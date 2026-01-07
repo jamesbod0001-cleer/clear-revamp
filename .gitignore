@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Code Generation
+*.g.dart
+*.freezed.dart
+
+# Localization
+/lib/ui/core/localization/generated/
