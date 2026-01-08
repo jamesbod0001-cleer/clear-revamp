@@ -127,6 +127,29 @@ abstract class AppTheme {
     bodyLink: _bodyLink,
   );
 
+  static final _inputDecorationTheme = InputDecorationThemeData(
+    contentPadding: EdgeInsets.all(Dimens.padding.p12),
+    filled: true,
+    fillColor: _Palette.grayComponent,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Dimens.radius.r8),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Dimens.radius.r8),
+      borderSide: BorderSide(
+        color: _Palette.outline,
+        strokeAlign: BorderSide.strokeAlignInside,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Dimens.radius.r8),
+      borderSide: BorderSide(
+        color: _Palette.blue400,
+        strokeAlign: BorderSide.strokeAlignInside,
+      ),
+    ),
+  );
+
   static final _buttonTheme = ButtonThemeData(
     shape: RoundedRectangleBorder(borderRadius: .circular(Dimens.radius.r8)),
     minWidth: Dimens.mobile.buttonMinimumSize.width,
@@ -154,6 +177,7 @@ abstract class AppTheme {
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
     textTheme: _textTheme,
+    inputDecorationTheme: _inputDecorationTheme,
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
     useMaterial3: true,
