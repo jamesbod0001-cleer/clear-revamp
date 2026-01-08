@@ -4,7 +4,7 @@ TextStyle _getBaseTextStyle(
   double fontSize,
   FontWeight fontWeight,
   double height,
-  double letterSpacing, {
+  double letterSpacingPercentage, {
   TextDecoration decoration = TextDecoration.none,
 }) => TextStyle(
   color: _Palette.grey1000,
@@ -12,7 +12,7 @@ TextStyle _getBaseTextStyle(
   fontWeight: fontWeight,
   fontSize: fontSize,
   height: height,
-  letterSpacing: letterSpacing,
+  letterSpacing: fontSize * (letterSpacingPercentage / 100),
   decoration: decoration,
 );
 
