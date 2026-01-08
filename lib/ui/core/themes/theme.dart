@@ -1,3 +1,4 @@
+import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/tokens/color_extension.dart';
 import 'package:cleer/ui/core/themes/tokens/typography_extensions.dart';
 import 'package:flutter/material.dart';
@@ -126,11 +127,35 @@ abstract class AppTheme {
     bodyLink: _bodyLink,
   );
 
+  static final _buttonTheme = ButtonThemeData(
+    shape: RoundedRectangleBorder(borderRadius: .circular(Dimens.radius.r8)),
+    minWidth: Dimens.mobile.buttonMinimumSize.width,
+    height: Dimens.mobile.buttonMinimumSize.height,
+    padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
+  );
+
+  static final _filledButtonTheme = FilledButtonThemeData(
+    style: FilledButton.styleFrom(
+      foregroundColor: _Palette.background,
+      backgroundColor: _Palette.green1300,
+      minimumSize: Dimens.mobile.buttonMinimumSize,
+      disabledBackgroundColor: _Palette.grey100,
+      disabledForegroundColor: _Palette.grey600,
+      textStyle: _labelMedium,
+      padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radius.r8),
+      ),
+    ),
+  );
+
   static ThemeData lightTheme = ThemeData(
     fontFamily: _AppFontConstants.rethinkSans,
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
     textTheme: _textTheme,
+    buttonTheme: _buttonTheme,
+    filledButtonTheme: _filledButtonTheme,
     useMaterial3: true,
     extensions: [_appColorExtension, _appTypographyExtension],
   );
