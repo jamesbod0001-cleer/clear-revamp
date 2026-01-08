@@ -1,4 +1,5 @@
 import 'package:cleer/ui/core/themes/tokens/color_extension.dart';
+import 'package:cleer/ui/core/themes/tokens/typography_extensions.dart';
 import 'package:flutter/material.dart';
 
 part 'tokens/palette.dart';
@@ -121,12 +122,16 @@ abstract class AppTheme {
     grey1000: _Palette.grey1000,
   );
 
+  static final _appTypographyExtension = AppTypographyExtension(
+    bodyLink: _bodyLink,
+  );
+
   static ThemeData lightTheme = ThemeData(
     fontFamily: _AppFontConstants.rethinkSans,
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
     textTheme: _textTheme,
     useMaterial3: true,
-    extensions: [_appColorExtension],
+    extensions: [_appColorExtension, _appTypographyExtension],
   );
 }

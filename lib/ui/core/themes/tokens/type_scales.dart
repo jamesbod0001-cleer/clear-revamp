@@ -55,3 +55,9 @@ TextStyle get _bodyMedium =>
     _getBaseTextStyle(_AppFontSizes.s14, AppFontWeights.medium, 21 / 14, 0);
 TextStyle get _bodySmall =>
     _getBaseTextStyle(_AppFontSizes.s12, AppFontWeights.medium, 16 / 12, 0.5);
+
+TextStyle get _bodyLink => _bodyMedium.copyWith(
+  decoration: TextDecoration.underline,
+  decorationStyle: TextDecorationStyle.dotted,
+  decorationColor: _Palette.green1000,
+);
