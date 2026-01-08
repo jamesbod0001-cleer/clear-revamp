@@ -28,6 +28,7 @@ class _AppSpacing {
   final double sp32 = 32.0;
 
   final double sp40 = 40.0;
+  final double sp65 = 65.0;
 }
 
 class _AppPadding {
