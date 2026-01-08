@@ -47,6 +47,9 @@ dependencies:
   amplify_api: ^2.8.0
   amplify_storage_s3: ^2.8.0
   freezed_annotation: ^3.1.0
+  result_dart: ^2.1.1
+  gap: ^3.0.1
+  pinput: ^6.0.1
 
 dev_dependencies:
   flutter_test:
