@@ -66,6 +66,32 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   generate: true
+  
+  fonts:
+    - family: RethinkSans
+      fonts:
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Rethink_Sans/RethinkSans-ExtraBold.ttf
+          weight: 800
 
   # To add assets to your application, add an assets section, like this:
   # assets:

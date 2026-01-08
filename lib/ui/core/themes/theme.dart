@@ -2,8 +2,24 @@ import 'package:cleer/ui/core/themes/tokens/color_extension.dart';
 import 'package:flutter/material.dart';
 
 part 'tokens/palette.dart';
+part 'tokens/typography_constants.dart';
+part 'tokens/type_scales.dart';
 
 abstract class AppTheme {
+  static final TextTheme _textTheme = TextTheme(
+    displayMedium: _displayMedium,
+    headlineMedium: _headlineMedium,
+    headlineSmall: _headlineSmall,
+    titleLarge: _titleLarge,
+    titleMedium: _titleMedium,
+    titleSmall: _titleSmall,
+    labelMedium: _labelMedium,
+    labelSmall: _labelSmall,
+    bodyLarge: _bodyLarge,
+    bodyMedium: _bodyMedium,
+    bodySmall: _bodySmall,
+  );
+
   static final _lightColorScheme = ColorScheme(
     brightness: Brightness.light,
 
@@ -106,8 +122,10 @@ abstract class AppTheme {
   );
 
   static ThemeData lightTheme = ThemeData(
+    fontFamily: _AppFontConstants.rethinkSans,
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
+    textTheme: _textTheme,
     useMaterial3: true,
     extensions: [_appColorExtension],
   );
