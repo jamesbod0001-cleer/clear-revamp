@@ -6,7 +6,9 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    OnboardingRoute().go(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      const OnboardingRoute().go(context);
+    });
     return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
