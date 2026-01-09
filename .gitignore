@@ -50,3 +50,9 @@ app.*.map.json
 
 # Localization
 /lib/ui/core/localization/generated/
+
+# amplify
+node_modules
+.amplify
+amplify_outputs*
+amplifyconfiguration*
