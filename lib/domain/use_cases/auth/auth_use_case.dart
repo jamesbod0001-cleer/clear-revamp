@@ -3,9 +3,16 @@ import 'package:cleer/data/repositories/api/user/user_repository.dart';
 import 'package:cleer/data/repositories/auth/auth_repository.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
+import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
+import 'package:cleer/domain/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
+import 'package:cleer/domain/models/update_password_result/update_password_result.dart';
 import 'package:cleer/domain/models/user/user.dart';
+import 'package:cleer/domain/use_cases/auth/params/confirm_reset_password_params.dart';
+import 'package:cleer/domain/use_cases/auth/params/confirm_sign_up_params.dart';
+import 'package:cleer/domain/use_cases/auth/params/sign_in_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_up_params.dart';
+import 'package:cleer/domain/use_cases/auth/params/update_password_params.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/utils/password_generator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -128,6 +135,22 @@ class AuthUseCase extends _$AuthUseCase {
     );
   }
 
+  Future<ResultDart<SignInDomainResult, AuthFailure>> signIn(
+    SignInParams params,
+  ) async {
+    _log.info('Attempting to sign in user: ${params.phoneNumber}');
+    final result = await _authRepository.signInUser(params);
+    await result.fold(
+      (SignInDomainResult success) async {
+        _log.info('Successfully signed in user: ${params.phoneNumber}');
+      },
+      (failure) {
+        _log.error('Error signing in user: ${params.phoneNumber}', failure);
+      },
+    );
+    return result;
+  }
+
   Future<ResultDart<SignUpDomainResult, AuthFailure>> signUp(
     SignUpParams params,
   ) async {
@@ -145,6 +168,132 @@ class AuthUseCase extends _$AuthUseCase {
       },
       (failure) {
         _log.error('Error creating account for user: ${params.email}', failure);
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<SignUpDomainResult, AuthFailure>> confirmSignUp(
+    ConfirmSignUpParams params,
+  ) async {
+    _log.info('Attempting to confirm sign up for user: ${params.username}');
+    final result = await _authRepository.confirmSignUp(params);
+    result.fold(
+      (success) {
+        _log.info(
+          'Successfully confirmed sign up for user: ${params.username}',
+        );
+      },
+      (failure) {
+        _log.error(
+          'Error confirming sign up for user: ${params.username}',
+          failure,
+        );
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<void, AuthFailure>> resendSignUpCode(
+    String username,
+  ) async {
+    _log.info('Attempting to resend sign up code to user: $username');
+    final result = await _authRepository.resendSignUpCode(username);
+    result.fold(
+      (success) {
+        _log.info('Successfully resent sign up code to user: $username');
+      },
+      (failure) {
+        _log.error('Error resending sign up code to user: $username', failure);
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<void, AuthFailure>> confirmSignUpAndSetPassword({
+    required String phoneNumber,
+    required String password,
+  }) async {
+    final storageKey = 'temp_pass_$phoneNumber';
+
+    final tempPass = await _secureStorage.read(key: storageKey);
+    if (tempPass == null) {
+      _log.error("No temporary password found for $phoneNumber");
+      return Failure(AuthFailure.unknown());
+    }
+    final result = await _authRepository
+        .signInUser(SignInParams(phoneNumber: phoneNumber, password: tempPass))
+        .flatMap((signInResult) async {
+          _log.info('Temporary sign-in successful for $phoneNumber');
+
+          return _authRepository.updatePassword(
+            UpdatePasswordParams(oldPassword: tempPass, newPassword: password),
+          );
+        });
+    return result.fold(
+      (success) async {
+        await _secureStorage.delete(key: storageKey);
+        _log.info(
+          'Registration finalized and storage cleared for $phoneNumber',
+        );
+        return Success.unit();
+      },
+      (failure) {
+        _log.error('Finalization failed for $phoneNumber: $failure');
+        return Failure(failure);
+      },
+    );
+  }
+
+  Future<ResultDart<ResetPasswordDomainResult, AuthFailure>> resetPassword(
+    String email,
+  ) async {
+    _log.info('Attempting to reset password for user');
+    final result = await _authRepository.resetPassword(email);
+    result.fold(
+      (success) {
+        _log.info('Successfully reset password for user');
+      },
+      (failure) {
+        _log.error('Error resetting password for user', failure);
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<ResetPasswordDomainResult, AuthFailure>>
+  confirmResetPassword(ConfirmResetPasswordParams params) async {
+    _log.info(
+      'Attempting to confirm reset password for user: ${params.username}',
+    );
+    final result = await _authRepository.confirmResetPassword(params);
+    result.fold(
+      (success) {
+        _log.info(
+          'Successfully confirmed reset password for user: ${params.username}',
+        );
+      },
+      (failure) {
+        _log.error(
+          'Error confirming reset password for user: ${params.username}',
+          failure,
+        );
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<UpdatePasswordDomainResult, AuthFailure>> updatePassword(
+    UpdatePasswordParams params,
+  ) async {
+    _log.info('Attempting to update password for user');
+    final result = await _authRepository.updatePassword(params);
+    await result.fold(
+      (UpdatePasswordDomainResult success) {
+        _log.info('Successfully updated password for user');
+      },
+      (failure) {
+        _log.error('Error updating password for user', failure);
       },
     );
     return result;
