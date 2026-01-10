@@ -145,10 +145,13 @@ abstract class AppTheme {
       borderRadius: BorderRadius.circular(Dimens.radius.r8),
       borderSide: BorderSide(
         color: _Palette.blue400,
+        width: Dimens.size.s2,
         strokeAlign: BorderSide.strokeAlignInside,
       ),
     ),
   );
+
+  static final _iconTheme = IconThemeData(color: _Palette.grey600);
 
   static final _buttonTheme = ButtonThemeData(
     shape: RoundedRectangleBorder(borderRadius: .circular(Dimens.radius.r8)),
@@ -180,6 +183,7 @@ abstract class AppTheme {
     inputDecorationTheme: _inputDecorationTheme,
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
+    iconTheme: _iconTheme,
     useMaterial3: true,
     extensions: [_appColorExtension, _appTypographyExtension],
   );
