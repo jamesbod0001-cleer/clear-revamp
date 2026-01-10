@@ -1,3 +1,4 @@
+import 'package:cleer/ui/auth/create_account/widgets/create_account_screen.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,4 +22,11 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const OnboardingScreen();
+}
+
+@TypedGoRoute<CreateAccountRoute>(path: '/create_account')
+class CreateAccountRoute extends GoRouteData with $CreateAccountRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      CreateAccountScreen();
 }
