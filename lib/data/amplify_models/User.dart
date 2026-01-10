@@ -32,6 +32,7 @@ class User extends amplify_core.Model {
   final String? _lastName;
   final String? _email;
   final String? _profileImage;
+  final String? _owner;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -95,6 +96,10 @@ class User extends amplify_core.Model {
     return _profileImage;
   }
   
+  String? get owner {
+    return _owner;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -103,16 +108,17 @@ class User extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const User._internal({required this.id, required phoneNumber, required firstName, required lastName, email, profileImage, createdAt, updatedAt}): _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _profileImage = profileImage, _createdAt = createdAt, _updatedAt = updatedAt;
+  const User._internal({required this.id, required phoneNumber, required firstName, required lastName, email, profileImage, owner, createdAt, updatedAt}): _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _profileImage = profileImage, _owner = owner, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory User({String? id, required String phoneNumber, required String firstName, required String lastName, String? email, String? profileImage}) {
+  factory User({String? id, required String phoneNumber, required String firstName, required String lastName, String? email, String? profileImage, String? owner}) {
     return User._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       phoneNumber: phoneNumber,
       firstName: firstName,
       lastName: lastName,
       email: email,
-      profileImage: profileImage);
+      profileImage: profileImage,
+      owner: owner);
   }
   
   bool equals(Object other) {
@@ -128,7 +134,8 @@ class User extends amplify_core.Model {
       _firstName == other._firstName &&
       _lastName == other._lastName &&
       _email == other._email &&
-      _profileImage == other._profileImage;
+      _profileImage == other._profileImage &&
+      _owner == other._owner;
   }
   
   @override
@@ -145,6 +152,7 @@ class User extends amplify_core.Model {
     buffer.write("lastName=" + "$_lastName" + ", ");
     buffer.write("email=" + "$_email" + ", ");
     buffer.write("profileImage=" + "$_profileImage" + ", ");
+    buffer.write("owner=" + "$_owner" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -152,14 +160,15 @@ class User extends amplify_core.Model {
     return buffer.toString();
   }
   
-  User copyWith({String? phoneNumber, String? firstName, String? lastName, String? email, String? profileImage}) {
+  User copyWith({String? phoneNumber, String? firstName, String? lastName, String? email, String? profileImage, String? owner}) {
     return User._internal(
       id: id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
-      profileImage: profileImage ?? this.profileImage);
+      profileImage: profileImage ?? this.profileImage,
+      owner: owner ?? this.owner);
   }
   
   User copyWithModelFieldValues({
@@ -167,7 +176,8 @@ class User extends amplify_core.Model {
     ModelFieldValue<String>? firstName,
     ModelFieldValue<String>? lastName,
     ModelFieldValue<String?>? email,
-    ModelFieldValue<String?>? profileImage
+    ModelFieldValue<String?>? profileImage,
+    ModelFieldValue<String?>? owner
   }) {
     return User._internal(
       id: id,
@@ -175,7 +185,8 @@ class User extends amplify_core.Model {
       firstName: firstName == null ? this.firstName : firstName.value,
       lastName: lastName == null ? this.lastName : lastName.value,
       email: email == null ? this.email : email.value,
-      profileImage: profileImage == null ? this.profileImage : profileImage.value
+      profileImage: profileImage == null ? this.profileImage : profileImage.value,
+      owner: owner == null ? this.owner : owner.value
     );
   }
   
@@ -186,11 +197,12 @@ class User extends amplify_core.Model {
       _lastName = json['lastName'],
       _email = json['email'],
       _profileImage = json['profileImage'],
+      _owner = json['owner'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'profileImage': _profileImage, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'profileImage': _profileImage, 'owner': _owner, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -200,6 +212,7 @@ class User extends amplify_core.Model {
     'lastName': _lastName,
     'email': _email,
     'profileImage': _profileImage,
+    'owner': _owner,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -211,6 +224,7 @@ class User extends amplify_core.Model {
   static final LASTNAME = amplify_core.QueryField(fieldName: "lastName");
   static final EMAIL = amplify_core.QueryField(fieldName: "email");
   static final PROFILEIMAGE = amplify_core.QueryField(fieldName: "profileImage");
+  static final OWNER = amplify_core.QueryField(fieldName: "owner");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
     modelSchemaDefinition.pluralName = "Users";
@@ -225,6 +239,11 @@ class User extends amplify_core.Model {
           amplify_core.ModelOperation.CREATE,
           amplify_core.ModelOperation.UPDATE,
           amplify_core.ModelOperation.DELETE,
+          amplify_core.ModelOperation.READ
+        ]),
+      amplify_core.AuthRule(
+        authStrategy: amplify_core.AuthStrategy.PRIVATE,
+        operations: const [
           amplify_core.ModelOperation.READ
         ])
     ];
@@ -257,6 +276,12 @@ class User extends amplify_core.Model {
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: User.PROFILEIMAGE,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: User.OWNER,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
