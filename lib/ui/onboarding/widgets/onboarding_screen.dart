@@ -1,3 +1,4 @@
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
@@ -56,7 +57,10 @@ class OnboardingScreen extends HookWidget {
                 ),
               ),
               Gap(Dimens.spacing.sp65),
-              FilledButton(onPressed: () {}, child: Text(l10n.getStarted)),
+              FilledButton(
+                onPressed: () => CreateAccountRoute().push(context),
+                child: Text(l10n.getStarted),
+              ),
               Gap(Dimens.spacing.sp12),
               RichText(
                 text: TextSpan(
