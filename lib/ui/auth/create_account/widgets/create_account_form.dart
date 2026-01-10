@@ -1,3 +1,4 @@
+import 'package:cleer/ui/auth/create_account/view_model/create_account_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
@@ -6,12 +7,13 @@ import 'package:cleer/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CreateAccountForm extends HookWidget {
+class CreateAccountForm extends HookConsumerWidget {
   const CreateAccountForm({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final TextEditingController firstNameController =
         useTextEditingController();
@@ -22,8 +24,23 @@ class CreateAccountForm extends HookWidget {
     final GlobalKey<FormState> createAccountFormKey = useMemoized(
       () => GlobalKey<FormState>(),
     );
+
+    final viewmodel = ref.read(createAccountViewModelProvider.notifier);
+    final state = ref.watch(createAccountViewModelProvider);
+
     return Form(
       key: createAccountFormKey,
+      onChanged: () {
+        debugPrint(phoneNumberController.text);
+        viewmodel.onFormChanged(
+          state.value!.createAccountFormData.copyWith(
+            firstName: firstNameController.text,
+            lastName: lastNameController.text,
+            phoneNumber: phoneNumberController.text,
+            email: emailController.text,
+          ),
+        );
+      },
       child: Column(
         children: [
           CustomTextFormField(
@@ -58,7 +75,12 @@ class CreateAccountForm extends HookWidget {
           ),
           const Spacer(),
           Gap(Dimens.spacing.sp40),
-          FilledButton(onPressed: () {}, child: Text(l10n.next)),
+          FilledButton(
+            onPressed: state.value!.createAccountFormData.isValid
+                ? () {}
+                : null,
+            child: Text(l10n.next),
+          ),
           Gap(Dimens.spacing.sp12),
           RichText(
             text: TextSpan(
