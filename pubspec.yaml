@@ -51,6 +51,7 @@ dependencies:
   gap: ^3.0.1
   pinput: ^6.0.1
   flutter_secure_storage: ^10.0.0
+  collection: ^1.19.1
 
 dev_dependencies:
   flutter_test:
