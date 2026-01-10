@@ -1,3 +1,4 @@
+import 'package:cleer/domain/models/auth_identity/auth_identity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_state.freezed.dart';
@@ -8,8 +9,7 @@ class AuthState with _$AuthState {
   const factory AuthState.unknown() = Unknown;
 
   // State when a user is successfully signed in
-  // const factory AuthState.signedIn({required User user}) = SignedIn;
-  const factory AuthState.signedIn() = SignedIn;
+  const factory AuthState.signedIn({required AuthIdentity? identity}) = SignedIn;
 
   // State when the user is signed out
   const factory AuthState.signedOut() = SignedOut;
