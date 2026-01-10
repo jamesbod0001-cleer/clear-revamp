@@ -6,5 +6,51 @@
   "lockFundsSecurelyTheReceiverSeesTheMoneyButCantTouchItUntilYouSaySo": "Lock funds securely. The receiver sees the money, but can't touch it until you say so.",
   "inspectThenRelease": "Inspect, Then Release.",
   "itemDeliveredServiceDoneClickReleaseToPayInstantlyNotSatisfiedGetARefund": "Item delivered? Service done? Click 'Release' to pay instantly. Not satisfied? Get a refund.",
-  "zeroRiskTransactions": "Zero Risk Transactions."
+  "zeroRiskTransactions": "Zero Risk Transactions.",
+  "letsGetYouStarted": "Let’s get you started.",
+  "aFewQuickStepsToSetUpYourAccountAndSecureYourFunds": "A few quick steps to set up your account and secure your funds.",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "phoneNumber": "Phone Number",
+  "emailAddress": "Email Address",
+  "optional": "(optional)",
+  "password": "Password",
+  "next": "Next",
+  "byClickingContinueYouAgreeToCleer": "By clicking continue, you agree to Cleer",
+  "terms": "Terms.",
+  "verifyPhoneNumber": "Verify Phone Number",
+  "weSentA4DigitCodeToYourPhoneForVerification": "We sent a 4-digit code to your phone for verification.",
+  "didntReceiveOTP": "Didn’t receive OTP?",
+  "resend": "Resend",
+  "youreCleerAccountSecured": "You're Cleer! Account Secured.",
+  "welcomeToThePlatformWhereTrustIsGuaranteedAndTransactionsAreAlwaysTransparent": "Welcome to the platform where trust is guaranteed and transactions are always transparent",
+  "finish": "Finish",
+  "fieldRequired": "Please enter your {fieldName}",
+  "@fieldRequired": {
+    "placeholders": {
+      "fieldName": { "type": "String" }
+    }
+  },
+  "fieldTooShort": "{fieldName} must be at least {count} characters long",
+  "@fieldTooShort": {
+    "placeholders": {
+      "fieldName": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "fieldTooLong": "{fieldName} cannot exceed {count} characters",
+  "@fieldTooLong": {
+    "placeholders": {
+      "fieldName": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "invalidCharacters": "{fieldName} contains invalid characters",
+  "@invalidCharacters": {
+    "placeholders": {
+      "fieldName": { "type": "String" }
+    }
+  },
+  "invalidEmailAddress": "Please enter a valid email address",
+  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)"
 }
