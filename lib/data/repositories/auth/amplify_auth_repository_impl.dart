@@ -4,12 +4,24 @@ import 'package:cleer/data/amplify_exceptions/amplify_auth_exception_handler.dar
 import 'package:cleer/data/mappers/amplify_auth_mappers.dart';
 import 'package:cleer/data/repositories/auth/auth_repository.dart';
 import 'package:cleer/data/services/auth/amplify_auth_service_client.dart';
+import 'package:cleer/data/services/auth/models/confirm_reset_password/confirm_reset_password_request.dart';
+import 'package:cleer/data/services/auth/models/confirm_sign_up/confirm_sign_up_request.dart';
+import 'package:cleer/data/services/auth/models/sign_in_user/sign_in_user_request.dart';
 import 'package:cleer/data/services/auth/models/sign_up_user/sign_up_user_request.dart';
+import 'package:cleer/data/services/auth/models/update_password/update_password_request.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/auth_identity/auth_identity.dart';
+import 'package:cleer/domain/models/code_delivery_details/code_delivery_details.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
+import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
+import 'package:cleer/domain/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
+import 'package:cleer/domain/models/update_password_result/update_password_result.dart';
+import 'package:cleer/domain/use_cases/auth/params/confirm_reset_password_params.dart';
+import 'package:cleer/domain/use_cases/auth/params/confirm_sign_up_params.dart';
+import 'package:cleer/domain/use_cases/auth/params/sign_in_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_up_params.dart';
+import 'package:cleer/domain/use_cases/auth/params/update_password_params.dart';
 import 'package:result_dart/result_dart.dart';
 
 class AmplifyAuthRepositoryImpl extends AuthRepository {
@@ -56,6 +68,40 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
   }
 
   @override
+  Future<ResultDart<SignInDomainResult, AuthFailure>> signInUser(
+    SignInParams params,
+  ) async {
+    try {
+      _log.info('Starting Sign In for user: ${params.phoneNumber}');
+      final request = SignInUserRequest(
+        username: params.phoneNumber,
+        password: params.password,
+      );
+      final amplifyResult = await _amplifyAuthServiceClient.signInUser(request);
+
+      if (amplifyResult.nextStep.signInStep == AuthSignInStep.confirmSignUp) {
+        _log.info('User is not confirmed. Resending confirmation code.');
+        final resendResult = await resendSignUpCode(params.phoneNumber);
+        return resendResult.fold(
+          (codeDetails) => Success(
+            SignInDomainResult.confirmationRequired(
+              destination: codeDetails.destination!,
+              deliveryMedium: codeDetails.deliveryMedium!,
+            ),
+          ),
+          (failure) => Failure(failure),
+        );
+      }
+
+      _log.info('Sign In successful for user: ${params.phoneNumber}');
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error signing in user: ${params.phoneNumber}', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
   Future<ResultDart<SignUpDomainResult, AuthFailure>> signUpUser(
     SignUpParams params,
   ) async {
@@ -73,6 +119,105 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
       return Success(amplifyResult.toDomain());
     } on AuthException catch (e) {
       _log.error('Error signing up user: ${params.phoneNumber}', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<SignUpDomainResult, AuthFailure>> confirmSignUp(
+    ConfirmSignUpParams params,
+  ) async {
+    try {
+      _log.info('Starting Sign Up confirmation for user: ${params.username}');
+      final request = ConfirmSignUpRequest(
+        username: params.username,
+        confirmationCode: params.confirmationCode,
+      );
+      final amplifyResult = await _amplifyAuthServiceClient.confirmSignUp(
+        request,
+      );
+      _log.info('Sign Up confirmation successful for user: ${params.username}');
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error confirming sign up for user: ${params.username}', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<CodeDeliveryDetails, AuthFailure>> resendSignUpCode(
+    String username,
+  ) async {
+    try {
+      _log.info('Resending Sign Up code for user: $username');
+      final result = await _amplifyAuthServiceClient.resendSignUpCode(username);
+      _log.info('Sign Up code resent successfully for user: $username');
+      return Success(result.codeDeliveryDetails.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error resending sign up code for user: $username', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<ResetPasswordDomainResult, AuthFailure>> resetPassword(
+    String username,
+  ) async {
+    try {
+      _log.info('Resetting password for user: $username');
+      final amplifyResult = await _amplifyAuthServiceClient.resetPassword(
+        username,
+      );
+      _log.info('Password reset successful for user: $username');
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error resetting password for user: $username', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<ResetPasswordDomainResult, AuthFailure>>
+  confirmResetPassword(ConfirmResetPasswordParams params) async {
+    try {
+      _log.info('Confirming password reset for user ${params.username}');
+      final request = ConfirmResetPasswordRequest(
+        username: params.username,
+        newPassword: params.newPassword,
+        confirmationCode: params.confirmationCode,
+      );
+      final amplifyResult = await _amplifyAuthServiceClient
+          .confirmResetPassword(request);
+      _log.info(
+        'Password reset confirmed successfully for user ${params.username}',
+      );
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error(
+        'Error confirming password reset for user ${params.username}',
+        e,
+      );
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<UpdatePasswordDomainResult, AuthFailure>> updatePassword(
+    UpdatePasswordParams params,
+  ) async {
+    try {
+      _log.info('Updating password for user');
+      final request = UpdatePasswordRequest(
+        oldPassword: params.oldPassword,
+        newPassword: params.newPassword,
+      );
+      final amplifyResult = await _amplifyAuthServiceClient.updatePassword(
+        request,
+      );
+      _log.info('Password updated successfully');
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error updating password', e);
       return Failure(AmplifyAuthExceptionHandler.handleException(e));
     }
   }
