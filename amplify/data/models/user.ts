@@ -6,8 +6,8 @@ export const User = a.model({
     lastName: a.string().required(),
     email: a.string(),
     profileImage: a.string(),
-
+    owner: a.string().authorization(allow => [allow.owner().to(['read', 'delete'])]),
 }).authorization(allow => [
-        allow.owner()
+        allow.owner(), allow.authenticated().to(['read']),
     ])
 
