@@ -1,8 +1,10 @@
 import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
+import 'package:cleer/data/repositories/api/user/user_repository.dart';
 import 'package:cleer/data/repositories/auth/auth_repository.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
+import 'package:cleer/domain/models/user/user.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_up_params.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/utils/password_generator.dart';
@@ -15,6 +17,7 @@ part 'auth_use_case.g.dart';
 @riverpod
 class AuthUseCase extends _$AuthUseCase {
   late final AuthRepository _authRepository;
+  late final UserRepository _userRepository;
   final _secureStorage = const FlutterSecureStorage();
 
   final _log = AmplifyLogger("AuthUseCase");
@@ -26,13 +29,30 @@ class AuthUseCase extends _$AuthUseCase {
     return AuthState.unknown();
   }
 
-  Future<AuthState> _doSomething() async {
+  Future<AuthState> _syncUserProfile() async {
     final identityResult = await _authRepository.getAuthIdentity();
     return await identityResult.fold(
-      (identity) {
+      (identity) async {
         _log.info('Current user auth identity: $identity');
-
-        return AuthState.signedIn(identity: identity);
+        final syncResult = await _userRepository.getOrCreateUserProfile(
+          User(
+            id: identity.id,
+            firstName: identity.firstName,
+            lastName: identity.lastName,
+            phoneNumber: identity.phoneNumber,
+            email: identity.email,
+          ),
+        );
+        return syncResult.fold(
+          (user) {
+            _log.info('Successfully synced user profile');
+            return AuthState.signedIn(identity: identity);
+          },
+          (failure) {
+            _log.error('Error syncing user profile', failure);
+            return AuthState.unknown();
+          },
+        );
       },
       (onFailure) {
         _log.error('Error getting auth identity: $onFailure');
@@ -61,7 +81,7 @@ class AuthUseCase extends _$AuthUseCase {
         (isSignedIn) async {
           if (isSignedIn) {
             _log.info('User is signed in');
-            return await _doSomething();
+            return await _syncUserProfile();
           } else {
             _log.info('User is not signed in');
             return AuthState.signedOut();
@@ -82,7 +102,7 @@ class AuthUseCase extends _$AuthUseCase {
         switch (status) {
           case AppAuthStatus.signedIn:
             state = const AsyncValue.loading();
-            state = AsyncValue.data(await _doSomething());
+            state = AsyncValue.data(await _syncUserProfile());
             break;
           case AppAuthStatus.signedOut:
             _log.info('User signed out');
