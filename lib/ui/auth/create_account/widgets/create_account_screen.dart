@@ -2,10 +2,9 @@ import 'package:cleer/ui/auth/create_account/widgets/create_account_form.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/app_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class CreateAccountScreen extends StatelessWidget {
   const CreateAccountScreen({super.key});
@@ -24,16 +23,7 @@ class CreateAccountScreen extends StatelessWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Gap(Dimens.spacing.sp16),
-                    IconButton(
-                      style: IconButton.styleFrom(
-                        tapTargetSize: .shrinkWrap,
-                        visualDensity: .compact,
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size(0, 0),
-                      ),
-                      onPressed: () => context.pop(),
-                      icon: PhosphorIcon(PhosphorIcons.arrowLeft()),
-                    ),
+                    AppBackButton(),
                     Gap(Dimens.spacing.sp24),
                     Text(
                       l10n.letsGetYouStarted,
