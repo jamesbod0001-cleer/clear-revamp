@@ -22,4 +22,5 @@ abstract class AuthRepository {
   Future<ResultDart<SignUpDomainResult, AuthFailure>> signUpUser(
     SignUpParams params,
   );
+  Future<ResultDart<void, AuthFailure>> signOut();
 }

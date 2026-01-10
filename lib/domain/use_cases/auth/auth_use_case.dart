@@ -44,8 +44,7 @@ class AuthUseCase extends _$AuthUseCase {
             'Session is invalid/revoked. Force redirecting to signedOut.',
           );
 
-          /// TODO: Sign out
-          // _authRepository.signOut();
+          _authRepository.signOut();
 
           return AuthState.signedOut();
         }

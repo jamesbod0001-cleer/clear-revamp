@@ -43,6 +43,11 @@ class AmplifyAuthServiceClient {
     return result;
   }
 
+  Future<SignOutResult> signOutCurrentUser() async {
+    final result = await _amplifyAuth.signOut();
+    return result;
+  }
+
   final _authStreamController = StreamController<AppAuthStatus>.broadcast();
   Stream<AppAuthStatus> get authStatus => _authStreamController.stream;
 
