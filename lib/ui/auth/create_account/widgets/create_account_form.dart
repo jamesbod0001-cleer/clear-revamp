@@ -2,7 +2,7 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
-import 'package:cleer/utils/validators/common_validator.dart';
+import 'package:cleer/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -54,6 +54,7 @@ class CreateAccountForm extends HookWidget {
             labelText: '${l10n.emailAddress} ${l10n.optional}',
             controller: emailController,
             textInputType: .emailAddress,
+            validator: (value) => emailValidator(value, l10n),
           ),
           const Spacer(),
           Gap(Dimens.spacing.sp40),
