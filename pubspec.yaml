@@ -50,6 +50,7 @@ dependencies:
   result_dart: ^2.1.1
   gap: ^3.0.1
   pinput: ^6.0.1
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:
