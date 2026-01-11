@@ -5,6 +5,7 @@ class _AppSize {
   final double s0 = 0.0;
   final double s2 = 2.0;
   final double s4 = 4.0;
+  final double s6 = 6.0;
 
   final double s20 = 20.0;
   final double s24 = 24.0;
@@ -13,6 +14,8 @@ class _AppSize {
   final double s40 = 40.0;
   final double s44 = 44.0;
   final double s48 = 48.0;
+
+  final double s60 = 60.0;
 
   final double s82 = 82.0;
 }
@@ -29,9 +32,13 @@ class _AppSpacing {
   final double sp24 = 24.0;
   final double sp28 = 28.0;
   final double sp32 = 32.0;
+  final double sp38 = 38.0;
 
   final double sp40 = 40.0;
+  final double sp48 = 48.0;
   final double sp65 = 65.0;
+
+  final double sp80 = 80.0;
 }
 
 class _AppPadding {
@@ -51,6 +58,7 @@ class _AppRadius {
   const _AppRadius();
   final double r2 = 2.0;
   final double r8 = 8.0;
+  final double r10 = 10.0;
   final double r12 = 12.0;
   final double r24 = 24.0;
   final double r48 = 48.0;
