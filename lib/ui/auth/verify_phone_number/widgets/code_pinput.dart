@@ -98,7 +98,6 @@ class _OtpPinputState extends ConsumerState<CodePinput> {
       },
       onChanged: (value) {
         if (value.length != widget.otpLength) {
-          debugPrint('In here');
           // ref.read(verifyEmailAddressViewModelProvider.notifier).setOtp(kEmpty);
         }
       },
