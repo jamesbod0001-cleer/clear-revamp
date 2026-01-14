@@ -26,6 +26,7 @@ class AuthUseCase extends _$AuthUseCase {
   late final AuthRepository _authRepository;
   late final UserRepository _userRepository;
   final _secureStorage = const FlutterSecureStorage();
+  bool _isProcessingRegistration = false;
 
   final _log = AmplifyLogger("AuthUseCase");
 
@@ -115,6 +116,12 @@ class AuthUseCase extends _$AuthUseCase {
         _log.info('Auth status changed: $status');
         switch (status) {
           case AppAuthStatus.signedIn:
+            if (_isProcessingRegistration) {
+              _log.info(
+                'Ignoring stream-based sign-in because registration is in progress',
+              );
+              break;
+            }
             state = const AsyncValue.loading();
             state = AsyncValue.data(await _syncUserProfile());
             break;
@@ -171,10 +178,15 @@ class AuthUseCase extends _$AuthUseCase {
     final result = await _authRepository.signUpUser(paramsWithPass);
     result.fold(
       (success) {
-        _log.info('Successfully created account for user: ${params.phoneNumber}');
+        _log.info(
+          'Successfully created account for user: ${params.phoneNumber}',
+        );
       },
       (failure) {
-        _log.error('Error creating account for user: ${params.phoneNumber}', failure);
+        _log.error(
+          'Error creating account for user: ${params.phoneNumber}',
+          failure,
+        );
       },
     );
     return result;
@@ -223,36 +235,34 @@ class AuthUseCase extends _$AuthUseCase {
   }) async {
     final storageKey = 'temp_pass_$phoneNumber';
 
-    final tempPass = await _secureStorage.read(key: storageKey);
-    if (tempPass == null) {
-      _log.error("No temporary password found for $phoneNumber");
-      return Failure(AuthFailure.unknown());
-    }
-    final result = await _authRepository
-        .signInUser(SignInParams(phoneNumber: phoneNumber, password: tempPass))
-        .flatMap((signInResult) async {
-          _log.info('Temporary sign-in successful for $phoneNumber');
+    try {
+      _isProcessingRegistration = true; // Lock engaged
 
-          return _authRepository.updatePassword(
-            UpdatePasswordParams(oldPassword: tempPass, newPassword: password),
+      final tempPass = await _secureStorage.read(key: storageKey);
+      if (tempPass == null) return Failure(AuthFailure.unknown());
+
+      final result = await _authRepository
+          .signInUser(
+            SignInParams(phoneNumber: phoneNumber, password: tempPass),
+          )
+          .flatMap(
+            (signInResult) => _authRepository.updatePassword(
+              UpdatePasswordParams(
+                oldPassword: tempPass,
+                newPassword: password,
+              ),
+            ),
           );
-        });
-    return result.fold(
-      (success) async {
+
+      return await result.fold((success) async {
         await _secureStorage.delete(key: storageKey);
-        _log.info(
-          'Registration finalized and storage cleared for $phoneNumber',
-        );
-        state = AsyncValue.data(
-          await _syncUserProfile(isCompilingRegistration: true),
-        );
+        final newState = await _syncUserProfile(isCompilingRegistration: true);
+        state = AsyncValue.data(newState);
         return Success.unit();
-      },
-      (failure) {
-        _log.error('Finalization failed for $phoneNumber: $failure');
-        return Failure(failure);
-      },
-    );
+      }, (failure) => Failure(failure));
+    } finally {
+      _isProcessingRegistration = false; // Always release the lock
+    }
   }
 
   void completeOnboarding() {
