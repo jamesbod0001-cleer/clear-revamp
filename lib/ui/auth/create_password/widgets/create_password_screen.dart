@@ -1,12 +1,12 @@
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/create_password/view_model/create_password_view_model.dart';
+import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/app_back_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
-import 'package:cleer/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -23,6 +23,7 @@ class CreatePasswordScreen extends HookConsumerWidget {
     final TextEditingController passwordController = useTextEditingController();
     final TextEditingController confirmPasswordController =
         useTextEditingController();
+    final checklistIsMet = useState(false);
     useListenable(passwordController);
     useListenable(confirmPasswordController);
 
@@ -72,28 +73,36 @@ class CreatePasswordScreen extends HookConsumerWidget {
                       controller: passwordController,
                       labelText: l10n.enterPassword,
                       isPassword: true,
-                      validator: (value) => passwordValidator(value, l10n),
                     ),
                     Gap(Dimens.spacing.sp28),
                     CustomTextFormField(
                       controller: confirmPasswordController,
-                      labelText:  l10n.confirmPassword,
+                      labelText: l10n.confirmPassword,
                       isPassword: true,
-                      validator: (value) => passwordValidator(
-                        value,
-                        l10n,
-                        confirmPassword: passwordController.text,
-                      ),
+                      validator: (value) {
+                        final confirmPassword = value ?? '';
+                        if (confirmPassword.isEmpty) {
+                          return l10n.pleaseEnterYourPassword;
+                        }
+                        if (passwordController.text != confirmPassword) {
+                          return l10n.passwordDoesNotMatch;
+                        }
+                        return null;
+                      },
+                    ),
+                    Gap(Dimens.spacing.sp28),
+                    PasswordValidationChecklist(
+                      passwordController: passwordController,
+                      isPasswordValid: (valid) => checklistIsMet.value = valid,
                     ),
                     const Spacer(),
                     Gap(Dimens.spacing.sp40),
                     FilledButton(
                       onPressed:
-                          passwordController.text.isValidPassword &&
-                              confirmPasswordController.text
-                                  .isValidConfirmPassword(
-                                    passwordController.text,
-                                  )
+                          (checklistIsMet.value &&
+                              passwordController.text ==
+                                  confirmPasswordController.text &&
+                              confirmPasswordController.text.isNotEmpty)
                           ? () => ref
                                 .read(createPasswordViewModelProvider.notifier)
                                 .createPassword(
