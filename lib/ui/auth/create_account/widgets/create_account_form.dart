@@ -1,8 +1,11 @@
+import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/ui/auth/create_account/view_model/create_account_view_model.dart';
+import 'package:cleer/ui/core/localization/error_messages.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
+import 'package:cleer/ui/core/ui/form_error.dart';
 import 'package:cleer/utils/validators/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -15,23 +18,31 @@ class CreateAccountForm extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final TextEditingController firstNameController =
-        useTextEditingController();
-    final TextEditingController lastNameController = useTextEditingController();
-    final TextEditingController phoneNumberController =
-        useTextEditingController();
-    final TextEditingController emailController = useTextEditingController();
-    final GlobalKey<FormState> createAccountFormKey = useMemoized(
-      () => GlobalKey<FormState>(),
-    );
 
     final viewmodel = ref.read(createAccountViewModelProvider.notifier);
     final state = ref.watch(createAccountViewModelProvider);
 
+    final TextEditingController firstNameController = useTextEditingController(
+      text: state.value!.createAccountFormData.firstName,
+    );
+    final TextEditingController lastNameController = useTextEditingController(
+      text: state.value!.createAccountFormData.lastName,
+    );
+    final TextEditingController phoneNumberController =
+        useTextEditingController(
+          text: state.value!.createAccountFormData.phoneNumber,
+        );
+    final TextEditingController emailController = useTextEditingController(
+      text: state.value!.createAccountFormData.email,
+    );
+
+    final GlobalKey<FormState> createAccountFormKey = useMemoized(
+      () => GlobalKey<FormState>(),
+    );
+
     return Form(
       key: createAccountFormKey,
       onChanged: () {
-        debugPrint(phoneNumberController.text);
         viewmodel.onFormChanged(
           state.value!.createAccountFormData.copyWith(
             firstName: firstNameController.text,
@@ -43,6 +54,17 @@ class CreateAccountForm extends HookConsumerWidget {
       },
       child: Column(
         children: [
+          FormError(
+            hasError: ref.watch(createAccountViewModelProvider).hasError,
+            errorMessage:
+                ref.watch(createAccountViewModelProvider).error != null
+                ? getAuthErrorMessage(
+                    ref.watch(createAccountViewModelProvider).error
+                        as AuthFailure,
+                    context,
+                  )
+                : null,
+          ),
           CustomTextFormField(
             labelText: l10n.firstName,
             controller: firstNameController,
@@ -74,10 +96,10 @@ class CreateAccountForm extends HookConsumerWidget {
             validator: (value) => emailValidator(value, l10n),
           ),
           const Spacer(),
-          Gap(Dimens.spacing.sp40),
+          Gap(Dimens.spacing.sp35),
           FilledButton(
             onPressed: state.value!.createAccountFormData.isValid
-                ? () {}
+                ? () => viewmodel.signUp()
                 : null,
             child: Text(l10n.next),
           ),

@@ -27,12 +27,15 @@ class CreateAccountScreen extends ConsumerWidget {
         result.when(
           success: () {},
           confirmationRequired: (String destination, String deliveryMedium) {
+            final formData = ref
+                .read(createAccountViewModelProvider)
+                .value!
+                .createAccountFormData;
+
+            final cleanDigits = formData.phoneNumber.replaceAll(' ', '');
+            final fullE164Number = '+234$cleanDigits';
             final details = VerificationDetails(
-              username: ref
-                  .read(createAccountViewModelProvider)
-                  .value!
-                  .createAccountFormData
-                  .phoneNumber,
+              username: fullE164Number,
               destination: destination,
               deliveryMedium: deliveryMedium,
             );
@@ -62,6 +65,7 @@ class CreateAccountScreen extends ConsumerWidget {
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
+              hasScrollBody: false,
               child: Padding(
                 padding: Dimens.mobile.edgeInsetsScreenHorizontal,
                 child: Column(
