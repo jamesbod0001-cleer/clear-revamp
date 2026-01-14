@@ -127,6 +127,24 @@ abstract class AppTheme {
     bodyLink: _bodyLink,
   );
 
+  static final _navigationBarTheme = NavigationBarThemeData(
+    backgroundColor: _Palette.white,
+    indicatorColor: _Palette.navbarGreen,
+    labelPadding: EdgeInsets.only(top: Dimens.padding.p4),
+    iconTheme: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return IconThemeData(color: _Palette.blue900, size: Dimens.size.s24);
+      }
+      return IconThemeData(color: _Palette.grey600, size: Dimens.size.s24);
+    }),
+    labelTextStyle: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return _bodySmall.copyWith(color: _Palette.blue900);
+      }
+      return _bodySmall.copyWith(color: _Palette.grey600);
+    }),
+  );
+
   static final _inputDecorationTheme = InputDecorationThemeData(
     contentPadding: EdgeInsets.all(Dimens.padding.p12),
     filled: true,
@@ -184,6 +202,7 @@ abstract class AppTheme {
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
     iconTheme: _iconTheme,
+    navigationBarTheme: _navigationBarTheme,
     useMaterial3: true,
     extensions: [_appColorExtension, _appTypographyExtension],
   );
