@@ -31,12 +31,16 @@ class AuthUseCase extends _$AuthUseCase {
 
   @override
   FutureOr<AuthState> build() {
+    _authRepository = ref.watch(authRepositoryProvider);
+    _userRepository = ref.watch(userRepositoryProvider);
     _initialiseAuthStatus();
     _listenToAuthStateChanges();
     return AuthState.unknown();
   }
 
-  Future<AuthState> _syncUserProfile() async {
+  Future<AuthState> _syncUserProfile({
+    bool isCompilingRegistration = false,
+  }) async {
     final identityResult = await _authRepository.getAuthIdentity();
     return await identityResult.fold(
       (identity) async {
@@ -53,7 +57,10 @@ class AuthUseCase extends _$AuthUseCase {
         return syncResult.fold(
           (user) {
             _log.info('Successfully synced user profile');
-            return AuthState.signedIn(identity: identity);
+            return AuthState.signedIn(
+              identity: identity,
+              isRegistrationComplete: !isCompilingRegistration,
+            );
           },
           (failure) {
             _log.error('Error syncing user profile', failure);
@@ -155,7 +162,7 @@ class AuthUseCase extends _$AuthUseCase {
     SignUpParams params,
   ) async {
     final tempPassword = PasswordGenerator.generateSecureTempPassword();
-    _log.info('Attempting to create account for user: ${params.email}');
+    _log.info('Attempting to create account for user: ${params.phoneNumber}');
     await _secureStorage.write(
       key: 'temp_pass_${params.phoneNumber}',
       value: tempPassword,
@@ -164,10 +171,10 @@ class AuthUseCase extends _$AuthUseCase {
     final result = await _authRepository.signUpUser(paramsWithPass);
     result.fold(
       (success) {
-        _log.info('Successfully created account for user: ${params.email}');
+        _log.info('Successfully created account for user: ${params.phoneNumber}');
       },
       (failure) {
-        _log.error('Error creating account for user: ${params.email}', failure);
+        _log.error('Error creating account for user: ${params.phoneNumber}', failure);
       },
     );
     return result;
@@ -236,6 +243,9 @@ class AuthUseCase extends _$AuthUseCase {
         _log.info(
           'Registration finalized and storage cleared for $phoneNumber',
         );
+        state = AsyncValue.data(
+          await _syncUserProfile(isCompilingRegistration: true),
+        );
         return Success.unit();
       },
       (failure) {
@@ -243,6 +253,16 @@ class AuthUseCase extends _$AuthUseCase {
         return Failure(failure);
       },
     );
+  }
+
+  void completeOnboarding() {
+    state.whenData((currentState) {
+      if (currentState is SignedIn) {
+        state = AsyncValue.data(
+          currentState.copyWith(isRegistrationComplete: true),
+        );
+      }
+    });
   }
 
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>> resetPassword(
