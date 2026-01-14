@@ -74,5 +74,10 @@
   "yourOldPasswordIsIncorrectOrYouAreNotAuthorizedToChangePassword": "Your old password is incorrect or you are not authorized to change password.",
   "userNotFoundExceptionMessage": "User does not exist.",
   "networkExceptionMessage": "Network error. Please check your internet connection.",
-  "unknownExceptionMessage": "An unknown error occurred. Please try again later."
+  "unknownExceptionMessage": "An unknown error occurred. Please try again later.",
+  "yourPasswordMustContain": "Your password must contain:",
+  "atLeast1Uppercase": "At least 1 uppercase",
+  "atLeast1Lowercase": "At least 1 lowercase",
+  "atLeast1Number": "At least 1 number",
+  "atLeast8Characters": "At least 8 characters"
 }
