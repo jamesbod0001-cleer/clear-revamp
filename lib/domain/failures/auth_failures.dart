@@ -16,8 +16,6 @@ sealed class AuthFailure with _$AuthFailure {
       NotAuthorizedServiceException;
   const factory AuthFailure.userNotFoundException() = UserNotFoundException;
   const factory AuthFailure.networkException() = NetworkException;
-  const factory AuthFailure.userLambdaValidationException({String? message}) =
-      UserLambdaValidationException;
   const factory AuthFailure.unknown({String? code, String? message}) =
       UnknownAuthFailure;
 }
