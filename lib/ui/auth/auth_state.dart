@@ -9,8 +9,10 @@ class AuthState with _$AuthState {
   const factory AuthState.unknown() = Unknown;
 
   // State when a user is successfully signed in
-  const factory AuthState.signedIn({required AuthIdentity? identity}) =
-      SignedIn;
+  const factory AuthState.signedIn({
+    required AuthIdentity? identity,
+    @Default(true) bool isRegistrationComplete,
+  }) = SignedIn;
 
   // State when the user is signed out
   const factory AuthState.signedOut() = SignedOut;
@@ -25,6 +27,11 @@ class AuthState with _$AuthState {
 extension AuthStateExtension on AuthState {
   bool get isAuthenticated => switch (this) {
     SignedIn() => true,
+    _ => false,
+  };
+
+  bool get isFullyAuthenticated => switch (this) {
+    SignedIn(isRegistrationComplete: true) => true,
     _ => false,
   };
 
