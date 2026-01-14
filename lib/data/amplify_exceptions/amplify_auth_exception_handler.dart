@@ -24,8 +24,6 @@ class AmplifyAuthExceptionHandler {
         return AuthFailure.networkException();
       case "UserNotFoundException":
         return AuthFailure.userNotFoundException();
-      case "UserLambdaValidationException":
-        return AuthFailure.userLambdaValidationException(message: e.message);
       default:
         return AuthFailure.unknown(code: e.runtimeTypeName, message: e.message);
     }
