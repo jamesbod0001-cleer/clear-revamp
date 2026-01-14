@@ -5,7 +5,20 @@ import { data } from './data/resource';
 /**
  * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
  */
-defineBackend({
+const backend = defineBackend({
   auth,
   data,
 });
+
+const { cfnUserPool } = backend.auth.resources.cfnResources;
+// modify cfnUserPool policies directly
+cfnUserPool.policies = {
+  passwordPolicy: {
+    minimumLength: 8,
+    requireLowercase: true,
+        requireNumbers: true,
+        requireSymbols: false,
+        requireUppercase: true,
+  },
+};
+
