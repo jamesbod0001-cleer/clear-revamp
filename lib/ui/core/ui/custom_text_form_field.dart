@@ -52,51 +52,76 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.labelText != null) ...[
-          Text(
-            widget.labelText!,
-            style: context.typo.bodyMedium.copyWith(
-              color: context.color.grey600,
+    return FormField<String>(
+      validator: widget.validator,
+      initialValue: widget.controller?.text,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      builder: (FormFieldState<String> state) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.labelText != null) ...[
+              Text(
+                widget.labelText!,
+                style: context.typo.bodyMedium.copyWith(
+                  color: context.color.grey600,
+                ),
+              ),
+              Gap(Dimens.spacing.sp4),
+            ],
+            TextField(
+              controller: widget.controller,
+              onChanged: (value) => state.didChange(value),
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                errorText: state.errorText,
+                errorStyle: const TextStyle(fontSize: 0, height: 0),
+                enabledBorder: state.hasError
+                    ? context.theme.inputDecorationTheme.errorBorder
+                    : null,
+                focusedBorder: state.hasError
+                    ? context.theme.inputDecorationTheme.errorBorder
+                    : null,
+                suffixIcon: widget.isPassword
+                    ? IconButton(
+                        onPressed: () =>
+                            setState(() => obscureText = !obscureText),
+                        icon: PhosphorIcon(
+                          obscureText
+                              ? PhosphorIcons.eye()
+                              : PhosphorIcons.eyeClosed(),
+                          color: context.color.blue700,
+                        ),
+                      )
+                    : null,
+              ),
+              keyboardType: widget.textInputType,
+              obscureText: obscureText,
+              inputFormatters: widget.inputFormatters,
             ),
-          ),
-          Gap(Dimens.spacing.sp4),
-        ],
-        TextFormField(
-          autovalidateMode: .onUserInteraction,
-          controller: widget.controller,
-          decoration: InputDecoration(
-            errorMaxLines: 2,
-            hintText: widget.hintText,
-            suffixIcon: widget.isPassword
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscureText = !obscureText;
-                      });
-                    },
-                    icon: PhosphorIcon(
-                      obscureText
-                          ? PhosphorIcons.eye(.duotone)
-                          : PhosphorIcons.eyeClosed(.duotone),
-                      color: context.color.blue700,
+            if (state.hasError)
+              Row(
+                children: [
+                  PhosphorIcon(
+                    PhosphorIcons.warning(.bold),
+                    color: context.color.error,
+                    size: Dimens.size.s16,
+                  ),
+                  Gap(Dimens.spacing.sp4),
+                  Expanded(
+                    child: Text(
+                      state.errorText ?? '',
+                      style: context.typo.bodyMedium.copyWith(
+                        color: context.color.error,
+                      ),
                     ),
-                  )
-                : null,
-          ),
-          keyboardType: widget.textInputType,
-          textCapitalization: widget.textCapitalization,
-          validator: widget.validator,
-          inputFormatters: widget.inputFormatters,
-          maxLength: widget.maxLength,
-          minLines: widget.minLines,
-          maxLines: widget.maxLines,
-          obscureText: obscureText,
-        ),
-      ],
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
     );
   }
 }
