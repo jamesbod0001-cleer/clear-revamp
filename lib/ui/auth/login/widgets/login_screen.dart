@@ -41,7 +41,9 @@ class LoginScreen extends ConsumerWidget {
             ref.read(loginViewModelProvider.notifier).resetResult();
             VerifyPhoneRoute($extra: details).push(context);
           },
-          orElse: () {},
+          orElse: () {
+            debugPrint(result.runtimeType.toString());
+          },
         );
       });
     });
