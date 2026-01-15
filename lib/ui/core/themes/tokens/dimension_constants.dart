@@ -28,6 +28,7 @@ class _AppSpacing {
   final double sp6 = 6.0;
   final double sp8 = 8.0;
   final double sp12 = 12.0;
+  final double sp14 = 14.0;
   final double sp16 = 16.0;
 
   final double sp20 = 20.0;
