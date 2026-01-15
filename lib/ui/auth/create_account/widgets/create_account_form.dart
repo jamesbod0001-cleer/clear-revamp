@@ -57,14 +57,9 @@ class CreateAccountForm extends HookConsumerWidget {
       child: Column(
         children: [
           FormError(
-            hasError: ref.watch(createAccountViewModelProvider).hasError,
-            errorMessage:
-                ref.watch(createAccountViewModelProvider).error != null
-                ? getAuthErrorMessage(
-                    ref.watch(createAccountViewModelProvider).error
-                        as AuthFailure,
-                    context,
-                  )
+            hasError: state.hasError,
+            errorMessage: state.error != null
+                ? getAuthErrorMessage(state.error as AuthFailure, context)
                 : null,
           ),
           CustomTextFormField(
@@ -118,8 +113,9 @@ class CreateAccountForm extends HookConsumerWidget {
                 TextSpan(text: ' '),
                 TextSpan(
                   text: l10n.logIn,
-                  style: context.typo.bodyMedium.copyWith(
+                  style: context.typo.bodyLink.copyWith(
                     color: context.color.blue700,
+                    decorationColor: context.color.blue700,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () => LoginRoute().pushReplacement(context),
@@ -147,7 +143,7 @@ class CreateAccountForm extends HookConsumerWidget {
               ],
             ),
           ),
-          Gap(Dimens.spacing.sp8),
+          Gap(Dimens.spacing.sp20),
         ],
       ),
     );
