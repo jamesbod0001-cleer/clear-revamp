@@ -34,6 +34,14 @@ class LoginForm extends HookConsumerWidget {
     );
     return Form(
       key: loginFormKey,
+      onChanged: () {
+        viewmodel.onFormChanged(
+          state.value!.loginFormData.copyWith(
+            phoneNumber: phoneNumberController.text,
+            password: passwordController.text,
+          ),
+        );
+      },
       child: Column(
         children: [
           FormError(
