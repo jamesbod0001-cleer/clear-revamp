@@ -1,4 +1,5 @@
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -9,6 +10,9 @@ class SplashScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       const OnboardingRoute().go(context);
     });
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return Scaffold(
+      backgroundColor: context.color.secondary,
+      body: Center(child: CircularProgressIndicator()),
+    );
   }
 }
