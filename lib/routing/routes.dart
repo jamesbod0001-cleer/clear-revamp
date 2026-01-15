@@ -1,5 +1,6 @@
 import 'package:cleer/ui/auth/create_account/widgets/create_account_screen.dart';
 import 'package:cleer/ui/auth/create_password/widgets/create_password_screen.dart';
+import 'package:cleer/ui/auth/login/widgets/login_screen.dart';
 import 'package:cleer/ui/auth/registration_success/widgets/registration_success_screen.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/auth/verify_phone_number/widgets/verify_phone_number_screen.dart';
@@ -28,6 +29,12 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const OnboardingScreen();
+}
+
+@TypedGoRoute<LoginRoute>(path: '/login')
+class LoginRoute extends GoRouteData with $LoginRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) => LoginScreen();
 }
 
 @TypedGoRoute<CreateAccountRoute>(path: '/create_account')

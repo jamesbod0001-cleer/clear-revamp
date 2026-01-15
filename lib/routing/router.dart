@@ -45,6 +45,7 @@ GoRouter router(Ref ref) {
       if (!isAuthenticated) {
         final publicRoutes = [
           onboardingPath,
+          '/login',
           '/create_account',
           '/verify_phone',
           createPasswordPath,
