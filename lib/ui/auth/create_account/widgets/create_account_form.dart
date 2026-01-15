@@ -1,4 +1,5 @@
 import 'package:cleer/domain/failures/auth_failures.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/create_account/view_model/create_account_view_model.dart';
 import 'package:cleer/ui/core/localization/error_messages.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -7,6 +8,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
 import 'package:cleer/ui/core/ui/form_error.dart';
 import 'package:cleer/utils/validators/validators.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -119,6 +121,8 @@ class CreateAccountForm extends HookConsumerWidget {
                   style: context.typo.bodyMedium.copyWith(
                     color: context.color.blue700,
                   ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => LoginRoute().pushReplacement(context),
                 ),
               ],
             ),
