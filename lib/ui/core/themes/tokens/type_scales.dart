@@ -57,7 +57,8 @@ TextStyle get _bodySmall =>
     _getBaseTextStyle(_AppFontSizes.s12, AppFontWeights.medium, 16 / 12, 0.5);
 
 TextStyle get _bodyLink => _bodyMedium.copyWith(
+  color: _Palette.blue600,
   decoration: TextDecoration.underline,
   decorationStyle: TextDecorationStyle.dotted,
-  decorationColor: _Palette.green1000,
+  decorationColor: _Palette.blue600,
 );
