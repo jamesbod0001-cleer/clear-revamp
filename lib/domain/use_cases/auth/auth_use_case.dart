@@ -275,6 +275,21 @@ class AuthUseCase extends _$AuthUseCase {
     });
   }
 
+  Future<ResultDart<void, AuthFailure>> signOut() async {
+    _log.info('Attempting to sign out user');
+    final result = await _authRepository.signOut();
+    result.fold(
+          (success) {
+        _log.info('Successfully signed out user');
+        state = AsyncValue.data(AuthState.signedOut());
+      },
+          (failure) {
+        _log.error('Error signing out user', failure);
+      },
+    );
+    return result;
+  }
+
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>> resetPassword(
     String phoneNumber,
   ) async {
