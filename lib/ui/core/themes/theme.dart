@@ -198,6 +198,7 @@ abstract class AppTheme {
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
     textTheme: _textTheme,
+    appBarTheme: _appBarTheme,
     inputDecorationTheme: _inputDecorationTheme,
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
