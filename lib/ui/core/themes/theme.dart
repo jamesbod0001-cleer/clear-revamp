@@ -127,6 +127,10 @@ abstract class AppTheme {
     bodyLink: _bodyLink,
   );
 
+  static final _appBarTheme = AppBarThemeData(
+    centerTitle: false,
+  );
+
   static final _navigationBarTheme = NavigationBarThemeData(
     backgroundColor: _Palette.white,
     indicatorColor: _Palette.navbarGreen,
