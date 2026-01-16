@@ -1,4 +1,8 @@
 import 'package:cleer/domain/providers/user_provider.dart';
+import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
+import 'package:cleer/ui/auth/auth_state.dart';
+import 'package:cleer/ui/auth/log_out/view_model/log_out_view_model.dart';
+import 'package:cleer/ui/auth/log_out/widgets/log_out_button.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -16,7 +20,21 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(userProvider).value;
-    bool isLoading = ref.watch(userProvider).isLoading;
+
+    final bool viewModelsLoading = ref.watch(logOutViewModelProvider).isLoading;
+
+    final bool isRedirectingOrSyncing = ref
+        .watch(authUseCaseProvider)
+        .maybeWhen(
+          data: (state) => state is SignedOut,
+          loading: () => true,
+          orElse: () => false,
+        );
+
+    bool isLoading =
+        viewModelsLoading ||
+        isRedirectingOrSyncing ||
+        ref.watch(userProvider).isLoading;
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -119,6 +137,7 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
+                    LogOutButton(),
                     Gap(Dimens.spacing.sp28),
                   ],
                 ),
