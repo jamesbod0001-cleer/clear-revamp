@@ -183,8 +183,8 @@ abstract class AppTheme {
       foregroundColor: _Palette.grey1000,
       backgroundColor: _Palette.primary,
       minimumSize: Dimens.mobile.buttonMinimumSize,
-      disabledBackgroundColor: _Palette.grey100,
-      disabledForegroundColor: _Palette.grey600,
+      disabledBackgroundColor: _Palette.grey200,
+      disabledForegroundColor: _Palette.grey500,
       textStyle: _labelMedium,
       padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
       shape: RoundedRectangleBorder(

@@ -29,7 +29,7 @@ class PrimaryButton extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Dimens.radius.r8),
                 color: isDisabled
-                    ? context.color.grey300
+                    ? context.color.grey200
                     : context.color.primary,
                 boxShadow: isDisabled || isPressed
                     ? []
