@@ -26,33 +26,34 @@ abstract class AppTheme {
     brightness: Brightness.light,
 
     // Brand Identity
-    primary: _Palette.primary, // #62E393 (functionalPrimary)
-    onPrimary:
-        _Palette.secondary, // #030551 (functionalSecondary) - high contrast
+    primary: _Palette.primary, // #60E491 (functionalLightGreen)
+    onPrimary: _Palette
+        .secondary, // #030551 (functionalDeepBlue) - High contrast for Cleer
 
-    secondary: _Palette.secondary, // #030551 (functionalSecondary)
-    onSecondary: _Palette.green100, // Lightest green tint for contrast
-    // UI States
-    error: _Palette.error, // #9F1B1D (semantic - red1000)
-    onError:
-        _Palette.errorLight, // #F7E1E7 (semantic - red100) - avoids pure white
+    secondary: _Palette.secondary, // #030551 (functionalDeepBlue)
+    onSecondary: _Palette
+        .green000, // #EEFDF3 (lightGreen 000) - Lightest green for contrast
+    // UI States (Semantic)
+    error: _Palette.error, // #9F1B1D (semantic red1000)
+    onError: _Palette.errorLight, // #F7E1E7 (semantic red100)
     // Background & Surfaces
-    // Using functional - bgcolor (#FAFAFA) as the base
-    surface: _Palette.background,
-    onSurface: _Palette.grey1000, // #1C211C (functional - text1000)
-    // Containers (Cards, etc.)
+    surface: _Palette.background, // #FAFAFA (functional bg color)
+    onSurface: _Palette.grey1000, // #1C211C (grey1000)
+    // Containers (Cards, Inputs, etc.)
+    // Using functional - gray component for surface containers
     surfaceContainerHighest: _Palette.grayComponent, // #F2F3F2
-    onSurfaceVariant: _Palette.grey800, // #424742 (functional - text800)
+    onSurfaceVariant: _Palette.grey800, // #424742 (grey800)
     // Outline for TextFields and Dividers
-    outline: _Palette.outline, // #E2E3E4 (functional - outline100)
+    outline: _Palette.outline, // #E2E3E4 (functional outline100)
     // Custom Semantic Mappings
-    tertiary: _Palette.info, // #0144CD (semantic - blue1000)
-    onTertiary: _Palette.blue100, // #E0E5EE
+    tertiary: _Palette.info, // #0144CD (semantic blue1000)
+    onTertiary: _Palette.infoLight, // #EBF1FC (semantic blue100)
   );
 
   static final _appColorExtension = AppColorExtension(
     // Brand & Functional
     primary: _Palette.primary,
+    primaryBlue: _Palette.primaryBlue,
     secondary: _Palette.secondary,
     background: _Palette.background,
     outline: _Palette.outline,
@@ -75,7 +76,10 @@ abstract class AppTheme {
     infoLight: _Palette.infoLight,
 
     // Green Ramp
+    green000: _Palette.green000,
+    green050: _Palette.green050,
     green100: _Palette.green100,
+    green150: _Palette.green150,
     green200: _Palette.green200,
     green300: _Palette.green300,
     green400: _Palette.green400,
@@ -83,16 +87,10 @@ abstract class AppTheme {
     green600: _Palette.green600,
     green700: _Palette.green700,
     green800: _Palette.green800,
+    green850: _Palette.green850,
     green900: _Palette.green900,
+    green950: _Palette.green950,
     green1000: _Palette.green1000,
-    green1100: _Palette.green1100,
-    green1200: _Palette.green1200,
-    green1300: _Palette.green1300,
-    green1400: _Palette.green1400,
-    green1600: _Palette.green1600,
-    green1700: _Palette.green1700,
-    green1800: _Palette.green1800,
-    green1900: _Palette.green1900,
 
     // Blue Ramp
     blue100: _Palette.blue100,
@@ -127,9 +125,7 @@ abstract class AppTheme {
     bodyLink: _bodyLink,
   );
 
-  static final _appBarTheme = AppBarThemeData(
-    centerTitle: false,
-  );
+  static final _appBarTheme = AppBarThemeData(centerTitle: false);
 
   static final _navigationBarTheme = NavigationBarThemeData(
     backgroundColor: _Palette.white,
@@ -184,8 +180,8 @@ abstract class AppTheme {
 
   static final _filledButtonTheme = FilledButtonThemeData(
     style: FilledButton.styleFrom(
-      foregroundColor: _Palette.background,
-      backgroundColor: _Palette.green1300,
+      foregroundColor: _Palette.grey1000,
+      backgroundColor: _Palette.primary,
       minimumSize: Dimens.mobile.buttonMinimumSize,
       disabledBackgroundColor: _Palette.grey100,
       disabledForegroundColor: _Palette.grey600,
