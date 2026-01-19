@@ -13,7 +13,9 @@ extension ValidationExtension on String? {
       commonValidator(value: this, fieldName: '', allowOnlyLetters: true) ==
       null;
   bool get isValidPhone => nigerianPhoneValidator(this, null) == null;
-  bool get isValidEmail => emailValidator(this, null) == null;
+  bool get isValidEmailOptional => emailValidator(this, null) == null;
+  bool get isValidEmailRequired =>
+      emailValidator(this, null, isRequired: true) == null;
   bool get isValidPassword => passwordValidator(this, null) == null;
   // bool isValidConfirmPassword(String password) =>
   //     passwordValidator(this, null, confirmPassword: password) == null;
