@@ -3,6 +3,7 @@ import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -98,7 +99,7 @@ class OnboardingScreen extends HookWidget {
                           padding: Dimens.mobile.edgeInsetsScreenHorizontal,
                           child: Visibility(
                             visible: index == 2,
-                            replacement: FilledButton(
+                            replacement: PrimaryButton(
                               onPressed: () {
                                 pageController.animateToPage(
                                   index + 1,
@@ -110,7 +111,7 @@ class OnboardingScreen extends HookWidget {
                             ),
                             child: Column(
                               children: [
-                                FilledButton(
+                                PrimaryButton(
                                   onPressed: () =>
                                       CreateAccountRoute().push(context),
                                   child: Text(l10n.getStarted),
