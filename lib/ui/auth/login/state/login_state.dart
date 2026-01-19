@@ -7,6 +7,7 @@ part 'login_state.freezed.dart';
 abstract class LoginState with _$LoginState {
   const factory LoginState({
     required LoginFormData loginFormData,
+    @Default(false) isEmailMode,
     SignInDomainResult? signInDomainResult,
   }) = _LoginState;
 }
@@ -15,6 +16,7 @@ abstract class LoginState with _$LoginState {
 abstract class LoginFormData with _$LoginFormData {
   const factory LoginFormData({
     @Default('') String phoneNumber,
+    @Default('') String email,
     @Default('') String password,
   }) = _LoginFormData;
 
