@@ -8,7 +8,7 @@ import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.da
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
-import 'package:cleer/ui/core/ui/app_back_button.dart';
+import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/offline_warning_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

@@ -23,10 +23,14 @@ class LoginForm extends HookConsumerWidget {
     final viewmodel = ref.read(loginViewModelProvider.notifier);
     final state = ref.watch(loginViewModelProvider);
 
-    final TextEditingController phoneNumberController =
-        useTextEditingController(text: state.value!.loginFormData.phoneNumber);
+    final isEmailMode = state.value!.isEmailMode;
+    final loginFormData = state.value!.loginFormData;
+
+    final identifierController = useTextEditingController(
+      text: isEmailMode ? loginFormData.email : loginFormData.phoneNumber,
+    );
     final TextEditingController passwordController = useTextEditingController(
-      text: state.value!.loginFormData.password,
+      text: loginFormData.password,
     );
 
     final GlobalKey<FormState> loginFormKey = useMemoized(
@@ -37,7 +41,8 @@ class LoginForm extends HookConsumerWidget {
       onChanged: () {
         viewmodel.onFormChanged(
           state.value!.loginFormData.copyWith(
-            phoneNumber: phoneNumberController.text,
+            phoneNumber: isEmailMode ? '' : identifierController.text,
+            email: isEmailMode ? identifierController.text : '',
             password: passwordController.text,
           ),
         );
@@ -50,13 +55,39 @@ class LoginForm extends HookConsumerWidget {
                 ? getAuthErrorMessage(state.error as AuthFailure, context)
                 : null,
           ),
-          PhoneNumberTextFormField(controller: phoneNumberController),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: isEmailMode
+                ? CustomTextFormField(
+                    key: const ValueKey('email_field'),
+                    labelText: l10n.email,
+                    controller: identifierController,
+                    textInputType: .emailAddress,
+                  )
+                : PhoneNumberTextFormField(
+                    key: const ValueKey('phone_field'),
+                    controller: identifierController,
+                  ),
+          ),
+          Gap(Dimens.spacing.sp12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: GestureDetector(
+              onTap: () {
+                identifierController.clear();
+                viewmodel.toggleLoginMode();
+              },
+              child: Text(
+                isEmailMode ? l10n.usePhoneInstead : l10n.useEmailInstead,
+                style: context.typo.bodyLink,
+              ),
+            ),
+          ),
           Gap(Dimens.spacing.sp28),
           CustomTextFormField(
             labelText: l10n.password,
             controller: passwordController,
             isPassword: true,
-            // validator: (value) => emailValidator(value, l10n),
           ),
           Gap(Dimens.spacing.sp14),
           Align(
@@ -72,7 +103,7 @@ class LoginForm extends HookConsumerWidget {
           const Spacer(),
           Gap(Dimens.spacing.sp35),
           FilledButton(
-            onPressed: state.value!.loginFormData.isValid
+            onPressed: state.value!.isFormValid
                 ? () => viewmodel.login()
                 : null,
             child: Text(l10n.next),
