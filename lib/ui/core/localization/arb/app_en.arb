@@ -83,8 +83,10 @@
   "welcomeBack": "Welcome Back",
   "pickUpWhereYouLeftOff": "Pick up where you left off.",
   "password": "Password",
-  "forgotPassword": "Forgot Password?",
+  "forgotPassword": "Forgot Password",
   "dontHaveAnAccount": "Don’t have an account?",
   "signUp": "Sign Up",
-  "logout": "Logout"
+  "logout": "Logout",
+  "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
+  "requestCode": "Request Code"
 }
