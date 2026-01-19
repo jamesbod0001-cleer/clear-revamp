@@ -53,6 +53,7 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   collection: ^1.19.1
   internet_connection_checker_plus: ^2.9.1+2
+  liquid_glass_renderer: ^0.2.0-dev.4
 
 dev_dependencies:
   flutter_test:
