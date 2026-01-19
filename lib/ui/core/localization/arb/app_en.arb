@@ -89,5 +89,8 @@
   "logout": "Logout",
   "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
   "requestCode": "Request Code",
-  "youreOfflineCheckYourInternetConnection": "You're offline. Check your internet connection"
+  "youreOfflineCheckYourInternetConnection": "You're offline. Check your internet connection",
+  "useEmailInstead": "Use Email Instead",
+  "usePhoneInstead": "Use Phone Instead",
+  "email": "Email"
 }
