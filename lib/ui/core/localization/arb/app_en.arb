@@ -88,5 +88,6 @@
   "signUp": "Sign Up",
   "logout": "Logout",
   "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
-  "requestCode": "Request Code"
+  "requestCode": "Request Code",
+  "youreOfflineCheckYourInternetConnection": "You're offline. Check your internet connection"
 }
