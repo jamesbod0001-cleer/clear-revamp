@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class AppColorExtension extends ThemeExtension<AppColorExtension> {
   // Brand & Functional
   final Color primary;
+  final Color primaryBlue;
   final Color secondary;
   final Color background;
   final Color outline;
@@ -25,8 +26,11 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
   final Color info;
   final Color infoLight;
 
-  // Green Ramp (100 - 1900)
+  // Green Ramp (000 - 1000)
+  final Color green000;
+  final Color green050;
   final Color green100;
+  final Color green150;
   final Color green200;
   final Color green300;
   final Color green400;
@@ -34,16 +38,10 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
   final Color green600;
   final Color green700;
   final Color green800;
+  final Color green850;
   final Color green900;
+  final Color green950;
   final Color green1000;
-  final Color green1100;
-  final Color green1200;
-  final Color green1300;
-  final Color green1400;
-  final Color green1600;
-  final Color green1700;
-  final Color green1800;
-  final Color green1900;
 
   // Blue Ramp (100 - 1400)
   final Color blue100;
@@ -75,6 +73,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
 
   const AppColorExtension({
     required this.primary,
+    required this.primaryBlue,
     required this.secondary,
     required this.background,
     required this.outline,
@@ -91,7 +90,10 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
     required this.warningLight,
     required this.info,
     required this.infoLight,
+    required this.green000,
+    required this.green050,
     required this.green100,
+    required this.green150,
     required this.green200,
     required this.green300,
     required this.green400,
@@ -99,16 +101,10 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
     required this.green600,
     required this.green700,
     required this.green800,
+    required this.green850,
     required this.green900,
+    required this.green950,
     required this.green1000,
-    required this.green1100,
-    required this.green1200,
-    required this.green1300,
-    required this.green1400,
-    required this.green1600,
-    required this.green1700,
-    required this.green1800,
-    required this.green1900,
     required this.blue100,
     required this.blue200,
     required this.blue300,
@@ -142,7 +138,9 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
   AppColorExtension lerp(ThemeExtension<AppColorExtension>? other, double t) {
     if (other is! AppColorExtension) return this;
     return AppColorExtension(
+      // Ensure you add the new fields to the lerp method
       primary: Color.lerp(primary, other.primary, t)!,
+      primaryBlue: Color.lerp(primaryBlue, other.primaryBlue, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       background: Color.lerp(background, other.background, t)!,
       outline: Color.lerp(outline, other.outline, t)!,
@@ -159,7 +157,10 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
       warningLight: Color.lerp(warningLight, other.warningLight, t)!,
       info: Color.lerp(info, other.info, t)!,
       infoLight: Color.lerp(infoLight, other.infoLight, t)!,
+      green000: Color.lerp(green000, other.green000, t)!,
+      green050: Color.lerp(green050, other.green050, t)!,
       green100: Color.lerp(green100, other.green100, t)!,
+      green150: Color.lerp(green150, other.green150, t)!,
       green200: Color.lerp(green200, other.green200, t)!,
       green300: Color.lerp(green300, other.green300, t)!,
       green400: Color.lerp(green400, other.green400, t)!,
@@ -167,16 +168,10 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
       green600: Color.lerp(green600, other.green600, t)!,
       green700: Color.lerp(green700, other.green700, t)!,
       green800: Color.lerp(green800, other.green800, t)!,
+      green850: Color.lerp(green850, other.green850, t)!,
       green900: Color.lerp(green900, other.green900, t)!,
+      green950: Color.lerp(green950, other.green950, t)!,
       green1000: Color.lerp(green1000, other.green1000, t)!,
-      green1100: Color.lerp(green1100, other.green1100, t)!,
-      green1200: Color.lerp(green1200, other.green1200, t)!,
-      green1300: Color.lerp(green1300, other.green1300, t)!,
-      green1400: Color.lerp(green1400, other.green1400, t)!,
-      green1600: Color.lerp(green1600, other.green1600, t)!,
-      green1700: Color.lerp(green1700, other.green1700, t)!,
-      green1800: Color.lerp(green1800, other.green1800, t)!,
-      green1900: Color.lerp(green1900, other.green1900, t)!,
       blue100: Color.lerp(blue100, other.blue100, t)!,
       blue200: Color.lerp(blue200, other.blue200, t)!,
       blue300: Color.lerp(blue300, other.blue300, t)!,
