@@ -62,8 +62,11 @@ class LoginForm extends HookConsumerWidget {
           Align(
             alignment: .centerRight,
             child: GestureDetector(
-              onTap: () {},
-              child: Text(l10n.forgotPassword, style: context.typo.bodyLink),
+              onTap: () => ForgotPasswordRoute().push(context),
+              child: Text(
+                '${l10n.forgotPassword}?',
+                style: context.typo.bodyLink,
+              ),
             ),
           ),
           const Spacer(),
