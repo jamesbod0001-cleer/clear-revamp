@@ -5,6 +5,7 @@ import 'package:cleer/ui/core/localization/error_messages.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
 import 'package:cleer/ui/core/ui/form_error.dart';
 import 'package:cleer/utils/validators/validators.dart';
@@ -94,7 +95,7 @@ class CreateAccountForm extends HookConsumerWidget {
           ),
           const Spacer(),
           Gap(Dimens.spacing.sp35),
-          FilledButton(
+          PrimaryButton(
             onPressed: state.value!.createAccountFormData.isValid
                 ? () => viewmodel.signUp()
                 : null,
