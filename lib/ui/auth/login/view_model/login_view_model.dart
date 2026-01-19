@@ -19,6 +19,7 @@ class LoginViewModel extends _$LoginViewModel {
   Future<void> login() async {
     _log.info('Attempting to login');
     final formData = state.value!.loginFormData;
+    final isEmailMode = state.value!.isEmailMode;
 
     final cleanDigits = formData.phoneNumber.replaceAll(' ', '');
     final fullE164Number = '+234$cleanDigits';
@@ -28,7 +29,7 @@ class LoginViewModel extends _$LoginViewModel {
           .read(authUseCaseProvider.notifier)
           .signIn(
             SignInParams(
-              phoneNumber: fullE164Number,
+              username: isEmailMode ? formData.email : fullE164Number,
               password: formData.password,
             ),
           );
@@ -52,11 +53,29 @@ class LoginViewModel extends _$LoginViewModel {
     }
   }
 
+  void toggleLoginMode() {
+    final currentState = state.value!;
+    state = AsyncData(
+      currentState.copyWith(
+        isEmailMode: !currentState.isEmailMode,
+        loginFormData: currentState.loginFormData.copyWith(
+          phoneNumber: '',
+          email: '',
+        ),
+      ),
+    );
+  }
+
   void resetResult() {
     state = AsyncValue.data(state.value!.copyWith(signInDomainResult: null));
   }
 }
 
-extension LoginFormDataExtension on LoginFormData {
-  bool get isValid => phoneNumber.isValidPhone && password.isValidPassword;
+extension LoginFormDataExtension on LoginState {
+  bool get isFormValid =>
+      (isEmailMode
+          ? loginFormData.email.isValidEmailRequired
+          : loginFormData.phoneNumber.isValidPhone) &&
+      loginFormData.password.isNotEmpty;
+  // && loginFormData.password.isValidPassword;
 }
