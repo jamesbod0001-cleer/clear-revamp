@@ -78,7 +78,7 @@ class _ValidationItem extends StatelessWidget {
               ? PhosphorIcons.checkCircle(.fill)
               : PhosphorIcons.xCircle(.fill),
           size: Dimens.size.s16,
-          color: isMet ? context.color.green1200 : context.color.grey600,
+          color: isMet ? context.color.green850 : context.color.grey600,
         ),
         Gap(Dimens.spacing.sp4),
         Text(
