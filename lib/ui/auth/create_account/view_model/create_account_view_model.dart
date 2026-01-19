@@ -69,6 +69,6 @@ extension CreateAccountFormDataExtension on CreateAccountFormData {
   bool get isValid =>
       firstName.isValidName &&
       lastName.isValidName &&
-      email.isValidEmail &&
+      email.isValidEmailOptional &&
       phoneNumber.isValidPhone;
 }
