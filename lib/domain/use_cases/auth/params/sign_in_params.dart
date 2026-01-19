@@ -5,7 +5,7 @@ part 'sign_in_params.freezed.dart';
 @freezed
 abstract class SignInParams with _$SignInParams {
   const factory SignInParams({
-    required String phoneNumber,
+    required String username,
     required String password,
   }) = _SignInParams;
 }

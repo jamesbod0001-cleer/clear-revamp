@@ -72,16 +72,16 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
     SignInParams params,
   ) async {
     try {
-      _log.info('Starting Sign In for user: ${params.phoneNumber}');
+      _log.info('Starting Sign In for user: ${params.username}');
       final request = SignInUserRequest(
-        username: params.phoneNumber,
+        username: params.username,
         password: params.password,
       );
       final amplifyResult = await _amplifyAuthServiceClient.signInUser(request);
 
       if (amplifyResult.nextStep.signInStep == AuthSignInStep.confirmSignUp) {
         _log.info('User is not confirmed. Resending confirmation code.');
-        final resendResult = await resendSignUpCode(params.phoneNumber);
+        final resendResult = await resendSignUpCode(params.username);
         return resendResult.fold(
           (codeDetails) => Success(
             SignInDomainResult.confirmationRequired(
@@ -93,10 +93,10 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
         );
       }
 
-      _log.info('Sign In successful for user: ${params.phoneNumber}');
+      _log.info('Sign In successful for user: ${params.username}');
       return Success(amplifyResult.toDomain());
     } on AuthException catch (e) {
-      _log.error('Error signing in user: ${params.phoneNumber}', e);
+      _log.error('Error signing in user: ${params.username}', e);
       return Failure(AmplifyAuthExceptionHandler.handleException(e));
     }
   }

@@ -152,14 +152,14 @@ class AuthUseCase extends _$AuthUseCase {
   Future<ResultDart<SignInDomainResult, AuthFailure>> signIn(
     SignInParams params,
   ) async {
-    _log.info('Attempting to sign in user: ${params.phoneNumber}');
+    _log.info('Attempting to sign in user: ${params.username}');
     final result = await _authRepository.signInUser(params);
     await result.fold(
       (SignInDomainResult success) async {
-        _log.info('Successfully signed in user: ${params.phoneNumber}');
+        _log.info('Successfully signed in user: ${params.username}');
       },
       (failure) {
-        _log.error('Error signing in user: ${params.phoneNumber}', failure);
+        _log.error('Error signing in user: ${params.username}', failure);
       },
     );
     return result;
@@ -243,7 +243,7 @@ class AuthUseCase extends _$AuthUseCase {
 
       final result = await _authRepository
           .signInUser(
-            SignInParams(phoneNumber: phoneNumber, password: tempPass),
+            SignInParams(username: phoneNumber, password: tempPass),
           )
           .flatMap(
             (signInResult) => _authRepository.updatePassword(
