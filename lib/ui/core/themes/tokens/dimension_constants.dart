@@ -16,6 +16,7 @@ class _AppSize {
   final double s44 = 44.0;
   final double s48 = 48.0;
 
+  final double s52 = 52.0;
   final double s56 = 56.0;
   final double s60 = 60.0;
 
@@ -24,6 +25,7 @@ class _AppSize {
 
 class _AppSpacing {
   const _AppSpacing();
+  final double sp2 = 2.0;
   final double sp4 = 4.0;
   final double sp6 = 6.0;
   final double sp8 = 8.0;
