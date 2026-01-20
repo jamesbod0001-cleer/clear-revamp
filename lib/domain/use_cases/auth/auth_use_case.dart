@@ -291,10 +291,10 @@ class AuthUseCase extends _$AuthUseCase {
   }
 
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>> resetPassword(
-    String phoneNumber,
+    String username,
   ) async {
     _log.info('Attempting to reset password for user');
-    final result = await _authRepository.resetPassword(phoneNumber);
+    final result = await _authRepository.resetPassword(username);
     result.fold(
       (success) {
         _log.info('Successfully reset password for user');
