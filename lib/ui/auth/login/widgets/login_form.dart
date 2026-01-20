@@ -8,6 +8,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
 import 'package:cleer/ui/core/ui/form_error.dart';
+import 'package:cleer/utils/validators/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -21,13 +22,13 @@ class LoginForm extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    final viewmodel = ref.read(loginViewModelProvider.notifier);
+    final viewModel = ref.read(loginViewModelProvider.notifier);
     final state = ref.watch(loginViewModelProvider);
 
     final isEmailMode = state.value!.isEmailMode;
     final loginFormData = state.value!.loginFormData;
 
-    final identifierController = useTextEditingController(
+    final usernameController = useTextEditingController(
       text: isEmailMode ? loginFormData.email : loginFormData.phoneNumber,
     );
     final TextEditingController passwordController = useTextEditingController(
@@ -40,10 +41,10 @@ class LoginForm extends HookConsumerWidget {
     return Form(
       key: loginFormKey,
       onChanged: () {
-        viewmodel.onFormChanged(
+        viewModel.onFormChanged(
           state.value!.loginFormData.copyWith(
-            phoneNumber: isEmailMode ? '' : identifierController.text,
-            email: isEmailMode ? identifierController.text : '',
+            phoneNumber: isEmailMode ? '' : usernameController.text,
+            email: isEmailMode ? usernameController.text : '',
             password: passwordController.text,
           ),
         );
@@ -62,12 +63,14 @@ class LoginForm extends HookConsumerWidget {
                 ? CustomTextFormField(
                     key: const ValueKey('email_field'),
                     labelText: l10n.email,
-                    controller: identifierController,
+                    controller: usernameController,
                     textInputType: .emailAddress,
+                    validator: (value) =>
+                        emailValidator(value, l10n, isRequired: true),
                   )
                 : PhoneNumberTextFormField(
                     key: const ValueKey('phone_field'),
-                    controller: identifierController,
+                    controller: usernameController,
                   ),
           ),
           Gap(Dimens.spacing.sp12),
@@ -75,8 +78,8 @@ class LoginForm extends HookConsumerWidget {
             alignment: Alignment.centerLeft,
             child: GestureDetector(
               onTap: () {
-                identifierController.clear();
-                viewmodel.toggleLoginMode();
+                usernameController.clear();
+                viewModel.toggleLoginMode();
               },
               child: Text(
                 isEmailMode ? l10n.usePhoneInstead : l10n.useEmailInstead,
@@ -105,7 +108,7 @@ class LoginForm extends HookConsumerWidget {
           Gap(Dimens.spacing.sp35),
           PrimaryButton(
             onPressed: state.value!.isFormValid
-                ? () => viewmodel.login()
+                ? () => viewModel.login()
                 : null,
             child: Text(l10n.next),
           ),
