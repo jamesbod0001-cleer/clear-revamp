@@ -10,6 +10,7 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/core/ui/step_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -70,7 +71,10 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Gap(Dimens.spacing.sp16),
-                    AppBackButton(),
+                    Row(
+                      mainAxisAlignment: .spaceBetween,
+                      children: [AppBackButton(), StepProgressIndicator(currentStep: 2,)],
+                    ),
                     Gap(Dimens.spacing.sp24),
                     Text(
                       l10n.verifyPhoneNumber,
