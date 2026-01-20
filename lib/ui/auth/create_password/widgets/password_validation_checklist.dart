@@ -29,7 +29,10 @@ class PasswordValidationChecklist extends HookWidget {
     bool hasAtLeast1Number = passwordController.text.contains(RegExp(r'[0-9]'));
     bool hasAtLeast8Characters = passwordController.text.length >= 8;
     final bool allMet =
-        hasAtLeast1Uppercase && hasAtLeast1lowercase && hasAtLeast1Number && hasAtLeast8Characters;
+        hasAtLeast1Uppercase &&
+        hasAtLeast1lowercase &&
+        hasAtLeast1Number &&
+        hasAtLeast8Characters;
     useEffect(() {
       Future.microtask(() => isPasswordValid?.call(allMet));
       return null;
@@ -78,12 +81,14 @@ class _ValidationItem extends StatelessWidget {
               ? PhosphorIcons.checkCircle(.fill)
               : PhosphorIcons.xCircle(.fill),
           size: Dimens.size.s16,
-          color: isMet ? context.color.green850 : context.color.grey600,
+          color: isMet ? context.color.green850 : context.color.grey300,
         ),
         Gap(Dimens.spacing.sp4),
         Text(
           label,
-          style: context.typo.bodyMedium.copyWith(color: context.color.grey800),
+          style: context.typo.bodyMedium.copyWith(
+            color: isMet ? context.color.grey800 : context.color.grey600,
+          ),
         ),
       ],
     );
