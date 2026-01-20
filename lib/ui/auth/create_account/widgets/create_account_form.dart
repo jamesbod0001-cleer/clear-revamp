@@ -93,6 +93,16 @@ class CreateAccountForm extends HookConsumerWidget {
             textInputType: .emailAddress,
             validator: (value) => emailValidator(value, l10n),
           ),
+          Gap(Dimens.spacing.sp4),
+          Align(
+            alignment: .centerLeft,
+            child: Text(
+              l10n.wellOnlyUseThisForReceiptsAndImportantUpdates,
+              style: context.typo.bodySmall.copyWith(
+                color: context.color.grey500,
+              ),
+            ),
+          ),
           const Spacer(),
           Gap(Dimens.spacing.sp35),
           PrimaryButton(
