@@ -92,5 +92,11 @@
   "youreOfflineCheckYourInternetConnection": "You're offline. Check your internet connection",
   "useEmailInstead": "Use Email Instead",
   "usePhoneInstead": "Use Phone Instead",
-  "email": "Email"
+  "email": "Email",
+  "enterThe6DigitCodeSentTo": "Enter the 6-digit code sent to",
+  "sixDigitsCode": "6-digits code",
+  "enterNewPassword": "Enter New Password",
+  "pleaseEnter6DigitsCode": "Please enter your 6-digits code",
+  "enterValid6DigitsCode": "Enter a valid 6-digits code",
+  "resetPassword": "Reset Password"
 }
