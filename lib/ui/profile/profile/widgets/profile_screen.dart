@@ -10,7 +10,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/profile/profile/widgets/payout_destination_card.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
-import 'package:cleer/ui/profile/profile/widgets/user_performace_stats_card.dart';
+import 'package:cleer/ui/profile/profile/widgets/user_performance_stats_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
