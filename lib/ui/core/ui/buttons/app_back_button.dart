@@ -3,7 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class AppBackButton extends StatelessWidget {
-  const AppBackButton({super.key});
+  const AppBackButton({super.key, this.onPressed});
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class AppBackButton extends StatelessWidget {
         padding: EdgeInsets.zero,
         minimumSize: Size(0, 0),
       ),
-      onPressed: () => context.pop(),
+      onPressed: onPressed ?? () => context.pop(),
       icon: PhosphorIcon(PhosphorIcons.arrowLeft()),
     );
   }
