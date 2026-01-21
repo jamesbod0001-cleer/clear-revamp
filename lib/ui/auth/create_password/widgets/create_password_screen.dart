@@ -121,7 +121,7 @@ class CreatePasswordScreen extends HookConsumerWidget {
                           : null,
                       child: Text(l10n.createPassword),
                     ),
-                    Gap(Dimens.spacing.sp38),
+                    Gap(Dimens.spacing.sp20),
                   ],
                 ),
               ),
