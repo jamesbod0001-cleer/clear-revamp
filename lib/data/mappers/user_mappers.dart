@@ -10,6 +10,7 @@ extension UserToDomainMapper on amplify_model.User {
       firstName: firstName,
       lastName: lastName,
       email: email,
+      createdAt: createdAt?.getDateTimeInUtc(),
     );
   }
 }

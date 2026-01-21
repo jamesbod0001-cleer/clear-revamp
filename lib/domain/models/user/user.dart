@@ -10,5 +10,6 @@ abstract class User with _$User {
     required String firstName,
     required String lastName,
     String? email,
+    DateTime? createdAt,
   }) = _User;
 }

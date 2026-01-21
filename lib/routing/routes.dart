@@ -8,6 +8,7 @@ import 'package:cleer/ui/auth/verify_phone_number/widgets/verify_phone_number_sc
 import 'package:cleer/ui/core/navigation/app_navigation_shell.dart';
 import 'package:cleer/ui/core/navigation/navigation_config.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
+import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -142,5 +143,5 @@ class ProfileBranch extends StatefulShellBranchData {
 class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const Placeholder();
+      const ProfileScreen();
 }

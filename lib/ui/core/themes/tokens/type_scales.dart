@@ -21,35 +21,35 @@ TextStyle _getBaseTextStyle(
 
 // Display
 TextStyle get _displayMedium =>
-    _getBaseTextStyle(_AppFontSizes.s64, AppFontWeights.semiBold, 120, -2);
+    _getBaseTextStyle(AppFontSizes.s64, AppFontWeights.semiBold, 120, -2);
 
 // Headlines
 TextStyle get _headlineMedium =>
-    _getBaseTextStyle(_AppFontSizes.s32, AppFontWeights.semiBold, 120, -2);
+    _getBaseTextStyle(AppFontSizes.s32, AppFontWeights.semiBold, 120, -2);
 TextStyle get _headlineSmall =>
-    _getBaseTextStyle(_AppFontSizes.s24, AppFontWeights.semiBold, 140, 0);
+    _getBaseTextStyle(AppFontSizes.s24, AppFontWeights.semiBold, 140, 0);
 
 // Titles
 TextStyle get _titleLarge =>
-    _getBaseTextStyle(_AppFontSizes.s20, AppFontWeights.medium, 130, 1);
+    _getBaseTextStyle(AppFontSizes.s20, AppFontWeights.medium, 130, 1);
 TextStyle get _titleMedium =>
-    _getBaseTextStyle(_AppFontSizes.s16, AppFontWeights.semiBold, 120, 1);
+    _getBaseTextStyle(AppFontSizes.s16, AppFontWeights.semiBold, 120, 1);
 TextStyle get _titleSmall =>
-    _getBaseTextStyle(_AppFontSizes.s14, AppFontWeights.semiBold, 100, 0);
+    _getBaseTextStyle(AppFontSizes.s14, AppFontWeights.semiBold, 100, 0);
 
 // Labels
 TextStyle get _labelMedium =>
-    _getBaseTextStyle(_AppFontSizes.s16, AppFontWeights.semiBold, 100, 1.5);
+    _getBaseTextStyle(AppFontSizes.s16, AppFontWeights.semiBold, 100, 1.5);
 TextStyle get _labelSmall =>
-    _getBaseTextStyle(_AppFontSizes.s14, AppFontWeights.regular, 150, 0);
+    _getBaseTextStyle(AppFontSizes.s14, AppFontWeights.regular, 150, 0);
 
 // Body
 TextStyle get _bodyLarge =>
-    _getBaseTextStyle(_AppFontSizes.s16, AppFontWeights.medium, 150, 0);
+    _getBaseTextStyle(AppFontSizes.s16, AppFontWeights.medium, 150, 0);
 TextStyle get _bodyMedium =>
-    _getBaseTextStyle(_AppFontSizes.s14, AppFontWeights.medium, 150, 0);
+    _getBaseTextStyle(AppFontSizes.s14, AppFontWeights.medium, 150, 0);
 TextStyle get _bodySmall => _getBaseTextStyle(
-  _AppFontSizes.s12,
+  AppFontSizes.s12,
   AppFontWeights.medium,
   16 / 12,
   0.25,

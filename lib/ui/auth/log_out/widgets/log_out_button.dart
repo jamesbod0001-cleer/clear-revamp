@@ -16,7 +16,6 @@ class LogOutButton extends ConsumerWidget {
     return OutlinedButton(
       style: FilledButton.styleFrom(
         foregroundColor: context.color.error,
-        backgroundColor: context.color.transparent,
         side: BorderSide(color: context.color.error),
         padding: EdgeInsets.symmetric(vertical: Dimens.padding.p12),
       ),

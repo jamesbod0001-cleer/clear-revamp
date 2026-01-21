@@ -30,7 +30,7 @@ class StepProgressIndicator extends StatelessWidget {
               height: Dimens.size.s6,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: const Color(0xFFD9D9D9),
+                color: context.color.outline,
                 borderRadius: BorderRadius.circular(Dimens.radius.r48),
               ),
               child: TweenAnimationBuilder<double>(
