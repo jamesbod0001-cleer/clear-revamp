@@ -104,5 +104,36 @@
   "enterNewPassword": "Enter New Password",
   "pleaseEnter6DigitsCode": "Please enter your 6-digits code",
   "enterValid6DigitsCode": "Enter a valid 6-digits code",
-  "resetPassword": "Reset Password"
+  "resetPassword": "Reset Password",
+  "successfulAgreements": "Successful\nAgreements",
+  "disputeFreeAgreements": "Dispute-Free\nAgreements",
+  "totalValueTransacted": "Total Value\nTransacted",
+  "activeDisputesCount": "{count, plural, =0{You have no active disputes} =1{You have 1 active dispute} other{You have {count} active disputes}}",
+  "@activeDisputesCount": {
+    "description": "Message showing the number of active disputes on the user's account.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "clickToViewAndResolve": "Click to view and resolve",
+  "payoutDestination": "Payout Destination",
+  "edit": "Edit",
+  "addBankAccount": "Add Bank Account",
+  "settings": "Settings",
+  "updateContactAndPassword": "Update Contact & Password",
+  "updateYourNameEmailPhoneNumberAndPassword": "Update your name, email, phone number, and password.",
+  "manageNotifications": "Manage Notifications",
+  "chooseHowYouReceiveAlertsForReleasesNewDealsAndStatusChanges": "Choose how you receive alerts for releases, new deals, and status changes.",
+  "legalAndPolicies": "Legal & Policies",
+  "termsOfServiceAndPolicies": "Terms of Service & Policies",
+  "viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform": "View the rules and agreements that govern your use of the Cleer platform.",
+  "dataDisclosureAndUsage": "Data Disclosure & Usage",
+  "seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals": "See how your transaction and identity data is used to secure your deals.",
+  "assistanceAndFeedback": "Assistance & Feedback",
+  "helpAndSupport": "Help & Support",
+  "rateCleerOnPlayStore": "Rate Cleer on Play Store",
+  "shareYourExperienceAndHelpUsBuildABetterPlatform": "Share your experience and help us build a better platform."
 }
