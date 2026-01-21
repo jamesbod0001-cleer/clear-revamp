@@ -7,6 +7,10 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/profile/profile/widgets/payout_destination_card.dart';
+import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
+import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/profile/profile/widgets/user_performace_stats_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -59,6 +63,7 @@ class ProfileScreen extends ConsumerWidget {
                   top: Dimens.padding.p10,
                 ),
                 child: Column(
+                  crossAxisAlignment: .start,
                   children: [
                     Row(
                       crossAxisAlignment: .start,
@@ -138,8 +143,75 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    Gap(Dimens.spacing.sp28),
+
+                    UserPerformanceStatsCard(
+                      successfulAgreements: 55,
+                      disputeFreeAgreements: 12,
+                      totalValueTransacted: '₦15.5M',
+                    ),
+                    Gap(Dimens.spacing.sp28),
+
+                    ProfileSectionHeader(title: l10n.payoutDestination),
+                    PayoutDestinationCard(),
+                    Gap(Dimens.spacing.sp16),
+                    AddBankAccountButton(),
                     Gap(Dimens.spacing.sp40),
+
+                    ProfileSectionHeader(title: l10n.settings),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.key(.duotone),
+                      title: l10n.updateContactAndPassword,
+                      content: l10n.updateYourNameEmailPhoneNumberAndPassword,
+                      onTap: () {},
+                    ),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.bell(.duotone),
+                      title: l10n.manageNotifications,
+                      content: l10n
+                          .chooseHowYouReceiveAlertsForReleasesNewDealsAndStatusChanges,
+                      onTap: () {},
+                      showBottomPadding: false,
+                    ),
+                    Gap(Dimens.spacing.sp40),
+
+                    ProfileSectionHeader(title: l10n.legalAndPolicies),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.scroll(.duotone),
+                      title: l10n.termsOfServiceAndPolicies,
+                      content: l10n
+                          .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
+                      onTap: () {},
+                    ),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.fileLock(.duotone),
+                      title: l10n.dataDisclosureAndUsage,
+                      content: l10n
+                          .seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals,
+                      onTap: () {},
+                      showBottomPadding: false,
+                    ),
+                    Gap(Dimens.spacing.sp40),
+
+                    ProfileSectionHeader(title: l10n.assistanceAndFeedback),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.scroll(.duotone),
+                      title: l10n.helpAndSupport,
+                      content: l10n
+                          .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
+                      onTap: () {},
+                    ),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.star(.duotone),
+                      title: l10n.rateCleerOnPlayStore,
+                      content:
+                          l10n.shareYourExperienceAndHelpUsBuildABetterPlatform,
+                      onTap: () {},
+                      showBottomPadding: false,
+                    ),
+
+                    const Spacer(),
+                    Gap(Dimens.spacing.sp70),
                     LogOutButton(),
                     Gap(Dimens.spacing.sp24),
                   ],
