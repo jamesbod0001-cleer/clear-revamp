@@ -41,13 +41,13 @@ class RegistrationSuccessScreen extends ConsumerWidget {
                             ),
                             Gap(Dimens.spacing.sp54),
                             Text(
-                              l10n.youreCleerAccountSecured,
+                              l10n.youreCleerYourAccountIsSecured,
                               style: context.typo.headlineSmall,
                               textAlign: .center,
                             ),
                             Gap(Dimens.spacing.sp12),
                             Text(
-                              l10n.welcomeToThePlatformWhereTrustIsGuaranteedAndTransactionsAreAlwaysTransparent,
+                              l10n.welcomeToCleerWhereYourPaymentsAreSafeAndTransparent,
                               textAlign: .center,
                               style: context.typo.bodyMedium.copyWith(
                                 color: context.color.grey600,
@@ -64,7 +64,7 @@ class RegistrationSuccessScreen extends ConsumerWidget {
                           .finish(),
                       child: Text(l10n.finish),
                     ),
-                    Gap(Dimens.spacing.sp38),
+                    Gap(Dimens.spacing.sp20),
                   ],
                 ),
               ),
