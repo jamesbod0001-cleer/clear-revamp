@@ -129,8 +129,8 @@ class OnboardingScreen extends HookWidget {
                                       TextSpan(text: ' '),
                                       TextSpan(
                                         text: l10n.logIn,
-                                        style: context.typo.bodyMedium.copyWith(
-                                          color: context.color.blue300,
+                                        style: context.typo.bodyLink.copyWith(
+                                          color: context.color.primaryBlue,
                                         ),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () =>
