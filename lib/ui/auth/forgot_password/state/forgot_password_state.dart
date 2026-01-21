@@ -10,6 +10,7 @@ abstract class ForgotPasswordState with _$ForgotPasswordState {
   const factory ForgotPasswordState({
     required ForgotPasswordFormData forgotPasswordFormData,
     ResetPasswordDomainResult? resetPasswordDomainResult,
+    @Default(false) bool isEmailMode,
     @Default(ForgotPasswordStep.requestCode)
     ForgotPasswordStep forgotPasswordStep,
   }) = _ForgotPasswordState;
