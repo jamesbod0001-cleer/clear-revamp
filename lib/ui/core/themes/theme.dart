@@ -193,6 +193,17 @@ abstract class AppTheme {
     ),
   );
 
+  static final _outlinedButtonTheme = OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      backgroundColor: _Palette.transparent,
+      minimumSize: Dimens.mobile.buttonMinimumSize,
+      padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radius.r8),
+      ),
+    ),
+  );
+
   static ThemeData lightTheme = ThemeData(
     fontFamily: _AppFontConstants.rethinkSans,
     brightness: Brightness.light,
@@ -202,6 +213,7 @@ abstract class AppTheme {
     inputDecorationTheme: _inputDecorationTheme,
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
+    outlinedButtonTheme: _outlinedButtonTheme,
     iconTheme: _iconTheme,
     navigationBarTheme: _navigationBarTheme,
     useMaterial3: true,
