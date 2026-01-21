@@ -17,9 +17,10 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     );
   }
 
-  Future<void> requestCode(bool isEmailMode) async {
+  Future<void> requestCode() async {
     _log.info('Attempting to request code');
     final formData = state.value!.forgotPasswordFormData;
+    final isEmailMode = state.value!.isEmailMode;
     final cleanDigits = formData.phoneNumber.replaceAll(' ', '');
     final fullE164Number = '+234$cleanDigits';
 
@@ -44,6 +45,53 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     });
   }
 
+  Future<void> resetPassword() async {
+    _log.info('Attempting to reset password');
+    final formData = state.value!.forgotPasswordFormData;
+    final isEmailMode = state.value!.isEmailMode;
+
+    final cleanDigits = formData.phoneNumber.replaceAll(' ', '');
+    final fullE164Number = '+234$cleanDigits';
+
+    final String username = isEmailMode ? formData.email : fullE164Number;
+
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final result = await ref
+          .read(authUseCaseProvider.notifier)
+          .confirmResetPassword(
+            ConfirmResetPasswordParams(
+              username: username,
+              newPassword: state.value!.forgotPasswordFormData.newPassword,
+              confirmationCode: state.value!.forgotPasswordFormData.code,
+            ),
+          );
+      return result.fold(
+        (result) {
+          _log.info('Confirm reset password result: $result');
+          return state.value!.copyWith(resetPasswordDomainResult: result);
+        },
+        (failure) {
+          _log.error('Confirm reset password failure: $failure');
+          throw failure;
+        },
+      );
+    });
+  }
+
+  void toggleIsEmailMode() {
+    final currentState = state.value!;
+    state = AsyncData(
+      currentState.copyWith(
+        isEmailMode: !currentState.isEmailMode,
+        forgotPasswordFormData: currentState.forgotPasswordFormData.copyWith(
+          phoneNumber: '',
+          email: '',
+        ),
+      ),
+    );
+  }
+
   void moveStepBack() {
     final forgotPasswordState = state.value;
     if (forgotPasswordState == null) return;
@@ -53,7 +101,14 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     if (currentStep != ForgotPasswordStep.requestCode) {
       final previousStep = ForgotPasswordStep.values[currentStep.index - 1];
       state = AsyncValue.data(
-        forgotPasswordState.copyWith(forgotPasswordStep: previousStep),
+        forgotPasswordState.copyWith(
+          forgotPasswordStep: previousStep,
+          resetPasswordDomainResult: null,
+          forgotPasswordFormData: state.value!.forgotPasswordFormData.copyWith(
+            code: '',
+            newPassword: '',
+          ),
+        ),
       );
     }
   }
