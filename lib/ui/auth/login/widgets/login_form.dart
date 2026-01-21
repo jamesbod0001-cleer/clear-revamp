@@ -110,7 +110,7 @@ class LoginForm extends HookConsumerWidget {
             onPressed: state.value!.isFormValid
                 ? () => viewModel.login()
                 : null,
-            child: Text(l10n.next),
+            child: Text(l10n.login),
           ),
           Gap(Dimens.spacing.sp12),
           RichText(
