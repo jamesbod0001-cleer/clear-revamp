@@ -74,7 +74,10 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
                     Gap(Dimens.spacing.sp16),
                     Row(
                       mainAxisAlignment: .spaceBetween,
-                      children: [AppBackButton(), StepProgressIndicator(currentStep: 2,)],
+                      children: [
+                        AppBackButton(),
+                        StepProgressIndicator(currentStep: 2),
+                      ],
                     ),
                     Gap(Dimens.spacing.sp24),
                     OfflineWarningBanner(),
@@ -114,9 +117,9 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
                               codeController.text,
                             )
                           : null,
-                      child: Text(l10n.verifyPhoneNumber),
+                      child: Text(l10n.verify),
                     ),
-                    Gap(Dimens.spacing.sp38),
+                    Gap(Dimens.spacing.sp20),
                   ],
                 ),
               ),
