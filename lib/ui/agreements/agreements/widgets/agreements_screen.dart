@@ -75,20 +75,6 @@ class _TabBar extends StatelessWidget {
         indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimens.radius.r48),
           color: context.color.background,
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 1),
-              blurRadius: 4,
-              spreadRadius: 0,
-              color: Color(0xFF0C0C0D).withAlpha(10),
-            ),
-            BoxShadow(
-              offset: Offset(0, 1),
-              blurRadius: 4,
-              spreadRadius: 0,
-              color: Color(0xFF0C0C0D).withAlpha(5),
-            ),
-          ],
         ),
         splashBorderRadius: BorderRadius.circular(Dimens.radius.r48),
         indicatorSize: TabBarIndicatorSize.tab,
