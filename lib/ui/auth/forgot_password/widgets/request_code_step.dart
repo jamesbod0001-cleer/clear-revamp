@@ -10,37 +10,31 @@ class _RequestCodeStep extends HookConsumerWidget {
     final viewModel = ref.read(forgotPasswordViewModelProvider.notifier);
     final state = ref.watch(forgotPasswordViewModelProvider);
 
-    final isEmailMode = useState(false);
+    final isEmailMode = state.value!.isEmailMode;
 
     final formData = state.value!.forgotPasswordFormData;
 
     final usernameController = useTextEditingController();
 
     useEffect(() {
-      usernameController.text = isEmailMode.value
+      usernameController.text = isEmailMode
           ? formData.email
           : formData.phoneNumber;
       return null;
-    }, [isEmailMode.value]);
+    }, [isEmailMode]);
 
     useListenable(usernameController);
 
-    bool isFormValid = isEmailMode.value
+    bool isFormValid = isEmailMode
         ? formData.email.isValidEmailRequired
         : formData.phoneNumber.isValidPhone;
-
-    final bool isLoading = ref.watch(forgotPasswordViewModelProvider).isLoading;
-
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
 
     return Form(
       onChanged: () {
         viewModel.onFormChanged(
           ForgotPasswordFormData(
-            phoneNumber: isEmailMode.value ? '' : usernameController.text,
-            email: isEmailMode.value ? usernameController.text : '',
+            phoneNumber: isEmailMode ? '' : usernameController.text,
+            email: isEmailMode ? usernameController.text : '',
           ),
         );
       },
@@ -62,7 +56,7 @@ class _RequestCodeStep extends HookConsumerWidget {
           ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child: isEmailMode.value
+            child: isEmailMode
                 ? CustomTextFormField(
                     key: const ValueKey('email_field'),
                     labelText: l10n.email,
@@ -82,11 +76,10 @@ class _RequestCodeStep extends HookConsumerWidget {
             child: GestureDetector(
               onTap: () {
                 usernameController.clear();
-                viewModel.onFormChanged(ForgotPasswordFormData.empty());
-                isEmailMode.value = !isEmailMode.value;
+                viewModel.toggleIsEmailMode();
               },
               child: Text(
-                isEmailMode.value ? l10n.usePhoneInstead : l10n.useEmailInstead,
+                isEmailMode ? l10n.usePhoneInstead : l10n.useEmailInstead,
                 style: context.typo.bodyLink,
               ),
             ),
@@ -95,7 +88,7 @@ class _RequestCodeStep extends HookConsumerWidget {
           Gap(Dimens.spacing.sp35),
           PrimaryButton(
             onPressed: isFormValid
-                ? () => viewModel.requestCode(isEmailMode.value)
+                ? () => viewModel.requestCode()
                 : null,
             child: Text(l10n.requestCode),
           ),
