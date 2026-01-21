@@ -32,7 +32,7 @@ extension SignInMapper on SignInResult {
       case AuthSignInStep.confirmSignUp:
         return SignInDomainResult.confirmationRequired(
           destination:
-          codeDeliveryDetails?.destination ?? 'Unknown destination',
+              codeDeliveryDetails?.destination ?? 'Unknown destination',
           deliveryMedium: codeDeliveryDetails?.deliveryMedium.name ?? kEmpty,
         );
       case AuthSignInStep.confirmSignInWithNewPassword:
