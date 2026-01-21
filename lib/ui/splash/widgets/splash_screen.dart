@@ -1,3 +1,4 @@
+import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,17 @@ class SplashScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       const OnboardingRoute().go(context);
     });
-    return Scaffold(
-      backgroundColor: context.color.secondary,
-      body: Center(child: CircularProgressIndicator()),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: Assets.images.onboardingBackground.provider(),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: context.color.transparent,
+        body: Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }
