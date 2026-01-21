@@ -2,6 +2,7 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 class AgreementsScreen extends StatelessWidget {
   const AgreementsScreen({super.key});
@@ -10,30 +11,99 @@ class AgreementsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: Dimens.padding.p18,
-        titleTextStyle: context.typo.headlineSmall,
-        title: Container(
-          height: Dimens.size.s54,
-          alignment: .bottomLeft,
-          child: Text(l10n.agreements),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: Dimens.padding.p18,
+          titleTextStyle: context.typo.headlineSmall,
+          title: Container(
+            height: Dimens.size.s54,
+            alignment: .bottomLeft,
+            child: Text(l10n.agreements),
+          ),
+          toolbarHeight: Dimens.size.s70,
         ),
-        toolbarHeight: Dimens.size.s70,
-      ),
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                  top: Dimens.padding.p10,
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                child: Padding(
+                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                    top: Dimens.padding.p10,
+                  ),
+                  child: Column(
+                    children: [
+                      Gap(Dimens.spacing.sp4),
+                      _TabBar(l10n: l10n),
+                      Gap(Dimens.spacing.sp28),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            SingleChildScrollView(),
+                            SingleChildScrollView(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(children: []),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TabBar extends StatelessWidget {
+  const _TabBar({required this.l10n});
+
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: Dimens.size.s44,
+      decoration: BoxDecoration(
+        color: Color(0xFFE3E5E7),
+        borderRadius: BorderRadius.circular(Dimens.radius.r80),
+      ),
+      child: TabBar(
+        dividerColor: Colors.transparent,
+        indicator: BoxDecoration(
+          borderRadius: BorderRadius.circular(Dimens.radius.r48),
+          color: context.color.background,
+          boxShadow: [
+            BoxShadow(
+              offset: Offset(0, 1),
+              blurRadius: 4,
+              spreadRadius: 0,
+              color: Color(0xFF0C0C0D).withAlpha(10),
+            ),
+            BoxShadow(
+              offset: Offset(0, 1),
+              blurRadius: 4,
+              spreadRadius: 0,
+              color: Color(0xFF0C0C0D).withAlpha(5),
             ),
           ],
         ),
+        splashBorderRadius: BorderRadius.circular(Dimens.radius.r48),
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicatorWeight: Dimens.size.s0,
+        indicatorPadding: EdgeInsets.all(Dimens.padding.p4),
+        padding: EdgeInsets.zero,
+        labelPadding: EdgeInsets.zero,
+        labelStyle: context.typo.bodyMedium,
+        unselectedLabelStyle: context.typo.bodyMedium.copyWith(
+          color: context.color.grey800,
+        ),
+        tabs: [
+          Tab(text: l10n.ongoing),
+          Tab(text: l10n.completed),
+        ],
       ),
     );
   }
