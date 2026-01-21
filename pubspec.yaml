@@ -50,6 +50,10 @@ dependencies:
   result_dart: ^2.1.1
   gap: ^3.0.1
   pinput: ^6.0.1
+  flutter_secure_storage: ^10.0.0
+  collection: ^1.19.1
+  internet_connection_checker_plus: ^2.9.1+2
+  liquid_glass_renderer: ^0.2.0-dev.4
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +70,7 @@ dev_dependencies:
   riverpod_generator: ^4.0.0+1
   freezed: ^3.2.3
   json_serializable: ^6.11.2
+  flutter_gen_runner: 5.12.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -104,6 +109,16 @@ flutter:
           style: italic
         - asset: assets/fonts/Rethink_Sans/RethinkSans-ExtraBold.ttf
           weight: 800
+  assets:
+    - assets/images/
+
+flutter_gen:
+  output: lib/config/
+  integrations:
+    image: true
+    flutter_svg: true
+  fonts:
+    enabled: false
 
   # To add assets to your application, add an assets section, like this:
   # assets:

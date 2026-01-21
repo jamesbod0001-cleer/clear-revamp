@@ -1,6 +1,105 @@
 {
-  "helloWorld": "Hello World!",
-  "@helloWorld": {
-    "description": "The conventional newborn programmer greeting"
-  }
+  "getStarted": "Get Started",
+  "alreadyHaveAnAccount": "Already have an account?",
+  "logIn": "Log in",
+  "dontJustSendSecure": "Don't Just Send. Secure.",
+  "lockFundsSecurelyTheReceiverSeesTheMoneyButCantTouchItUntilYouSaySo": "Lock funds securely. The receiver sees the money, but can't touch it until you say so.",
+  "inspectThenRelease": "Inspect, Then Release.",
+  "itemDeliveredServiceDoneClickReleaseToPayInstantlyNotSatisfiedGetARefund": "Item delivered? Service done? Click 'Release' to pay instantly. Not satisfied? Get a refund.",
+  "zeroRiskTransactions": "Zero Risk Transactions.",
+  "letsGetYouStarted": "Let’s get you started.",
+  "aFewQuickStepsToSetUpYourAccountAndSecureYourFunds": "A few quick steps to set up your account and secure your funds.",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "phoneNumber": "Phone Number",
+  "emailAddress": "Email Address",
+  "optional": "(optional)",
+  "next": "Next",
+  "login": "Login",
+  "byClickingContinueYouAgreeToCleer": "By clicking continue, you agree to Cleer",
+  "terms": "Terms.",
+  "wellOnlyUseThisForReceiptsAndImportantUpdates": "We’ll only use this for receipts and important updates.",
+  "verifyPhoneNumber": "Verify Phone Number",
+  "weSentA6DigitCodeToYourPhoneForVerification": "We sent a 6-digit code to your phone for verification.",
+  "didntReceiveOTP": "Didn’t receive OTP?",
+  "resend": "Resend",
+  "verify": "Verify",
+  "youreCleerYourAccountIsSecured": "You're Cleer! Your account is secured.",
+  "welcomeToCleerWhereYourPaymentsAreSafeAndTransparent": "Welcome to Cleer - where your payments are safe and transparent.",
+  "finish": "Finish",
+  "fieldRequired": "Please enter your {fieldName}",
+  "@fieldRequired": {
+    "placeholders": {
+      "fieldName": { "type": "String" }
+    }
+  },
+  "fieldTooShort": "{fieldName} must be at least {count} characters long",
+  "@fieldTooShort": {
+    "placeholders": {
+      "fieldName": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "fieldTooLong": "{fieldName} cannot exceed {count} characters",
+  "@fieldTooLong": {
+    "placeholders": {
+      "fieldName": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "invalidCharacters": "{fieldName} contains invalid characters",
+  "@invalidCharacters": {
+    "placeholders": {
+      "fieldName": { "type": "String" }
+    }
+  },
+  "invalidEmailAddress": "Please enter a valid email address",
+  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)",
+  "createYourPassword": "Create your Password",
+  "enterPassword": "Enter Password",
+  "confirmPassword": "Confirm Password",
+  "createPassword": "Create Password",
+  "pleaseEnterYourPassword": "Please enter your password",
+  "passwordMustBeAtLeast8CharactersLong": "Password must be at least 8 characters long.",
+  "passwordMustContainAtLeastOneUppercaseLetter": "Password must contain at least one uppercase letter.",
+  "passwordMustContainAtLeastOneLowercaseLetter": "Password must contain at least one lowercase letter.",
+  "passwordMustContainAtLeastOneDigit": "Password must contain at least one digit.",
+  "passwordCannotContainSpaces": "Password cannot contain spaces.",
+  "passwordMustContainAtLeastOneSpecialCharacter": "Password must contain at least one special character.",
+  "passwordDoesNotMatch": "Password does not match.",
+  "invalidPasswordExceptionMessage": "Invalid password. Please try again.",
+  "invalidParameterExceptionMessage": "One or more parameters are invalid.",
+  "usernameExistsExceptionMessage": "User already exists.",
+  "codeMismatchExceptionMessage": "Invalid OTP code.",
+  "expiredCodeExceptionMessage": "Invalid OTP code.",
+  "signedOutExceptionMessage": "User has already signed out.",
+  "notAuthorizedServiceExceptionMessage": "Incorrect username or password.",
+  "yourOldPasswordIsIncorrectOrYouAreNotAuthorizedToChangePassword": "Your old password is incorrect or you are not authorized to change password.",
+  "userNotFoundExceptionMessage": "User does not exist.",
+  "networkExceptionMessage": "Network error. Please check your internet connection.",
+  "unknownExceptionMessage": "An unknown error occurred. Please try again later.",
+  "yourPasswordMustContain": "Your password must contain:",
+  "atLeast1Uppercase": "At least 1 uppercase",
+  "atLeast1Lowercase": "At least 1 lowercase",
+  "atLeast1Number": "At least 1 number",
+  "atLeast8Characters": "At least 8 characters",
+  "welcomeBack": "Welcome Back",
+  "pickUpWhereYouLeftOff": "Pick up where you left off.",
+  "password": "Password",
+  "forgotPassword": "Forgot Password",
+  "dontHaveAnAccount": "Don’t have an account?",
+  "signUp": "Sign Up",
+  "logout": "Logout",
+  "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
+  "requestCode": "Request Code",
+  "youreOfflineCheckYourInternetConnection": "You're offline. Check your internet connection",
+  "useEmailInstead": "Use Email Instead",
+  "usePhoneInstead": "Use Phone Instead",
+  "email": "Email",
+  "enterThe6DigitCodeSentTo": "Enter the 6-digit code sent to",
+  "sixDigitsCode": "6-digits code",
+  "enterNewPassword": "Enter New Password",
+  "pleaseEnter6DigitsCode": "Please enter your 6-digits code",
+  "enterValid6DigitsCode": "Enter a valid 6-digits code",
+  "resetPassword": "Reset Password"
 }
