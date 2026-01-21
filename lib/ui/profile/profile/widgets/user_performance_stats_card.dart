@@ -14,8 +14,7 @@ class UserPerformanceStatsCard extends StatelessWidget {
 
   final int successfulAgreements;
   final int disputeFreeAgreements;
-  final String
-  totalValueTransacted; // String to handle currency formatting easily
+  final String totalValueTransacted;
 
   @override
   Widget build(BuildContext context) {
