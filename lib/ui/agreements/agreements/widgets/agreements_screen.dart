@@ -25,12 +25,14 @@ class AgreementsScreen extends StatelessWidget {
           toolbarHeight: Dimens.size.s70,
         ),
         body: SafeArea(
+          bottom: false,
           child: CustomScrollView(
             slivers: [
               SliverFillRemaining(
                 child: Padding(
                   padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
                     top: Dimens.padding.p10,
+                    bottom: MediaQuery.of(context).padding.bottom,
                   ),
                   child: Column(
                     children: [

@@ -54,6 +54,7 @@ class ProfileScreen extends ConsumerWidget {
         toolbarHeight: Dimens.size.s70,
       ),
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
@@ -61,6 +62,7 @@ class ProfileScreen extends ConsumerWidget {
               child: Padding(
                 padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
                   top: Dimens.padding.p10,
+                  bottom: MediaQuery.of(context).padding.bottom,
                 ),
                 child: Column(
                   crossAxisAlignment: .start,
