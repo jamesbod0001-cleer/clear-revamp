@@ -35,9 +35,10 @@ class OnboardingScreen extends HookWidget {
               Padding(
                 padding: Dimens.mobile.edgeInsetsScreenHorizontal,
                 child: LinearProgressIndicator(
+                  minHeight: Dimens.size.s8,
                   borderRadius: BorderRadius.circular(Dimens.radius.r48),
                   backgroundColor: Color(0xff4390FD).withValues(alpha: .4),
-                  color: Color(0xff4390FD),
+                  color: context.color.primaryBlue,
                   value: (currentPage.value + 1) / 3,
                 ),
               ),
