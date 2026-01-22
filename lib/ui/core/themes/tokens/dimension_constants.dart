@@ -67,6 +67,7 @@ class _AppPadding {
   final double p0 = 0.0;
   final double p2 = 2.0;
   final double p4 = 4.0;
+  final double p6 = 6.0;
   final double p8 = 8.0;
   final double p10 = 10.0;
   final double p12 = 12.0;
