@@ -1,6 +1,7 @@
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/tokens/color_extension.dart';
 import 'package:cleer/ui/core/themes/tokens/typography_extensions.dart';
+import 'package:cleer/ui/core/ui/shapes/fixed_width_indicator_shape.dart';
 import 'package:flutter/material.dart';
 
 part 'tokens/palette.dart';
@@ -58,7 +59,7 @@ abstract class AppTheme {
     background: _Palette.background,
     outline: _Palette.outline,
     grayComponent: _Palette.grayComponent,
-    navbarGreen: _Palette.navbarGreen,
+    navbarBg: _Palette.navbarBg,
 
     // Base
     white: _Palette.white,
@@ -128,18 +129,25 @@ abstract class AppTheme {
   static final _appBarTheme = AppBarThemeData(centerTitle: false);
 
   static final _navigationBarTheme = NavigationBarThemeData(
-    backgroundColor: _Palette.white,
-    indicatorColor: _Palette.navbarGreen,
+    elevation: Dimens.size.s0,
+    backgroundColor: _Palette.navbarBg,
+    indicatorColor: _Palette.primaryBlue,
+    indicatorShape: FixedWidthIndicatorShape(
+      width: Dimens.size.s56,
+      height: Dimens.size.s32,
+      borderRadius: Dimens.size.s16,
+    ),
+    height: Dimens.size.s60,
     labelPadding: EdgeInsets.only(top: Dimens.padding.p4),
     iconTheme: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return IconThemeData(color: _Palette.blue900, size: Dimens.size.s24);
+        return IconThemeData(color: _Palette.background, size: Dimens.size.s24);
       }
       return IconThemeData(color: _Palette.grey600, size: Dimens.size.s24);
     }),
     labelTextStyle: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return _bodySmall.copyWith(color: _Palette.blue900);
+        return _bodySmall.copyWith(color: _Palette.secondary);
       }
       return _bodySmall.copyWith(color: _Palette.grey600);
     }),

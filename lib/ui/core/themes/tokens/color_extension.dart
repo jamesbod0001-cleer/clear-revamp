@@ -9,7 +9,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
   final Color background;
   final Color outline;
   final Color grayComponent;
-  final Color navbarGreen;
+  final Color navbarBg;
 
   // Base
   final Color white;
@@ -78,7 +78,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
     required this.background,
     required this.outline,
     required this.grayComponent,
-    required this.navbarGreen,
+    required this.navbarBg,
     required this.white,
     required this.black,
     required this.transparent,
@@ -145,7 +145,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
       background: Color.lerp(background, other.background, t)!,
       outline: Color.lerp(outline, other.outline, t)!,
       grayComponent: Color.lerp(grayComponent, other.grayComponent, t)!,
-      navbarGreen: Color.lerp(navbarGreen, other.navbarGreen, t)!,
+      navbarBg: Color.lerp(navbarBg, other.navbarBg, t)!,
       white: Color.lerp(white, other.white, t)!,
       black: Color.lerp(black, other.black, t)!,
       transparent: Color.lerp(transparent, other.transparent, t)!,

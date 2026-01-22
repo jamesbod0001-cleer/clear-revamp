@@ -1,7 +1,9 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -20,7 +22,14 @@ class SplashScreen extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: context.color.transparent,
-        body: Center(child: CircularProgressIndicator()),
+        body: Column(
+          mainAxisAlignment: .center,
+          children: [
+            Assets.icons.cleerPrimaryLogo.svg(),
+            Gap(Dimens.spacing.sp24),
+            Center(child: CircularProgressIndicator()),
+          ],
+        ),
       ),
     );
   }

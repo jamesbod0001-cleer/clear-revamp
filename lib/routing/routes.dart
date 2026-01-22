@@ -1,3 +1,4 @@
+import 'package:cleer/ui/agreements/agreements/widgets/agreements_screen.dart';
 import 'package:cleer/ui/auth/create_account/widgets/create_account_screen.dart';
 import 'package:cleer/ui/auth/create_password/widgets/create_password_screen.dart';
 import 'package:cleer/ui/auth/forgot_password/widgets/forgot_password_screen.dart';
@@ -133,7 +134,7 @@ class AgreementsBranch extends StatefulShellBranchData {
 class AgreementsRoute extends GoRouteData with $AgreementsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const Placeholder();
+      const AgreementsScreen();
 }
 
 class ProfileBranch extends StatefulShellBranchData {

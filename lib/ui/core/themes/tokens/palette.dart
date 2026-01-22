@@ -13,7 +13,7 @@ abstract class _Palette {
   static const Color secondary = Color(0xFF030551);  // functional Deep Blue
   static const Color outline = Color(0xFFE2E3E4);    // functional outline 100
   static const Color grayComponent = Color(0xFFF2F3F2); // functional gray component
-  static const Color navbarGreen = Color(0xFFC7E7D3);   // functional Navbar Green
+  static const Color navbarBg = Color(0xFFF2F2F2);   // functional Navbar Background
 
   // Semantic Colors (State & Feedback)
   static const Color error = Color(0xFF9F1B1D);       // semantic red 1000
