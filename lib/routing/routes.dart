@@ -8,6 +8,7 @@ import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.da
 import 'package:cleer/ui/auth/verify_phone_number/widgets/verify_phone_number_screen.dart';
 import 'package:cleer/ui/core/navigation/app_navigation_shell.dart';
 import 'package:cleer/ui/core/navigation/navigation_config.dart';
+import 'package:cleer/ui/home/home/widgets/home_screen.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
@@ -124,7 +125,7 @@ class HomeBranch extends StatefulShellBranchData {
 
 class HomeRoute extends GoRouteData with $HomeRoute {
   @override
-  Widget build(BuildContext context, GoRouterState state) => Placeholder();
+  Widget build(BuildContext context, GoRouterState state) => HomeScreen();
 }
 
 class AgreementsBranch extends StatefulShellBranchData {
