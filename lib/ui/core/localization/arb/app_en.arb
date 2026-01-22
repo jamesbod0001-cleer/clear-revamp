@@ -1,4 +1,5 @@
 {
+  "cleer": "Cleer",
   "getStarted": "Get Started",
   "alreadyHaveAnAccount": "Already have an account?",
   "logIn": "Log in",
@@ -138,5 +139,6 @@
   "shareYourExperienceAndHelpUsBuildABetterPlatform": "Share your experience and help us build a better platform.",
   "agreements": "Agreements",
   "ongoing": "Ongoing",
-  "completed": "Completed"
+  "completed": "Completed",
+  "totalFundsSecured": "Total Funds Secured"
 }
