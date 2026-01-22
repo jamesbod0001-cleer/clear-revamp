@@ -54,6 +54,7 @@ dependencies:
   collection: ^1.19.1
   internet_connection_checker_plus: ^2.9.1+2
   liquid_glass_renderer: ^0.2.0-dev.4
+  flutter_svg: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -111,6 +112,7 @@ flutter:
           weight: 800
   assets:
     - assets/images/
+    - assets/icons/
 
 flutter_gen:
   output: lib/config/
