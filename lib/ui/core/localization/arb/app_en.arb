@@ -140,5 +140,6 @@
   "agreements": "Agreements",
   "ongoing": "Ongoing",
   "completed": "Completed",
-  "totalFundsSecured": "Total Funds Secured"
+  "totalFundsSecured": "Total Funds Secured",
+  "help": "Help"
 }
