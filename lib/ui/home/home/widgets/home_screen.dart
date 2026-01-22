@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -5,6 +7,8 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -30,6 +34,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           child: Row(
+            mainAxisAlignment: .spaceBetween,
             children: [
               Text(
                 l10n.cleer,
@@ -39,6 +44,80 @@ class HomeScreen extends StatelessWidget {
                   height: 1,
                   letterSpacing: 0,
                 ),
+              ),
+              Row(
+                children: [
+                  LiquidGlass.withOwnLayer(
+                    glassContainsChild: true,
+                    settings: LiquidGlassSettings(
+                      saturation: 1,
+                      blur: 20,
+                      thickness: 12,
+                      lightIntensity: .8,
+                      lightAngle: pi / 4,
+                      refractiveIndex: 1.1,
+                      glassColor: Color(0xFF27286B).withAlpha(40),
+                    ),
+                    shape: LiquidRoundedRectangle(
+                      borderRadius: Dimens.radius.r48,
+                    ),
+                    child: SizedBox(
+                      width: Dimens.size.s70,
+                      height: Dimens.size.s28,
+                      child: Padding(
+                        padding: .symmetric(
+                          horizontal: Dimens.padding.p10,
+                          vertical: Dimens.padding.p6,
+                        ),
+                        child: Row(
+                          children: [
+                            PhosphorIcon(
+                              PhosphorIcons.headset(.duotone),
+                              color: context.color.blue100,
+                              size: Dimens.size.s16,
+                            ),
+                            Gap(Dimens.spacing.sp4),
+                            Text(
+                              l10n.help,
+                              style: context.typo.bodyMedium.copyWith(
+                                height: 1,
+                                color: context.color.blue100,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gap(Dimens.spacing.sp12),
+                  LiquidGlass.withOwnLayer(
+                    glassContainsChild: true,
+                    settings: LiquidGlassSettings(
+                      saturation: 1,
+                      blur: 20,
+                      thickness: 12,
+                      lightIntensity: .8,
+                      lightAngle: pi / 4,
+                      refractiveIndex: 1.1,
+                      glassColor: Color(0xFF27286B).withAlpha(40),
+                    ),
+                    shape: LiquidRoundedRectangle(
+                      borderRadius: Dimens.radius.r48,
+                    ),
+                    child: SizedBox(
+                      width: Dimens.size.s28,
+                      height: Dimens.size.s28,
+                      child: Padding(
+                        padding: .all(Dimens.padding.p6),
+                        child: PhosphorIcon(
+                          PhosphorIcons.lineSegments(.duotone),
+                          color: context.color.blue100,
+                          size: Dimens.size.s16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
