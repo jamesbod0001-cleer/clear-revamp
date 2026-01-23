@@ -1,0 +1,1 @@
+enum AgreementType { send, request }
