@@ -1,3 +1,4 @@
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -52,10 +53,11 @@ class QuickActionsSection extends StatelessWidget {
     );
   }
 
-  void _handleSendFunds(BuildContext context) { /* TODO */ }
-  void _handleRequestPayment(BuildContext context) { /* TODO */ }
+  void _handleSendFunds(BuildContext context) =>
+      CreateAgreementRoute(type: .send).push(context);
+  void _handleRequestPayment(BuildContext context) =>
+      CreateAgreementRoute(type: .request).push(context);
 }
-
 
 class _QuickActionCard extends StatelessWidget {
   const _QuickActionCard({
