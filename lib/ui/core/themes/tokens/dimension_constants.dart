@@ -11,6 +11,7 @@ class _AppSize {
 
   final double s16 = 16.0;
   final double s20 = 20.0;
+  final double s21 = 21.0;
   final double s24 = 24.0;
   final double s28 = 28.0;
 
@@ -87,6 +88,7 @@ class _AppRadius {
   final double r12 = 12.0;
   final double r20 = 20.0;
   final double r24 = 24.0;
+  final double r40 = 40.0;
   final double r48 = 48.0;
   final double r50 = 50.0;
   final double r80 = 80.0;
