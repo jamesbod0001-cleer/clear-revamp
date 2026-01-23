@@ -69,7 +69,7 @@ class _TabBar extends StatelessWidget {
     return Container(
       height: Dimens.size.s44,
       decoration: BoxDecoration(
-        color: Color(0xFFE3E5E7),
+        color: context.color.outline,
         borderRadius: BorderRadius.circular(Dimens.radius.r80),
       ),
       child: TabBar(

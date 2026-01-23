@@ -7,6 +7,7 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/trust_score_badge.dart';
 import 'package:cleer/ui/profile/profile/widgets/payout_destination_card.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
@@ -82,53 +83,7 @@ class ProfileScreen extends ConsumerWidget {
                                   color: context.color.grey600,
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  Text(
-                                    '${l10n.trustScore}:',
-                                    style: context.typo.bodySmall.copyWith(
-                                      color: context.color.grey600,
-                                    ),
-                                  ),
-                                  Gap(Dimens.spacing.sp4),
-                                  Material(
-                                    color: context.color.successLight,
-                                    borderRadius: BorderRadius.circular(
-                                      Dimens.radius.r20,
-                                    ),
-                                    child: Padding(
-                                      padding: .symmetric(
-                                        horizontal: Dimens.padding.p8,
-                                        vertical: Dimens.padding.p2,
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: .min,
-                                        children: [
-                                          PhosphorIcon(
-                                            PhosphorIcons.shootingStar(
-                                              .duotone,
-                                            ),
-                                            color: context.color.success,
-                                            size: Dimens.size.s16,
-                                          ),
-                                          Gap(Dimens.spacing.sp4),
-                                          Text(
-                                            '99',
-                                            style: context.typo.bodySmall
-                                                .copyWith(
-                                                  fontWeight:
-                                                      AppFontWeights.regular,
-                                                  letterSpacing: 0,
-                                                  height: 1.5,
-                                                  color: context.color.success,
-                                                ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                             TrustScoreBadge(score: 99),
                               Gap(Dimens.spacing.sp8),
                               Text(
                                 '${l10n.memberSince} ${DateFormat('d MMM, y').format(user!.createdAt!)}',

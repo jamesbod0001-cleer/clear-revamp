@@ -140,5 +140,22 @@
   "agreements": "Agreements",
   "ongoing": "Ongoing",
   "completed": "Completed",
-  "totalFundsSecured": "Total Funds Secured"
+  "totalFundsSecured": "Total Funds Secured",
+  "help": "Help",
+  "activeAgreements": "Active Agreements",
+  "waitingForApproval": "Waiting for Approval",
+  "readyForRelease": "Ready for Release",
+  "startATransaction": "Start a Transaction",
+  "sendFunds": "Send\nFunds",
+  "yourMoneyIsHeldSafelyUntilYouConfirm": "Your money is held safely until you confirm",
+  "requestPayment": "Request\nPayment",
+  "fundsAreSecuredUntilTheDealIsComplete": "Funds are secured until the deal is complete",
+  "recentActivity": "Recent Activity",
+  "viewAll": "View All",
+  "tapToViewAndResolve": "Tap to view and resolve",
+  "verifyYourNin": "Verify your NIN",
+  "unlockHigherTransactionLimits": "Unlock higher transaction limits",
+  "youHaveNoActiveTransactions": "You have no Active Transactions",
+  "or": "or",
+  "toGetStarted": "to Get Started"
 }
