@@ -126,7 +126,10 @@ abstract class AppTheme {
     bodyLink: _bodyLink,
   );
 
-  static final _appBarTheme = AppBarThemeData(centerTitle: false);
+  static final _appBarTheme = AppBarThemeData(
+    centerTitle: false,
+    elevation: Dimens.size.s0,
+  );
 
   static final _navigationBarTheme = NavigationBarThemeData(
     elevation: Dimens.size.s0,
