@@ -157,5 +157,18 @@
   "unlockHigherTransactionLimits": "Unlock higher transaction limits",
   "youHaveNoActiveTransactions": "You have no Active Transactions",
   "or": "or",
-  "toGetStarted": "to Get Started"
+  "toGetStarted": "to Get Started",
+  "requestFunds": "Request Funds",
+  "amount": "Amount",
+  "nairaSign": "₦",
+  "enterAmountToSecure": "Enter amount to secure",
+  "recipientDetails": "Recipient Details",
+  "selectBank": "Select Bank",
+  "bankName": "Bank Name",
+  "accountNumber": "Account Number",
+  "howWillThePaymentBeReleased": "How will the payment be released?",
+  "oneTimeRelease": "One-Time Release",
+  "bestForPhysicalGoodsOrSimpleServicesWherePaymentIsReleasedOnceAfterDelivery": "Best for: Physical goods or simple services where payment is released once after delivery.",
+  "milestonePayments": "Milestone Payments",
+  "bestForLargeJobsOrLongProjectsPayInStagesAsWorkIsCompleted": "Best for: Large jobs or long projects.\nPay in stages as work is completed."
 }
