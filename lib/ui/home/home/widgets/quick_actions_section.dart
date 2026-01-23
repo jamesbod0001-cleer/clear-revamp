@@ -97,7 +97,7 @@ class _QuickActionCard extends StatelessWidget {
               children: [
                 Gap(Dimens.spacing.sp40), // Space for the floating icon
                 Text(
-                  title,
+                  title.replaceAll(' ', '\n'),
                   style: context.typo.titleLarge.copyWith(
                     color: contentColor,
                     fontWeight: AppFontWeights.semiBold,

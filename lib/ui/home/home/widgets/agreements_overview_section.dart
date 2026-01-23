@@ -193,7 +193,7 @@ class _AgreementsEmptyState extends StatelessWidget {
                       children: [
                         _linkSpan(
                           context,
-                          text: l10n.sendFunds.replaceAll('\n', ' '),
+                          text: l10n.sendFunds,
                           onTap: () => _handleSendFunds(context),
                         ),
                         const TextSpan(text: ' '),
@@ -201,7 +201,7 @@ class _AgreementsEmptyState extends StatelessWidget {
                         const TextSpan(text: ' '),
                         _linkSpan(
                           context,
-                          text: l10n.requestPayment.replaceAll('\n', ' '),
+                          text: l10n.requestPayment,
                           onTap: () => _handleRequestPayment(context),
                         ),
                         const TextSpan(text: ' '),
