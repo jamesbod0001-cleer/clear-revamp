@@ -25,6 +25,8 @@ class CustomTextFormField extends StatefulWidget {
     this.textInputType,
     this.prefixIcon,
     this.suffixIcon,
+    this.onTap,
+    this.readOnly = false,
   });
 
   final String? labelText;
@@ -40,6 +42,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextInputType? textInputType;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final VoidCallback? onTap;
+  final bool readOnly;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -91,6 +95,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             TextField(
               controller: widget.controller,
               onChanged: (value) => state.didChange(value),
+              onTap: widget.onTap,
+              readOnly: widget.readOnly,
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 errorText: state.errorText,
