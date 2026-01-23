@@ -1,4 +1,6 @@
 import 'package:cleer/ui/agreements/agreements/widgets/agreements_screen.dart';
+import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
+import 'package:cleer/ui/agreements/create_agreement/widgets/create_agreement_screen.dart';
 import 'package:cleer/ui/auth/create_account/widgets/create_account_screen.dart';
 import 'package:cleer/ui/auth/create_password/widgets/create_password_screen.dart';
 import 'package:cleer/ui/auth/forgot_password/widgets/forgot_password_screen.dart';
@@ -146,4 +148,15 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProfileScreen();
+}
+
+@TypedGoRoute<CreateAgreementRoute>(path: '/create_agreement/:type')
+class CreateAgreementRoute extends GoRouteData with $CreateAgreementRoute {
+  final AgreementType type;
+
+  CreateAgreementRoute({required this.type});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      CreateAgreementScreen(type: type);
 }
