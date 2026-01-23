@@ -23,6 +23,8 @@ class CustomTextFormField extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.isPassword = false,
     this.textInputType,
+    this.prefixIcon,
+    this.suffixIcon,
   });
 
   final String? labelText;
@@ -36,6 +38,8 @@ class CustomTextFormField extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final bool isPassword;
   final TextInputType? textInputType;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -49,6 +53,20 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     obscureText = widget.isPassword;
     super.initState();
   }
+
+  Widget? get suffixIcon =>
+      widget.suffixIcon ??
+      (widget.isPassword
+          ? IconButton(
+              onPressed: () => setState(() => obscureText = !obscureText),
+              icon: PhosphorIcon(
+                obscureText ? PhosphorIcons.eye() : PhosphorIcons.eyeClosed(),
+                color: context.color.blue700,
+              ),
+            )
+          : null);
+
+  Widget? get prefixIcon => widget.prefixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -83,18 +101,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 focusedBorder: state.hasError
                     ? context.theme.inputDecorationTheme.errorBorder
                     : null,
-                suffixIcon: widget.isPassword
-                    ? IconButton(
-                        onPressed: () =>
-                            setState(() => obscureText = !obscureText),
-                        icon: PhosphorIcon(
-                          obscureText
-                              ? PhosphorIcons.eye()
-                              : PhosphorIcons.eyeClosed(),
-                          color: context.color.blue700,
-                        ),
-                      )
-                    : null,
+                prefix: prefixIcon,
+                suffixIcon: suffixIcon,
               ),
               keyboardType: widget.textInputType,
               obscureText: obscureText,
