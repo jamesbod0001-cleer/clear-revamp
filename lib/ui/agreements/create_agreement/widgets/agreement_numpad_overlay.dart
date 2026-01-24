@@ -13,14 +13,21 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class AgreementNumpadOverlay extends HookWidget {
-  const AgreementNumpadOverlay({super.key, required this.type});
+  const AgreementNumpadOverlay({
+    super.key,
+    required this.initialAmount,
+    required this.type,
+    required this.onSubmitted,
+  });
 
+  final String initialAmount;
   final AgreementType type;
+  final Function(String) onSubmitted;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final amountText = useState('0');
+    final amountText = useState(initialAmount.isEmpty ? '0' : initialAmount);
     final double minimumAmount = 1000;
 
     void handleTap(String char) {
@@ -133,7 +140,9 @@ class AgreementNumpadOverlay extends HookWidget {
                                             ),
                                       style: context.typo.displayMedium
                                           .copyWith(
-                                            color: context.color.blue700,
+                                            color: amountText.value == '0'
+                                                ? context.color.blue700
+                                                : context.color.blue100,
                                             height: 1.5,
                                             letterSpacing: 0,
                                           ),
@@ -173,7 +182,10 @@ class AgreementNumpadOverlay extends HookWidget {
                     Gap(Dimens.spacing.sp40),
                     PrimaryButton(
                       onPressed: double.parse(amountText.value) > minimumAmount
-                          ? () {}
+                          ? () {
+                              onSubmitted.call(amountText.value);
+                              context.pop();
+                            }
                           : null,
                       child: Text(l10n.next),
                     ),
