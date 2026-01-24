@@ -34,6 +34,15 @@ class AgreementNumpadOverlay extends HookWidget {
         }
       }
 
+      if (char == '0' && currentText == '0') {
+        return; // Do nothing if it's already just a zero
+      }
+
+      if (currentText == '0' && char != '.') {
+        amountText.value = char;
+        return;
+      }
+
       if (currentText.length < 7) {
         amountText.value = currentText + char;
       }
