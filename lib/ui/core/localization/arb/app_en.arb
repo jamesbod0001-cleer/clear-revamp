@@ -170,5 +170,7 @@
   "oneTimeRelease": "One-Time Release",
   "bestForPhysicalGoodsOrSimpleServicesWherePaymentIsReleasedOnceAfterDelivery": "Best for: Physical goods or simple services where payment is released once after delivery.",
   "milestonePayments": "Milestone Payments",
-  "bestForLargeJobsOrLongProjectsPayInStagesAsWorkIsCompleted": "Best for: Large jobs or long projects.\nPay in stages as work is completed."
+  "bestForLargeJobsOrLongProjectsPayInStagesAsWorkIsCompleted": "Best for: Large jobs or long projects.\nPay in stages as work is completed.",
+  "search": "Search",
+  "searchNotFound": "Search not found"
 }
