@@ -1,5 +1,7 @@
+import 'package:cleer/data/services/flutterwave/requests/resolve_account/resolve_account_request.dart';
 import 'package:cleer/data/services/flutterwave/responses/bank/bank_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/base/flutterwave_response.dart';
+import 'package:cleer/data/services/flutterwave/responses/resolve_account/resolve_account_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,6 +18,11 @@ abstract class FlutterwaveServiceClient {
   @GET("/banks")
   Future<FlutterwaveResponse<List<BankResponse>>> retrieveBanks(
     @Query("country") String country,
+  );
+
+  @POST("/accounts/resolve")
+  Future<FlutterwaveResponse<ResolveAccountResponse>> resolveAccount(
+    @Body() ResolveAccountRequest body,
   );
 }
 
