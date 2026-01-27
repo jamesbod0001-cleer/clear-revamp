@@ -88,6 +88,7 @@ class _AppRadius {
   final double r12 = 12.0;
   final double r20 = 20.0;
   final double r24 = 24.0;
+  final double r32 = 32.0;
   final double r40 = 40.0;
   final double r48 = 48.0;
   final double r50 = 50.0;
