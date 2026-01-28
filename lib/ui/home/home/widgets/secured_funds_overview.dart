@@ -46,9 +46,7 @@ class SecuredFundsOverview extends StatelessWidget {
                 Text(
                   totalFunds,
                   style: context.typo.headlineSmall.copyWith(
-                    fontWeight: AppFontWeights.medium,
-                    height: 1.5,
-                    letterSpacing: 0.24,
+                    color: context.color.grey800,
                   ),
                 ),
               ],
