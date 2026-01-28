@@ -83,10 +83,14 @@ class ProfileScreen extends ConsumerWidget {
                                   color: context.color.grey600,
                                 ),
                               ),
-                             TrustScoreBadge(score: 99),
+                              TrustScoreBadge(score: 99),
                               Gap(Dimens.spacing.sp8),
                               Text(
-                                '${l10n.memberSince} ${DateFormat('d MMM, y').format(user!.createdAt!)}',
+                                l10n.memberSince(
+                                  DateFormat(
+                                    'd MMM, y',
+                                  ).format(user!.createdAt!),
+                                ),
                                 style: context.typo.bodySmall.copyWith(
                                   color: context.color.grey600,
                                 ),
