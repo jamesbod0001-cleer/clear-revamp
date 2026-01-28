@@ -1,3 +1,6 @@
+import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:cleer/domain/models/bank/bank.dart';
+import 'package:cleer/domain/models/recipient_resolution/recipient_resolution.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -15,6 +18,8 @@ abstract class CreateAgreementState with _$CreateAgreementState {
     @Default(AgreementType.send) AgreementType type,
     @Default(CreateAgreementStep.setup) CreateAgreementStep currentStep,
     required CreateAgreementFormData formData,
+    RecipientResolution? recipientResolution,
+    @Default(false) bool isResolvingRecipientDetails,
   }) = _CreateAgreementState;
 }
 
@@ -22,9 +27,10 @@ abstract class CreateAgreementState with _$CreateAgreementState {
 abstract class CreateAgreementFormData with _$CreateAgreementFormData {
   const factory CreateAgreementFormData({
     @Default('') String amount,
-    @Default('') String recipientBankName,
+    Bank? recipientBank,
     @Default('') String recipientAccountNumber,
     @Default('') String recipientAccountName,
+    DisbursementType? disbursementType,
     @Default('') String category,
     @Default('') String description,
   }) = _CreateAgreementFormData;
