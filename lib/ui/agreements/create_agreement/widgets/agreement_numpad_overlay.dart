@@ -2,7 +2,6 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
-import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
