@@ -51,8 +51,10 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       );
       final response = await _flutterwaveServiceClient.resolveAccount(
         ResolveAccountRequest(
-          bankCode: params.bankCode,
-          accountNumber: params.accountNumber,
+          account: AccountObject(
+            code: params.bankCode,
+            number: params.accountNumber,
+          ),
         ),
       );
       _log.info(

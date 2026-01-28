@@ -20,7 +20,7 @@ abstract class FlutterwaveServiceClient {
     @Query("country") String country,
   );
 
-  @POST("/accounts/resolve")
+  @POST("/banks/account-resolve")
   Future<FlutterwaveResponse<ResolveAccountResponse>> resolveAccount(
     @Body() ResolveAccountRequest body,
   );
