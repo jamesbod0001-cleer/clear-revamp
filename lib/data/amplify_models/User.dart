@@ -21,6 +21,7 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
+import 'package:collection/collection.dart';
 
 
 /** This is an auto generated class representing the User type in your schema. */
@@ -32,6 +33,10 @@ class User extends amplify_core.Model {
   final String? _lastName;
   final String? _email;
   final String? _profileImage;
+  final List<Agreement>? _initiatedAgreements;
+  final List<Agreement>? _sentAgreements;
+  final List<Agreement>? _receivedAgreements;
+  final List<PayoutDestination>? _payoutDestinations;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -95,6 +100,22 @@ class User extends amplify_core.Model {
     return _profileImage;
   }
   
+  List<Agreement>? get initiatedAgreements {
+    return _initiatedAgreements;
+  }
+  
+  List<Agreement>? get sentAgreements {
+    return _sentAgreements;
+  }
+  
+  List<Agreement>? get receivedAgreements {
+    return _receivedAgreements;
+  }
+  
+  List<PayoutDestination>? get payoutDestinations {
+    return _payoutDestinations;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -103,16 +124,20 @@ class User extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const User._internal({required this.id, required phoneNumber, required firstName, required lastName, email, profileImage, createdAt, updatedAt}): _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _profileImage = profileImage, _createdAt = createdAt, _updatedAt = updatedAt;
+  const User._internal({required this.id, required phoneNumber, required firstName, required lastName, email, profileImage, initiatedAgreements, sentAgreements, receivedAgreements, payoutDestinations, createdAt, updatedAt}): _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _profileImage = profileImage, _initiatedAgreements = initiatedAgreements, _sentAgreements = sentAgreements, _receivedAgreements = receivedAgreements, _payoutDestinations = payoutDestinations, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory User({String? id, required String phoneNumber, required String firstName, required String lastName, String? email, String? profileImage}) {
+  factory User({String? id, required String phoneNumber, required String firstName, required String lastName, String? email, String? profileImage, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
     return User._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       phoneNumber: phoneNumber,
       firstName: firstName,
       lastName: lastName,
       email: email,
-      profileImage: profileImage);
+      profileImage: profileImage,
+      initiatedAgreements: initiatedAgreements != null ? List<Agreement>.unmodifiable(initiatedAgreements) : initiatedAgreements,
+      sentAgreements: sentAgreements != null ? List<Agreement>.unmodifiable(sentAgreements) : sentAgreements,
+      receivedAgreements: receivedAgreements != null ? List<Agreement>.unmodifiable(receivedAgreements) : receivedAgreements,
+      payoutDestinations: payoutDestinations != null ? List<PayoutDestination>.unmodifiable(payoutDestinations) : payoutDestinations);
   }
   
   bool equals(Object other) {
@@ -128,7 +153,11 @@ class User extends amplify_core.Model {
       _firstName == other._firstName &&
       _lastName == other._lastName &&
       _email == other._email &&
-      _profileImage == other._profileImage;
+      _profileImage == other._profileImage &&
+      DeepCollectionEquality().equals(_initiatedAgreements, other._initiatedAgreements) &&
+      DeepCollectionEquality().equals(_sentAgreements, other._sentAgreements) &&
+      DeepCollectionEquality().equals(_receivedAgreements, other._receivedAgreements) &&
+      DeepCollectionEquality().equals(_payoutDestinations, other._payoutDestinations);
   }
   
   @override
@@ -152,14 +181,18 @@ class User extends amplify_core.Model {
     return buffer.toString();
   }
   
-  User copyWith({String? phoneNumber, String? firstName, String? lastName, String? email, String? profileImage}) {
+  User copyWith({String? phoneNumber, String? firstName, String? lastName, String? email, String? profileImage, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
     return User._internal(
       id: id,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
-      profileImage: profileImage ?? this.profileImage);
+      profileImage: profileImage ?? this.profileImage,
+      initiatedAgreements: initiatedAgreements ?? this.initiatedAgreements,
+      sentAgreements: sentAgreements ?? this.sentAgreements,
+      receivedAgreements: receivedAgreements ?? this.receivedAgreements,
+      payoutDestinations: payoutDestinations ?? this.payoutDestinations);
   }
   
   User copyWithModelFieldValues({
@@ -167,7 +200,11 @@ class User extends amplify_core.Model {
     ModelFieldValue<String>? firstName,
     ModelFieldValue<String>? lastName,
     ModelFieldValue<String?>? email,
-    ModelFieldValue<String?>? profileImage
+    ModelFieldValue<String?>? profileImage,
+    ModelFieldValue<List<Agreement>?>? initiatedAgreements,
+    ModelFieldValue<List<Agreement>?>? sentAgreements,
+    ModelFieldValue<List<Agreement>?>? receivedAgreements,
+    ModelFieldValue<List<PayoutDestination>?>? payoutDestinations
   }) {
     return User._internal(
       id: id,
@@ -175,7 +212,11 @@ class User extends amplify_core.Model {
       firstName: firstName == null ? this.firstName : firstName.value,
       lastName: lastName == null ? this.lastName : lastName.value,
       email: email == null ? this.email : email.value,
-      profileImage: profileImage == null ? this.profileImage : profileImage.value
+      profileImage: profileImage == null ? this.profileImage : profileImage.value,
+      initiatedAgreements: initiatedAgreements == null ? this.initiatedAgreements : initiatedAgreements.value,
+      sentAgreements: sentAgreements == null ? this.sentAgreements : sentAgreements.value,
+      receivedAgreements: receivedAgreements == null ? this.receivedAgreements : receivedAgreements.value,
+      payoutDestinations: payoutDestinations == null ? this.payoutDestinations : payoutDestinations.value
     );
   }
   
@@ -186,11 +227,63 @@ class User extends amplify_core.Model {
       _lastName = json['lastName'],
       _email = json['email'],
       _profileImage = json['profileImage'],
+      _initiatedAgreements = json['initiatedAgreements']  is Map
+        ? (json['initiatedAgreements']['items'] is List
+          ? (json['initiatedAgreements']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['initiatedAgreements'] is List
+          ? (json['initiatedAgreements'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
+      _sentAgreements = json['sentAgreements']  is Map
+        ? (json['sentAgreements']['items'] is List
+          ? (json['sentAgreements']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['sentAgreements'] is List
+          ? (json['sentAgreements'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
+      _receivedAgreements = json['receivedAgreements']  is Map
+        ? (json['receivedAgreements']['items'] is List
+          ? (json['receivedAgreements']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['receivedAgreements'] is List
+          ? (json['receivedAgreements'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
+      _payoutDestinations = json['payoutDestinations']  is Map
+        ? (json['payoutDestinations']['items'] is List
+          ? (json['payoutDestinations']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => PayoutDestination.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['payoutDestinations'] is List
+          ? (json['payoutDestinations'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => PayoutDestination.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'profileImage': _profileImage, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'profileImage': _profileImage, 'initiatedAgreements': _initiatedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'sentAgreements': _sentAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'receivedAgreements': _receivedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'payoutDestinations': _payoutDestinations?.map((PayoutDestination? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -200,6 +293,10 @@ class User extends amplify_core.Model {
     'lastName': _lastName,
     'email': _email,
     'profileImage': _profileImage,
+    'initiatedAgreements': _initiatedAgreements,
+    'sentAgreements': _sentAgreements,
+    'receivedAgreements': _receivedAgreements,
+    'payoutDestinations': _payoutDestinations,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -211,6 +308,18 @@ class User extends amplify_core.Model {
   static final LASTNAME = amplify_core.QueryField(fieldName: "lastName");
   static final EMAIL = amplify_core.QueryField(fieldName: "email");
   static final PROFILEIMAGE = amplify_core.QueryField(fieldName: "profileImage");
+  static final INITIATEDAGREEMENTS = amplify_core.QueryField(
+    fieldName: "initiatedAgreements",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static final SENTAGREEMENTS = amplify_core.QueryField(
+    fieldName: "sentAgreements",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static final RECEIVEDAGREEMENTS = amplify_core.QueryField(
+    fieldName: "receivedAgreements",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static final PAYOUTDESTINATIONS = amplify_core.QueryField(
+    fieldName: "payoutDestinations",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'PayoutDestination'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
     modelSchemaDefinition.pluralName = "Users";
@@ -268,6 +377,34 @@ class User extends amplify_core.Model {
       key: User.PROFILEIMAGE,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: User.INITIATEDAGREEMENTS,
+      isRequired: false,
+      ofModelName: 'Agreement',
+      associatedKey: Agreement.INITIATOR
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: User.SENTAGREEMENTS,
+      isRequired: false,
+      ofModelName: 'Agreement',
+      associatedKey: Agreement.SENDER
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: User.RECEIVEDAGREEMENTS,
+      isRequired: false,
+      ofModelName: 'Agreement',
+      associatedKey: Agreement.RECIPIENT
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: User.PAYOUTDESTINATIONS,
+      isRequired: false,
+      ofModelName: 'PayoutDestination',
+      associatedKey: PayoutDestination.USER
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
