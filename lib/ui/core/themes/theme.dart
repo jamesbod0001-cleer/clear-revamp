@@ -11,6 +11,7 @@ part 'tokens/type_scales.dart';
 abstract class AppTheme {
   static final TextTheme _textTheme = TextTheme(
     displayMedium: _displayMedium,
+    headlineLarge: _headlineLarge,
     headlineMedium: _headlineMedium,
     headlineSmall: _headlineSmall,
     titleLarge: _titleLarge,

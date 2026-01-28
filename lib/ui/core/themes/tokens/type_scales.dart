@@ -24,6 +24,8 @@ TextStyle get _displayMedium =>
     _getBaseTextStyle(AppFontSizes.s64, AppFontWeights.semiBold, 120, -2);
 
 // Headlines
+TextStyle get _headlineLarge =>
+    _getBaseTextStyle(AppFontSizes.s40, AppFontWeights.semiBold, 140, 0);
 TextStyle get _headlineMedium =>
     _getBaseTextStyle(AppFontSizes.s32, AppFontWeights.semiBold, 120, -2);
 TextStyle get _headlineSmall =>
@@ -31,7 +33,7 @@ TextStyle get _headlineSmall =>
 
 // Titles
 TextStyle get _titleLarge =>
-    _getBaseTextStyle(AppFontSizes.s20, AppFontWeights.medium, 130, 1);
+    _getBaseTextStyle(AppFontSizes.s20, AppFontWeights.semiBold, 130, 1);
 TextStyle get _titleMedium =>
     _getBaseTextStyle(AppFontSizes.s16, AppFontWeights.semiBold, 120, 1);
 TextStyle get _titleSmall =>
@@ -41,7 +43,7 @@ TextStyle get _titleSmall =>
 TextStyle get _labelMedium =>
     _getBaseTextStyle(AppFontSizes.s16, AppFontWeights.semiBold, 100, 1.5);
 TextStyle get _labelSmall =>
-    _getBaseTextStyle(AppFontSizes.s14, AppFontWeights.regular, 150, 0);
+    _getBaseTextStyle(AppFontSizes.s14, AppFontWeights.semiBold, 130, 0);
 
 // Body
 TextStyle get _bodyLarge =>

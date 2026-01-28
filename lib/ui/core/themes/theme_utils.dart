@@ -23,6 +23,7 @@ class AppTypography {
 
   // --- Material 3 Standard Styles ---
   TextStyle get displayMedium => _textTheme.displayMedium!;
+  TextStyle get headlineLarge => _textTheme.headlineLarge!;
   TextStyle get headlineMedium => _textTheme.headlineMedium!;
   TextStyle get headlineSmall => _textTheme.headlineSmall!;
   TextStyle get titleLarge => _textTheme.titleLarge!;
