@@ -156,7 +156,7 @@ class ProfileScreen extends ConsumerWidget {
 
                     ProfileSectionHeader(title: l10n.assistanceAndFeedback),
                     ProfileMenuTile(
-                      icon: PhosphorIcons.scroll(.duotone),
+                      icon: PhosphorIcons.question(.duotone),
                       title: l10n.helpAndSupport,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
