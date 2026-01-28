@@ -2,16 +2,28 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/exceptions/backend_exception.dart';
 
 mixin ApiErrorChecker {
-  void validateResponse(GraphQLResponse response) {
+  T? validateResponse<T>(GraphQLResponse<T> response) {
     if (response.hasErrors) {
-      final error = response.errors.first;
       throw BackendException(
-        error.message,
-        // code: error.message.contains('Authorized') ? 'Unauthorized' : null,
-        code: error.errorType,
+        response.errors.first.message,
+        code: response.errors.first.errorType,
       );
-    } else if (response.data == null) {
-      throw BackendException('Data is null', code: 'NotFound');
     }
+    return response.data;
+  }
+
+  // Use this when you want to FORCE a non-null result
+  T validateRequiredResponse<T>(
+    GraphQLResponse<T> response, {
+    String? errorMessage,
+  }) {
+    final data = validateResponse(response);
+    if (data == null) {
+      throw BackendException(
+        errorMessage ?? 'Required data was not found',
+        code: 'NotFound',
+      );
+    }
+    return data;
   }
 }
