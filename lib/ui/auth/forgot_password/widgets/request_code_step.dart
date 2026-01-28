@@ -43,7 +43,8 @@ class _RequestCodeStep extends HookConsumerWidget {
         children: [
           Text(
             l10n.enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode,
-            style: context.typo.labelSmall.copyWith(
+            style: context.typo.bodyMedium.copyWith(
+              fontWeight: AppFontWeights.regular,
               color: context.color.grey600,
             ),
           ),

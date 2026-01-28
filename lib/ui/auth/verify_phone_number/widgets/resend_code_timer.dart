@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -66,8 +67,11 @@ class _ResendOtpTimerState extends ConsumerState<ResendCodeTimer> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          AppLocalizations.of(context)!.didntReceiveOTP,
-          style: context.typo.labelSmall.copyWith(color: context.color.grey600),
+          AppLocalizations.of(context)!.didntGetTheCode,
+          style: context.typo.bodyMedium.copyWith(
+            fontWeight: AppFontWeights.regular,
+            color: context.color.grey600,
+          ),
         ),
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
@@ -83,14 +87,29 @@ class _ResendOtpTimerState extends ConsumerState<ResendCodeTimer> {
                   },
                   child: Text(
                     AppLocalizations.of(context)!.resend,
-                    style: context.typo.labelSmall.copyWith(
+                    style: context.typo.bodyMedium.copyWith(
+                      fontWeight: AppFontWeights.regular,
                       color: context.color.green1000,
                     ),
                   ),
                 )
-              : Text(
-                  "${currentDuration.inMinutes.toString().padLeft(2, '0')}:${(currentDuration.inSeconds % 60).toString().padLeft(2, '0')}",
-                  style: context.typo.labelSmall,
+              : RichText(
+                  text: TextSpan(
+                    style: context.typo.bodyMedium.copyWith(
+                      fontWeight: AppFontWeights.regular,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: AppLocalizations.of(context)!.resendIn,
+                        style: TextStyle(color: context.color.grey600),
+                      ),
+                      TextSpan(text: ' '),
+                      TextSpan(
+                        text:
+                            "${currentDuration.inMinutes.toString().padLeft(1, '0')}:${(currentDuration.inSeconds % 60).toString().padLeft(2, '0')}",
+                      ),
+                    ],
+                  ),
                 ),
         ),
       ],

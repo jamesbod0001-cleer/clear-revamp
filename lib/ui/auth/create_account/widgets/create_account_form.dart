@@ -135,23 +135,10 @@ class CreateAccountForm extends HookConsumerWidget {
             ),
           ),
           Gap(Dimens.spacing.sp20),
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: l10n.byClickingContinueYouAgreeToCleer,
-                  style: context.typo.bodySmall.copyWith(
-                    color: context.color.grey600,
-                  ),
-                ),
-                TextSpan(text: ' '),
-                TextSpan(
-                  text: l10n.terms,
-                  style: context.typo.bodySmall.copyWith(
-                    color: context.color.blue700,
-                  ),
-                ),
-              ],
+          Text(
+            l10n.byTappingNextYouAgreeToCleerTermsOfService,
+            style: context.typo.bodySmall.copyWith(
+              color: context.color.grey600,
             ),
           ),
           Gap(Dimens.spacing.sp20),

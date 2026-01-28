@@ -7,6 +7,7 @@ import 'package:cleer/ui/auth/create_account/widgets/create_account_form.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/offline_warning_banner.dart';
@@ -84,10 +85,11 @@ class CreateAccountScreen extends ConsumerWidget {
                       l10n.letsGetYouStarted,
                       style: context.typo.headlineSmall,
                     ),
-                    Gap(Dimens.spacing.sp12),
+                    Gap(Dimens.spacing.sp8),
                     Text(
-                      l10n.aFewQuickStepsToSetUpYourAccountAndSecureYourFunds,
-                      style: context.typo.labelSmall.copyWith(
+                      l10n.justAFewStepsToSetUpYourAccountAndKeepYourMoneySafe,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
                         color: context.color.grey600,
                       ),
                     ),

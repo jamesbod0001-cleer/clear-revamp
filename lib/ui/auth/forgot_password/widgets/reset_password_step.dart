@@ -34,15 +34,16 @@ class _ResetPasswordStep extends HookConsumerWidget {
         children: [
           RichText(
             text: TextSpan(
+              style: context.typo.bodyMedium.copyWith(
+                fontWeight: AppFontWeights.regular,
+              ),
               children: [
                 TextSpan(
                   text: l10n.enterThe6DigitCodeSentTo,
-                  style: context.typo.labelSmall.copyWith(
-                    color: context.color.grey600,
-                  ),
+                  style: TextStyle(color: context.color.grey600),
                 ),
                 TextSpan(text: ' '),
-                TextSpan(text: destination, style: context.typo.labelSmall),
+                TextSpan(text: destination),
               ],
             ),
           ),
