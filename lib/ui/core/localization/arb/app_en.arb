@@ -9,7 +9,7 @@
   "itemDeliveredServiceDoneClickReleaseToPayInstantlyNotSatisfiedGetARefund": "Item delivered? Service done? Click 'Release' to pay instantly. Not satisfied? Get a refund.",
   "zeroRiskTransactions": "Zero Risk Transactions.",
   "letsGetYouStarted": "Let’s get you started.",
-  "aFewQuickStepsToSetUpYourAccountAndSecureYourFunds": "A few quick steps to set up your account and secure your funds.",
+  "justAFewStepsToSetUpYourAccountAndKeepYourMoneySafe": "Just a few steps to set up your account and keep your money safe.",
   "firstName": "First Name",
   "lastName": "Last Name",
   "phoneNumber": "Phone Number",
@@ -17,12 +17,21 @@
   "optional": "(optional)",
   "next": "Next",
   "login": "Login",
-  "byClickingContinueYouAgreeToCleer": "By clicking continue, you agree to Cleer",
-  "terms": "Terms.",
+  "byTappingNextYouAgreeToCleerTermsOfService": "By tapping Next, you agree to Cleer’s Terms of Service",
   "wellOnlyUseThisForReceiptsAndImportantUpdates": "We’ll only use this for receipts and important updates.",
   "verifyPhoneNumber": "Verify Phone Number",
-  "weSentA6DigitCodeToYourPhoneForVerification": "We sent a 6-digit code to your phone for verification.",
-  "didntReceiveOTP": "Didn’t receive OTP?",
+  "enterVerificationCode": "Enter the verification code we sent to {phone}",
+  "@enterVerificationCode": {
+    "description": "Instructional text for the OTP verification screen",
+    "placeholders": {
+      "phone": {
+        "type": "String",
+        "example": "+234 90***413"
+      }
+    }
+  },
+  "didntGetTheCode": "Didn’t get the code?",
+  "resendIn": "Resend in",
   "resend": "Resend",
   "verify": "Verify",
   "youreCleerYourAccountIsSecured": "You're Cleer! Your account is secured.",
@@ -57,6 +66,7 @@
   "invalidEmailAddress": "Please enter a valid email address",
   "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)",
   "createYourPassword": "Create your Password",
+  "createAPasswordToProtectYourAccount": "Create a password to protect your account.",
   "enterPassword": "Enter Password",
   "confirmPassword": "Confirm Password",
   "createPassword": "Create Password",
