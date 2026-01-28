@@ -104,8 +104,6 @@ class AgreementNumpadOverlay extends HookWidget {
                       type.isSend ? l10n.sendFunds : l10n.requestFunds,
                       style: context.typo.headlineSmall.copyWith(
                         color: context.color.blue100,
-                        fontWeight: AppFontWeights.bold,
-                        height: 1,
                       ),
                     ),
                     Gap(Dimens.spacing.sp54),
@@ -120,12 +118,9 @@ class AgreementNumpadOverlay extends HookWidget {
                                   children: [
                                     TextSpan(
                                       text: l10n.nairaSign,
-                                      style: context.typo.headlineMedium
+                                      style: context.typo.headlineLarge
                                           .copyWith(
                                             color: context.color.blue100,
-                                            fontSize: 40,
-                                            height: 1.5,
-                                            letterSpacing: 0,
                                           ),
                                     ),
                                     TextSpan(
@@ -143,8 +138,6 @@ class AgreementNumpadOverlay extends HookWidget {
                                             color: amountText.value == '0'
                                                 ? context.color.blue700
                                                 : context.color.blue100,
-                                            height: 1.5,
-                                            letterSpacing: 0,
                                           ),
                                     ),
                                   ],
@@ -248,8 +241,6 @@ class _NumpadGrid extends StatelessWidget {
                 key,
                 style: context.typo.headlineMedium.copyWith(
                   color: context.color.blue100,
-                  height: 1.5,
-                  letterSpacing: 0,
                 ),
               ),
             ),
