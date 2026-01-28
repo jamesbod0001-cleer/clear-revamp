@@ -92,7 +92,16 @@
   "signUp": "Sign Up",
   "profile": "Profile",
   "trustScore": "Trust Score",
-  "memberSince": "Member since",
+  "memberSince": "Member since {date}",
+  "@memberSince": {
+    "description": "Label showing when the user joined the platform",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 2026"
+      }
+    }
+  },
   "logout": "Logout",
   "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
   "requestCode": "Request Code",
@@ -172,5 +181,34 @@
   "milestonePayments": "Milestone Payments",
   "bestForLargeJobsOrLongProjectsPayInStagesAsWorkIsCompleted": "Best for: Large jobs or long projects.\nPay in stages as work is completed.",
   "search": "Search",
-  "searchNotFound": "Search not found"
+  "searchNotFound": "Search not found",
+  "enterAValid10DigitsAccountNumber": "Enter a valid 10 digits account number",
+  "newUserAlert": "New User Alert",
+  "@newUserAlert": {
+    "description": "Short title for the alert shown when a recipient is not found in the database"
+  },
+  "noHistoryWarning": "No history for {name}. Funds are secured. Proceed with caution.",
+  "@noHistoryWarning": {
+    "description": "Warning message displayed when a user is new to the platform, emphasizing that funds are safe in escrow.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ajadi Jackson"
+      }
+    }
+  },
+  "lowTrustScoreAlert": "Low Trust Score Alert",
+  "@lowTrustScoreAlert": {
+    "description": "Title for the alert shown when a recipient has a poor history on the platform"
+  },
+  "lowTrustScoreWarning": "This recipient has a low Trust Score ({score}%). They have a history of disputes or cancellations. Proceed with caution.",
+  "@lowTrustScoreWarning": {
+    "description": "Warning message for users with low trust ratings",
+    "placeholders": {
+      "score": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  }
 }
