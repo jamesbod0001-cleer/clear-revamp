@@ -76,7 +76,9 @@ class CreateAgreementScreen extends ConsumerWidget {
                             mainAxisAlignment: .spaceBetween,
                             children: [
                               AppBackButton(onPressed: () => handleBack()),
-                              StepProgressIndicator(),
+                              StepProgressIndicator(
+                                currentStep: state.value!.currentStep.index + 1,
+                              ),
                             ],
                           ),
                           Gap(Dimens.spacing.sp24),
@@ -84,7 +86,7 @@ class CreateAgreementScreen extends ConsumerWidget {
                             type.isSend ? l10n.sendFunds : l10n.requestFunds,
                             style: context.typo.headlineSmall,
                           ),
-                          Gap(Dimens.spacing.sp24),
+                          Gap(Dimens.spacing.sp12),
                           Expanded(
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 150),
