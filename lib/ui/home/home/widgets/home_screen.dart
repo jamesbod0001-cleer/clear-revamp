@@ -59,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                       lightIntensity: .8,
                       lightAngle: pi / 4,
                       refractiveIndex: 1.1,
-                      glassColor: Color(0xFF27286B).withAlpha(40),
+                      glassColor: context.color.blue800.withAlpha(30),
                     ),
                     shape: LiquidRoundedRectangle(
                       borderRadius: Dimens.radius.r48,
@@ -102,7 +102,7 @@ class HomeScreen extends StatelessWidget {
                       lightIntensity: .8,
                       lightAngle: pi / 4,
                       refractiveIndex: 1.1,
-                      glassColor: Color(0xFF27286B).withAlpha(40),
+                      glassColor: context.color.blue800.withAlpha(30),
                     ),
                     shape: LiquidRoundedRectangle(
                       borderRadius: Dimens.radius.r48,

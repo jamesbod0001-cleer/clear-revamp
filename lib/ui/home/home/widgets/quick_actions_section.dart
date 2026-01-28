@@ -40,7 +40,7 @@ class QuickActionsSection extends StatelessWidget {
               child: _QuickActionCard(
                 title: l10n.requestPayment,
                 subtitle: l10n.fundsAreSecuredUntilTheDealIsComplete,
-                backgroundColor: const Color(0xFFC0DFFF),
+                backgroundColor: context.color.primaryBlueLight,
                 contentColor: context.color.secondary,
                 subtitleColor: context.color.secondary,
                 icon: PhosphorIcons.arrowDownLeft(),
@@ -101,9 +101,7 @@ class _QuickActionCard extends StatelessWidget {
                 Text(
                   title.replaceAll(' ', '\n'),
                   style: context.typo.titleLarge.copyWith(
-                    color: contentColor,
-                    fontWeight: AppFontWeights.semiBold,
-                    height: 1.4,
+                    color: contentColor
                   ),
                 ),
                 Gap(Dimens.spacing.sp8),
