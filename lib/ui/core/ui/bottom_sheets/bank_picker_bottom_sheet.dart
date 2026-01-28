@@ -79,7 +79,7 @@ class BankPickerBottomSheet extends HookConsumerWidget {
                 itemBuilder: (BuildContext context, int index) {
                   final bank = filteredList[index];
                   return Column(
-                    crossAxisAlignment: .start,
+                    crossAxisAlignment: .stretch,
                     children: [
                       if (index == 0)
                         Divider(
@@ -87,17 +87,20 @@ class BankPickerBottomSheet extends HookConsumerWidget {
                           height: Dimens.size.s1,
                           thickness: Dimens.size.s1,
                         ),
-                      InkWell(
-                        onTap: () => context.pop(bank),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimens.padding.p8,
-                            vertical: Dimens.padding.p12,
-                          ),
-                          child: Text(
-                            bank.name,
-                            style: context.typo.bodyLarge.copyWith(
-                              color: context.color.grey800,
+                      Material(
+                        color: context.color.transparent,
+                        child: InkWell(
+                          onTap: () => context.pop(bank),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Dimens.padding.p8,
+                              vertical: Dimens.padding.p12,
+                            ),
+                            child: Text(
+                              bank.name,
+                              style: context.typo.bodyLarge.copyWith(
+                                color: context.color.grey800,
+                              ),
                             ),
                           ),
                         ),
