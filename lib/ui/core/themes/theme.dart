@@ -56,6 +56,7 @@ abstract class AppTheme {
     // Brand & Functional
     primary: _Palette.primary,
     primaryBlue: _Palette.primaryBlue,
+    primaryBlueLight: _Palette.primaryBlueLight,
     secondary: _Palette.secondary,
     background: _Palette.background,
     outline: _Palette.outline,
