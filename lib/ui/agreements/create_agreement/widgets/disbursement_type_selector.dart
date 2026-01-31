@@ -26,6 +26,7 @@ class DisbursementTypeSelector extends StatelessWidget {
       groupValue: selectedType,
       onChanged: onChanged,
       child: Column(
+        mainAxisSize: .min,
         children: [
           _DisbursementTypeTile(
             type: DisbursementType.oneTime,
@@ -103,6 +104,7 @@ class _DisbursementTypeTile extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: .min,
                 children: [
                   Text(title, style: context.typo.bodyLarge),
                   Gap(Dimens.spacing.sp4),
