@@ -38,6 +38,9 @@ class AgreementSetupStep extends HookConsumerWidget {
     final ValueNotifier<Bank?> selectedBank = useState<Bank?>(
       state.value?.formData.recipientBank,
     );
+    final bankController = useTextEditingController(
+      text: selectedBank.value?.name,
+    );
     final TextEditingController accountNumberController =
         useTextEditingController(
           text: state.value?.formData.recipientAccountNumber,
@@ -45,8 +48,10 @@ class AgreementSetupStep extends HookConsumerWidget {
     final ValueNotifier<DisbursementType?> selectedDisbursementType =
         useState<DisbursementType?>(state.value?.formData.disbursementType);
 
-    useListenable(amountController);
-    useListenable(accountNumberController);
+    useEffect(() {
+      bankController.text = selectedBank.value?.name ?? '';
+      return null;
+    }, [selectedBank.value]);
 
     useEffect(() {
       if (amountController.text == '') {
@@ -56,6 +61,22 @@ class AgreementSetupStep extends HookConsumerWidget {
       }
       return null;
     }, [amountController]);
+
+    useEffect(
+      () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          viewModel.onFormChanged(
+            state.value!.formData.copyWith(
+              amount: amountController.text,
+              recipientBank: selectedBank.value,
+              recipientAccountNumber: accountNumberController.text,
+            ),
+          );
+        });
+        return null;
+      },
+      [amountController.text, selectedBank.value, accountNumberController.text],
+    );
 
     bool isRecipientDetailsValid =
         selectedBank.value != null && accountNumberController.text.length == 10;
@@ -89,90 +110,108 @@ class AgreementSetupStep extends HookConsumerWidget {
           ),
         );
       },
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Gap(Dimens.spacing.sp12),
-            CustomTextFormField(
-              controller: amountController,
-              labelText: l10n.amount,
-              readOnly: true,
-              onTap: () =>
-                  _showAgreementNumpadOverlay(context, amountController),
-              prefixIcon: Padding(
-                padding: EdgeInsets.only(right: Dimens.padding.p8),
-                child: Text(
-                  l10n.nairaSign,
-                  style: context.typo.bodyLarge.copyWith(
-                    color: context.color.grey600,
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Gap(Dimens.spacing.sp12),
+                CustomTextFormField(
+                  controller: amountController,
+                  labelText: l10n.amount,
+                  readOnly: true,
+                  onTap: () =>
+                      _showAgreementNumpadOverlay(context, amountController),
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.only(right: Dimens.padding.p8),
+                    child: Text(
+                      l10n.nairaSign,
+                      style: context.typo.bodyLarge.copyWith(
+                        color: context.color.grey600,
+                      ),
+                    ),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () =>
+                        _showAgreementNumpadOverlay(context, amountController),
+                    icon: PhosphorIcon(
+                      PhosphorIcons.numpad(),
+                      color: context.color.blue700,
+                    ),
                   ),
                 ),
-              ),
-              suffixIcon: IconButton(
-                onPressed: () =>
-                    _showAgreementNumpadOverlay(context, amountController),
-                icon: PhosphorIcon(
-                  PhosphorIcons.numpad(),
-                  color: context.color.blue700,
+                Gap(Dimens.spacing.sp40),
+
+                ProfileSectionHeader(title: l10n.recipientDetails),
+                CustomTextFormField(
+                  controller: bankController,
+                  labelText: l10n.selectBank,
+                  readOnly: true,
+                  onTap: () =>
+                      _showBankPickerBottomSheet(context, selectedBank),
+                  suffixIcon: IconButton(
+                    onPressed: () =>
+                        _showBankPickerBottomSheet(context, selectedBank),
+                    icon: PhosphorIcon(
+                      PhosphorIcons.caretDown(),
+                      color: context.color.blue700,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Gap(Dimens.spacing.sp40),
-
-            ProfileSectionHeader(title: l10n.recipientDetails),
-            CustomTextFormField(
-              controller: TextEditingController(text: selectedBank.value?.name),
-              labelText: l10n.selectBank,
-              readOnly: true,
-              onTap: () => _showBankPickerBottomSheet(context, selectedBank),
-              suffixIcon: IconButton(
-                onPressed: () =>
-                    _showBankPickerBottomSheet(context, selectedBank),
-                icon: PhosphorIcon(
-                  PhosphorIcons.caretDown(),
-                  color: context.color.blue700,
+                Gap(Dimens.spacing.sp20),
+                CustomTextFormField(
+                  controller: accountNumberController,
+                  labelText: l10n.accountNumber,
+                  inputFormatters: [LengthLimitingTextInputFormatter(10)],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return l10n.fieldRequired('account number');
+                    }
+                    if (value.length != 10) {
+                      return l10n.enterAValid10DigitsAccountNumber;
+                    }
+                    return null;
+                  },
                 ),
+                RecipientIdentityTile(type: type),
+                Gap(Dimens.spacing.sp40),
+
+                ProfileSectionHeader(title: l10n.howWillThePaymentBeReleased),
+                DisbursementTypeSelector(
+                  selectedType: selectedDisbursementType.value,
+                  onChanged: (value) {
+                    selectedDisbursementType.value = value;
+                    viewModel.onFormChanged(
+                      state.value!.formData.copyWith(disbursementType: value),
+                    );
+                  },
+                ),
+              ]),
+            ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+              child: Column(
+                mainAxisAlignment: .end,
+                children: [
+                  Gap(Dimens.spacing.sp30),
+                  PrimaryButton(
+                    onPressed: isFormComplete
+                        ? () => viewModel.moveToNextStep()
+                        : null,
+                    child: Text(l10n.next),
+                  ),
+                  Gap(Dimens.spacing.sp20),
+                ],
               ),
             ),
-            Gap(Dimens.spacing.sp28),
-            CustomTextFormField(
-              controller: accountNumberController,
-              labelText: l10n.accountNumber,
-              inputFormatters: [LengthLimitingTextInputFormatter(10)],
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return l10n.fieldRequired('account number');
-                }
-                if (value.length != 10) {
-                  return l10n.enterAValid10DigitsAccountNumber;
-                }
-                return null;
-              },
-            ),
-            RecipientIdentityTile(type: type),
-            Gap(Dimens.spacing.sp40),
-
-            ProfileSectionHeader(title: l10n.howWillThePaymentBeReleased),
-            DisbursementTypeSelector(
-              selectedType: selectedDisbursementType.value,
-              onChanged: (value) {
-                selectedDisbursementType.value = value;
-                viewModel.onFormChanged(
-                  state.value!.formData.copyWith(disbursementType: value),
-                );
-              },
-            ),
-            Gap(Dimens.spacing.sp30),
-
-            PrimaryButton(
-              onPressed: isFormComplete
-                  ? () => viewModel.moveToNextStep()
-                  : null,
-              child: Text(l10n.next),
-            ),
-            Gap(Dimens.spacing.sp20),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -203,7 +242,9 @@ class AgreementSetupStep extends HookConsumerWidget {
   void _showBankPickerBottomSheet(
     BuildContext context,
     ValueNotifier<Bank?> selectedBank,
-  ) => BankPickerBottomSheet.show(
-    context,
-  ).then((bank) => selectedBank.value = bank);
+  ) => BankPickerBottomSheet.show(context).then((bank) {
+    if (bank != null) {
+      selectedBank.value = bank;
+    }
+  });
 }
