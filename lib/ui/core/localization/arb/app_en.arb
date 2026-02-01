@@ -230,5 +230,11 @@
   "whatExactlyAreYouPayingFor": "What exactly are you paying for? (e.g. “iPhone 13 – 128GB, black”)",
   "fundsWillBeHeldSafelyAndOnlyReleasedWhenYouConfirmDelivery": "Funds will be held safely and only released when you confirm delivery.",
   "reviewDetails": "Review Details",
-  "selectCategory": "Select Category"
+  "selectCategory": "Select Category",
+  "amountToBeHeld": "Amount to be held",
+  "accountName": "Account Name",
+  "category": "Category",
+  "fees": "Fees",
+  "fundsReleaseDate": "Funds Release Date",
+  "confirmAndPay": "Confirm & Pay",
 }
