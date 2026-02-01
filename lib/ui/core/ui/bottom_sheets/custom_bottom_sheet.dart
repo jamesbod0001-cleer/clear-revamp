@@ -10,15 +10,18 @@ class CustomBottomSheet extends StatelessWidget {
     super.key,
     required this.child,
     this.isDismissible = true,
+    this.showCancelIcon = true,
   });
 
   final Widget child;
   final bool isDismissible;
+  final bool showCancelIcon;
 
   static Future<T?> show<T>({
     required BuildContext context,
     required Widget child,
     bool isDismissible = true,
+    bool showCancelIcon = true,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -33,7 +36,11 @@ class CustomBottomSheet extends StatelessWidget {
         maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
       builder: (BuildContext context) {
-        return CustomBottomSheet(isDismissible: isDismissible, child: child);
+        return CustomBottomSheet(
+          isDismissible: isDismissible,
+          showCancelIcon: showCancelIcon,
+          child: child,
+        );
       },
     );
   }
@@ -57,22 +64,23 @@ class CustomBottomSheet extends StatelessWidget {
         bottomInset,
       ),
       child: Column(
+        mainAxisSize: .min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            style: IconButton.styleFrom(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: VisualDensity.compact,
-              padding: EdgeInsets.zero,
-              minimumSize: const Size(0, 0),
+          if (showCancelIcon) ...[
+            IconButton(
+              style: IconButton.styleFrom(
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+                minimumSize: const Size(0, 0),
+              ),
+              onPressed: () => context.pop(),
+              icon: PhosphorIcon(PhosphorIcons.x()),
             ),
-            onPressed: () => context.pop(),
-            icon: PhosphorIcon(PhosphorIcons.x()),
-          ),
-          Gap(Dimens.spacing.sp24),
-          Expanded(
-            child: child,
-          ),
+            Gap(Dimens.spacing.sp24),
+          ],
+          Flexible(child: child),
         ],
       ),
     );
