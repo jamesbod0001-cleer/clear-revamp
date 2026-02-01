@@ -32,8 +32,12 @@ class AgreementSetupStep extends HookConsumerWidget {
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 
+    String formattedAmount = state.value?.formData.amount != null && state.value!.formData.amount.isNotEmpty
+        ? NumberFormat('#,###.##').format(double.parse(state.value!.formData.amount))
+        : '';
+
     final TextEditingController amountController = useTextEditingController(
-      text: state.value?.formData.amount,
+      text: formattedAmount,
     );
     final ValueNotifier<Bank?> selectedBank = useState<Bank?>(
       state.value?.formData.recipientBank,
@@ -67,7 +71,7 @@ class AgreementSetupStep extends HookConsumerWidget {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           viewModel.onFormChanged(
             state.value!.formData.copyWith(
-              amount: amountController.text,
+              amount: amountController.text.replaceAll(',', ''),
               recipientBank: selectedBank.value,
               recipientAccountNumber: accountNumberController.text,
             ),
@@ -104,7 +108,7 @@ class AgreementSetupStep extends HookConsumerWidget {
       onChanged: () {
         viewModel.onFormChanged(
           state.value!.formData.copyWith(
-            amount: amountController.text,
+            amount: amountController.text.replaceAll(',', ''),
             recipientBank: selectedBank.value,
             recipientAccountNumber: accountNumberController.text,
           ),
@@ -206,7 +210,6 @@ class AgreementSetupStep extends HookConsumerWidget {
                         : null,
                     child: Text(l10n.next),
                   ),
-                  Gap(Dimens.spacing.sp20),
                 ],
               ),
             ),
