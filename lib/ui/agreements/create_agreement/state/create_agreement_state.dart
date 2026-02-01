@@ -29,7 +29,6 @@ abstract class CreateAgreementFormData with _$CreateAgreementFormData {
     @Default('') String amount,
     Bank? recipientBank,
     @Default('') String recipientAccountNumber,
-    @Default('') String recipientAccountName,
     DisbursementType? disbursementType,
     AgreementCategory? category,
     DateTime? releaseDate,
