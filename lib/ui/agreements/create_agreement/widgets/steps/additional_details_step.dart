@@ -31,12 +31,12 @@ class AdditionalDetailsStep extends HookConsumerWidget {
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 
     final ValueNotifier<AgreementCategory?> selectedCategory =
-        useState<AgreementCategory?>(null);
+        useState<AgreementCategory?>(state.value?.formData.category);
     final categoryController = useTextEditingController(
       text: selectedCategory.value?.label,
     );
     final ValueNotifier<DateTime?> selectedReleaseDate = useState<DateTime?>(
-      null,
+      state.value?.formData.releaseDate,
     );
     String formattedReleaseDate = selectedReleaseDate.value != null
         ? DateFormat('dd-MM-yyyy').format(selectedReleaseDate.value!)
@@ -237,7 +237,9 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                   ),
                   Gap(Dimens.spacing.sp20),
                   PrimaryButton(
-                    onPressed: isFormComplete ? () {} : null,
+                    onPressed: isFormComplete
+                        ? () => viewModel.moveToNextStep()
+                        : null,
                     child: Text(l10n.reviewDetails),
                   ),
                 ],
