@@ -31,7 +31,8 @@ abstract class CreateAgreementFormData with _$CreateAgreementFormData {
     @Default('') String recipientAccountNumber,
     @Default('') String recipientAccountName,
     DisbursementType? disbursementType,
-    @Default('') String category,
+    AgreementCategory? category,
+    DateTime? releaseDate,
     @Default('') String description,
   }) = _CreateAgreementFormData;
 
