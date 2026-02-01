@@ -3,6 +3,7 @@ import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart'
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/additional_details_step.dart';
+import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_review_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_setup_step.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -41,7 +42,10 @@ class CreateAgreementScreen extends ConsumerWidget {
           key: ValueKey(currentStep),
           type: type,
         ),
-        CreateAgreementStep.review => Placeholder(key: ValueKey(currentStep)),
+        CreateAgreementStep.review => AgreementReviewStep(
+          key: ValueKey(currentStep),
+          type: type,
+        ),
       };
     }
 
@@ -82,7 +86,11 @@ class CreateAgreementScreen extends ConsumerWidget {
               ),
               Gap(Dimens.spacing.sp24),
               Text(
-                type.isSend ? l10n.sendFunds : l10n.requestFunds,
+                type.isSend
+                    ? (currentStep == .review
+                          ? l10n.reviewDetails
+                          : l10n.sendFunds)
+                    : l10n.requestFunds,
                 style: context.typo.headlineSmall,
               ),
             ],
