@@ -13,6 +13,7 @@ class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     super.key,
     this.labelText,
+    this.label,
     this.hintText,
     this.controller,
     this.validator,
@@ -30,6 +31,7 @@ class CustomTextFormField extends StatefulWidget {
   });
 
   final String? labelText;
+  final Widget? label;
   final String? hintText;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
@@ -83,8 +85,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.labelText != null) ...[
-              Text(
+            if (widget.labelText != null || widget.label != null) ...[
+              widget.label ?? Text(
                 widget.labelText!,
                 style: context.typo.bodyMedium.copyWith(
                   color: context.color.grey600,
@@ -96,6 +98,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               controller: widget.controller,
               onChanged: (value) => state.didChange(value),
               onTap: widget.onTap,
+              maxLines: widget.maxLines,
+              minLines: widget.minLines,
+              maxLength: widget.maxLength,
+              textCapitalization: widget.textCapitalization,
               readOnly: widget.readOnly,
               decoration: InputDecoration(
                 hintText: widget.hintText,
