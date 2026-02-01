@@ -1,6 +1,8 @@
+import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
+import 'package:cleer/ui/agreements/create_agreement/widgets/steps/additional_details_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_setup_step.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -21,6 +23,7 @@ class CreateAgreementScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
+    ref.watch(getBanksProvider(.NG));
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 
@@ -34,8 +37,9 @@ class CreateAgreementScreen extends ConsumerWidget {
           key: ValueKey(currentStep),
           type: type,
         ),
-        CreateAgreementStep.additionalDetails => Placeholder(
+        CreateAgreementStep.additionalDetails => AdditionalDetailsStep(
           key: ValueKey(currentStep),
+          type: type,
         ),
         CreateAgreementStep.review => Placeholder(key: ValueKey(currentStep)),
       };
@@ -60,45 +64,36 @@ class CreateAgreementScreen extends ConsumerWidget {
         viewModel.moveStepBack();
       },
       child: Scaffold(
-        body: SafeArea(
-          child: Stack(
+        appBar: AppBar(
+          titleSpacing: Dimens.padding.p18,
+          titleTextStyle: context.typo.headlineSmall,
+          automaticallyImplyLeading: false,
+          title: Column(
+            crossAxisAlignment: .start,
             children: [
-              CustomScrollView(
-                slivers: [
-                  SliverFillRemaining(
-                    child: Padding(
-                      padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          Gap(Dimens.spacing.sp16),
-                          Row(
-                            mainAxisAlignment: .spaceBetween,
-                            children: [
-                              AppBackButton(onPressed: () => handleBack()),
-                              StepProgressIndicator(
-                                currentStep: state.value!.currentStep.index + 1,
-                              ),
-                            ],
-                          ),
-                          Gap(Dimens.spacing.sp24),
-                          Text(
-                            type.isSend ? l10n.sendFunds : l10n.requestFunds,
-                            style: context.typo.headlineSmall,
-                          ),
-                          Gap(Dimens.spacing.sp12),
-                          Expanded(
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 150),
-                              child: getCurrentStepWidget(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+              Row(
+                mainAxisAlignment: .spaceBetween,
+                children: [
+                  AppBackButton(onPressed: () => handleBack()),
+                  StepProgressIndicator(
+                    currentStep: state.value!.currentStep.index + 1,
                   ),
                 ],
               ),
+              Gap(Dimens.spacing.sp24),
+              Text(
+                type.isSend ? l10n.sendFunds : l10n.requestFunds,
+                style: context.typo.headlineSmall,
+              ),
+            ],
+          ),
+          toolbarHeight: 114,
+        ),
+        body: SafeArea(
+          bottom: false,
+          child: Stack(
+            children: [
+              getCurrentStepWidget(),
               if (state.isLoading)
                 Positioned.fill(
                   child: Material(
