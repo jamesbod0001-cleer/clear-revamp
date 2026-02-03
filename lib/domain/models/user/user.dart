@@ -10,6 +10,7 @@ abstract class User with _$User {
     required String firstName,
     required String lastName,
     String? email,
+    required String flutterwaveCustomerId,
     DateTime? createdAt,
   }) = _User;
 }
