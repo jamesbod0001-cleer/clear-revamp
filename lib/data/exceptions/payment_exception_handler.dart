@@ -36,9 +36,27 @@ class PaymentExceptionHandler {
   /// Extracts the specific error message from the Flutterwave JSON response body
   static String _extractDioMessage(DioException e) {
     final data = e.response?.data;
-    if (data is Map<String, dynamic> && data.containsKey('message')) {
-      return data['message'] as String;
+
+    if (data is Map<String, dynamic>) {
+      // 1. Try to get the top-level 'message' (Standard FW format)
+      if (data['message'] != null && data['message'].toString().isNotEmpty) {
+        return data['message'].toString();
+      }
+
+      // 2. Try to get nested error message if it exists (Common in v4)
+      if (data['error'] is Map && data['error']['message'] != null) {
+        return data['error']['message'].toString();
+      }
+
+      // 3. Check for validation_errors array (Specific field errors)
+      if (data['validation_errors'] is List && (data['validation_errors'] as List).isNotEmpty) {
+        final firstError = data['validation_errors'][0];
+        if (firstError is Map && firstError['message'] != null) {
+          return firstError['message'].toString();
+        }
+      }
     }
+
     return e.message ?? "An unexpected payment error occurred.";
   }
 
