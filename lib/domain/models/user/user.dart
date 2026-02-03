@@ -11,6 +11,7 @@ abstract class User with _$User {
     required String lastName,
     String? email,
     required String flutterwaveCustomerId,
+    @Default([]) List<String> flutterwavePaymentMethodIds,
     DateTime? createdAt,
   }) = _User;
 }

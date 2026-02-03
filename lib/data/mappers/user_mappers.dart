@@ -11,6 +11,7 @@ extension UserToDomainMapper on amplify_model.User {
       lastName: lastName,
       email: email,
       flutterwaveCustomerId: flutterwaveCustomerId,
+      flutterwavePaymentMethodIds: flutterwavePaymentMethodIds ?? [],
       createdAt: createdAt?.getDateTimeInUtc(),
     );
   }
@@ -26,6 +27,7 @@ extension UserToAmplifyMapper on domain.User {
       lastName: lastName,
       email: email,
       flutterwaveCustomerId: flutterwaveCustomerId,
+      flutterwavePaymentMethodIds: flutterwavePaymentMethodIds,
     );
   }
 }
