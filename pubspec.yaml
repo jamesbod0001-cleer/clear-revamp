@@ -60,6 +60,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   retrofit: ^4.9.2
   fpdart: ^1.2.0
+  cryptography: ^2.9.0
 
 dev_dependencies:
   flutter_test:
