@@ -33,7 +33,7 @@ class CustomBottomSheet extends StatelessWidget {
       enableDrag: isDismissible,
       isDismissible: isDismissible,
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
+        maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
       builder: (BuildContext context) {
         return CustomBottomSheet(
