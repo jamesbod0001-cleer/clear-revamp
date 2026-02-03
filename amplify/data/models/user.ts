@@ -10,6 +10,7 @@ export const User = a.model({
 
     // Flutterwave
     flutterwaveCustomerId: a.string().required(),
+    flutterwavePaymentMethodIds: a.string().array(),
 
     initiatedAgreements: a.hasMany('Agreement', 'initiatorId'), // Agreements this user physically created
     sentAgreements: a.hasMany('Agreement', 'senderId'), // Agreements where this user is the one paying
