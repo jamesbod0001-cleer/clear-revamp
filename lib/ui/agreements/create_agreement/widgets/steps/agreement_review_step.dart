@@ -209,6 +209,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                     onPressed: () {},
                     child: Text(l10n.confirmAndPay),
                   ),
+                  Gap(Dimens.spacing.sp20),
                 ],
               ),
             ),

@@ -210,6 +210,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                         : null,
                     child: Text(l10n.next),
                   ),
+                  Gap(Dimens.spacing.sp20),
                 ],
               ),
             ),

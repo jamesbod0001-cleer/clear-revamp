@@ -242,6 +242,7 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                         : null,
                     child: Text(l10n.reviewDetails),
                   ),
+                  Gap(Dimens.spacing.sp20),
                 ],
               ),
             ),
