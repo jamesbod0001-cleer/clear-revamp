@@ -35,6 +35,15 @@ class AmplifyUserServiceClient with ApiErrorChecker {
     return validateRequiredResponse(response);
   }
 
+  Future<User> updateUser(User user) async {
+    final request = ModelMutations.update(
+      user,
+      authorizationMode: APIAuthorizationType.userPools,
+    );
+    final response = await _amplifyAPI.mutate(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
   Stream<GraphQLResponse<User>> observeUserUpdates(String id) {
     final subscriptionRequest = ModelSubscriptions.onUpdate(
       User.classType,
