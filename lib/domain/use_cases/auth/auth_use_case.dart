@@ -1,6 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
 import 'package:cleer/data/repositories/api/user/user_repository.dart';
 import 'package:cleer/data/repositories/auth/auth_repository.dart';
+import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
@@ -13,7 +14,9 @@ import 'package:cleer/domain/use_cases/auth/params/confirm_sign_up_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_in_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_up_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/update_password_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_customer_params.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
+import 'package:cleer/utils/constants.dart';
 import 'package:cleer/utils/password_generator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:result_dart/result_dart.dart';
@@ -25,6 +28,7 @@ part 'auth_use_case.g.dart';
 class AuthUseCase extends _$AuthUseCase {
   late final AuthRepository _authRepository;
   late final UserRepository _userRepository;
+  late final FlutterwaveRepository _flutterwaveRepository;
   final _secureStorage = const FlutterSecureStorage();
   bool _isProcessingRegistration = false;
 
@@ -34,6 +38,7 @@ class AuthUseCase extends _$AuthUseCase {
   FutureOr<AuthState> build() {
     _authRepository = ref.watch(authRepositoryProvider);
     _userRepository = ref.watch(userRepositoryProvider);
+    _flutterwaveRepository = ref.watch(flutterwaveRepositoryProvider);
     _initialiseAuthStatus();
     _listenToAuthStateChanges();
     return AuthState.unknown();
@@ -41,6 +46,7 @@ class AuthUseCase extends _$AuthUseCase {
 
   Future<AuthState> _syncUserProfile({
     bool isCompilingRegistration = false,
+    String flutterwaveCustomerId = kEmpty,
   }) async {
     final identityResult = await _authRepository.getAuthIdentity();
     return await identityResult.fold(
@@ -53,6 +59,7 @@ class AuthUseCase extends _$AuthUseCase {
             lastName: identity.lastName,
             phoneNumber: identity.phoneNumber,
             email: identity.email,
+            flutterwaveCustomerId: flutterwaveCustomerId,
           ),
         );
         return syncResult.fold(
@@ -236,17 +243,16 @@ class AuthUseCase extends _$AuthUseCase {
     final storageKey = 'temp_pass_$phoneNumber';
 
     try {
-      _isProcessingRegistration = true; // Lock engaged
+      _isProcessingRegistration = true;
 
       final tempPass = await _secureStorage.read(key: storageKey);
       if (tempPass == null) return Failure(AuthFailure.unknown());
 
-      final result = await _authRepository
-          .signInUser(
-            SignInParams(username: phoneNumber, password: tempPass),
-          )
+      _log.info('Attempting to confirm sign up for user: $phoneNumber');
+      final authResult = await _authRepository
+          .signInUser(SignInParams(username: phoneNumber, password: tempPass))
           .flatMap(
-            (signInResult) => _authRepository.updatePassword(
+            (_) => _authRepository.updatePassword(
               UpdatePasswordParams(
                 oldPassword: tempPass,
                 newPassword: password,
@@ -254,14 +260,67 @@ class AuthUseCase extends _$AuthUseCase {
             ),
           );
 
-      return await result.fold((success) async {
-        await _secureStorage.delete(key: storageKey);
-        final newState = await _syncUserProfile(isCompilingRegistration: true);
-        state = AsyncValue.data(newState);
-        return Success.unit();
-      }, (failure) => Failure(failure));
+      _log.info('Auth result: $authResult');
+      return await authResult.fold(
+        (success) async {
+          await _secureStorage.delete(key: storageKey);
+
+          final identityResult = await _authRepository.getAuthIdentity();
+
+          return await identityResult.fold(
+            (identity) async {
+              _log.info(
+                'Creating mandatory Flutterwave customer for: ${identity.id}',
+              );
+              final customerResult = await _flutterwaveRepository
+                  .createCustomer(
+                    params: CreateCustomerParams(
+                      firstName: identity.firstName,
+                      lastName: identity.lastName,
+                      phoneNumber: phoneNumber,
+                    ),
+                    userId: identity.id,
+                  );
+
+              return await customerResult.fold(
+                (customer) async {
+                  _log.info(
+                    'Successfully created mandatory Flutterwave customer for: ${identity.id}',
+                  );
+                  final newState = await _syncUserProfile(
+                    isCompilingRegistration: true,
+                    flutterwaveCustomerId: customer.id, // Passing the ID
+                  );
+                  _log.info('New state: $newState');
+                  state = AsyncValue.data(newState);
+                  return Success.unit();
+                },
+                // Map PaymentFailure to AuthFailure if necessary
+                (paymentFailure) {
+                  _log.error(
+                    'CRITICAL: Flutterwave customer creation failed. Blocking registration.',
+                    paymentFailure,
+                  );
+                  return Failure(AuthFailure.unknown());
+                },
+              );
+            },
+            (failure) {
+              _log.error('Error getting auth identity', failure);
+              return Failure(AuthFailure.unknown());
+            },
+          );
+        },
+        (failure) {
+          _log.error(
+            'Error confirming sign up for user: $phoneNumber',
+            failure,
+          );
+          return Failure(failure);
+        },
+      );
     } finally {
-      _isProcessingRegistration = false; // Always release the lock
+      _isProcessingRegistration = false;
     }
   }
 
@@ -279,11 +338,11 @@ class AuthUseCase extends _$AuthUseCase {
     _log.info('Attempting to sign out user');
     final result = await _authRepository.signOut();
     result.fold(
-          (success) {
+      (success) {
         _log.info('Successfully signed out user');
         state = AsyncValue.data(AuthState.signedOut());
       },
-          (failure) {
+      (failure) {
         _log.error('Error signing out user', failure);
       },
     );
