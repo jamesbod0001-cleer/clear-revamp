@@ -2,7 +2,9 @@ import 'package:cleer/data/repositories/flutterwave/flutterwave_repository_impl.
 import 'package:cleer/data/services/flutterwave/flutterwave_service_client.dart';
 import 'package:cleer/domain/failures/payment_failures.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
+import 'package:cleer/domain/models/customer/customer.dart';
 import 'package:cleer/domain/models/enums/country_code.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_customer_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -22,4 +24,6 @@ abstract class FlutterwaveRepository {
   Future<ResultDart<String, PaymentFailure>> resolveAccount(
     ResolveAccountParams params,
   );
+
+  Future<ResultDart<Customer, PaymentFailure>> createCustomer({required CreateCustomerParams params, required String userId});
 }
