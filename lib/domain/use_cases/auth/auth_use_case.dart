@@ -2,6 +2,7 @@ import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
 import 'package:cleer/data/repositories/api/user/user_repository.dart';
 import 'package:cleer/data/repositories/auth/auth_repository.dart';
 import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
+import 'package:cleer/data/services/local/secure_storage_service.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
@@ -18,7 +19,6 @@ import 'package:cleer/domain/use_cases/flutterwave/params/create_customer_params
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/utils/constants.dart';
 import 'package:cleer/utils/password_generator.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -29,7 +29,7 @@ class AuthUseCase extends _$AuthUseCase {
   late final AuthRepository _authRepository;
   late final UserRepository _userRepository;
   late final FlutterwaveRepository _flutterwaveRepository;
-  final _secureStorage = const FlutterSecureStorage();
+  late final SecureStorageService _secureStorageService;
   bool _isProcessingRegistration = false;
 
   final _log = AmplifyLogger("AuthUseCase");
@@ -177,10 +177,7 @@ class AuthUseCase extends _$AuthUseCase {
   ) async {
     final tempPassword = PasswordGenerator.generateSecureTempPassword();
     _log.info('Attempting to create account for user: ${params.phoneNumber}');
-    await _secureStorage.write(
-      key: 'temp_pass_${params.phoneNumber}',
-      value: tempPassword,
-    );
+    await _secureStorageService.saveTempPassword(params.phoneNumber, tempPassword);
     final paramsWithPass = params.copyWith(password: tempPassword);
     final result = await _authRepository.signUpUser(paramsWithPass);
     result.fold(
@@ -240,12 +237,10 @@ class AuthUseCase extends _$AuthUseCase {
     required String phoneNumber,
     required String password,
   }) async {
-    final storageKey = 'temp_pass_$phoneNumber';
-
     try {
       _isProcessingRegistration = true;
 
-      final tempPass = await _secureStorage.read(key: storageKey);
+      final tempPass = await _secureStorageService.getTempPassword(phoneNumber);
       if (tempPass == null) return Failure(AuthFailure.unknown());
 
       _log.info('Attempting to confirm sign up for user: $phoneNumber');
@@ -263,7 +258,7 @@ class AuthUseCase extends _$AuthUseCase {
       _log.info('Auth result: $authResult');
       return await authResult.fold(
         (success) async {
-          await _secureStorage.delete(key: storageKey);
+          await _secureStorageService.deleteTempPassword(phoneNumber);
 
           final identityResult = await _authRepository.getAuthIdentity();
 
