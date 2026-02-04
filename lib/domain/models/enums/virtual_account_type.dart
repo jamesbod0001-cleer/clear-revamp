@@ -1,0 +1,4 @@
+enum VirtualAccountType {
+  static,
+  dynamic
+}
