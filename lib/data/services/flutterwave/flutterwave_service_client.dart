@@ -1,9 +1,11 @@
+import 'package:cleer/data/services/flutterwave/requests/create_charge/create_charge_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_customer/create_customer_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_payment_method/create_payment_method_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_virtual_account/create_virtual_account_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/resolve_account/resolve_account_request.dart';
 import 'package:cleer/data/services/flutterwave/responses/bank/bank_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/base/flutterwave_response.dart';
+import 'package:cleer/data/services/flutterwave/responses/charge/charge_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/customer/customer_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/payment_method/payment_method_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/resolve_account/resolve_account_response.dart';
@@ -50,6 +52,11 @@ abstract class FlutterwaveServiceClient {
   @POST("/virtual-accounts")
   Future<FlutterwaveResponse<VirtualAccountResponse>> createVirtualAccount(
     @Body() CreateVirtualAccountRequest body,
+  );
+
+  @POST("/charges")
+  Future<FlutterwaveResponse<ChargeResponse>> createCharge(
+    @Body() CreateChargeRequest body,
   );
 }
 
