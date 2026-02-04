@@ -6,13 +6,23 @@ import 'package:cleer/data/services/flutterwave/flutterwave_service_client.dart'
 import 'package:cleer/data/services/flutterwave/models/name/name_object.dart';
 import 'package:cleer/data/services/flutterwave/models/phone/phone_object.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_customer/create_customer_request.dart';
+import 'package:cleer/data/services/flutterwave/requests/create_payment_method/create_payment_method_request.dart';
+import 'package:cleer/data/services/flutterwave/requests/create_virtual_account/create_virtual_account_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/resolve_account/resolve_account_request.dart';
 import 'package:cleer/domain/failures/payment_failures.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
 import 'package:cleer/domain/models/customer/customer.dart';
 import 'package:cleer/domain/models/enums/country_code.dart';
+import 'package:cleer/domain/models/enums/payment_method_type.dart';
+import 'package:cleer/domain/models/enums/virtual_account_type.dart';
+import 'package:cleer/domain/models/payment_method/payment_method.dart';
+import 'package:cleer/domain/models/virtual_account/virtual_account.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/create_customer_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_payment_method_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_virtual_account_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
+import 'package:cleer/env/env.dart';
+import 'package:cleer/utils/security_utils.dart';
 import 'package:result_dart/result_dart.dart';
 
 class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
@@ -24,6 +34,7 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
 
   final _log = AmplifyLogger('FlutterwaveRepositoryImpl');
 
+  // Banks
   @override
   Future<ResultDart<List<Bank>, PaymentFailure>> getBanks(
     CountryCode countryCode,
@@ -76,6 +87,7 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
     }
   }
 
+  // Customers
   @override
   Future<ResultDart<Customer, PaymentFailure>> createCustomer({
     required CreateCustomerParams params,
@@ -103,6 +115,158 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       return Success(response.data.toDomain(userId));
     } catch (e) {
       _log.error('Error creating customer with params: $params', e);
+      return Failure(PaymentExceptionHandler.handleException(e));
+    }
+  }
+
+  // Payment Methods
+  @override
+  Future<ResultDart<PaymentMethod, PaymentFailure>> getPaymentMethod(
+    String id,
+  ) async {
+    try {
+      _log.info('Retrieving payment method with id: $id');
+      final response = await _flutterwaveServiceClient.retrievePaymentMethod(
+        id,
+      );
+      _log.info('Successfully retrieved payment method with id: $id');
+      return Success(response.data.toDomain());
+    } catch (e) {
+      _log.error('Error retrieving payment method with id: $id', e);
+      return Failure(PaymentExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<PaymentMethod, PaymentFailure>> createPaymentMethod(
+    CreatePaymentMethodParams params,
+  ) async {
+    try {
+      _log.info('Creating payment method with type: ${params.runtimeType}');
+      final CreatePaymentMethodRequest request = await params.when(
+        card:
+            (
+              String cardNumber,
+              String expiryMonth,
+              String expiryYear,
+              String cvv,
+              String? cardHolderName,
+            ) async {
+              final String nonce = PaymentSecurityUtils.generateNonce();
+              final String encryptionKey = Env.flutterwaveEncryptionKey;
+              final request = CreatePaymentMethodRequest(
+                type: PaymentMethodType.card.snakeCase,
+                card: CardRequestObject(
+                  encryptedCardNumber: await PaymentSecurityUtils.encryptAESGCM(
+                    cardNumber,
+                    encryptionKey,
+                    nonce,
+                  ),
+                  encryptedExpiryMonth:
+                      await PaymentSecurityUtils.encryptAESGCM(
+                        expiryMonth,
+                        encryptionKey,
+                        nonce,
+                      ),
+                  encryptedExpiryYear: await PaymentSecurityUtils.encryptAESGCM(
+                    expiryYear,
+                    encryptionKey,
+                    nonce,
+                  ),
+                  encryptedCvv: await PaymentSecurityUtils.encryptAESGCM(
+                    cvv,
+                    encryptionKey,
+                    nonce,
+                  ),
+                  nonce: nonce,
+                ),
+              );
+
+              return request;
+            },
+        opay: () async {
+          final request = CreatePaymentMethodRequest(
+            type: PaymentMethodType.opay.snakeCase,
+          );
+          return request;
+        },
+      );
+      final response = await _flutterwaveServiceClient.createPaymentMethod(
+        request,
+      );
+      _log.info(
+        'Successfully created payment method with type: ${params.runtimeType}, id: ${response.data.id}',
+      );
+      return Success(response.data.toDomain());
+    } catch (e) {
+      _log.error(
+        'Error creating payment method with type: ${params.runtimeType}',
+        e,
+      );
+      return Failure(PaymentExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<VirtualAccount, PaymentFailure>> createVirtualAccount(
+    CreateVirtualAccountParams params,
+  ) async {
+    try {
+      _log.info('Creating virtual account with params: $params');
+      final CreateVirtualAccountRequest request = await params.when(
+        dynamic:
+            (
+              String reference,
+              String customerId,
+              double amount,
+              int? expiry,
+              String? narration,
+              String? merchantVatAmount,
+              Map<String, dynamic>? meta,
+            ) async {
+              final request = CreateVirtualAccountRequest(
+                reference: reference,
+                customerId: customerId,
+                amount: amount,
+                accountType: VirtualAccountType.dynamic.name,
+                expiry: expiry,
+                narration: narration,
+                merchantVatAmount: merchantVatAmount,
+                meta: meta,
+              );
+              return request;
+            },
+        static:
+            (
+              String reference,
+              String customerId,
+              String? bvn,
+              String? nin,
+              String? narration,
+              String? merchantVatAmount,
+              Map<String, dynamic>? meta,
+            ) {
+              final request = CreateVirtualAccountRequest(
+                reference: reference,
+                customerId: customerId,
+                amount: 0,
+                accountType: VirtualAccountType.static.name,
+                narration: narration,
+                merchantVatAmount: merchantVatAmount,
+                meta: meta,
+                bvn: bvn,
+                nin: nin,
+              );
+              return request;
+            },
+      );
+      final response = await _flutterwaveServiceClient.createVirtualAccount(
+        request,
+      );
+      _log.info('Successfully created virtual account with params: $params');
+      return Success(response.data.toDomain());
+    } catch (e) {
+      _log.error('Error creating virtual account with params: $params', e);
       return Failure(PaymentExceptionHandler.handleException(e));
     }
   }

@@ -4,7 +4,11 @@ import 'package:cleer/domain/failures/payment_failures.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
 import 'package:cleer/domain/models/customer/customer.dart';
 import 'package:cleer/domain/models/enums/country_code.dart';
+import 'package:cleer/domain/models/payment_method/payment_method.dart';
+import 'package:cleer/domain/models/virtual_account/virtual_account.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/create_customer_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_payment_method_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_virtual_account_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -25,5 +29,17 @@ abstract class FlutterwaveRepository {
     ResolveAccountParams params,
   );
 
-  Future<ResultDart<Customer, PaymentFailure>> createCustomer({required CreateCustomerParams params, required String userId});
+  Future<ResultDart<Customer, PaymentFailure>> createCustomer({
+    required CreateCustomerParams params,
+    required String userId,
+  });
+
+  Future<ResultDart<PaymentMethod, PaymentFailure>> getPaymentMethod(String id);
+  Future<ResultDart<PaymentMethod, PaymentFailure>> createPaymentMethod(
+    CreatePaymentMethodParams params,
+  );
+
+  Future<ResultDart<VirtualAccount, PaymentFailure>> createVirtualAccount(
+    CreateVirtualAccountParams params,
+  );
 }
