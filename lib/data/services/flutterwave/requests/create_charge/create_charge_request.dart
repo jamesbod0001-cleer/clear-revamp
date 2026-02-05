@@ -1,4 +1,3 @@
-import 'package:cleer/data/services/flutterwave/models/authorization/authorization_objects.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_charge_request.g.dart';
@@ -15,7 +14,6 @@ class CreateChargeRequest {
   final String paymentMethodId;
   @JsonKey(name: 'redirect_url')
   final String? redirectUrl;
-  final AuthorizationObject? authorization;
   final bool recurring;
   final String? orderId;
   @JsonKey(name: 'merchant_vat_amount')
@@ -29,7 +27,6 @@ class CreateChargeRequest {
     this.meta,
     required this.paymentMethodId,
     this.redirectUrl,
-    this.authorization,
     this.recurring = false,
     this.orderId,
     this.merchantVatAmount,
