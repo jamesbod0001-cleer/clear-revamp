@@ -16,7 +16,8 @@ abstract class CreateVirtualAccountParams with _$CreateVirtualAccountParams {
   }) = _DynamicParams;
 
   /// Use for permanent user accounts
-  @Assert('bvn != null || nin != null', 'Either bvn or nin must be provided')
+  @Assert('(bvn != null && bvn != "") || (nin != null && nin != "")',
+    'Either bvn or nin must be provided',)
   const factory CreateVirtualAccountParams.static({
     required String reference,
     required String customerId,
