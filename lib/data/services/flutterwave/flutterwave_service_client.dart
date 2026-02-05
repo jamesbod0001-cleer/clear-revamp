@@ -3,6 +3,7 @@ import 'package:cleer/data/services/flutterwave/requests/create_customer/create_
 import 'package:cleer/data/services/flutterwave/requests/create_payment_method/create_payment_method_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_virtual_account/create_virtual_account_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/resolve_account/resolve_account_request.dart';
+import 'package:cleer/data/services/flutterwave/requests/update_charge/update_charge_request.dart';
 import 'package:cleer/data/services/flutterwave/responses/bank/bank_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/base/flutterwave_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/charge/charge_response.dart';
@@ -44,9 +45,9 @@ abstract class FlutterwaveServiceClient {
     @Body() CreatePaymentMethodRequest body,
   );
 
-  @GET("/payment-methods")
+  @GET("/payment-methods/{id}")
   Future<FlutterwaveResponse<PaymentMethodResponse>> retrievePaymentMethod(
-    @Field('id') String id,
+    @Path('id') String id,
   );
 
   @POST("/virtual-accounts")
@@ -57,6 +58,12 @@ abstract class FlutterwaveServiceClient {
   @POST("/charges")
   Future<FlutterwaveResponse<ChargeResponse>> createCharge(
     @Body() CreateChargeRequest body,
+  );
+
+  @POST("/charges/{id}")
+  Future<FlutterwaveResponse<ChargeResponse>> updateCharge(
+    @Path('id') String id,
+    @Body() UpdateChargeRequest body,
   );
 }
 
