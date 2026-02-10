@@ -1,3 +1,4 @@
+import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/domain/models/user/user.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -11,5 +12,6 @@ abstract class RecipientResolution with _$RecipientResolution {
     required String bankCode,
     User? recipient,
     required bool isRegisteredUser,
+    PayoutDestination? payoutDestination,
   }) = _RecipientResolution;
 }
