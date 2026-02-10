@@ -7,12 +7,12 @@ export const PayoutDestination = a.model({
     userId: a.id(),
     bankName: a.string().required(),
     accountName: a.string().required(),
-    isDefault: a.boolean().default(false).authorization(allow => [allow.owner(),]),
+    isDefault: a.boolean().default(false),
 
     user: a.belongsTo('User', 'userId'),
     agreements: a.hasMany('Agreement', ['recipientAccountNumber', 'recipientBankCode']),
 }).identifier(['accountNumber', 'bankCode'])
     .authorization(allow => [
-        allow.owner().to(['create', 'read', 'delete']),
-        allow.authenticated().to(['read']),
+        allow.authenticated().to(['create', 'read']),
+        allow.ownerDefinedIn('userId'),
     ]);
