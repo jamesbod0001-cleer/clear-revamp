@@ -245,5 +245,8 @@
   "payWithBankTransfer": "Pay with Bank Transfer",
   "payWithOpay": "Pay with Opay",
   "cancelPayment": "Cancel Payment",
-  "fundsAreHeldSecurelyUntilYouConfirmRelease": "Funds are held securely until you approve release"
+  "fundsAreHeldSecurelyUntilYouConfirmRelease": "Funds are held securely until you approve release",
+  "continueWithOpay": "Continue with Opay",
+  "youllBeRedirectedToAuthorizeThisPayment": "You’ll be redirected to authorize this payment.",
+  "changePaymentMethod": "Change Payment Method"
 }
