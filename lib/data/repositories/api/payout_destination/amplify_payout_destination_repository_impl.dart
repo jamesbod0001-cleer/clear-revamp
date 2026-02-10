@@ -38,4 +38,19 @@ class AmplifyPayoutDestinationRepositoryImpl
       targetId: params.accountNumber,
     );
   }
+
+  @override
+  Future<ResultDart<PayoutDestination, DataFailure>> createPayoutDestination(
+    PayoutDestination payoutDestination,
+  ) async {
+    return await performDataOperation<PayoutDestination>(
+      operation: () async {
+        final response = await _amplifyPayoutDestinationServiceClient
+            .createPayoutDestination(payoutDestination.toAmplify());
+        return response.toDomain();
+      },
+      operationName: 'CreatePayoutDestination',
+      targetId: payoutDestination.accountNumber,
+    );
+  }
 }

@@ -34,4 +34,15 @@ class AmplifyPayoutDestinationServiceClient with ApiErrorChecker {
     final response = await _amplifyAPI.query(request: request).response;
     return validateResponse(response);
   }
+
+  Future<PayoutDestination> createPayoutDestination(
+    PayoutDestination payoutDestination,
+  ) async {
+    final request = ModelMutations.create(
+      payoutDestination,
+      authorizationMode: APIAuthorizationType.userPools,
+    );
+    final response = await _amplifyAPI.mutate(request: request).response;
+    return validateRequiredResponse(response);
+  }
 }

@@ -20,4 +20,8 @@ PayoutDestinationRepository payoutDestinationRepository(Ref ref) =>
 abstract class PayoutDestinationRepository {
   Future<ResultDart<Option<PayoutDestination>, DataFailure>>
   getPayoutDestination(GetPayoutDestinationParams params);
+
+  Future<ResultDart<PayoutDestination, DataFailure>> createPayoutDestination(
+    PayoutDestination payoutDestination,
+  );
 }
