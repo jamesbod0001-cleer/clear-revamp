@@ -247,6 +247,6 @@
   "cancelPayment": "Cancel Payment",
   "fundsAreHeldSecurelyUntilYouConfirmRelease": "Funds are held securely until you approve release",
   "continueWithOpay": "Continue with Opay",
-  "youllBeRedirectedToAuthorizeThisPayment": "You’ll be redirected to authorize this payment.",
+  "youllBeRedirectedToAuthorizeThisPayment": "You’ll be redirected to authorize this\npayment.",
   "changePaymentMethod": "Change Payment Method"
 }
