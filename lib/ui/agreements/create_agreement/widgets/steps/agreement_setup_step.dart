@@ -32,13 +32,18 @@ class AgreementSetupStep extends HookConsumerWidget {
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 
-    String formattedAmount = state.value?.formData.amount != null && state.value!.formData.amount.isNotEmpty
-        ? NumberFormat('#,###.##').format(double.parse(state.value!.formData.amount))
+    String formattedAmount =
+        state.value?.formData.amount != null &&
+            state.value!.formData.amount.isNotEmpty
+        ? NumberFormat(
+            '#,###.##',
+          ).format(double.parse(state.value!.formData.amount))
         : '';
 
     final TextEditingController amountController = useTextEditingController(
       text: formattedAmount,
     );
+
     final ValueNotifier<Bank?> selectedBank = useState<Bank?>(
       state.value?.formData.recipientBank,
     );
@@ -95,7 +100,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     }, [selectedBank.value, accountNumberController.text]);
 
     final formData = state.value?.formData;
-    final resolution = state.value?.recipientResolution;
+    final resolution = formData?.recipientResolution;
 
     final bool isFormComplete =
         (formData?.amount.isNotEmpty ?? false) &&
