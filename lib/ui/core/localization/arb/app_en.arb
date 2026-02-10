@@ -236,5 +236,14 @@
   "category": "Category",
   "fees": "Fees",
   "fundsReleaseDate": "Funds Release Date",
-  "confirmAndPay": "Confirm & Pay"
+  "confirmAndPay": "Confirm & Pay",
+  "ngn": "NGN",
+  "secureYourPayment": "Secure your payment",
+  "securedBy": "SECURED BY",
+  "payWithCard": "Pay with Card",
+  "payWithUSSD": "Pay with USSD",
+  "payWithBankTransfer": "Pay with Bank Transfer",
+  "payWithOpay": "Pay with Opay",
+  "cancelPayment": "Cancel Payment",
+  "fundsAreHeldSecurelyUntilYouConfirmRelease": "Funds are held securely until you approve release"
 }
