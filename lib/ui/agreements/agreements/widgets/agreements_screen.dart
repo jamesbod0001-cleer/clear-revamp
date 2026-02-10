@@ -1,15 +1,18 @@
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AgreementsScreen extends StatelessWidget {
+class AgreementsScreen extends ConsumerWidget {
   const AgreementsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    ref.watch(userProvider);
 
     return DefaultTabController(
       length: 2,
