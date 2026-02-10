@@ -67,6 +67,9 @@ class _AppSpacing {
   final double sp70 = 70.0;
 
   final double sp80 = 80.0;
+  final double sp84 = 84.0;
+
+  final double sp103 = 103.0;
 }
 
 class _AppPadding {
