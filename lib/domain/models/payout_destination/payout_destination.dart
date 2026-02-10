@@ -8,7 +8,7 @@ abstract class PayoutDestination with _$PayoutDestination {
   const factory PayoutDestination({
     required String accountNumber,
     required String bankCode,
-    required String currency,
+    @Default('NGN') String currency,
     User? user,
     required String bankName,
     required String accountName,
