@@ -3,10 +3,7 @@ enum InitiatorRole { sender, recipient }
 enum DisbursementType { oneTime, milestones }
 
 enum AgreementCategory {
-  physicalGoods(
-    'Physical Goods',
-    'Electronics, Fashion, Wigs, Gadgets, etc.',
-  ),
+  physicalGoods('Physical Goods', 'Electronics, Fashion, Wigs, Gadgets, etc.'),
   servicesWork(
     'Services & Work',
     'Freelance, Repairs, Consulting, Digital services, etc.',
@@ -19,8 +16,16 @@ enum AgreementCategory {
   /// Helper to convert string from database back to enum
   static AgreementCategory? fromName(String? name) {
     return AgreementCategory.values.firstWhere(
-          (e) => e.name == name,
+      (e) => e.name == name,
       orElse: () => AgreementCategory.physicalGoods,
     );
   }
+}
+
+enum AgreementStatus {
+  draft,
+  awaitingRecipient,
+  awaitingFunding,
+  funded,
+  inProgress,
 }
