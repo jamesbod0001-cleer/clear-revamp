@@ -14,7 +14,7 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
   FutureOr<CreateAgreementState> build(AgreementType type) {
     return CreateAgreementState(
       type: type,
-      formData: CreateAgreementFormData.empty(),
+      formData: CreateAgreementFormData.empty(type),
     );
   }
 
@@ -24,33 +24,62 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
     final formData = state.value!.formData;
 
     if (currentState.isResolvingRecipientDetails ||
-        (currentState.recipientResolution?.accountNumber ==
+        (formData.recipientResolution?.accountNumber ==
                 formData.recipientAccountNumber &&
-            currentState.recipientResolution?.bankCode ==
+            formData.recipientResolution?.bankCode ==
                 formData.recipientBank?.code)) {
       return;
     }
 
-    final agreementUseCase = ref.read(agreementUseCaseProvider.notifier);
-
     state = AsyncValue.data(
       state.value!.copyWith(
         isResolvingRecipientDetails: true,
-        recipientResolution: null,
+        formData: formData.copyWith(recipientResolution: null),
       ),
     );
 
-    final result = await agreementUseCase.resolveRecipientDetails(
-      accountNumber: formData.recipientAccountNumber,
-      bankCode: formData.recipientBank!.code,
-    );
+    final result = await ref
+        .read(agreementUseCaseProvider.notifier)
+        .resolveRecipientDetails(
+          accountNumber: formData.recipientAccountNumber,
+          bankCode: formData.recipientBank!.code,
+        );
 
     state = AsyncValue.data(
       state.value!.copyWith(
         isResolvingRecipientDetails: false,
-        recipientResolution: result.getOrNull(),
+        formData: state.value!.formData.copyWith(
+          recipientResolution: result.getOrNull(),
+        ),
       ),
     );
+  }
+
+  Future<void> initiateAgreement() async {
+    _log.info('Initiating agreement');
+    final currentState = state.value;
+    if (currentState == null) return;
+    final formData = state.value!.formData;
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final result = await ref
+          .read(agreementUseCaseProvider.notifier)
+          .initiateAgreement(formData);
+
+      return await result.fold(
+        (agreement) {
+          _log.info('Agreement initiated successfully');
+          return state.value!.copyWith(
+            agreement: agreement,
+            currentStep: CreateAgreementStep.payment,
+          );
+        },
+        (failure) {
+          _log.error('Error initiating agreement', failure);
+          return state.value!.copyWith(agreement: null);
+        },
+      );
+    });
   }
 
   void onFormChanged(CreateAgreementFormData formData) {
@@ -61,10 +90,13 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
           state.value!.formData.recipientAccountNumber !=
               formData.recipientAccountNumber) {
         state = AsyncValue.data(
-          state.value!.copyWith(recipientResolution: null),
+          state.value!.copyWith(
+            formData: formData.copyWith(recipientResolution: null),
+          ),
         );
+      } else {
+        state = AsyncValue.data(state.value!.copyWith(formData: formData));
       }
-      state = AsyncValue.data(state.value!.copyWith(formData: formData));
     }
   }
 
