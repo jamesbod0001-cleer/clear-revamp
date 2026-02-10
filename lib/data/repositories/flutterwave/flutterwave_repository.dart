@@ -42,4 +42,8 @@ abstract class FlutterwaveRepository {
   Future<ResultDart<VirtualAccount, PaymentFailure>> createVirtualAccount(
     CreateVirtualAccountParams params,
   );
+
+  // Future<ResultDart<Charge, PaymentFailure>> createCharge(
+  //     CreateChargeParams params,
+  //     );
 }
