@@ -80,6 +80,11 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   Future<ResultDart<void, Object>> createPaymentMethod(
     CreatePaymentMethodParams params,
   ) async {
+    final user = ref.read(userProvider).value;
+    if (user == null) {
+      _log.error('User state is missing during update');
+      return Failure(DataFailure.notFound());
+    }
     _log.info(
       'Attempting to create payment method with type: ${params.runtimeType}',
     );
@@ -98,12 +103,6 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     _log.info(
       'Successfully created payment method with id: ${paymentMethod.id}',
     );
-
-    final user = ref.read(userProvider).value;
-    if (user == null) {
-      _log.error('User state is missing during update');
-      return Failure(DataFailure.notFound());
-    }
 
     final updatedUser = user.copyWith(
       flutterwavePaymentMethodIds: [
