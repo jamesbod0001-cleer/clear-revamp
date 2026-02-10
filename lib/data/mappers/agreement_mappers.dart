@@ -13,13 +13,15 @@ extension AgreementToDomainMapper on amplify_model.Agreement {
       amount: amount,
       currency: currency,
       disbursementType: _mapDisbursementTypeToDomain(disbursementType!),
-      category: category,
+      category: AgreementCategory.fromId(category),
       expectedReleaseDate: expectedReleaseDate.getDateTime(),
       description: description,
       payoutDestination: payoutDestination!.toDomain(),
       initiatorRole: _mapInitiatorRoleToDomain(initiatorRole!),
       status: _mapAgreementStatusToDomain(status!),
       initiator: initiator!.toDomain(),
+      sender: sender?.toDomain(),
+      recipient: recipient?.toDomain(),
       createdAt: createdAt?.getDateTimeInUtc(),
     );
   }
@@ -33,13 +35,15 @@ extension AgreementToAmplifyMapper on domain.Agreement {
       amount: amount,
       currency: currency,
       disbursementType: _mapDisbursementTypeToAmplify(disbursementType),
-      category: category,
+      category: category.id,
       expectedReleaseDate: TemporalDate(expectedReleaseDate),
       description: description,
       payoutDestination: payoutDestination.toAmplify(),
       initiatorRole: _mapInitiatorRoleToAmplify(initiatorRole),
       status: _mapAgreementStatusToAmplify(status),
       initiator: initiator?.toAmplify(),
+      sender: sender?.toAmplify(),
+      recipient: recipient?.toAmplify(),
     );
   }
 }
