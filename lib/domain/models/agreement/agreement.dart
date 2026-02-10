@@ -8,19 +8,19 @@ part 'agreement.freezed.dart';
 @freezed
 abstract class Agreement with _$Agreement {
   const factory Agreement({
-    required String id,
+    required String? id,
     required double amount,
     required String currency,
     required DisbursementType disbursementType,
-    required String category,
+    required AgreementCategory category,
     required DateTime expectedReleaseDate,
     required String description,
     required PayoutDestination payoutDestination,
-    // required String recipientAccountNumber,
-    // required String recipientBankCode,
     required InitiatorRole initiatorRole,
-    User? initiator,
     @Default(AgreementStatus.draft) AgreementStatus status,
+    User? initiator,
+    User? sender,
+    User? recipient,
     DateTime? createdAt,
   }) = _Agreement;
 }
