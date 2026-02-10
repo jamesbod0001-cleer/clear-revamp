@@ -18,7 +18,7 @@ abstract class _Palette {
 
   // Semantic Colors (State & Feedback)
   static const Color error = Color(0xFF9F1B1D);       // semantic red 1000
-  static const Color errorLight = Color(0xFFF7E1E7);  // semantic red 100
+  static const Color errorLight = Color(0xFFFBEEF2);  // semantic red 100
   static const Color success = Color(0xFF005833);     // semantic green 1000
   static const Color successLight = Color(0xFFEEFDF3);// semantic green 100
   static const Color warning = Color(0xFF563105);     // semantic orange 1000
