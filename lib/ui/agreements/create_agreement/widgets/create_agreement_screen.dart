@@ -1,4 +1,5 @@
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/step_progress_indicator.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/payment_orchestrator_view.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -46,6 +48,10 @@ class CreateAgreementScreen extends ConsumerWidget {
           key: ValueKey(currentStep),
           type: type,
         ),
+        CreateAgreementStep.payment => PaymentOrchestratorView(
+          key: ValueKey(currentStep),
+          agreement: state.value!.agreement!,
+        ),
       };
     }
 
@@ -68,35 +74,37 @@ class CreateAgreementScreen extends ConsumerWidget {
         viewModel.moveStepBack();
       },
       child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: Dimens.padding.p18,
-          titleTextStyle: context.typo.headlineSmall,
-          automaticallyImplyLeading: false,
-          title: Column(
-            crossAxisAlignment: .start,
-            children: [
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  AppBackButton(onPressed: () => handleBack()),
-                  StepProgressIndicator(
-                    currentStep: state.value!.currentStep.index + 1,
-                  ),
-                ],
+        appBar: currentStep == .payment
+            ? null
+            : AppBar(
+                titleSpacing: Dimens.padding.p18,
+                titleTextStyle: context.typo.headlineSmall,
+                automaticallyImplyLeading: false,
+                title: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: .spaceBetween,
+                      children: [
+                        AppBackButton(onPressed: () => handleBack()),
+                        StepProgressIndicator(
+                          currentStep: state.value!.currentStep.index + 1,
+                        ),
+                      ],
+                    ),
+                    Gap(Dimens.spacing.sp24),
+                    Text(
+                      type.isSend
+                          ? (currentStep == .review
+                                ? l10n.reviewDetails
+                                : l10n.sendFunds)
+                          : l10n.requestFunds,
+                      style: context.typo.headlineSmall,
+                    ),
+                  ],
+                ),
+                toolbarHeight: 114,
               ),
-              Gap(Dimens.spacing.sp24),
-              Text(
-                type.isSend
-                    ? (currentStep == .review
-                          ? l10n.reviewDetails
-                          : l10n.sendFunds)
-                    : l10n.requestFunds,
-                style: context.typo.headlineSmall,
-              ),
-            ],
-          ),
-          toolbarHeight: 114,
-        ),
         body: SafeArea(
           bottom: false,
           child: Stack(
