@@ -53,6 +53,15 @@ extension SignInMapper on SignInResult {
         return const SignInDomainResult.continueWithTotpSetup();
       case AuthSignInStep.continueSignInWithEmailMfaSetup:
         return const SignInDomainResult.continueWithEmailMfaSetup();
+      case AuthSignInStep.continueSignInWithFirstFactorSelection:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case AuthSignInStep.confirmSignInWithOtp:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case AuthSignInStep.confirmSignInWithPassword:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }
