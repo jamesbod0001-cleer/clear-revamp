@@ -4,7 +4,7 @@ export const PayoutDestination = a.model({
     accountNumber: a.string().required(),
     bankCode: a.string().required(),
     currency: a.string().required(),
-    userId: a.id().required(),
+    userId: a.id(),
     bankName: a.string().required(),
     accountName: a.string().required(),
     isDefault: a.boolean().default(false).authorization(allow => [allow.owner(),]),
