@@ -21,6 +21,8 @@ export const Agreement = a.model({
     recipientAccountNumber: a.string().required(),
     recipientBankCode: a.string().required(),
 
+    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS']),
+
     // Relationships
     initiator: a.belongsTo('User', 'initiatorId'),
     sender: a.belongsTo('User', 'senderId'),
