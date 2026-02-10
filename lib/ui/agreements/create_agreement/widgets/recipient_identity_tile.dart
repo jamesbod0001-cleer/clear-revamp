@@ -21,9 +21,10 @@ class RecipientIdentityTile extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final state = ref.watch(createAgreementViewModelProvider(type));
+    final formData = state.value?.formData;
 
     bool isResolving = state.value!.isResolvingRecipientDetails;
-    RecipientResolution? resolution = state.value!.recipientResolution;
+    RecipientResolution? resolution = formData!.recipientResolution;
 
     if (isResolving) {
       return Padding(
