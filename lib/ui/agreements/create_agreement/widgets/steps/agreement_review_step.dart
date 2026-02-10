@@ -68,7 +68,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                             ),
                           ),
                           Text(
-                            state.value!.recipientResolution!.accountName,
+                            formData.recipientResolution!.accountName,
                             style: context.typo.bodyMedium.copyWith(
                               fontWeight: AppFontWeights.regular,
                             ),
@@ -206,7 +206,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                 children: [
                   Gap(Dimens.spacing.sp30),
                   PrimaryButton(
-                    onPressed: () {},
+                    onPressed: () => viewModel.initiateAgreement(),
                     child: Text(l10n.confirmAndPay),
                   ),
                   Gap(Dimens.spacing.sp20),
