@@ -21,6 +21,7 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
+import 'package:collection/collection.dart';
 
 
 /** This is an auto generated class representing the Agreement type in your schema. */
@@ -39,6 +40,7 @@ class Agreement extends amplify_core.Model {
   final User? _sender;
   final User? _recipient;
   final PayoutDestination? _payoutDestination;
+  final List<Transaction>? _transactions;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -148,6 +150,10 @@ class Agreement extends amplify_core.Model {
     return _payoutDestination;
   }
   
+  List<Transaction>? get transactions {
+    return _transactions;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -156,9 +162,9 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required amount, required currency, disbursementType, required category, required expectedReleaseDate, required description, initiatorRole, status, initiator, sender, recipient, payoutDestination, createdAt, updatedAt}): _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required amount, required currency, disbursementType, required category, required expectedReleaseDate, required description, initiatorRole, status, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, required amplify_core.TemporalDate expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination}) {
+  factory Agreement({String? id, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, required amplify_core.TemporalDate expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       amount: amount,
@@ -172,7 +178,8 @@ class Agreement extends amplify_core.Model {
       initiator: initiator,
       sender: sender,
       recipient: recipient,
-      payoutDestination: payoutDestination);
+      payoutDestination: payoutDestination,
+      transactions: transactions != null ? List<Transaction>.unmodifiable(transactions) : transactions);
   }
   
   bool equals(Object other) {
@@ -195,7 +202,8 @@ class Agreement extends amplify_core.Model {
       _initiator == other._initiator &&
       _sender == other._sender &&
       _recipient == other._recipient &&
-      _payoutDestination == other._payoutDestination;
+      _payoutDestination == other._payoutDestination &&
+      DeepCollectionEquality().equals(_transactions, other._transactions);
   }
   
   @override
@@ -226,7 +234,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination}) {
+  Agreement copyWith({double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
     return Agreement._internal(
       id: id,
       amount: amount ?? this.amount,
@@ -240,7 +248,8 @@ class Agreement extends amplify_core.Model {
       initiator: initiator ?? this.initiator,
       sender: sender ?? this.sender,
       recipient: recipient ?? this.recipient,
-      payoutDestination: payoutDestination ?? this.payoutDestination);
+      payoutDestination: payoutDestination ?? this.payoutDestination,
+      transactions: transactions ?? this.transactions);
   }
   
   Agreement copyWithModelFieldValues({
@@ -255,7 +264,8 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<User?>? initiator,
     ModelFieldValue<User?>? sender,
     ModelFieldValue<User?>? recipient,
-    ModelFieldValue<PayoutDestination?>? payoutDestination
+    ModelFieldValue<PayoutDestination?>? payoutDestination,
+    ModelFieldValue<List<Transaction>?>? transactions
   }) {
     return Agreement._internal(
       id: id,
@@ -270,7 +280,8 @@ class Agreement extends amplify_core.Model {
       initiator: initiator == null ? this.initiator : initiator.value,
       sender: sender == null ? this.sender : sender.value,
       recipient: recipient == null ? this.recipient : recipient.value,
-      payoutDestination: payoutDestination == null ? this.payoutDestination : payoutDestination.value
+      payoutDestination: payoutDestination == null ? this.payoutDestination : payoutDestination.value,
+      transactions: transactions == null ? this.transactions : transactions.value
     );
   }
   
@@ -304,11 +315,24 @@ class Agreement extends amplify_core.Model {
           ? PayoutDestination.fromJson(new Map<String, dynamic>.from(json['payoutDestination']['serializedData']))
           : PayoutDestination.fromJson(new Map<String, dynamic>.from(json['payoutDestination']))
         : null,
+      _transactions = json['transactions']  is Map
+        ? (json['transactions']['items'] is List
+          ? (json['transactions']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Transaction.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['transactions'] is List
+          ? (json['transactions'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Transaction.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -325,6 +349,7 @@ class Agreement extends amplify_core.Model {
     'sender': _sender,
     'recipient': _recipient,
     'payoutDestination': _payoutDestination,
+    'transactions': _transactions,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -351,6 +376,9 @@ class Agreement extends amplify_core.Model {
   static final PAYOUTDESTINATION = amplify_core.QueryField(
     fieldName: "payoutDestination",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'PayoutDestination'));
+  static final TRANSACTIONS = amplify_core.QueryField(
+    fieldName: "transactions",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Transaction'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Agreement";
     modelSchemaDefinition.pluralName = "Agreements";
@@ -450,6 +478,13 @@ class Agreement extends amplify_core.Model {
       isRequired: false,
       targetNames: ['recipientAccountNumber', 'recipientBankCode'],
       ofModelName: 'PayoutDestination'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Agreement.TRANSACTIONS,
+      isRequired: false,
+      ofModelName: 'Transaction',
+      associatedKey: Transaction.AGREEMENT
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

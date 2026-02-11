@@ -22,6 +22,7 @@
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'Agreement.dart';
 import 'PayoutDestination.dart';
+import 'Transaction.dart';
 import 'User.dart';
 
 export 'Agreement.dart';
@@ -29,13 +30,15 @@ export 'AgreementDisbursementType.dart';
 export 'AgreementInitiatorRole.dart';
 export 'AgreementStatus.dart';
 export 'PayoutDestination.dart';
+export 'Transaction.dart';
+export 'TransactionStatus.dart';
 export 'User.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "7e63651b84f85677ed033d6097d344d3";
+  String version = "9d64130775b2fcc1d265ba90941a8bf5";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [Agreement.schema, PayoutDestination.schema, User.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [Agreement.schema, PayoutDestination.schema, Transaction.schema, User.schema];
   @override
   List<amplify_core.ModelSchema> customTypeSchemas = [];
   static final ModelProvider _instance = ModelProvider();
@@ -48,6 +51,8 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return Agreement.classType;
       case "PayoutDestination":
         return PayoutDestination.classType;
+      case "Transaction":
+        return Transaction.classType;
       case "User":
         return User.classType;
       default:
