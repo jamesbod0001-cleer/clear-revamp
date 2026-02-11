@@ -9,7 +9,7 @@ export const Agreement = a.model({
     description: a.string().required(),
 
     // The person who physically clicked "Create Agreement"
-    initiatorId: a.string().required(),
+    initiatorId: a.id().required(),
     // Tells us if the initiator is the one PAYING or GETTING PAID
     initiatorRole: a.enum(['SENDER', 'RECIPIENT']),
 
@@ -28,6 +28,7 @@ export const Agreement = a.model({
     sender: a.belongsTo('User', 'senderId'),
     recipient: a.belongsTo('User', 'recipientId'),
     payoutDestination: a.belongsTo('PayoutDestination', ['recipientAccountNumber', 'recipientBankCode']),
+    transactions: a.hasMany('Transaction', 'agreementId'),
 }).authorization(allow => [
     allow.owner(), // The initiator is the owner
     allow.authenticated().to(['read']),
