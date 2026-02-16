@@ -61,6 +61,9 @@ dependencies:
   retrofit: ^4.9.2
   fpdart: ^1.2.0
   cryptography: ^2.9.0
+  webview_flutter: ^4.13.1
+  command_it: ^9.5.0
+  listen_it: ^5.3.4
 
 dev_dependencies:
   flutter_test:
