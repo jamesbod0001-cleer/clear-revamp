@@ -1,6 +1,8 @@
 enum PaymentMethodType {
   card,
-  opay;
+  opay,
+  bankTransfer,
+  ussd;
 
   String get snakeCase {
     return name.replaceAllMapped(RegExp(r'([A-Z])'), (match) {

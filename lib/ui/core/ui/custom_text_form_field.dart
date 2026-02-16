@@ -1,7 +1,7 @@
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/utils/constants.dart';
-import 'package:cleer/utils/validators/nigerian_phone_formatter.dart';
+import 'package:cleer/utils/text_input_formatters/nigerian_phone_formatter.dart';
 import 'package:cleer/utils/validators/phone_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,11 +23,13 @@ class CustomTextFormField extends StatefulWidget {
     this.maxLines = 1,
     this.textCapitalization = TextCapitalization.none,
     this.isPassword = false,
+    this.obscureText,
     this.textInputType,
     this.prefixIcon,
     this.suffixIcon,
     this.onTap,
     this.readOnly = false,
+    this.focusNode,
   });
 
   final String? labelText;
@@ -41,11 +43,13 @@ class CustomTextFormField extends StatefulWidget {
   final int? maxLines;
   final TextCapitalization textCapitalization;
   final bool isPassword;
+  final bool? obscureText;
   final TextInputType? textInputType;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final VoidCallback? onTap;
   final bool readOnly;
+  final FocusNode? focusNode;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -56,7 +60,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   void initState() {
-    obscureText = widget.isPassword;
+    obscureText = widget.obscureText ?? widget.isPassword;
     super.initState();
   }
 
@@ -86,15 +90,17 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (widget.labelText != null || widget.label != null) ...[
-              widget.label ?? Text(
-                widget.labelText!,
-                style: context.typo.bodyMedium.copyWith(
-                  color: context.color.grey600,
-                ),
-              ),
+              widget.label ??
+                  Text(
+                    widget.labelText!,
+                    style: context.typo.bodyMedium.copyWith(
+                      color: context.color.grey600,
+                    ),
+                  ),
               Gap(Dimens.spacing.sp4),
             ],
             TextField(
+              focusNode: widget.focusNode,
               controller: widget.controller,
               onChanged: (value) => state.didChange(value),
               onTap: widget.onTap,

@@ -16,7 +16,11 @@ AgreementRepository agreementRepository(Ref ref) =>
     );
 
 abstract class AgreementRepository {
+  Future<ResultDart<Agreement, DataFailure>> getAgreement(String id);
   Future<ResultDart<Agreement, DataFailure>> createAgreement(
+    Agreement agreement,
+  );
+  Future<ResultDart<Agreement, DataFailure>> updateAgreement(
     Agreement agreement,
   );
 }

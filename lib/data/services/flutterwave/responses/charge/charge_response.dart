@@ -59,6 +59,7 @@ class ChargeResponse {
 
   factory ChargeResponse.fromJson(Map<String, dynamic> json) =>
       _$ChargeResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$ChargeResponseToJson(this);
 }
 
 @JsonSerializable()

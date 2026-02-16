@@ -1,15 +1,23 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
-import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
+import 'package:cleer/domain/models/charge/charge.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/buttons.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/choose_payment_method_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/continue_with_opay_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/enter_card_details_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/loading_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/authorizing_web_view.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/pay_with_bank_transfer_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/pay_with_ussd_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/payment_secured_successfully_step.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -22,147 +30,257 @@ class PaymentOrchestratorView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-
-    final state = ref.watch(paymentOrchestratorViewModelProvider);
-    final viewModel = ref.read(paymentOrchestratorViewModelProvider.notifier);
-    ref.watch(flutterwaveSavedPaymentMethodsProvider);
-
+    final state = ref.watch(
+      paymentOrchestratorViewModelProvider(agreement.id!),
+    );
     final currentStep =
         state.value?.currentStep ?? PaymentOrchestratorStep.choosePaymentMethod;
-    final bool isFirstStep =
-        currentStep == PaymentOrchestratorStep.choosePaymentMethod;
 
-    Widget getCurrentStepWidget() {
-      final PaymentOrchestratorStep currentStep = state.value!.currentStep;
-      return switch (currentStep) {
-        PaymentOrchestratorStep.choosePaymentMethod => ChoosePaymentMethodStep(
-          key: ValueKey(currentStep),
-        ),
-        PaymentOrchestratorStep.continueWithOpay => ContinueWithOpayStep(
-          key: ValueKey(currentStep),
-        ),
-      };
+    if (currentStep == PaymentOrchestratorStep.authorizing) {
+      return AuthorizingWebView(
+        key: const ValueKey('authorizing'),
+        agreementId: agreement.id!,
+        url:
+            state.value!.ongoingCharge!.action.mapOrNull(
+              redirect: (r) => r.url,
+            ) ??
+            '',
+      );
     }
 
-    return PopScope(
-      canPop: isFirstStep,
-      onPopInvokedWithResult: (didPop, result) {
-        // If didPop is true, the screen is already closing.
-        if (didPop) return;
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            _OrchestratorHeader(agreement: agreement),
 
-        // If didPop is false, we are on Step 2 or 3.
-        // Just move the internal state back.
-        viewModel.moveStepBack();
-      },
-      child: Scaffold(
-        body: SafeArea(
-          bottom: false,
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    Gap(Dimens.spacing.sp32),
+            SliverPadding(
+              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                bottom: Dimens.spacing.sp54,
+              ),
+              sliver: SliverToBoxAdapter(
+                child: _StepSwitcher(
+                  step: currentStep,
+                  agreementId: agreement.id!,
+                ),
+              ),
+            ),
+
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                  bottom:
+                      MediaQuery.of(context).padding.bottom +
+                      Dimens.padding.p20,
+                ),
+                child: _OrchestratorFooter(
+                  step: currentStep,
+                  agreementId: agreement.id!,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _OrchestratorHeader extends StatelessWidget {
+  const _OrchestratorHeader({required this.agreement});
+  final Agreement agreement;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+        child: Column(
+          children: [
+            Gap(Dimens.spacing.sp32),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  backgroundColor: context.color.secondary,
+                  radius: Dimens.radius.r40,
+                  child: Padding(
+                    padding: .fromLTRB(
+                      Dimens.padding.p20,
+                      Dimens.padding.p16,
+                      20.27,
+                      Dimens.padding.p16,
+                    ),
+                    child: Assets.icons.cleerIcon.svg(fit: BoxFit.fill),
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
                     Row(
-                      mainAxisAlignment: .spaceBetween,
                       children: [
-                        CircleAvatar(
-                          backgroundColor: context.color.secondary,
-                          radius: Dimens.radius.r40,
-                          child: Padding(
-                            padding: .fromLTRB(
-                              Dimens.padding.p20,
-                              Dimens.padding.p16,
-                              20.27,
-                              Dimens.padding.p16,
-                            ),
-                            child: Assets.icons.cleerIcon.svg(fit: .fill),
+                        Text(
+                          l10n.ngn,
+                          style: context.typo.labelSmall.copyWith(
+                            color: context.color.grey600,
                           ),
                         ),
-                        Column(
-                          crossAxisAlignment: .end,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  l10n.ngn,
-                                  style: context.typo.labelSmall.copyWith(
-                                    color: context.color.grey600,
-                                  ),
-                                ),
-                                Gap(Dimens.spacing.sp4),
-                                Text(
-                                  NumberFormat(
-                                    '#,###.##',
-                                  ).format(agreement.amount),
-                                  style: context.typo.titleLarge.copyWith(
-                                    color: context.color.grey800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              agreement.sender!.email?.maskEmail ??
-                                  agreement.sender!.phoneNumber,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
-                                color: context.color.grey800,
-                              ),
-                            ),
-                          ],
+                        Gap(Dimens.spacing.sp4),
+                        Text(
+                          NumberFormat('#,###.##').format(agreement.amount),
+                          style: context.typo.titleLarge.copyWith(
+                            color: context.color.grey800,
+                          ),
                         ),
                       ],
                     ),
-                    Gap(Dimens.spacing.sp40),
-                    getCurrentStepWidget(),
-                    Gap(Dimens.spacing.sp54),
-                  ]),
-                ),
-              ),
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
-                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                    bottom: MediaQuery.of(context).padding.bottom,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: .end,
-                    children: [
-                      Material(
-                        borderRadius: .circular(Dimens.radius.r8),
-                        color: context.color.infoLight,
-                        child: Padding(
-                          padding: .all(Dimens.padding.p8),
-                          child: Row(
-                            children: [
-                              Assets.images.shield.image(
-                                width: Dimens.size.s17,
-                                height: Dimens.size.s24,
-                              ),
-                              Gap(Dimens.spacing.sp8),
-                              Expanded(
-                                child: Text(
-                                  l10n.fundsAreHeldSecurelyUntilYouConfirmRelease,
-                                  style: context.typo.bodyMedium.copyWith(
-                                    color: context.color.blue800,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    Text(
+                      agreement.sender?.email?.maskEmail ??
+                          agreement.sender?.phoneNumber ??
+                          '',
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey800,
                       ),
-                      Gap(Dimens.spacing.sp24),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+            Gap(Dimens.spacing.sp40),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class _StepSwitcher extends StatelessWidget {
+  const _StepSwitcher({required this.step, required this.agreementId});
+  final PaymentOrchestratorStep step;
+  final String agreementId;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 100),
+      switchInCurve: Curves.easeInOut,
+      switchOutCurve: Curves.easeInOut,
+      child: switch (step) {
+        PaymentOrchestratorStep.choosePaymentMethod => ChoosePaymentMethodStep(
+          key: const ValueKey('choose'),
+          agreementId: agreementId,
+        ),
+        PaymentOrchestratorStep.continueWithOpay => ContinueWithOpayStep(
+          key: const ValueKey('opay'),
+          agreementId: agreementId,
+        ),
+        PaymentOrchestratorStep.payWithBankTransfer => PayWithBankTransferStep(
+          key: const ValueKey('opay'),
+          agreementId: agreementId,
+        ),
+        PaymentOrchestratorStep.payWithUSSD => PayWithUSSDStep(
+          key: const ValueKey('opay'),
+          agreementId: agreementId,
+        ),
+        PaymentOrchestratorStep.enterCardDetails => EnterCardDetailsStep(
+          key: const ValueKey('card'),
+          agreementId: agreementId,
+        ),
+        // Note: Authorizing is handled at the top level to fill the screen
+        PaymentOrchestratorStep.redirecting => LoadingStep(
+          key: const ValueKey('redirecting'),
+          title: l10n.redirecting,
+          loadingMessage: l10n.pleaseDontCloseThisScreenWeAreRedirectingYou,
+        ),
+        PaymentOrchestratorStep.securingYourPayment => LoadingStep(
+          key: const ValueKey('securing'),
+          title: l10n.securingYourPayment,
+          loadingMessage:
+              l10n.pleaseDontCloseThisScreenWeAreSafelyLockingYourFunds,
+        ),
+        PaymentOrchestratorStep.waitingForConfirmation => LoadingStep(
+          key: const ValueKey('waiting'),
+          title: l10n.waitingForConfirmation,
+          loadingMessage:
+              l10n.weWillUpdateThisScreenOnceYourBankConfirmsThePayment,
+        ),
+        PaymentOrchestratorStep.paymentSecuredSuccessfully =>
+          PaymentSecuredSuccessfullyStep(
+            key: const ValueKey('success'),
+            agreementId: agreementId,
+          ),
+        _ => const SizedBox.shrink(),
+      },
+    );
+  }
+}
+
+class _OrchestratorFooter extends ConsumerWidget {
+  const _OrchestratorFooter({required this.step, required this.agreementId});
+  final PaymentOrchestratorStep step;
+  final String agreementId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final viewModel = ref.read(
+      paymentOrchestratorViewModelProvider(agreementId).notifier,
+    );
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (step == PaymentOrchestratorStep.paymentSecuredSuccessfully) ...[
+          PrimaryButton(onPressed: () {}, child: Text(l10n.viewAgreement)),
+          Gap(Dimens.spacing.sp12),
+          TextButton(onPressed: () {}, child: Text(l10n.goToDashboard)),
+        ] else ...[
+          if (!(step == PaymentOrchestratorStep.choosePaymentMethod ||
+              step == .securingYourPayment ||
+              step == .waitingForConfirmation ||
+              step == .redirecting)) ...[
+            Column(
+              mainAxisSize: .min,
+              children: [
+                ChangePaymentMethodButton(
+                  onPressed: () => viewModel.changePaymentMethod(),
+                ),
+                Gap(Dimens.spacing.sp16),
+                CancelPaymentButton(onPressed: () {}),
+              ],
+            ),
+            Gap(Dimens.spacing.sp54),
+          ],
+          Material(
+            borderRadius: BorderRadius.circular(Dimens.radius.r8),
+            color: context.color.infoLight,
+            child: Padding(
+              padding: EdgeInsets.all(Dimens.padding.p12),
+              child: Row(
+                children: [
+                  Assets.images.shield.image(width: Dimens.size.s17),
+                  Gap(Dimens.spacing.sp8),
+                  Expanded(
+                    child: Text(
+                      l10n.fundsAreHeldSecurelyUntilYouConfirmRelease,
+                      style: context.typo.bodyMedium.copyWith(
+                        color: context.color.blue800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

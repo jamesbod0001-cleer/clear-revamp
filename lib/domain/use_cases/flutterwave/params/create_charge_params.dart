@@ -5,8 +5,8 @@ part 'create_charge_params.freezed.dart';
 @freezed
 abstract class CreateChargeParams with _$CreateChargeParams {
   const factory CreateChargeParams({
+    required String agreementId,
     required double amount,
-    required String reference,
     required String customerId,
     Map<String, dynamic>? meta,
     required String paymentMethodId,

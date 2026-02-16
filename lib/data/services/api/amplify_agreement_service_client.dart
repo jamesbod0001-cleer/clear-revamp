@@ -17,8 +17,26 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
   AmplifyAgreementServiceClient({required APICategory amplifyAPI})
     : _amplifyAPI = amplifyAPI;
 
+  Future<Agreement> queryAgreement(String id) async {
+    final request = ModelQueries.get(
+      Agreement.classType,
+      AgreementModelIdentifier(id: id),
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
   Future<Agreement> createAgreement(Agreement agreement) async {
     final request = ModelMutations.create(
+      agreement,
+      authorizationMode: APIAuthorizationType.userPools,
+    );
+    final response = await _amplifyAPI.mutate(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
+  Future<Agreement> updateAgreement(Agreement agreement) async {
+    final request = ModelMutations.update(
       agreement,
       authorizationMode: APIAuthorizationType.userPools,
     );

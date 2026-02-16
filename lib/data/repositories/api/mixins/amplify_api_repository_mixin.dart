@@ -76,9 +76,9 @@ mixin AmplifyApiRepositoryMixin {
       // Map a network/system failure to a DataFailure
       return Failure(AmplifyApiExceptionHandler.handleException(e));
     }
-    // catch (e, st) {
-    //   log.error('Unhandled exception caught during $operationName: $e', e, st);
-    //   return Failure(DataFailure.unknown( message: e.toString()));
-    // }
+    catch (e, st) {
+      log.error('Unhandled exception caught during $operationName: $e', e, st);
+      return Failure(DataFailure.unknown( message: e.toString()));
+    }
   }
 }

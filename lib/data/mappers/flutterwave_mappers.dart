@@ -1,8 +1,10 @@
 import 'package:cleer/data/services/flutterwave/responses/bank/bank_response.dart';
+import 'package:cleer/data/services/flutterwave/responses/charge/charge_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/customer/customer_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/payment_method/payment_method_response.dart';
 import 'package:cleer/data/services/flutterwave/responses/virtual_account/virtual_account_response.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
+import 'package:cleer/domain/models/charge/charge.dart';
 import 'package:cleer/domain/models/customer/customer.dart';
 import 'package:cleer/domain/models/enums/card_network.dart';
 import 'package:cleer/domain/models/enums/virtual_account_type.dart';
@@ -31,6 +33,7 @@ extension PaymentMethodResponseMapper on PaymentMethodResponse {
           id: id,
           type: .card,
           cardDetails: CardDetails(
+            first6: card!.first6,
             last4: card!.last4,
             network: mapToCardNetwork(card!.network),
             expiryMonth: card!.expiryMonth,
@@ -40,6 +43,13 @@ extension PaymentMethodResponseMapper on PaymentMethodResponse {
         );
       case 'opay':
         return PaymentMethod(id: id, type: .opay, createdAt: createdDatetime);
+      case 'ussd':
+        return PaymentMethod(
+          id: id,
+          type: .ussd,
+          ussdDetails: USSDDetails(accountBankCode: ussd!.accountBank),
+          createdAt: createdDatetime,
+        );
       default:
         throw Exception('Unknown payment method type: $type');
     }
@@ -63,15 +73,15 @@ CardNetwork mapToCardNetwork(String? network) {
 extension VirtualAccountResponseMapper on VirtualAccountResponse {
   VirtualAccount toDomain() {
     return VirtualAccount(
-      id: id,
-      accountNumber: accountNumber,
-      bankName: accountBankName,
-      accountType: mapToVirtualAccountType(accountType),
-      amount: amount,
-      reference: reference,
-      note: note,
+      id: id ?? '',
+      accountNumber: accountNumber ?? '',
+      bankName: accountBankName ?? '',
+      accountType: mapToVirtualAccountType(accountType!),
+      amount: amount ?? 0,
+      reference: reference ?? '',
+      note: note ?? '',
       expiresAt: accountExpirationDatetime,
-      createdAt: createdDatetime,
+      createdAt: createdDatetime!,
     );
   }
 }
@@ -82,4 +92,70 @@ VirtualAccountType mapToVirtualAccountType(String accountType) {
     'static' => VirtualAccountType.static,
     _ => throw Exception('Unknown virtual account type: $accountType'),
   };
+}
+
+extension ChargeResponseMapper on ChargeResponse {
+  Charge toDomain(String fallbackAgreementId) {
+    return Charge(
+      id: id!,
+      agreementId: meta?['agreement_id'] as String? ?? fallbackAgreementId,
+      reference: reference!,
+      amount: amount!,
+      currency: currency!,
+      status: _mapToChargeStatus(status),
+      action: _mapToChargeAction(nextAction),
+    );
+  }
+}
+
+ChargeStatus _mapToChargeStatus(String? status) {
+  switch (status?.toLowerCase()) {
+    case 'succeeded':
+      return ChargeStatus.succeeded;
+    case 'pending':
+      return ChargeStatus.pending;
+    case 'failed':
+      return ChargeStatus.failed;
+    case 'voided':
+      return ChargeStatus.voided;
+    default:
+      return ChargeStatus.unknown;
+  }
+}
+
+ChargeAction _mapToChargeAction(
+  NextActionObject? next,
+  // , String? rootRedirect
+) {
+  if (next != null) {
+    switch (next.type) {
+      case 'redirect_url':
+        return ChargeAction.redirect(next.redirectUrl?.url ?? '');
+      case 'requires_otp':
+        return const ChargeAction.otp();
+      case 'requires_pin':
+        return const ChargeAction.pin();
+      case 'requires_bank_transfer':
+        return ChargeAction.bankTransfer(
+          accountNumber: next.requiresBankTransfer?.accountNumber ?? '',
+          bankName: next.requiresBankTransfer?.accountBankName ?? '',
+          expiry: next.requiresBankTransfer?.accountExpirationDatetime,
+        );
+      case 'qr_code':
+        return ChargeAction.qrCode(next.qrCode?.image ?? '');
+      case 'payment_instruction':
+        return ChargeAction.displayInstruction(
+          next.paymentInstruction?.note ?? '',
+        );
+      default:
+        return const ChargeAction.none();
+    }
+  }
+
+  // if (rootRedirect != null && rootRedirect.isNotEmpty) {
+  //   // Optional: Only return if it doesn't match your cleer:// callback
+  //   return ChargeAction.redirect(rootRedirect);
+  // }
+
+  return const ChargeAction.none();
 }

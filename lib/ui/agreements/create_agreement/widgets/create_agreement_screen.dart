@@ -26,6 +26,7 @@ class CreateAgreementScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
+    ref.watch(userProvider);
     ref.watch(getBanksProvider(.NG));
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
@@ -63,61 +64,50 @@ class CreateAgreementScreen extends ConsumerWidget {
       }
     }
 
-    return PopScope(
-      canPop: isFirstStep,
-      onPopInvokedWithResult: (didPop, result) {
-        // If didPop is true, the screen is already closing.
-        if (didPop) return;
-
-        // If didPop is false, we are on Step 2 or 3.
-        // Just move the internal state back.
-        viewModel.moveStepBack();
-      },
-      child: Scaffold(
-        appBar: currentStep == .payment
-            ? null
-            : AppBar(
-                titleSpacing: Dimens.padding.p18,
-                titleTextStyle: context.typo.headlineSmall,
-                automaticallyImplyLeading: false,
-                title: Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: .spaceBetween,
-                      children: [
-                        AppBackButton(onPressed: () => handleBack()),
-                        StepProgressIndicator(
-                          currentStep: state.value!.currentStep.index + 1,
-                        ),
-                      ],
-                    ),
-                    Gap(Dimens.spacing.sp24),
-                    Text(
-                      type.isSend
-                          ? (currentStep == .review
-                                ? l10n.reviewDetails
-                                : l10n.sendFunds)
-                          : l10n.requestFunds,
-                      style: context.typo.headlineSmall,
-                    ),
-                  ],
-                ),
-                toolbarHeight: 114,
-              ),
-        body: SafeArea(
-          bottom: false,
-          child: Stack(
-            children: [
-              getCurrentStepWidget(),
-              if (state.isLoading)
-                Positioned.fill(
-                  child: Material(
-                    child: Center(child: CircularProgressIndicator()),
+    return Scaffold(
+      appBar: currentStep == .payment
+          ? null
+          : AppBar(
+              titleSpacing: Dimens.padding.p18,
+              titleTextStyle: context.typo.headlineSmall,
+              automaticallyImplyLeading: false,
+              title: Column(
+                crossAxisAlignment: .start,
+                children: [
+                  Row(
+                    mainAxisAlignment: .spaceBetween,
+                    children: [
+                      AppBackButton(onPressed: () => handleBack()),
+                      StepProgressIndicator(
+                        currentStep: state.value!.currentStep.index + 1,
+                      ),
+                    ],
                   ),
+                  Gap(Dimens.spacing.sp24),
+                  Text(
+                    type.isSend
+                        ? (currentStep == .review
+                              ? l10n.reviewDetails
+                              : l10n.sendFunds)
+                        : l10n.requestFunds,
+                    style: context.typo.headlineSmall,
+                  ),
+                ],
+              ),
+              toolbarHeight: 114,
+            ),
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
+          children: [
+            getCurrentStepWidget(),
+            if (state.isLoading)
+              Positioned.fill(
+                child: Material(
+                  child: Center(child: CircularProgressIndicator()),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
     );

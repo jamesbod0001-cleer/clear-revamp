@@ -1,3 +1,5 @@
+import 'package:cleer/data/services/flutterwave/models/cof/cof_object.dart';
+import 'package:cleer/data/services/flutterwave/models/ussd/ussd_object.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_payment_method_request.g.dart';
@@ -6,13 +8,24 @@ part 'create_payment_method_request.g.dart';
 class CreatePaymentMethodRequest {
   final String type;
   final CardRequestObject? card;
+  final USSDObject? ussd;
 
-  CreatePaymentMethodRequest({required this.type, this.card});
+  @JsonKey(name: 'customer_id')
+  final String? customerId;
+  final Map<String, dynamic>? meta;
+
+  CreatePaymentMethodRequest({
+    required this.type,
+    this.card,
+    this.ussd,
+    this.customerId,
+    this.meta,
+  });
 
   Map<String, dynamic> toJson() => _$CreatePaymentMethodRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class CardRequestObject {
   @JsonKey(name: 'encrypted_card_number')
   final String encryptedCardNumber;
@@ -24,12 +37,15 @@ class CardRequestObject {
   final String encryptedCvv;
   final String nonce;
 
+  final COFObject cof;
+
   CardRequestObject({
     required this.encryptedCardNumber,
     required this.encryptedExpiryMonth,
     required this.encryptedExpiryYear,
     required this.encryptedCvv,
     required this.nonce,
+    required this.cof,
   });
 
   factory CardRequestObject.fromJson(Map<String, dynamic> json) =>

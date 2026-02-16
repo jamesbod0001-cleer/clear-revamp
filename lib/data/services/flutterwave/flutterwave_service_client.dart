@@ -1,3 +1,4 @@
+import 'package:cleer/data/services/flutterwave/models/charge_filter/charge_filter.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_charge/create_charge_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_customer/create_customer_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_payment_method/create_payment_method_request.dart';
@@ -58,6 +59,16 @@ abstract class FlutterwaveServiceClient {
   @POST("/charges")
   Future<FlutterwaveResponse<ChargeResponse>> createCharge(
     @Body() CreateChargeRequest body,
+  );
+
+  @GET("/charges/{id}")
+  Future<FlutterwaveResponse<ChargeResponse>> retrieveCharge(
+    @Path('id') String id,
+  );
+
+  @GET("/charges")
+  Future<FlutterwaveResponse<List<ChargeResponse>>> listCharges(
+    @Queries() ChargeFilter filter,
   );
 
   @POST("/charges/{id}")

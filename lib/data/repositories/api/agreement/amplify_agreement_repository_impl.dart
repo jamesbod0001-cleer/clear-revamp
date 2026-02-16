@@ -34,4 +34,34 @@ class AmplifyAgreementRepositoryImpl
       targetId: agreement.id,
     );
   }
+
+  @override
+  Future<ResultDart<Agreement, DataFailure>> getAgreement(String id) async {
+    return await performDataOperation<Agreement>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient.queryAgreement(
+          id,
+        );
+        return response.toDomain();
+      },
+      operationName: 'GetAgreement',
+      targetId: id,
+    );
+  }
+
+  @override
+  Future<ResultDart<Agreement, DataFailure>> updateAgreement(
+    Agreement agreement,
+  ) async {
+    return await performDataOperation<Agreement>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient.updateAgreement(
+          agreement.toAmplify(),
+        );
+        return response.toDomain();
+      },
+      operationName: 'UpdateAgreement',
+      targetId: agreement.id,
+    );
+  }
 }

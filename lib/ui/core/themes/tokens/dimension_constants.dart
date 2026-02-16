@@ -31,10 +31,12 @@ class _AppSize {
 
   final double s70 = 70.0;
 
+  final double s80 = 80.0;
   final double s82 = 82.0;
   final double s87 = 87.0;
 
 
+  final double s100 = 100.0;
   final double s101 = 101.0;
   final double s126 = 126.0;
 }
@@ -69,6 +71,7 @@ class _AppSpacing {
   final double sp80 = 80.0;
   final double sp84 = 84.0;
 
+  final double sp100 = 100.0;
   final double sp103 = 103.0;
 }
 
@@ -95,6 +98,7 @@ class _AppRadius {
   final double r8 = 8.0;
   final double r10 = 10.0;
   final double r12 = 12.0;
+  final double r15 = 15.0;
   final double r20 = 20.0;
   final double r24 = 24.0;
   final double r32 = 32.0;

@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_charge_request.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable()
 class CreateChargeRequest {
   final double amount;
   final String currency;

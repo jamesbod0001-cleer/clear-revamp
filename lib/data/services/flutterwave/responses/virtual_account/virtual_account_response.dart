@@ -4,27 +4,27 @@ part 'virtual_account_response.g.dart';
 
 @JsonSerializable()
 class VirtualAccountResponse {
-  final String id;
-  final double amount;
+  final String? id;
+  final double? amount;
   @JsonKey(name: 'account_number')
-  final String accountNumber;
-  final String reference;
+  final String? accountNumber;
+  final String? reference;
   @JsonKey(name: 'account_bank_name')
-  final String accountBankName;
+  final String? accountBankName;
   @JsonKey(name: 'account_type')
-  final String accountType;
-  final String status;
+  final String? accountType;
+  final String? status;
   @JsonKey(name: 'account_expiration_datetime')
   final DateTime accountExpirationDatetime;
-  final String note;
+  final String? note;
   @JsonKey(name: 'customer_id')
-  final String customerId;
+  final String? customerId;
   @JsonKey(name: 'created_datetime')
-  final DateTime createdDatetime;
+  final DateTime? createdDatetime;
   final Map<String, dynamic>? meta;
   @JsonKey(name: 'customer_reference')
-  final String customerReference;
-  final String currency;
+  final String? customerReference;
+  final String? currency;
 
   VirtualAccountResponse({
     required this.id,

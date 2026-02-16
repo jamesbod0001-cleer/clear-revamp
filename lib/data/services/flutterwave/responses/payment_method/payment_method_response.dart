@@ -1,4 +1,6 @@
 import 'package:cleer/data/services/flutterwave/models/address/address_object.dart';
+import 'package:cleer/data/services/flutterwave/models/cof/cof_object.dart';
+import 'package:cleer/data/services/flutterwave/models/ussd/ussd_object.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'payment_method_response.g.dart';
@@ -8,6 +10,7 @@ class PaymentMethodResponse {
   final String type;
 
   CardResponseObject? card;
+  USSDObject? ussd;
 
   final String id;
   @JsonKey(name: 'customer_id')
@@ -25,6 +28,7 @@ class PaymentMethodResponse {
     required this.id,
 
     this.card,
+    this.ussd,
 
     this.customerId,
     this.meta,
@@ -40,9 +44,9 @@ class PaymentMethodResponse {
 @JsonSerializable()
 class CardResponseObject {
   @JsonKey(name: 'expiry_month')
-  final String expiryMonth;
+  final int expiryMonth;
   @JsonKey(name: 'expiry_year')
-  final String expiryYear;
+  final int expiryYear;
   final String first6;
   final String last4;
   final String network;
@@ -50,6 +54,8 @@ class CardResponseObject {
   final AddressObject? billingAddress;
   @JsonKey(name: 'card_holder_name')
   final String? cardHolderName;
+
+  final COFObject cof;
 
   CardResponseObject({
     required this.expiryMonth,
@@ -59,6 +65,7 @@ class CardResponseObject {
     required this.network,
     this.billingAddress,
     this.cardHolderName,
+    required this.cof,
   });
 
   factory CardResponseObject.fromJson(Map<String, dynamic> json) =>

@@ -73,7 +73,14 @@ class AgreementUseCase extends _$AgreementUseCase {
                 );
               },
               (payout) {
-                _log.info('User found on Cleer: ${payout.accountName}');
+                _log.info(payout.toString());
+                if(payout.user != null) {
+                  _log.info('User found on Cleer: ${payout.user!.firstName}');
+                } else {
+                  _log.info('User not found on Cleer');
+                  /// TODO: Maybe we can add a suspicious tag here, for this
+                  _log.info('Payout destination exists for user, resolved name is: ${payout.accountName}');
+                }
                 return Success(
                   RecipientResolution(
                     accountName: payout.accountName,
@@ -114,11 +121,11 @@ class AgreementUseCase extends _$AgreementUseCase {
 
     PayoutDestination? payoutDestination;
 
-    if (formData.recipientResolution!.isRegisteredUser) {
-      _log.info('User is already registered');
+    if (formData.recipientResolution!.payoutDestination != null) {
+      _log.info('Using existing payout destination');
       payoutDestination = formData.recipientResolution!.payoutDestination!;
     } else {
-      _log.info('User is not registered');
+      _log.info('Creating new payout destination');
       final recipientResolution = formData.recipientResolution!;
       switch (formData.initiatorRole) {
         case InitiatorRole.sender:
@@ -173,6 +180,64 @@ class AgreementUseCase extends _$AgreementUseCase {
       },
       (failure) {
         _log.error('Error creating agreement', failure);
+        return Failure(failure);
+      },
+    );
+  }
+
+  Future<ResultDart<Agreement, DataFailure>> getAgreement(String id) async {
+    _log.info('Attempting to get agreement');
+    final result = await _agreementRepository.getAgreement(id);
+    result.fold(
+      (agreement) {
+        _log.info('Successfully retrieved agreement');
+      },
+      (failure) {
+        _log.error('Error retrieving agreement', failure);
+        return Failure(failure);
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<Agreement, DataFailure>> markAgreementAsFunded(
+    String id,
+  ) async {
+    _log.info('Attempting to mark agreement as funded');
+    final agreementResult = await _agreementRepository.getAgreement(id);
+    return await agreementResult.fold(
+      (agreement) async {
+        _log.info('Successfully retrieved agreement');
+        late AgreementStatus updatedStatus;
+        if (agreement.initiatorRole == InitiatorRole.sender &&
+            agreement.status == .draft) {
+          updatedStatus = .awaitingRecipient;
+        } else if (agreement.initiatorRole == InitiatorRole.recipient &&
+            agreement.status == .awaitingFunding) {
+          updatedStatus = .funded;
+        } else {
+          _log.error('Invalid agreement status for funding');
+          _log.error('Agreement current status: ${agreement.status}');
+          return Failure(DataFailure.notFound());
+        }
+        final updatedAgreement = agreement.copyWith(status: updatedStatus);
+        _log.info('Attempting to update agreement');
+        final updateResult = await _agreementRepository.updateAgreement(
+          updatedAgreement,
+        );
+        return await updateResult.fold(
+          (updatedAgreement) {
+            _log.info('Successfully updated agreement');
+            return Success(updatedAgreement);
+          },
+          (failure) {
+            _log.error('Error updating agreement', failure);
+            return Failure(failure);
+          },
+        );
+      },
+      (failure) {
+        _log.error('Error retrieving agreement', failure);
         return Failure(failure);
       },
     );

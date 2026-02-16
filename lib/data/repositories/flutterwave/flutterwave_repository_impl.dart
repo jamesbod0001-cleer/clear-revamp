@@ -3,26 +3,35 @@ import 'package:cleer/data/exceptions/payment_exception_handler.dart';
 import 'package:cleer/data/mappers/flutterwave_mappers.dart';
 import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
 import 'package:cleer/data/services/flutterwave/flutterwave_service_client.dart';
+import 'package:cleer/data/services/flutterwave/models/charge_filter/charge_filter.dart';
+import 'package:cleer/data/services/flutterwave/models/cof/cof_object.dart';
 import 'package:cleer/data/services/flutterwave/models/name/name_object.dart';
 import 'package:cleer/data/services/flutterwave/models/phone/phone_object.dart';
+import 'package:cleer/data/services/flutterwave/models/ussd/ussd_object.dart';
+import 'package:cleer/data/services/flutterwave/requests/create_charge/create_charge_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_customer/create_customer_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_payment_method/create_payment_method_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/create_virtual_account/create_virtual_account_request.dart';
 import 'package:cleer/data/services/flutterwave/requests/resolve_account/resolve_account_request.dart';
 import 'package:cleer/domain/failures/payment_failures.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
+import 'package:cleer/domain/models/charge/charge.dart';
 import 'package:cleer/domain/models/customer/customer.dart';
 import 'package:cleer/domain/models/enums/country_code.dart';
 import 'package:cleer/domain/models/enums/payment_method_type.dart';
 import 'package:cleer/domain/models/enums/virtual_account_type.dart';
 import 'package:cleer/domain/models/payment_method/payment_method.dart';
 import 'package:cleer/domain/models/virtual_account/virtual_account.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/create_charge_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/create_customer_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/create_payment_method_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/create_virtual_account_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/list_charges_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:cleer/env/env.dart';
+import 'package:cleer/utils/reference_generator.dart';
 import 'package:cleer/utils/security_utils.dart';
+import 'package:dio/dio.dart';
 import 'package:result_dart/result_dart.dart';
 
 class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
@@ -51,9 +60,13 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       _log.info('Successfully retrieved banks for country code: $countryCode');
 
       return Success(banks);
-    } catch (e) {
-      _log.error('Error retrieving banks for country code: $countryCode', e);
-      return Failure(PaymentExceptionHandler.handleException(e));
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error(
+        'Error retrieving banks for country code: $countryCode',
+        failure,
+      );
+      return Failure(failure);
     }
   }
 
@@ -78,12 +91,13 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       );
       String accountName = response.data.accountName;
       return Success(accountName);
-    } catch (e) {
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
       _log.error(
         'Error resolving account for bank code: ${params.bankCode} and account number: ${params.accountNumber}',
-        e,
+        failure,
       );
-      return Failure(PaymentExceptionHandler.handleException(e));
+      return Failure(failure);
     }
   }
 
@@ -113,9 +127,10 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       );
       _log.info('Successfully created customer with params: $params');
       return Success(response.data.toDomain(userId));
-    } catch (e) {
-      _log.error('Error creating customer with params: $params', e);
-      return Failure(PaymentExceptionHandler.handleException(e));
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error('Error creating customer with params: $params', failure);
+      return Failure(failure);
     }
   }
 
@@ -131,9 +146,10 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       );
       _log.info('Successfully retrieved payment method with id: $id');
       return Success(response.data.toDomain());
-    } catch (e) {
-      _log.error('Error retrieving payment method with id: $id', e);
-      return Failure(PaymentExceptionHandler.handleException(e));
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error('Error retrieving payment method with id: $id', failure);
+      return Failure(failure);
     }
   }
 
@@ -151,6 +167,8 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
               String expiryYear,
               String cvv,
               String? cardHolderName,
+              String? customerId,
+              Map<String, dynamic>? meta,
             ) async {
               final String nonce = PaymentSecurityUtils.generateNonce();
               final String encryptionKey = Env.flutterwaveEncryptionKey;
@@ -179,17 +197,36 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
                     nonce,
                   ),
                   nonce: nonce,
+                  cof: COFObject(enabled: true),
                 ),
+                customerId: customerId,
+                meta: meta,
               );
-
               return request;
             },
-        opay: () async {
+        opay: (String? customerId, Map<String, dynamic>? meta) async {
           final request = CreatePaymentMethodRequest(
             type: PaymentMethodType.opay.snakeCase,
+            customerId: customerId,
+            meta: meta,
           );
           return request;
         },
+        ussd:
+            (
+              String accountBankCode,
+              String? customerId,
+              Map<String, dynamic>? meta,
+            ) {
+              _log.info(accountBankCode);
+              final request = CreatePaymentMethodRequest(
+                type: PaymentMethodType.ussd.snakeCase,
+                ussd: USSDObject(accountBank: accountBankCode),
+                customerId: customerId,
+                meta: meta,
+              );
+              return request;
+            },
       );
       final response = await _flutterwaveServiceClient.createPaymentMethod(
         request,
@@ -198,12 +235,13 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
         'Successfully created payment method with type: ${params.runtimeType}, id: ${response.data.id}',
       );
       return Success(response.data.toDomain());
-    } catch (e) {
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
       _log.error(
         'Error creating payment method with type: ${params.runtimeType}',
-        e,
+        failure,
       );
-      return Failure(PaymentExceptionHandler.handleException(e));
+      return Failure(failure);
     }
   }
 
@@ -265,9 +303,79 @@ class FlutterwaveRepositoryImpl extends FlutterwaveRepository {
       );
       _log.info('Successfully created virtual account with params: $params');
       return Success(response.data.toDomain());
-    } catch (e) {
-      _log.error('Error creating virtual account with params: $params', e);
-      return Failure(PaymentExceptionHandler.handleException(e));
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error(
+        'Error creating virtual account with params: $params',
+        failure,
+      );
+      return Failure(failure);
+    }
+  }
+
+  @override
+  Future<ResultDart<Charge, PaymentFailure>> createCharge(
+    CreateChargeParams params,
+  ) async {
+    try {
+      _log.info('Creating charge with params: $params');
+      final request = CreateChargeRequest(
+        amount: params.amount,
+        reference: ReferenceGenerator.generate(params.agreementId),
+        customerId: params.customerId,
+        paymentMethodId: params.paymentMethodId,
+        meta: {'agreement_id': params.agreementId, ...params.meta ?? {}},
+      );
+
+      final response = await _flutterwaveServiceClient.createCharge(request);
+      return Success(response.data.toDomain(params.agreementId));
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error('Error creating charge with params: $params', failure);
+      return Failure(failure);
+    }
+  }
+
+  @override
+  Future<ResultDart<Charge, PaymentFailure>> getCharge(String id) async {
+    try {
+      _log.info('Retrieving charge with id: $id');
+      final response = await _flutterwaveServiceClient.retrieveCharge(id);
+      _log.info('Successfully retrieved charge with id: $id');
+      return Success(response.data.toDomain(''));
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error('Error retrieving charge with id: $id', failure);
+      return Failure(failure);
+    }
+  }
+
+  @override
+  Future<ResultDart<List<Charge>, PaymentFailure>> listCharges(
+    ListChargesParams params,
+  ) async {
+    try {
+      _log.info('Retrieving charges with params: $params');
+      final request = ChargeFilter(
+        status: params.status,
+        reference: params.reference,
+        to: params.to,
+        from: params.from,
+        customerId: params.customerId,
+        virtualAccountId: params.virtualAccountId,
+        paymentMethodId: params.paymentMethodId,
+        page: params.page,
+        size: params.size,
+      );
+      final response = await _flutterwaveServiceClient.listCharges(request);
+      _log.info('Successfully retrieved charges with params: $params');
+      return Success(
+        response.data.map((charge) => charge.toDomain('')).toList(),
+      );
+    } on DioException catch (e) {
+      final failure = FlutterwaveExceptionHandler.handleException(e);
+      _log.error('Error retrieving charges with params: $params', failure);
+      return Failure(failure);
     }
   }
 }

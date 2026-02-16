@@ -20,4 +20,12 @@ extension StringExtensions on String {
       return "${username[0]}***${username[username.length - 1]}@$domain";
     }
   }
+
+  String? get extractUssd {
+    // Pattern matches * followed by digits and optional *segments, ending in #
+    final RegExp ussdRegex = RegExp(r'\*[\d\*]+#');
+
+    final match = ussdRegex.firstMatch(this);
+    return match?.group(0);
+  }
 }
