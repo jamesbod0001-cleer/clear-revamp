@@ -210,6 +210,20 @@ abstract class AppTheme {
     style: OutlinedButton.styleFrom(
       backgroundColor: _Palette.transparent,
       minimumSize: Dimens.mobile.buttonMinimumSize,
+      textStyle: _labelMedium,
+      padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radius.r8),
+      ),
+    ),
+  );
+
+  static final _textButtonTheme = TextButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      backgroundColor: _Palette.transparent,
+      foregroundColor: _Palette.blue700,
+      minimumSize: Dimens.mobile.buttonMinimumSize,
+      textStyle: _labelMedium,
       padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.radius.r8),
@@ -227,6 +241,7 @@ abstract class AppTheme {
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
     outlinedButtonTheme: _outlinedButtonTheme,
+    textButtonTheme: _textButtonTheme,
     iconTheme: _iconTheme,
     navigationBarTheme: _navigationBarTheme,
     useMaterial3: true,
