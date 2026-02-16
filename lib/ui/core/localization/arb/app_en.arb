@@ -248,5 +248,62 @@
   "fundsAreHeldSecurelyUntilYouConfirmRelease": "Funds are held securely until you approve release",
   "continueWithOpay": "Continue with Opay",
   "youllBeRedirectedToAuthorizeThisPayment": "You’ll be redirected to authorize this\npayment.",
-  "changePaymentMethod": "Change Payment Method"
+  "changePaymentMethod": "Change Payment Method",
+  "paymentSecuredSuccessfully": "Payment secured successfully",
+  "fundsHeldSecurely": "{amount} has now been held securely until it’s released by you",
+  "@fundsHeldSecurely": {
+    "description": "Message shown to the sender after successfully funding an agreement",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "NGN 500,005.89"
+      }
+    }
+  },
+  "viewAgreement": "View Agreement",
+  "goToDashboard": "Go to Dashboard",
+  "waitingForConfirmation": "Waiting for confirmation",
+  "weWillUpdateThisScreenOnceYourBankConfirmsThePayment" :"We’ll update this screen once your\nbank confirms the payment.",
+  "securingYourPayment": "Securing your payment",
+  "pleaseDontCloseThisScreenWeAreSafelyLockingYourFunds": "Please don’t close this screen.\nWe’re safely locking your funds.",
+  "redirecting": "Redirecting",
+  "pleaseDontCloseThisScreenWeAreRedirectingYou": "Please don’t close this screen.\nWe’re redirecting you.",
+  "dial": "Dial",
+  "iHaveCompletedTheUSSDPayment": "I’ve completed the USSD payment",
+  "enterYourCardDetailsToPay": "Enter your card details to pay",
+  "cardNumber": "Card Number",
+  "cardExpiry": "Card Expiry",
+  "cvv": "CVV",
+  "rememberThisCardForNextTime": "Remember this card for next time",
+  "invalidCardNumber": "Invalid card number",
+  "expiryDate": "Expiry date",
+  "invalidExpiryDate": "Invalid expiry date",
+  "invalidMonth": "Invalid month",
+  "invalidYear": "Invalid year",
+  "cardHasExpired": "Card has expired",
+  "invalidCvv": "Invalid CVV",
+  "invalidCvvLength": "CVV must be {expectedLength} digits",
+  "@invalidCvvLength": {
+    "description": "Error message for invalid CVV length",
+    "placeholders": {
+      "expectedLength": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "secureAmount": "Secure {formattedAmount}",
+  "@secureAmount": {
+    "description": "Text displayed on the button to initiate payment securing",
+    "placeholders": {
+      "formattedAmount": {
+        "type": "String",
+        "example": "NGN 500,005.89"
+      }
+    }
+  },
+  "remove": "Remove",
+  "usingSavedCard": "Using saved card",
+  "copy": "Copy",
+  "iHaveSentTheMoney": "I’ve sent the money"
 }
