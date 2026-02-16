@@ -31,12 +31,13 @@ export 'AgreementInitiatorRole.dart';
 export 'AgreementStatus.dart';
 export 'PayoutDestination.dart';
 export 'Transaction.dart';
+export 'TransactionPaymentMethodType.dart';
 export 'TransactionStatus.dart';
 export 'User.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "9d64130775b2fcc1d265ba90941a8bf5";
+  String version = "73f539c7b49e2082f5531c3aa31969f9";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [Agreement.schema, PayoutDestination.schema, Transaction.schema, User.schema];
   @override
