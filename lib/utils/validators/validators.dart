@@ -2,6 +2,7 @@ export 'common_validator.dart';
 export 'email_validator.dart';
 export 'phone_validator.dart';
 export 'password_validator.dart';
+export 'card_validators.dart';
 
 import 'package:cleer/utils/validators/common_validator.dart';
 import 'package:cleer/utils/validators/email_validator.dart';
