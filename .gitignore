@@ -59,3 +59,5 @@ amplifyconfiguration*
 
 # Envied
 .env
+
+/lib/config/assets.gen.dart
