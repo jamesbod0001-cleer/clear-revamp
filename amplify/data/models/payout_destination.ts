@@ -14,5 +14,5 @@ export const PayoutDestination = a.model({
 }).identifier(['accountNumber', 'bankCode'])
     .authorization(allow => [
         allow.authenticated().to(['create', 'read']),
-        allow.ownerDefinedIn('userId'),
+
     ]);
