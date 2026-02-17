@@ -59,5 +59,7 @@ amplifyconfiguration*
 
 # Envied
 .env
+sentry.properties
+
 
 /lib/config/assets.gen.dart

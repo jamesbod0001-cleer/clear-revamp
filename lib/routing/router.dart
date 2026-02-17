@@ -5,6 +5,7 @@ import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'router.g.dart';
 
@@ -16,6 +17,9 @@ GoRouter router(Ref ref) {
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
+    observers: [
+      SentryNavigatorObserver(),
+    ],
     initialLocation: const SplashRoute().location,
     refreshListenable: authNotifier,
     debugLogDiagnostics: true,

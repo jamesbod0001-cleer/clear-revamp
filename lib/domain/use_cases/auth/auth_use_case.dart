@@ -21,6 +21,7 @@ import 'package:cleer/utils/constants.dart';
 import 'package:cleer/utils/password_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'auth_use_case.g.dart';
 
@@ -65,6 +66,16 @@ class AuthUseCase extends _$AuthUseCase {
         return syncResult.fold(
           (user) {
             _log.info('Successfully synced user profile');
+            Sentry.configureScope(
+              (scope) => scope.setUser(
+                SentryUser(
+                  id: identity.id,
+                  email: identity.email,
+                  username: "${identity.firstName} ${identity.lastName}",
+                  data: {'phone': identity.phoneNumber},
+                ),
+              ),
+            );
             return AuthState.signedIn(
               identity: identity,
               isRegistrationComplete: !isCompilingRegistration,
