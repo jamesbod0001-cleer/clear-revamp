@@ -40,6 +40,7 @@ class AuthUseCase extends _$AuthUseCase {
     _authRepository = ref.watch(authRepositoryProvider);
     _userRepository = ref.watch(userRepositoryProvider);
     _flutterwaveRepository = ref.watch(flutterwaveRepositoryProvider);
+    _secureStorageService = ref.watch(secureStorageServiceProvider);
     _initialiseAuthStatus();
     _listenToAuthStateChanges();
     return AuthState.unknown();
