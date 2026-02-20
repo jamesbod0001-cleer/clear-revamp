@@ -305,5 +305,31 @@
   "remove": "Remove",
   "usingSavedCard": "Using saved card",
   "copy": "Copy",
-  "iHaveSentTheMoney": "I’ve sent the money"
+  "iHaveSentTheMoney": "I’ve sent the money",
+  "splitAmountIntoMilestones": "Split {amount} into Milestones",
+  "@splitAmountIntoMilestones": {
+    "description": "Label for the milestone split action",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦500,000"
+      }
+    }
+  },
+  "remaining": "Remaining",
+  "milestoneName": "Milestone Name",
+  "milestoneAmount": "Milestone Amount",
+  "addMilestone": "Add Milestone",
+  "milestonesTotalExceeded": "Total milestones cannot exceed {amount}",
+  "@milestonesTotalExceeded": {
+    "description": "Error message when the sum of milestones is greater than the agreement total",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦500,000"
+      }
+    }
+  },
+  "mustBeGreaterThanZero": "Must be greater than 0",
+  "invalidReleaseDate": "Invalid release date"
 }
