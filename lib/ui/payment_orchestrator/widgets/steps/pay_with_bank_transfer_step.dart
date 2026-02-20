@@ -5,6 +5,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/step_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,15 +26,11 @@ class PayWithBankTransferStep extends HookConsumerWidget {
 
     final generateVirtualAccountCommand = viewModel.generateVirtualAccount;
     useEffect(() {
-      debugPrint("useEffect");
-      // 1. Run the logic on mount
-      // We use Future.microtask to ensure the build completes before triggering state changes
       Future.microtask(() async {
         generateVirtualAccountCommand.clearErrors();
         await generateVirtualAccountCommand.runAsync();
       });
 
-      // 2. Setup your error listener (as you already had)
       void listener() {
         if (generateVirtualAccountCommand.errors.value != null) {
           debugPrint(
@@ -44,8 +41,8 @@ class PayWithBankTransferStep extends HookConsumerWidget {
 
       generateVirtualAccountCommand.errors.addListener(listener);
 
-      // Clean up the listener when the widget is disposed
-      return () => generateVirtualAccountCommand.errors.removeListener(listener);
+      return () =>
+          generateVirtualAccountCommand.errors.removeListener(listener);
     }, []);
 
     return PopScope(
@@ -140,7 +137,15 @@ class PayWithBankTransferStep extends HookConsumerWidget {
                                         visualDensity: .compact,
                                         minimumSize: .zero,
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        await Clipboard.setData(
+                                          ClipboardData(
+                                            text:
+                                                virtualAccount?.accountNumber ??
+                                                '',
+                                          ),
+                                        );
+                                      },
                                       child: Row(
                                         mainAxisSize: .min,
                                         children: [
@@ -152,12 +157,7 @@ class PayWithBankTransferStep extends HookConsumerWidget {
                                           Gap(Dimens.spacing.sp2),
                                           Text(
                                             l10n.copy,
-                                            style: context.typo.bodyMedium
-                                                .copyWith(
-                                                  height: 1,
-                                                  letterSpacing: 0.14,
-                                                  // color: context.color.blue700,
-                                                ),
+                                            style: context.typo.labelSmall,
                                           ),
                                         ],
                                       ),
