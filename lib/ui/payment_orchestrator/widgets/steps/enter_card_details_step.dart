@@ -347,7 +347,7 @@ class CustomCheckbox extends StatelessWidget {
             : PhosphorIcon(
                 PhosphorIcons.square(),
                 size: Dimens.size.s20,
-                color: context.color.grey400,
+                color: context.color.blue700,
               ),
       ),
     );
