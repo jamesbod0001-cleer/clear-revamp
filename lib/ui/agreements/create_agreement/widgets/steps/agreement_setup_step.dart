@@ -65,7 +65,11 @@ class AgreementSetupStep extends HookConsumerWidget {
     useEffect(() {
       if (amountController.text == '') {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          _showAgreementNumpadOverlay(context, amountController);
+          _showAgreementNumpadOverlay(
+            context,
+            amountController,
+            isAutomaticallyOpened: true,
+          );
         });
       }
       return null;
@@ -244,8 +248,9 @@ class AgreementSetupStep extends HookConsumerWidget {
 
   void _showAgreementNumpadOverlay(
     BuildContext context,
-    TextEditingController amountController,
-  ) => showDialog(
+    TextEditingController amountController, {
+    bool isAutomaticallyOpened = false,
+  }) => showDialog(
     context: context,
     useRootNavigator: true,
     fullscreenDialog: true,
@@ -262,6 +267,7 @@ class AgreementSetupStep extends HookConsumerWidget {
           '#,###.##',
         ).format(double.parse(value));
       },
+      isAutomaticallyOpened: isAutomaticallyOpened,
     ),
   );
 

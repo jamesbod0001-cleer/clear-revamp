@@ -17,11 +17,14 @@ class AgreementNumpadOverlay extends HookWidget {
     required this.initialAmount,
     required this.type,
     required this.onSubmitted,
+    this.isAutomaticallyOpened = false,
   });
 
   final String initialAmount;
   final AgreementType type;
   final Function(String) onSubmitted;
+
+  final bool isAutomaticallyOpened;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +89,9 @@ class AgreementNumpadOverlay extends HookWidget {
                   ),
                   onPressed: () {
                     context.pop();
+                    if (isAutomaticallyOpened) {
+                      context.pop();
+                    }
                   },
                   icon: PhosphorIcon(
                     PhosphorIcons.x(.bold),
