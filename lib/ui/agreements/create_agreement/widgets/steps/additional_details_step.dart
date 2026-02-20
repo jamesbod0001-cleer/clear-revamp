@@ -117,8 +117,10 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                     controller: categoryController,
                     labelText: l10n.paymentCategory,
                     readOnly: true,
-                    onTap: () =>
-                        _showCategoryPickerBottomSheet(context, selectedCategory),
+                    onTap: () => _showCategoryPickerBottomSheet(
+                      context,
+                      selectedCategory,
+                    ),
                     suffixIcon: IconButton(
                       onPressed: () => _showCategoryPickerBottomSheet(
                         context,
@@ -151,8 +153,10 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                         color: context.color.blue700,
                       ),
                     ),
-                    onTap: () =>
-                        _showDatePickerBottomSheet(context, selectedReleaseDate),
+                    onTap: () => _showDatePickerBottomSheet(
+                      context,
+                      selectedReleaseDate,
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return l10n.fieldRequired('release date');
@@ -352,7 +356,7 @@ class AdditionalDetailsStep extends HookConsumerWidget {
   ) =>
       CustomBottomSheet.show<DateTime?>(
         context: context,
-        showCancelIcon: false,
+        showCancelIcon: true,
         child: DatePickerDialog(
           insetPadding: .only(bottom: Dimens.padding.p24),
           firstDate: DateTime.now(),
