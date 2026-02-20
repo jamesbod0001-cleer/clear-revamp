@@ -3,11 +3,13 @@ import {User} from "./models/user";
 import {Agreement} from "./models/agreement";
 import {PayoutDestination} from "./models/payout_destination";
 import {Transaction} from "./models/transaction";
+import {Milestone} from "./models/milestone";
 
 const schema = a.schema({
     User,
     Agreement,
     PayoutDestination,
+    Milestone,
     Transaction,
 });
 

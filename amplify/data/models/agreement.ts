@@ -24,6 +24,7 @@ export const Agreement = a.model({
     status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS']),
 
     // Relationships
+    milestones: a.hasMany('Milestone', 'agreementId'),
     initiator: a.belongsTo('User', 'initiatorId'),
     sender: a.belongsTo('User', 'senderId'),
     recipient: a.belongsTo('User', 'recipientId'),
