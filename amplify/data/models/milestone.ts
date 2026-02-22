@@ -5,6 +5,7 @@ export const Milestone = a.model({
     name: a.string().required(),
     amount: a.float().required(),
     order: a.integer().required(),
+    expectedReleaseDate: a.date().required(),
     status: a.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'PENDING_RELEASE', 'RELEASED', 'DISPUTED']),
     agreement: a.belongsTo('Agreement', 'agreementId'),
 }).authorization(allow => [
