@@ -12,6 +12,7 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     super.key,
+    this.fieldKey,
     this.labelText,
     this.label,
     this.hintText,
@@ -31,6 +32,8 @@ class CustomTextFormField extends StatefulWidget {
     this.readOnly = false,
     this.focusNode,
   });
+
+  final GlobalKey<FormFieldState>? fieldKey;
 
   final String? labelText;
   final Widget? label;
@@ -81,6 +84,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   @override
   Widget build(BuildContext context) {
     return FormField<String>(
+      key: widget.fieldKey,
       validator: widget.validator,
       initialValue: widget.controller?.text,
       autovalidateMode: AutovalidateMode.onUserInteraction,
