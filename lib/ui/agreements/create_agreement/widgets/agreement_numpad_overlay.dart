@@ -1,4 +1,5 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -66,132 +67,146 @@ class AgreementNumpadOverlay extends HookWidget {
       }
     }
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: Assets.images.onboardingBackground.provider(),
-            fit: BoxFit.cover,
+    return PopScope(
+      canPop: !isAutomaticallyOpened,
+      onPopInvokedWithResult: (didPop, result) {
+        // If didPop is true, the screen is already closing.
+        if (didPop) return;
+
+        HomeRoute().go(context);
+      },
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: Assets.images.onboardingBackground.provider(),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-        child: SafeArea(
-          child: Stack(
-            children: [
-              Positioned(
-                top: 29,
-                right: 0,
-                child: IconButton(
-                  style: IconButton.styleFrom(
-                    padding: EdgeInsets.all(Dimens.padding.p6),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    minimumSize: Size.zero,
-                  ),
-                  onPressed: () {
-                    context.pop();
-                    if (isAutomaticallyOpened) {
-                      context.pop();
-                    }
-                  },
-                  icon: PhosphorIcon(
-                    PhosphorIcons.x(.bold),
-                    color: context.color.blue200,
+          padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 29,
+                  right: 0,
+                  child: IconButton(
+                    style: IconButton.styleFrom(
+                      padding: EdgeInsets.all(Dimens.padding.p6),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: Size.zero,
+                    ),
+                    onPressed: () {
+                      if (isAutomaticallyOpened) {
+                        HomeRoute().go(context);
+                      } else {
+                        context.pop();
+                      }
+                    },
+                    icon: PhosphorIcon(
+                      PhosphorIcons.x(.bold),
+                      color: context.color.blue200,
+                    ),
                   ),
                 ),
-              ),
-              Positioned.fill(
-                child: Column(
-                  mainAxisSize: .min,
-                  crossAxisAlignment: .center,
-                  children: [
-                    Gap(Dimens.spacing.sp35),
-                    Text(
-                      type.isSend ? l10n.sendFunds : l10n.requestFunds,
-                      style: context.typo.headlineSmall.copyWith(
-                        color: context.color.blue100,
+                Positioned.fill(
+                  child: Column(
+                    mainAxisSize: .min,
+                    crossAxisAlignment: .center,
+                    children: [
+                      Gap(Dimens.spacing.sp35),
+                      Text(
+                        type.isSend ? l10n.sendFunds : l10n.requestFunds,
+                        style: context.typo.headlineSmall.copyWith(
+                          color: context.color.blue100,
+                        ),
                       ),
-                    ),
-                    Gap(Dimens.spacing.sp54),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Center(
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: l10n.nairaSign,
-                                      style: context.typo.headlineLarge
-                                          .copyWith(
-                                            color: context.color.blue100,
-                                          ),
-                                    ),
-                                    TextSpan(
-                                      text: ' ',
-                                      style: context.typo.headlineMedium,
-                                    ),
-                                    TextSpan(
-                                      text: amountText.value.isEmpty
-                                          ? '0'
-                                          : NumberFormat('#,###.##').format(
-                                              double.parse(amountText.value),
+                      Gap(Dimens.spacing.sp54),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Center(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: l10n.nairaSign,
+                                        style: context.typo.headlineLarge
+                                            .copyWith(
+                                              color: context.color.blue100,
                                             ),
-                                      style: context.typo.displayMedium
-                                          .copyWith(
-                                            color: amountText.value == '0'
-                                                ? context.color.blue700
-                                                : context.color.blue100,
-                                          ),
-                                    ),
-                                  ],
+                                      ),
+                                      TextSpan(
+                                        text: ' ',
+                                        style: context.typo.headlineMedium,
+                                      ),
+                                      TextSpan(
+                                        text: amountText.value.isEmpty
+                                            ? '0'
+                                            : NumberFormat('#,###.##').format(
+                                                double.parse(amountText.value),
+                                              ),
+                                        style: context.typo.displayMedium
+                                            .copyWith(
+                                              color: amountText.value == '0'
+                                                  ? context.color.blue700
+                                                  : context.color.blue100,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Gap(Dimens.spacing.sp8),
-                          Material(
-                            color: context.color.blue1100,
-                            borderRadius: .circular(Dimens.radius.r8),
-                            child: Padding(
-                              padding: .symmetric(
-                                vertical: Dimens.padding.p8,
-                                horizontal: Dimens.padding.p12,
-                              ),
-                              child: Text(
-                                l10n.enterAmountToSecure,
-                                style: context.typo.bodyMedium.copyWith(
-                                  color: context.color.outline,
+                            Gap(Dimens.spacing.sp8),
+                            Material(
+                              color: context.color.blue1100,
+                              borderRadius: .circular(Dimens.radius.r8),
+                              child: Padding(
+                                padding: .symmetric(
+                                  vertical: Dimens.padding.p8,
+                                  horizontal: Dimens.padding.p12,
+                                ),
+                                child: Text(
+                                  l10n.enterAmountToSecure,
+                                  style: context.typo.bodyMedium.copyWith(
+                                    color: context.color.outline,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Gap(Dimens.spacing.sp24),
-                          Expanded(
-                            child: _NumpadGrid(
-                              onTap: handleTap,
-                              onBackspace: handleBackspace,
+                            Gap(Dimens.spacing.sp24),
+                            Expanded(
+                              child: _NumpadGrid(
+                                onTap: handleTap,
+                                onBackspace: handleBackspace,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Gap(Dimens.spacing.sp40),
-                    PrimaryButton(
-                      onPressed: double.parse(amountText.value) > minimumAmount
-                          ? () {
-                              onSubmitted.call(amountText.value);
-                              context.pop();
-                            }
-                          : null,
-                      child: Text(l10n.next),
-                    ),
-                    Gap(Dimens.spacing.sp20),
-                  ],
+                      Gap(Dimens.spacing.sp40),
+                      PrimaryButton(
+                        onPressed:
+                            (amountText.value.isNotEmpty
+                                    ? double.parse(amountText.value)
+                                    : 0.0) >
+                                minimumAmount
+                            ? () {
+                                onSubmitted.call(amountText.value);
+                                context.pop();
+                              }
+                            : null,
+                        child: Text(l10n.next),
+                      ),
+                      Gap(Dimens.spacing.sp20),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
