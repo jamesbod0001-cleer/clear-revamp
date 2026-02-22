@@ -1,4 +1,5 @@
 import 'package:cleer/domain/models/agreement/agreement.dart';
+import 'package:cleer/domain/models/milestone/milestone_enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'milestone.freezed.dart';
@@ -10,6 +11,7 @@ abstract class Milestone with _$Milestone {
     required int order,
     required String name,
     required double amount,
+    required MilestoneStatus status,
     required DateTime expectedReleaseDate,
     Agreement? agreement,
   }) = _Milestone;
