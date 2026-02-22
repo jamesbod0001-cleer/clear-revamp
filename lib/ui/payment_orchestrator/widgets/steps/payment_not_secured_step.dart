@@ -2,7 +2,6 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
-import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,7 +14,7 @@ class PaymentNotSecuredStep extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final state = ref.watch(paymentOrchestratorViewModelProvider(agreementId));
+    // final state = ref.watch(paymentOrchestratorViewModelProvider(agreementId));
     // final viewModel = ref.read(
     //   paymentOrchestratorViewModelProvider(agreementId).notifier,
     // );
