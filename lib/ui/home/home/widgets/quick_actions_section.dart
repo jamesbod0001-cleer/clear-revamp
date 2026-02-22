@@ -30,7 +30,7 @@ class QuickActionsSection extends StatelessWidget {
                 subtitle: l10n.yourMoneyIsHeldSafelyUntilYouConfirm,
                 backgroundColor: context.color.green400,
                 contentColor: context.color.green1000,
-                subtitleColor: context.color.green850,
+                subtitleColor: context.color.green900,
                 icon: PhosphorIcons.arrowUpRight(),
                 onTap: () => _handleSendFunds(context),
               ),
@@ -100,9 +100,7 @@ class _QuickActionCard extends StatelessWidget {
                 Gap(Dimens.spacing.sp40), // Space for the floating icon
                 Text(
                   title.replaceAll(' ', '\n'),
-                  style: context.typo.titleLarge.copyWith(
-                    color: contentColor
-                  ),
+                  style: context.typo.titleLarge.copyWith(color: contentColor),
                 ),
                 Gap(Dimens.spacing.sp8),
                 Text(

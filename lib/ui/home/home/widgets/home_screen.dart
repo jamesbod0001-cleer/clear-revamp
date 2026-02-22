@@ -108,14 +108,29 @@ class HomeScreen extends StatelessWidget {
                       borderRadius: Dimens.radius.r48,
                     ),
                     child: SizedBox(
-                      width: Dimens.size.s28,
+                      width: Dimens.size.s70,
                       height: Dimens.size.s28,
                       child: Padding(
-                        padding: .all(Dimens.padding.p6),
-                        child: PhosphorIcon(
-                          PhosphorIcons.lineSegments(.duotone),
-                          color: context.color.blue100,
-                          size: Dimens.size.s16,
+                        padding: .symmetric(
+                          horizontal: Dimens.padding.p10,
+                          vertical: Dimens.padding.p6,
+                        ),
+                        child: Row(
+                          children: [
+                            PhosphorIcon(
+                              PhosphorIcons.lineSegments(.duotone),
+                              color: context.color.blue100,
+                              size: Dimens.size.s16,
+                            ),
+                            Gap(Dimens.spacing.sp4),
+                            Text(
+                              l10n.logs,
+                              style: context.typo.bodyMedium.copyWith(
+                                height: 1,
+                                color: context.color.blue100,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
