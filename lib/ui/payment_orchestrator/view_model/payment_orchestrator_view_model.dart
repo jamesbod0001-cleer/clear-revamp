@@ -306,21 +306,29 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
             .markAgreementAsFunded(charge.agreementId)
             .then((r) => r.getOrThrow());
         return state.value!.copyWith(
-          currentStep: .paymentSecuredSuccessfully,
+          // currentStep: .paymentSecuredSuccessfully,
           agreement: updatedAgreement,
         );
       case ChargeStatus.pending:
         // TODO: Handle this case.
         throw UnimplementedError();
       case ChargeStatus.failed:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        _log.warn('Transaction ${charge.status.name}');
+        await ref
+            .read(transactionUseCaseProvider.notifier)
+            .updateTransaction(transaction.copyWith(status: .failed))
+            .then((r) => r.getOrThrow());
+        return state.value!.copyWith(currentStep: .paymentNotSecured);
       case ChargeStatus.voided:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        _log.warn('Transaction ${charge.status.name}');
+        await ref
+            .read(transactionUseCaseProvider.notifier)
+            .updateTransaction(transaction.copyWith(status: .cancelled))
+            .then((r) => r.getOrThrow());
+        return state.value!.copyWith(currentStep: .paymentNotSecured);
       case ChargeStatus.unknown:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        _log.error('Unknown charge status received');
+        throw Exception("Received unknown transaction status from provider");
     }
   }
 
@@ -335,7 +343,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         );
     final charges = listChargesResult.getOrThrow();
 
-    /// TODO: I need to add what to do when there a no charges
+    /// TODO: I need to add what to do when there a no charges (yet)
     _log.info('Found ${charges.length} charges');
     final transactionOption =
         (await ref
@@ -357,7 +365,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       (sum, charge) => sum + charge.amount,
     );
     if (totalAmount < transaction.amount) {
-      /// TODO: I need to add what to do when the total money hasn't been sent
+      /// TODO: I need to add what to do when the total money hasn't been sent (yet)
       _log.info(
         'Amount mismatch - expected: ${transaction.amount}, actual: $totalAmount',
       );
@@ -372,7 +380,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
           .markAgreementAsFunded(state.value!.agreement.id!)
           .then((r) => r.getOrThrow());
       return state.value!.copyWith(
-        currentStep: .paymentSecuredSuccessfully,
+        // currentStep: .paymentSecuredSuccessfully,
         agreement: updatedAgreement,
       );
     }
@@ -395,6 +403,32 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     });
   }
 
+  Future<void> cancelAgreement() async {
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      _log.info('Cancelling agreement');
+      if (state.value!.agreement.initiatorRole == .sender) {
+        _log.info('Initiator is sender, cancelling agreement');
+        final result = await ref
+            .read(agreementUseCaseProvider.notifier)
+            .updateAgreement(
+              state.value!.agreement.copyWith(status: .cancelled),
+            );
+        return result.fold(
+          (updatedAgreement) {
+            return state.value!.copyWith(agreement: updatedAgreement);
+          },
+          (failure) {
+            throw failure;
+          },
+        );
+      } else {
+        _log.info('Initiator is recipient, cancelling transaction');
+        throw UnimplementedError();
+      }
+    });
+  }
+
   Future<void> changePaymentMethod() async {
     if (state.value!.ongoingCharge != null) {
       if (state.value!.currentStep == .payWithUSSD) {
@@ -403,6 +437,16 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
       }
     }
+    state = AsyncData(
+      state.value!.copyWith(
+        currentStep: .choosePaymentMethod,
+        ongoingCharge: null,
+        ongoingVirtualAccount: null,
+      ),
+    );
+  }
+
+  void retryPayment() async {
     state = AsyncData(
       state.value!.copyWith(
         currentStep: .choosePaymentMethod,

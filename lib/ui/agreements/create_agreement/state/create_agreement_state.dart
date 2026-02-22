@@ -12,6 +12,7 @@ enum CreateAgreementStep {
   additionalDetails, // Maps to AdditionalDetailsStep
   review, // Maps to AgreementReviewStep
   payment,
+  fundsSecured,
 }
 
 @freezed
@@ -34,6 +35,7 @@ abstract class CreateAgreementFormData with _$CreateAgreementFormData {
     @Default('') String recipientAccountNumber,
     RecipientResolution? recipientResolution,
     DisbursementType? disbursementType,
+    List<MilestoneDraft>? milestones,
     AgreementCategory? category,
     DateTime? releaseDate,
     @Default('') String description,
@@ -41,4 +43,14 @@ abstract class CreateAgreementFormData with _$CreateAgreementFormData {
 
   factory CreateAgreementFormData.empty(AgreementType type) =>
       CreateAgreementFormData(initiatorRole: type.initiatorRole);
+}
+
+@freezed
+abstract class MilestoneDraft with _$MilestoneDraft {
+  const factory MilestoneDraft({
+    required String id,
+    @Default('') String name,
+    @Default(0.0) double amount,
+    DateTime? releaseDate,
+  }) = _MilestoneDraft;
 }

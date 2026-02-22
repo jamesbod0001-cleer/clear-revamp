@@ -26,6 +26,17 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     return validateRequiredResponse(response);
   }
 
+  Future<PaginatedResult<Agreement>?> queryAgreementByShortCode(
+    String shortCode,
+  ) async {
+    final request = ModelQueries.list(
+      Agreement.classType,
+      where: Agreement.SHORTCODE.eq(shortCode),
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+    return validateResponse(response);
+  }
+
   Future<Agreement> createAgreement(Agreement agreement) async {
     final request = ModelMutations.create(
       agreement,

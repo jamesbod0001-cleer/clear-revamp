@@ -35,6 +35,7 @@ class PaymentSecuredSuccessfullyStep extends ConsumerWidget {
                 shape: BoxShape.circle,
                 border: .all(
                   color: context.color.green700.withValues(alpha: .1),
+                  width: Dimens.size.s2
                 ),
               ),
               child: Assets.images.checkmark.image(height: Dimens.size.s60),

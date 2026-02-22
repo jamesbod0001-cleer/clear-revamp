@@ -1,6 +1,8 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/charge/charge.dart';
+import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -17,7 +19,7 @@ import 'package:cleer/ui/payment_orchestrator/widgets/steps/loading_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/authorizing_web_view.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/pay_with_bank_transfer_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/pay_with_ussd_step.dart';
-import 'package:cleer/ui/payment_orchestrator/widgets/steps/payment_secured_successfully_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/payment_not_secured_step.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -30,6 +32,26 @@ class PaymentOrchestratorView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(paymentOrchestratorViewModelProvider(agreement.id!), (
+      previous,
+      next,
+    ) {
+      if (previous?.value?.agreement.status != next.value?.agreement.status) {
+        if (next.value?.agreement.status == .cancelled) {
+          /// TODO: It might not go home if the user is on the web
+          HomeRoute().go(context);
+        }
+        if (next.value?.agreement.initiatorRole == .sender &&
+            next.value?.agreement.status == .awaitingRecipient) {
+          ref
+              .read(createAgreementViewModelProvider(.send).notifier)
+              .updateAgreement(next.value!.agreement);
+          ref
+              .read(createAgreementViewModelProvider(.send).notifier)
+              .goTo(.fundsSecured);
+        }
+      }
+    });
     final state = ref.watch(
       paymentOrchestratorViewModelProvider(agreement.id!),
     );
@@ -45,6 +67,17 @@ class PaymentOrchestratorView extends ConsumerWidget {
               redirect: (r) => r.url,
             ) ??
             '',
+      );
+    }
+
+    if (state.isLoading &&
+        currentStep == PaymentOrchestratorStep.paymentNotSecured) {
+      return PopScope(
+        canPop: false,
+        child: Material(
+          color: context.color.background,
+          child: Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 
@@ -210,11 +243,15 @@ class _StepSwitcher extends StatelessWidget {
           loadingMessage:
               l10n.weWillUpdateThisScreenOnceYourBankConfirmsThePayment,
         ),
-        PaymentOrchestratorStep.paymentSecuredSuccessfully =>
-          PaymentSecuredSuccessfullyStep(
-            key: const ValueKey('success'),
-            agreementId: agreementId,
-          ),
+        // PaymentOrchestratorStep.paymentSecuredSuccessfully =>
+        //   PaymentSecuredSuccessfullyStep(
+        //     key: const ValueKey('success'),
+        //     agreementId: agreementId,
+        //   ),
+        PaymentOrchestratorStep.paymentNotSecured => PaymentNotSecuredStep(
+          key: const ValueKey('failed'),
+          agreementId: agreementId,
+        ),
         _ => const SizedBox.shrink(),
       },
     );
@@ -237,10 +274,30 @@ class _OrchestratorFooter extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (step == PaymentOrchestratorStep.paymentSecuredSuccessfully) ...[
-          PrimaryButton(onPressed: () {}, child: Text(l10n.viewAgreement)),
+        // if (step == PaymentOrchestratorStep.paymentSecuredSuccessfully) ...[
+        //   PrimaryButton(onPressed: () {}, child: Text(l10n.viewAgreement)),
+        //   Gap(Dimens.spacing.sp12),
+        //   TextButton(onPressed: () {}, child: Text(l10n.goToDashboard)),
+        // ] else
+        if (step == PaymentOrchestratorStep.paymentNotSecured) ...[
+          Text(
+            l10n.ifAnyAmountWasDebitedItWillBeAutomaticallyReversedByYourBank,
+            textAlign: .center,
+            style: context.typo.bodyMedium.copyWith(
+              color: context.color.grey600,
+            ),
+          ),
+          Gap(Dimens.spacing.sp32),
+          PrimaryButton(
+            onPressed: () => viewModel.retryPayment(),
+            child: Text(l10n.retryPayment),
+          ),
           Gap(Dimens.spacing.sp12),
-          TextButton(onPressed: () {}, child: Text(l10n.goToDashboard)),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: context.color.error),
+            onPressed: () => viewModel.cancelAgreement(),
+            child: Text(l10n.cancelAgreement),
+          ),
         ] else ...[
           if (!(step == PaymentOrchestratorStep.choosePaymentMethod ||
               step == .securingYourPayment ||

@@ -7,13 +7,16 @@ part 'agreement.freezed.dart';
 
 @freezed
 abstract class Agreement with _$Agreement {
+  const Agreement._();
+
   const factory Agreement({
     required String? id,
+    required String shortCode,
     required double amount,
     required String currency,
     required DisbursementType disbursementType,
     required AgreementCategory category,
-    required DateTime expectedReleaseDate,
+    DateTime? expectedReleaseDate,
     required String description,
     required InitiatorRole initiatorRole,
     @Default(AgreementStatus.draft) AgreementStatus status,
@@ -23,4 +26,6 @@ abstract class Agreement with _$Agreement {
     User? recipient,
     DateTime? createdAt,
   }) = _Agreement;
+
+  String get shareLink => 'https://cleerpayments.com/a/$shortCode';
 }

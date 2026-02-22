@@ -1,4 +1,5 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/use_cases/agreement/agreement_use_case.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
@@ -55,6 +56,39 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
     );
   }
 
+  // void updateMilestone(MilestoneDraft milestone) {
+  //   final createAgreementState = state.value;
+  //   if (createAgreementState == null) return;
+  //   final updatedMilestones = createAgreementState.formData.milestones!
+  //       .map((m) => m.id == milestone.id ? milestone : m)
+  //       .toList();
+  //   state = AsyncValue.data(
+  //     createAgreementState.copyWith(
+  //       formData: createAgreementState.formData.copyWith(
+  //         milestones: updatedMilestones,
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // void addEmptyMilestone() {
+  //   final createAgreementState = state.value;
+  //   if (createAgreementState == null) return;
+  //   _log.info('adding...');
+  //   state = AsyncValue.data(
+  //     createAgreementState.copyWith(
+  //       formData: createAgreementState.formData.copyWith(
+  //         milestones: [
+  //           ...createAgreementState.formData.milestones ?? [],
+  //           MilestoneDraft(
+  //             id: DateTime.now().millisecondsSinceEpoch.toString(),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Future<void> initiateAgreement() async {
     _log.info('Initiating agreement');
     final currentState = state.value;
@@ -98,6 +132,18 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
         state = AsyncValue.data(state.value!.copyWith(formData: formData));
       }
     }
+  }
+
+  void updateAgreement(Agreement agreement) {
+    if (state.value == null) return;
+    state = AsyncValue.data(state.value!.copyWith(agreement: agreement));
+  }
+
+  void goTo(CreateAgreementStep step) {
+    final createAgreementState = state.value;
+    if (createAgreementState == null) return;
+
+    state = AsyncValue.data(state.value!.copyWith(currentStep: step));
   }
 
   void moveToNextStep() {

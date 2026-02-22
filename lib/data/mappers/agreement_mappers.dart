@@ -10,11 +10,12 @@ extension AgreementToDomainMapper on amplify_model.Agreement {
   domain.Agreement toDomain() {
     return domain.Agreement(
       id: id,
+      shortCode: shortCode,
       amount: amount,
       currency: currency,
       disbursementType: _mapDisbursementTypeToDomain(disbursementType!),
       category: AgreementCategory.fromId(category),
-      expectedReleaseDate: expectedReleaseDate.getDateTime(),
+      expectedReleaseDate: expectedReleaseDate?.getDateTime(),
       description: description,
       payoutDestination: payoutDestination?.toDomain(),
       initiatorRole: _mapInitiatorRoleToDomain(initiatorRole!),
@@ -32,11 +33,14 @@ extension AgreementToAmplifyMapper on domain.Agreement {
   amplify_model.Agreement toAmplify() {
     return amplify_model.Agreement(
       id: id,
+      shortCode: shortCode,
       amount: amount,
       currency: currency,
       disbursementType: _mapDisbursementTypeToAmplify(disbursementType),
       category: category.id,
-      expectedReleaseDate: TemporalDate(expectedReleaseDate),
+      expectedReleaseDate: expectedReleaseDate != null
+          ? TemporalDate(expectedReleaseDate!)
+          : null,
       description: description,
       payoutDestination: payoutDestination?.toAmplify(),
       initiatorRole: _mapInitiatorRoleToAmplify(initiatorRole),
@@ -104,6 +108,8 @@ AgreementStatus _mapAgreementStatusToDomain(amplify_model.AgreementStatus p) {
       return AgreementStatus.funded;
     case amplify_model.AgreementStatus.IN_PROGRESS:
       return AgreementStatus.inProgress;
+    case amplify_model.AgreementStatus.CANCELLED:
+      return AgreementStatus.cancelled;
   }
 }
 
@@ -119,5 +125,7 @@ amplify_model.AgreementStatus _mapAgreementStatusToAmplify(AgreementStatus p) {
       return amplify_model.AgreementStatus.FUNDED;
     case AgreementStatus.inProgress:
       return amplify_model.AgreementStatus.IN_PROGRESS;
+    case AgreementStatus.cancelled:
+      return amplify_model.AgreementStatus.CANCELLED;
   }
 }

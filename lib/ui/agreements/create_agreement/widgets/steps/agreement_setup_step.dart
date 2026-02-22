@@ -3,6 +3,7 @@ import 'package:cleer/domain/models/bank/bank.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/agreement_numpad_overlay.dart';
+import 'package:cleer/ui/agreements/create_agreement/widgets/agreement_split_milestones_overlay.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/disbursement_type_selector.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/recipient_identity_tile.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -231,7 +232,26 @@ class AgreementSetupStep extends HookConsumerWidget {
                     Gap(Dimens.spacing.sp30),
                     PrimaryButton(
                       onPressed: isFormComplete
-                          ? () => viewModel.moveToNextStep()
+                          ? () {
+                              if (formData?.disbursementType == .milestones) {
+                                showDialog(
+                                  context: context,
+                                  useRootNavigator: true,
+                                  fullscreenDialog: true,
+                                  useSafeArea: false,
+                                  animationStyle: .new(
+                                    curve: Curves.easeInOut,
+                                    duration: const Duration(milliseconds: 200),
+                                  ),
+                                  builder: (context) =>
+                                      AgreementSplitMilestonesOverlay(
+                                        type: type,
+                                      ),
+                                );
+                              } else {
+                                viewModel.moveToNextStep();
+                              }
+                            }
                           : null,
                       child: Text(l10n.next),
                     ),

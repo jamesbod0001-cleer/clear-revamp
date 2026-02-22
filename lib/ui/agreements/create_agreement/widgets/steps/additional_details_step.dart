@@ -81,7 +81,9 @@ class AdditionalDetailsStep extends HookConsumerWidget {
 
     final bool isFormComplete =
         (formData?.category != null) &&
-        (formData?.releaseDate != null) &&
+        (formData?.disbursementType == .oneTime
+            ? (formData?.releaseDate != null)
+            : true) &&
         ((formData?.description.isNotEmpty ?? false) &&
             ((formData?.description.length ?? 0) > 2));
 
@@ -138,40 +140,42 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                       return null;
                     },
                   ),
-                  Gap(Dimens.spacing.sp20),
-                  CustomTextFormField(
-                    controller: releaseDateController,
-                    labelText: l10n.releaseDate,
-                    readOnly: true,
-                    suffixIcon: IconButton(
-                      onPressed: () => _showDatePickerBottomSheet(
+                  if (formData?.disbursementType == .oneTime) ...[
+                    Gap(Dimens.spacing.sp20),
+                    CustomTextFormField(
+                      controller: releaseDateController,
+                      labelText: l10n.releaseDate,
+                      readOnly: true,
+                      suffixIcon: IconButton(
+                        onPressed: () => _showDatePickerBottomSheet(
+                          context,
+                          selectedReleaseDate,
+                        ),
+                        icon: PhosphorIcon(
+                          PhosphorIcons.calendarDot(.duotone),
+                          color: context.color.blue700,
+                        ),
+                      ),
+                      onTap: () => _showDatePickerBottomSheet(
                         context,
                         selectedReleaseDate,
                       ),
-                      icon: PhosphorIcon(
-                        PhosphorIcons.calendarDot(.duotone),
-                        color: context.color.blue700,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired('release date');
+                        }
+                        return null;
+                      },
+                    ),
+                    Gap(Dimens.spacing.sp4),
+                    Text(
+                      l10n.expectedFundsReleaseDeadline,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey600,
                       ),
                     ),
-                    onTap: () => _showDatePickerBottomSheet(
-                      context,
-                      selectedReleaseDate,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return l10n.fieldRequired('release date');
-                      }
-                      return null;
-                    },
-                  ),
-                  Gap(Dimens.spacing.sp4),
-                  Text(
-                    l10n.expectedFundsReleaseDeadline,
-                    style: context.typo.bodyMedium.copyWith(
-                      fontWeight: AppFontWeights.regular,
-                      color: context.color.grey600,
-                    ),
-                  ),
+                  ],
                   Gap(Dimens.spacing.sp20),
                   CustomTextFormField(
                     controller: descriptionController,

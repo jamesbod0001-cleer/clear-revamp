@@ -31,4 +31,6 @@ enum AgreementStatus {
   awaitingFunding,
   funded,
   inProgress,
+
+  cancelled,
 }

@@ -15,7 +15,8 @@ enum PaymentOrchestratorStep {
   securingYourPayment,
   redirecting,
   authorizing,
-  paymentSecuredSuccessfully,
+  // paymentSecuredSuccessfully,
+  paymentNotSecured,
 }
 
 @freezed

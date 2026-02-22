@@ -1,16 +1,19 @@
 import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
 import 'package:cleer/data/repositories/api/agreement/agreement_repository.dart';
+import 'package:cleer/data/repositories/api/milestone/milestone_repository.dart';
 import 'package:cleer/data/repositories/api/payout_destination/payout_destination_repository.dart';
 import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
 import 'package:cleer/domain/failures/data_failures.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:cleer/domain/models/milestone/milestone.dart';
 import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/domain/models/recipient_resolution/recipient_resolution.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:cleer/domain/use_cases/payout_destination/params/get_payout_destination_params.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
+import 'package:cleer/utils/short_code_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,6 +24,7 @@ class AgreementUseCase extends _$AgreementUseCase {
   late final AgreementRepository _agreementRepository;
   late final FlutterwaveRepository _flutterwaveRepository;
   late final PayoutDestinationRepository _payoutDestinationRepository;
+  late final MilestoneRepository _milestoneRepository;
 
   final _log = AmplifyLogger("AgreementUseCase");
 
@@ -31,7 +35,25 @@ class AgreementUseCase extends _$AgreementUseCase {
     _payoutDestinationRepository = ref.watch(
       payoutDestinationRepositoryProvider,
     );
+    _milestoneRepository = ref.watch(milestoneRepositoryProvider);
     return;
+  }
+
+  Future<ResultDart<Agreement, DataFailure>> updateAgreement(
+    Agreement agreement,
+  ) async {
+    _log.info('Updating agreement: $agreement');
+    final result = await _agreementRepository.updateAgreement(agreement);
+    result.fold(
+      (agreement) {
+        _log.info('Agreement updated: $agreement');
+      },
+      (failure) {
+        _log.error('Error updating agreement', failure);
+        throw failure;
+      },
+    );
+    return result;
   }
 
   Future<ResultDart<RecipientResolution, Object>> resolveRecipientDetails({
@@ -74,12 +96,15 @@ class AgreementUseCase extends _$AgreementUseCase {
               },
               (payout) {
                 _log.info(payout.toString());
-                if(payout.user != null) {
+                if (payout.user != null) {
                   _log.info('User found on Cleer: ${payout.user!.firstName}');
                 } else {
                   _log.info('User not found on Cleer');
+
                   /// TODO: Maybe we can add a suspicious tag here, for this
-                  _log.info('Payout destination exists for user, resolved name is: ${payout.accountName}');
+                  _log.info(
+                    'Payout destination exists for user, resolved name is: ${payout.accountName}',
+                  );
                 }
                 return Success(
                   RecipientResolution(
@@ -155,6 +180,7 @@ class AgreementUseCase extends _$AgreementUseCase {
 
     Agreement agreement = Agreement(
       id: null,
+      shortCode: ShortCodeGenerator.generate(),
       amount: double.parse(formData.amount),
       currency: 'NGN',
       disbursementType: formData.disbursementType!,
@@ -173,9 +199,45 @@ class AgreementUseCase extends _$AgreementUseCase {
     _log.info('Attempting to create agreement');
     final result = await _agreementRepository.createAgreement(agreement);
 
-    return result.fold(
-      (agreement) {
+    return await result.fold(
+      (agreement) async {
         _log.info('Successfully created agreement');
+        if (agreement.disbursementType == .milestones) {
+          List<Milestone> milestones = formData.milestones!
+              .asMap()
+              .map((index, milestone) {
+                return MapEntry(
+                  index,
+                  Milestone(
+                    id: null,
+                    order: index,
+                    name: milestone.name,
+                    amount: milestone.amount,
+                    status: .pending,
+                    expectedReleaseDate: milestone.releaseDate!,
+                    agreement: agreement,
+                  ),
+                );
+              })
+              .values
+              .toList();
+          final createMilestoneTasks = milestones.map((milestone) async {
+            final result = await _milestoneRepository.createMilestone(
+              milestone,
+            );
+            return result.fold(
+              (milestone) {
+                _log.info('Successfully created milestone: ${milestone.order}');
+                return Success(milestone);
+              },
+              (failure) {
+                _log.error('Error creating milestone', failure);
+                return Failure(failure);
+              },
+            );
+          });
+          await Future.wait(createMilestoneTasks);
+        }
         return Success(agreement);
       },
       (failure) {
@@ -226,8 +288,72 @@ class AgreementUseCase extends _$AgreementUseCase {
           updatedAgreement,
         );
         return await updateResult.fold(
-          (updatedAgreement) {
+          (updatedAgreement) async {
             _log.info('Successfully updated agreement');
+            if (updatedAgreement.status == .funded) {
+              _log.info(
+                'Updating agreement to in progress because it is funded already',
+              );
+
+              /// TODO: meaning I need to take it to in progress immediately
+              updatedAgreement = updatedAgreement.copyWith(status: .inProgress);
+              final result = await _agreementRepository.updateAgreement(
+                updatedAgreement,
+              );
+              if (updatedAgreement.disbursementType ==
+                  DisbursementType.milestones) {
+                _log.info('Updating first milestone to in progress');
+
+                /// TODO: It should update the first milestone to in progress
+                final milestonesResult = await _milestoneRepository
+                    .getMilestonesByAgreement(updatedAgreement.id!);
+                return await milestonesResult.fold(
+                  (milestones) async {
+                    final firstMilestone = milestones.where(
+                      (milestone) => milestone.order == 0,
+                    );
+                    if (firstMilestone.isEmpty) {
+                      _log.error('No milestones found for agreement');
+                      return Failure(
+                        DataFailure.unknown(message: 'No milestones found'),
+                      );
+                    } else {
+                      final firstMilestoneToUpdate = firstMilestone.first;
+                      final updatedMilestone = firstMilestoneToUpdate.copyWith(
+                        status: .inProgress,
+                      );
+                      final result = await _milestoneRepository.updateMilestone(
+                        updatedMilestone,
+                      );
+                      return await result.fold(
+                        (updatedMilestone) {
+                          _log.info('Successfully updated milestone');
+                          return Success(updatedAgreement);
+                        },
+                        (failure) {
+                          _log.error('Error updating milestone', failure);
+                          return Failure(failure);
+                        },
+                      );
+                    }
+                  },
+                  (failure) {
+                    _log.error('Error retrieving milestones', failure);
+                    return Failure(failure);
+                  },
+                );
+              }
+              return await result.fold(
+                (updatedAgreement) {
+                  _log.info('Successfully updated agreement');
+                  return Success(updatedAgreement);
+                },
+                (failure) {
+                  _log.error('Error updating agreement', failure);
+                  return Failure(failure);
+                },
+              );
+            }
             return Success(updatedAgreement);
           },
           (failure) {

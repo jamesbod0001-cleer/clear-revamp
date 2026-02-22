@@ -38,7 +38,22 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
                   )
                   .verifyTransaction();
             } else if (url.contains('failed')) {
-            } else if (url.contains('cancelled')) {}
+              await ref
+                  .read(
+                    paymentOrchestratorViewModelProvider(
+                      widget.agreementId,
+                    ).notifier,
+                  )
+                  .verifyTransaction();
+            } else if (url.contains('cancelled')) {
+              await ref
+                  .read(
+                    paymentOrchestratorViewModelProvider(
+                      widget.agreementId,
+                    ).notifier,
+                  )
+                  .verifyTransaction();
+            }
           },
           onProgress: (int progress) {
             // Update loading bar.
