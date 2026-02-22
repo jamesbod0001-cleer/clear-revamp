@@ -156,10 +156,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Gap(Dimens.spacing.sp20),
-                    SecuredFundsOverview(
-                      totalFunds: '₦50,000,000',
-                      trustScore: 99,
-                    ),
+                    SecuredFundsOverview(totalFunds: '₦0', trustScore: 100),
                     Visibility(
                       visible: false,
                       child: Padding(
@@ -168,7 +165,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Gap(Dimens.spacing.sp40),
-                    AgreementsOverviewSection(hasAgreements: true),
+                    AgreementsOverviewSection(hasAgreements: false),
                     Gap(Dimens.spacing.sp40),
                     QuickActionsSection(),
                     Gap(Dimens.spacing.sp40),

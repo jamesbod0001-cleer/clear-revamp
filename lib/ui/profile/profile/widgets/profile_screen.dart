@@ -83,7 +83,7 @@ class ProfileScreen extends ConsumerWidget {
                                   color: context.color.grey600,
                                 ),
                               ),
-                              TrustScoreBadge(score: 99),
+                              TrustScoreBadge(score: 100),
                               Gap(Dimens.spacing.sp8),
                               Text(
                                 l10n.memberSince(
@@ -107,9 +107,9 @@ class ProfileScreen extends ConsumerWidget {
                     Gap(Dimens.spacing.sp28),
 
                     UserPerformanceStatsCard(
-                      successfulAgreements: 55,
-                      disputeFreeAgreements: 12,
-                      totalValueTransacted: '₦15.5M',
+                      successfulAgreements: 0,
+                      disputeFreeAgreements: 0,
+                      totalValueTransacted: '₦0',
                     ),
                     Gap(Dimens.spacing.sp28),
 
@@ -122,8 +122,8 @@ class ProfileScreen extends ConsumerWidget {
                     ProfileSectionHeader(title: l10n.settings),
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),
-                      title: l10n.updateContactAndPassword,
-                      content: l10n.updateYourNameEmailPhoneNumberAndPassword,
+                      title: l10n.accountAndSecurity,
+                      content: l10n.updateYourEmailPhoneNumberAndPassword,
                       onTap: () {},
                     ),
                     ProfileMenuTile(
@@ -139,14 +139,14 @@ class ProfileScreen extends ConsumerWidget {
                     ProfileSectionHeader(title: l10n.legalAndPolicies),
                     ProfileMenuTile(
                       icon: PhosphorIcons.scroll(.duotone),
-                      title: l10n.termsOfServiceAndPolicies,
+                      title: l10n.termsAndPolicies,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
                       onTap: () {},
                     ),
                     ProfileMenuTile(
                       icon: PhosphorIcons.fileLock(.duotone),
-                      title: l10n.dataDisclosureAndUsage,
+                      title: l10n.dataUsageAndPrivacy,
                       content: l10n
                           .seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals,
                       onTap: () {},

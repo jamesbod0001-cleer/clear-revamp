@@ -1,3 +1,4 @@
+import 'package:cleer/routing/routes.dart' show CreateAgreementRoute;
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -202,7 +203,8 @@ class _AgreementsEmptyState extends StatelessWidget {
                         _linkSpan(
                           context,
                           text: l10n.requestPayment,
-                          onTap: () => _handleRequestPayment(context),
+                          onTap: (){},
+                          // onTap: () => _handleRequestPayment(context),
                         ),
                         const TextSpan(text: ' '),
                         TextSpan(text: l10n.toGetStarted),
@@ -236,11 +238,8 @@ class _AgreementsEmptyState extends StatelessWidget {
     );
   }
 
-  void _handleSendFunds(BuildContext context) {
-    // Navigate to Send Funds Flow
-  }
-
-  void _handleRequestPayment(BuildContext context) {
-    // Navigate to Request Payment Flow
-  }
+  void _handleSendFunds(BuildContext context) =>
+      CreateAgreementRoute(type: .send).push(context);
+  void _handleRequestPayment(BuildContext context) =>
+      CreateAgreementRoute(type: .request).push(context);
 }

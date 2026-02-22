@@ -386,7 +386,7 @@ class MilestoneItemCard extends HookWidget {
                       fieldKey: dateFieldKey,
                       controller: releaseDateController,
                       labelText: l10n.releaseDate,
-                      readOnly: false,
+                      readOnly: true,
                       suffixIcon: IconButton(
                         onPressed: () => _pickDate(
                           context,
