@@ -36,6 +36,7 @@ class Agreement extends amplify_core.Model {
   final String? _description;
   final AgreementInitiatorRole? _initiatorRole;
   final AgreementStatus? _status;
+  final List<Milestone>? _milestones;
   final User? _initiator;
   final User? _sender;
   final User? _recipient;
@@ -134,6 +135,10 @@ class Agreement extends amplify_core.Model {
     return _status;
   }
   
+  List<Milestone>? get milestones {
+    return _milestones;
+  }
+  
   User? get initiator {
     return _initiator;
   }
@@ -162,9 +167,9 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required amount, required currency, disbursementType, required category, required expectedReleaseDate, required description, initiatorRole, status, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required amount, required currency, disbursementType, required category, required expectedReleaseDate, required description, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, required amplify_core.TemporalDate expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
+  factory Agreement({String? id, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, required amplify_core.TemporalDate expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       amount: amount,
@@ -175,6 +180,7 @@ class Agreement extends amplify_core.Model {
       description: description,
       initiatorRole: initiatorRole,
       status: status,
+      milestones: milestones != null ? List<Milestone>.unmodifiable(milestones) : milestones,
       initiator: initiator,
       sender: sender,
       recipient: recipient,
@@ -199,6 +205,7 @@ class Agreement extends amplify_core.Model {
       _description == other._description &&
       _initiatorRole == other._initiatorRole &&
       _status == other._status &&
+      DeepCollectionEquality().equals(_milestones, other._milestones) &&
       _initiator == other._initiator &&
       _sender == other._sender &&
       _recipient == other._recipient &&
@@ -234,7 +241,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
+  Agreement copyWith({double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
     return Agreement._internal(
       id: id,
       amount: amount ?? this.amount,
@@ -245,6 +252,7 @@ class Agreement extends amplify_core.Model {
       description: description ?? this.description,
       initiatorRole: initiatorRole ?? this.initiatorRole,
       status: status ?? this.status,
+      milestones: milestones ?? this.milestones,
       initiator: initiator ?? this.initiator,
       sender: sender ?? this.sender,
       recipient: recipient ?? this.recipient,
@@ -261,6 +269,7 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<String>? description,
     ModelFieldValue<AgreementInitiatorRole?>? initiatorRole,
     ModelFieldValue<AgreementStatus?>? status,
+    ModelFieldValue<List<Milestone>?>? milestones,
     ModelFieldValue<User?>? initiator,
     ModelFieldValue<User?>? sender,
     ModelFieldValue<User?>? recipient,
@@ -277,6 +286,7 @@ class Agreement extends amplify_core.Model {
       description: description == null ? this.description : description.value,
       initiatorRole: initiatorRole == null ? this.initiatorRole : initiatorRole.value,
       status: status == null ? this.status : status.value,
+      milestones: milestones == null ? this.milestones : milestones.value,
       initiator: initiator == null ? this.initiator : initiator.value,
       sender: sender == null ? this.sender : sender.value,
       recipient: recipient == null ? this.recipient : recipient.value,
@@ -295,6 +305,19 @@ class Agreement extends amplify_core.Model {
       _description = json['description'],
       _initiatorRole = amplify_core.enumFromString<AgreementInitiatorRole>(json['initiatorRole'], AgreementInitiatorRole.values),
       _status = amplify_core.enumFromString<AgreementStatus>(json['status'], AgreementStatus.values),
+      _milestones = json['milestones']  is Map
+        ? (json['milestones']['items'] is List
+          ? (json['milestones']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Milestone.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['milestones'] is List
+          ? (json['milestones'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Milestone.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _initiator = json['initiator'] != null
         ? json['initiator']['serializedData'] != null
           ? User.fromJson(new Map<String, dynamic>.from(json['initiator']['serializedData']))
@@ -332,7 +355,7 @@ class Agreement extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -345,6 +368,7 @@ class Agreement extends amplify_core.Model {
     'description': _description,
     'initiatorRole': _initiatorRole,
     'status': _status,
+    'milestones': _milestones,
     'initiator': _initiator,
     'sender': _sender,
     'recipient': _recipient,
@@ -364,6 +388,9 @@ class Agreement extends amplify_core.Model {
   static final DESCRIPTION = amplify_core.QueryField(fieldName: "description");
   static final INITIATORROLE = amplify_core.QueryField(fieldName: "initiatorRole");
   static final STATUS = amplify_core.QueryField(fieldName: "status");
+  static final MILESTONES = amplify_core.QueryField(
+    fieldName: "milestones",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Milestone'));
   static final INITIATOR = amplify_core.QueryField(
     fieldName: "initiator",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'User'));
@@ -450,6 +477,13 @@ class Agreement extends amplify_core.Model {
       key: Agreement.STATUS,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.enumeration)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Agreement.MILESTONES,
+      isRequired: false,
+      ofModelName: 'Milestone',
+      associatedKey: Milestone.AGREEMENT
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
