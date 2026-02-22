@@ -1,11 +1,12 @@
 import {a} from "@aws-amplify/backend"
 
 export const Agreement = a.model({
+    shortCode: a.string().required(),
     amount: a.float().required(),
     currency: a.string().required(),
     disbursementType: a.enum(['ONE_TIME', 'MILESTONES']),
     category: a.string().required(),
-    expectedReleaseDate: a.date().required(),
+    expectedReleaseDate: a.date(),
     description: a.string().required(),
 
     // The person who physically clicked "Create Agreement"
@@ -21,7 +22,7 @@ export const Agreement = a.model({
     recipientAccountNumber: a.string().required(),
     recipientBankCode: a.string().required(),
 
-    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS']),
+    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'CANCELLED']),
 
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
@@ -30,7 +31,7 @@ export const Agreement = a.model({
     recipient: a.belongsTo('User', 'recipientId'),
     payoutDestination: a.belongsTo('PayoutDestination', ['recipientAccountNumber', 'recipientBankCode']),
     transactions: a.hasMany('Transaction', 'agreementId'),
-}).authorization(allow => [
+}).secondaryIndexes((index) => [index("shortCode")]).authorization(allow => [
     allow.owner(), // The initiator is the owner
     allow.authenticated().to(['read']),
 ]);
