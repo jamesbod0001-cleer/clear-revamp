@@ -28,6 +28,7 @@ import 'package:collection/collection.dart';
 class Agreement extends amplify_core.Model {
   static const classType = const _AgreementModelType();
   final String id;
+  final String? _shortCode;
   final double? _amount;
   final String? _currency;
   final AgreementDisbursementType? _disbursementType;
@@ -56,6 +57,19 @@ class Agreement extends amplify_core.Model {
       return AgreementModelIdentifier(
         id: id
       );
+  }
+  
+  String get shortCode {
+    try {
+      return _shortCode!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   double get amount {
@@ -101,17 +115,8 @@ class Agreement extends amplify_core.Model {
     }
   }
   
-  amplify_core.TemporalDate get expectedReleaseDate {
-    try {
-      return _expectedReleaseDate!;
-    } catch(e) {
-      throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  amplify_core.TemporalDate? get expectedReleaseDate {
+    return _expectedReleaseDate;
   }
   
   String get description {
@@ -167,11 +172,12 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required amount, required currency, disbursementType, required category, required expectedReleaseDate, required description, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, required amplify_core.TemporalDate expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
+  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
+      shortCode: shortCode,
       amount: amount,
       currency: currency,
       disbursementType: disbursementType,
@@ -197,6 +203,7 @@ class Agreement extends amplify_core.Model {
     if (identical(other, this)) return true;
     return other is Agreement &&
       id == other.id &&
+      _shortCode == other._shortCode &&
       _amount == other._amount &&
       _currency == other._currency &&
       _disbursementType == other._disbursementType &&
@@ -222,6 +229,7 @@ class Agreement extends amplify_core.Model {
     
     buffer.write("Agreement {");
     buffer.write("id=" + "$id" + ", ");
+    buffer.write("shortCode=" + "$_shortCode" + ", ");
     buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
     buffer.write("currency=" + "$_currency" + ", ");
     buffer.write("disbursementType=" + (_disbursementType != null ? amplify_core.enumToString(_disbursementType)! : "null") + ", ");
@@ -241,9 +249,10 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
+  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
     return Agreement._internal(
       id: id,
+      shortCode: shortCode ?? this.shortCode,
       amount: amount ?? this.amount,
       currency: currency ?? this.currency,
       disbursementType: disbursementType ?? this.disbursementType,
@@ -261,11 +270,12 @@ class Agreement extends amplify_core.Model {
   }
   
   Agreement copyWithModelFieldValues({
+    ModelFieldValue<String>? shortCode,
     ModelFieldValue<double>? amount,
     ModelFieldValue<String>? currency,
     ModelFieldValue<AgreementDisbursementType?>? disbursementType,
     ModelFieldValue<String>? category,
-    ModelFieldValue<amplify_core.TemporalDate>? expectedReleaseDate,
+    ModelFieldValue<amplify_core.TemporalDate?>? expectedReleaseDate,
     ModelFieldValue<String>? description,
     ModelFieldValue<AgreementInitiatorRole?>? initiatorRole,
     ModelFieldValue<AgreementStatus?>? status,
@@ -278,6 +288,7 @@ class Agreement extends amplify_core.Model {
   }) {
     return Agreement._internal(
       id: id,
+      shortCode: shortCode == null ? this.shortCode : shortCode.value,
       amount: amount == null ? this.amount : amount.value,
       currency: currency == null ? this.currency : currency.value,
       disbursementType: disbursementType == null ? this.disbursementType : disbursementType.value,
@@ -297,6 +308,7 @@ class Agreement extends amplify_core.Model {
   
   Agreement.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
+      _shortCode = json['shortCode'],
       _amount = (json['amount'] as num?)?.toDouble(),
       _currency = json['currency'],
       _disbursementType = amplify_core.enumFromString<AgreementDisbursementType>(json['disbursementType'], AgreementDisbursementType.values),
@@ -355,11 +367,12 @@ class Agreement extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
+    'shortCode': _shortCode,
     'amount': _amount,
     'currency': _currency,
     'disbursementType': _disbursementType,
@@ -380,6 +393,7 @@ class Agreement extends amplify_core.Model {
 
   static final amplify_core.QueryModelIdentifier<AgreementModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<AgreementModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
+  static final SHORTCODE = amplify_core.QueryField(fieldName: "shortCode");
   static final AMOUNT = amplify_core.QueryField(fieldName: "amount");
   static final CURRENCY = amplify_core.QueryField(fieldName: "currency");
   static final DISBURSEMENTTYPE = amplify_core.QueryField(fieldName: "disbursementType");
@@ -429,7 +443,17 @@ class Agreement extends amplify_core.Model {
         ])
     ];
     
+    modelSchemaDefinition.indexes = [
+      amplify_core.ModelIndex(fields: const ["shortCode"], name: "agreementsByShortCode")
+    ];
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Agreement.SHORTCODE,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: Agreement.AMOUNT,
@@ -457,7 +481,7 @@ class Agreement extends amplify_core.Model {
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: Agreement.EXPECTEDRELEASEDATE,
-      isRequired: true,
+      isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.date)
     ));
     
