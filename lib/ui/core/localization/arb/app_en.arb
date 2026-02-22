@@ -161,6 +161,7 @@
   "completed": "Completed",
   "totalFundsSecured": "Total Funds Secured",
   "help": "Help",
+  "logs": "Logs",
   "activeAgreements": "Active Agreements",
   "waitingForApproval": "Waiting for Approval",
   "readyForRelease": "Ready for Release",
@@ -331,5 +332,14 @@
     }
   },
   "mustBeGreaterThanZero": "Must be greater than 0",
-  "invalidReleaseDate": "Invalid release date"
+  "invalidReleaseDate": "Invalid release date",
+  "removeMilestone": "Remove Milestone",
+  "paymentCouldNotBeSecured": "Payment couldn’t be secured",
+  "weCouldNotSecureYourPaymentNoMoneyHasBeenHeldOrTransferred": "We couldn’t secure your payment.\nNo money has been held or transferred.",
+  "ifAnyAmountWasDebitedItWillBeAutomaticallyReversedByYourBank": "If any amount was debited, it will be automatically reversed by your bank.",
+  "retryPayment": "Retry payment",
+  "cancelAgreement": "Cancel agreement",
+  "fundsSecured": "Funds Secured",
+  "shareThisLinkWithTheRecipientToAcceptTheAgreementFundsWillBeReleasedOnlyWhenYouConfirm": "Share this link with the recipient to accept the agreement.\nFunds will be released only when you confirm.",
+  "sendLink": "Send Link"
 }
