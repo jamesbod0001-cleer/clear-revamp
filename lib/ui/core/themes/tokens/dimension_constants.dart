@@ -91,6 +91,7 @@ class _AppPadding {
   final double p20 = 20.0;
   final double p22 = 22.0;
   final double p24 = 24.0;
+  final double p40 = 40.0;
 }
 
 class _AppRadius {
