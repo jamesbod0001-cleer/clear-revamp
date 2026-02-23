@@ -345,5 +345,12 @@
   "milestoneBreakdown": "Milestone Breakdown",
   "continuePayment": "Continue Payment",
   "cancellingThisPaymentWillCancelTheEntireAgreement": "Cancelling this payment will cancel the entire agreement",
-  "manageYourPersonalDetailsAndLoginSecurity" :"Manage your personal details and login security."
+  "manageYourPersonalDetailsAndLoginSecurity" :"Manage your personal details and login security.",
+  "tapToChangeImage": "Tap to Change Image",
+  "personalInformation": "Personal Information",
+  "contactDetails": "Contact Details",
+  "contactSupportToEditYourDetails": "Contact support to edit your details",
+  "passwordAndSecurity": "Password & Security",
+  "changePassword": "Change Password",
+  "unverified": "Unverified"
 }

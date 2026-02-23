@@ -21,6 +21,26 @@ extension StringExtensions on String {
     }
   }
 
+  String get maskPhoneNumber {
+    // Remove any non-digit characters except '+' just in case
+    String cleanPhone = replaceAll(RegExp(r'[^\d+]'), '');
+
+    // Ensure the phone number is long enough to mask
+    if (cleanPhone.length < 12) return cleanPhone;
+
+    // Slicing the string based on your specific requirements:
+    // +234 (Country Code)
+    // 903 (First 3 digits of number)
+    // *** (Mask)
+    // 685 (Last 3 digits)
+
+    String countryCode = cleanPhone.substring(0, 4); // +234
+    String prefix = cleanPhone.substring(4, 7);      // 903
+    String suffix = cleanPhone.substring(cleanPhone.length - 3); // 685
+
+    return '$countryCode $prefix *** $suffix';
+  }
+
   String? get extractUssd {
     // Pattern matches * followed by digits and optional *segments, ending in #
     final RegExp ussdRegex = RegExp(r'\*[\d\*]+#');
