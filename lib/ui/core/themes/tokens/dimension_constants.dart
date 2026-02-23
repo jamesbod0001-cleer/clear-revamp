@@ -97,6 +97,7 @@ class _AppPadding {
 class _AppRadius {
   const _AppRadius();
   final double r2 = 2.0;
+  final double r4 = 4.0;
   final double r8 = 8.0;
   final double r10 = 10.0;
   final double r12 = 12.0;
