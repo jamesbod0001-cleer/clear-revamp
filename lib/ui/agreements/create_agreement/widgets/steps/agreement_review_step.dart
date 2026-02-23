@@ -51,6 +51,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                       margin: .only(bottom: Dimens.padding.p40),
                       color: context.color.transparent,
                       child: ExpansionTile(
+                        initiallyExpanded: true,
                         trailing: PhosphorIcon(
                           PhosphorIcons.caretDown(),
                           size: Dimens.size.s16,

@@ -343,7 +343,7 @@ class MilestoneItemCard extends HookWidget {
             controller: nameController,
             labelText: l10n.milestoneName,
             validator: (name) =>
-                commonValidator(value: name, fieldName: 'Milestone Name'),
+                commonValidator(value: name, fieldName: 'Milestone Name', l10n: l10n),
           ),
           Gap(Dimens.spacing.sp16),
           Row(

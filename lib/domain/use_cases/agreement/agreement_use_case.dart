@@ -178,6 +178,8 @@ class AgreementUseCase extends _$AgreementUseCase {
       }
     }
 
+    _log.info('Here: Creating agreement');
+
     Agreement agreement = Agreement(
       id: null,
       shortCode: ShortCodeGenerator.generate(),
@@ -185,7 +187,9 @@ class AgreementUseCase extends _$AgreementUseCase {
       currency: 'NGN',
       disbursementType: formData.disbursementType!,
       category: formData.category!,
-      expectedReleaseDate: formData.releaseDate!,
+      expectedReleaseDate: formData.disbursementType == .milestones
+          ? null
+          : formData.releaseDate,
       description: formData.description,
       payoutDestination: payoutDestination,
       initiatorRole: formData.initiatorRole,

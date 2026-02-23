@@ -62,7 +62,10 @@ class CancelAgreementBottomSheet extends StatelessWidget {
         Gap(Dimens.spacing.sp12),
         TextButton(
           style: TextButton.styleFrom(foregroundColor: context.color.error),
-          onPressed: onCancelAgreement,
+          onPressed: (){
+            context.pop();
+            onCancelAgreement();
+          },
           child: Text(l10n.cancelAgreement),
         ),
         Gap(Dimens.spacing.sp20),

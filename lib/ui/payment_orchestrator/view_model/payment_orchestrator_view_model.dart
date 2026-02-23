@@ -405,24 +405,24 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   }
 
   Future<void> cancelAgreement() async {
-    state = AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      if (state.value!.currentStep !=
-          PaymentOrchestratorStep.paymentNotSecured) {
-        _log.info('Attempting to cancel ongoing transaction');
-        if (state.value!.ongoingCharge != null) {
-          _log.info('Cancelling ongoing transaction');
-          if (state.value!.currentStep == .payWithUSSD) {
-            await cancelTransaction(state.value!.ongoingCharge!.id);
-          }
-        }
-        if (state.value!.ongoingVirtualAccount != null) {
-          if (state.value!.currentStep == .payWithBankTransfer) {
-            _log.info('Cancelling transaction');
-            await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
-          }
+    if (state.value!.currentStep != PaymentOrchestratorStep.paymentNotSecured) {
+      state = AsyncData(state.value!.copyWith(currentStep: .paymentNotSecured));
+      _log.info('Attempting to cancel ongoing transaction');
+      if (state.value!.ongoingCharge != null) {
+        _log.info('Cancelling ongoing transaction');
+        if (state.value!.currentStep == .payWithUSSD) {
+          await cancelTransaction(state.value!.ongoingCharge!.id);
         }
       }
+      if (state.value!.ongoingVirtualAccount != null) {
+        if (state.value!.currentStep == .payWithBankTransfer) {
+          _log.info('Cancelling transaction');
+          await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
+        }
+      }
+    }
+    state = AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
       _log.info('Cancelling agreement');
       if (state.value!.agreement.initiatorRole == .sender) {
         _log.info('Initiator is sender, cancelling agreement');

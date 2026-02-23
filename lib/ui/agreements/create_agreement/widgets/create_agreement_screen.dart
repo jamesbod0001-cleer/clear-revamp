@@ -79,6 +79,7 @@ class CreateAgreementScreen extends ConsumerWidget {
               title: Column(
                 crossAxisAlignment: .start,
                 children: [
+                  Gap(Dimens.spacing.sp4),
                   Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
@@ -99,7 +100,7 @@ class CreateAgreementScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              toolbarHeight: 114,
+              toolbarHeight: 110,
             ),
       body: SafeArea(
         bottom: false,
