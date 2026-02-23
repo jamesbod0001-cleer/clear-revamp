@@ -13,6 +13,7 @@ import 'package:cleer/ui/core/navigation/app_navigation_shell.dart';
 import 'package:cleer/ui/core/navigation/navigation_config.dart';
 import 'package:cleer/ui/home/home/widgets/home_screen.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
+import 'package:cleer/ui/profile/account_security/widgets/account_security_screen.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,14 @@ class RegistrationSuccessRoute extends GoRouteData
       ],
     ),
     TypedStatefulShellBranch<ProfileBranch>(
-      routes: [TypedGoRoute<ProfileRoute>(path: '/profile')],
+      routes: [
+        TypedGoRoute<ProfileRoute>(
+          path: '/profile',
+          routes: [
+            TypedGoRoute<AccountSecurityRoute>(path: 'account_security'),
+          ],
+        ),
+      ],
     ),
   ],
 )
@@ -167,4 +175,11 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProfileScreen();
+}
+
+class AccountSecurityRoute extends GoRouteData with $AccountSecurityRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      AccountSecurityScreen();
 }

@@ -1,5 +1,6 @@
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/log_out/view_model/log_out_view_model.dart';
 import 'package:cleer/ui/auth/log_out/widgets/log_out_button.dart';
@@ -124,7 +125,7 @@ class ProfileScreen extends ConsumerWidget {
                       icon: PhosphorIcons.key(.duotone),
                       title: l10n.accountAndSecurity,
                       content: l10n.updateYourEmailPhoneNumberAndPassword,
-                      onTap: () {},
+                      onTap: () => AccountSecurityRoute().go(context),
                     ),
                     ProfileMenuTile(
                       icon: PhosphorIcons.bell(.duotone),

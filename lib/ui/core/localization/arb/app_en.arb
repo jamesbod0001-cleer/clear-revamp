@@ -344,5 +344,6 @@
   "sendLink": "Send Link",
   "milestoneBreakdown": "Milestone Breakdown",
   "continuePayment": "Continue Payment",
-  "cancellingThisPaymentWillCancelTheEntireAgreement": "Cancelling this payment will cancel the entire agreement"
+  "cancellingThisPaymentWillCancelTheEntireAgreement": "Cancelling this payment will cancel the entire agreement",
+  "manageYourPersonalDetailsAndLoginSecurity" :"Manage your personal details and login security."
 }
