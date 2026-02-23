@@ -103,6 +103,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       if (state.value!.ongoingCharge != null) {
         _log.info('Cancelling previous ongoing transaction');
         await cancelTransaction(state.value!.ongoingCharge!.id);
+        state = AsyncData(state.value!.copyWith(ongoingCharge: null));
       }
       _log.info('Getting bank ussd payment method');
       final hasBankUSSD = ref.read(hasBankUSSDMethodProvider(bank.code));
@@ -406,6 +407,22 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   Future<void> cancelAgreement() async {
     state = AsyncValue.loading();
     state = await AsyncValue.guard(() async {
+      if (state.value!.currentStep !=
+          PaymentOrchestratorStep.paymentNotSecured) {
+        _log.info('Attempting to cancel ongoing transaction');
+        if (state.value!.ongoingCharge != null) {
+          _log.info('Cancelling ongoing transaction');
+          if (state.value!.currentStep == .payWithUSSD) {
+            await cancelTransaction(state.value!.ongoingCharge!.id);
+          }
+        }
+        if (state.value!.ongoingVirtualAccount != null) {
+          if (state.value!.currentStep == .payWithBankTransfer) {
+            _log.info('Cancelling transaction');
+            await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
+          }
+        }
+      }
       _log.info('Cancelling agreement');
       if (state.value!.agreement.initiatorRole == .sender) {
         _log.info('Initiator is sender, cancelling agreement');
@@ -430,13 +447,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   }
 
   Future<void> changePaymentMethod() async {
-    if (state.value!.ongoingCharge != null) {
-      if (state.value!.currentStep == .payWithUSSD) {
-        await cancelTransaction(state.value!.ongoingCharge!.id);
-      } else if (state.value!.currentStep == .payWithBankTransfer) {
-        await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
-      }
-    }
+    final oldState = state.value!;
     state = AsyncData(
       state.value!.copyWith(
         currentStep: .choosePaymentMethod,
@@ -444,6 +455,19 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         ongoingVirtualAccount: null,
       ),
     );
+    _log.info('Attempting to change payment method');
+    if (oldState.ongoingCharge != null) {
+      _log.info('Cancelling ongoing transaction');
+      if (oldState.currentStep == .payWithUSSD) {
+        await cancelTransaction(oldState.ongoingCharge!.id);
+      }
+    }
+    if (oldState.ongoingVirtualAccount != null) {
+      if (oldState.currentStep == .payWithBankTransfer) {
+        _log.info('Cancelling transaction');
+        await cancelTransaction(oldState.ongoingVirtualAccount!.id);
+      }
+    }
   }
 
   void retryPayment() async {
@@ -457,6 +481,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   }
 
   Future<void> cancelTransaction(String flutterwaveId) async {
+    _log.info('Cancelling transaction');
     final transactionResult = await ref
         .read(transactionUseCaseProvider.notifier)
         .getTransactionByFlutterwaveId(flutterwaveId);

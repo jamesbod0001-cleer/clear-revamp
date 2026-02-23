@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class AgreementReviewStep extends HookConsumerWidget {
   const AgreementReviewStep({super.key, required this.type});
@@ -40,7 +41,110 @@ class AgreementReviewStep extends HookConsumerWidget {
               padding: Dimens.mobile.edgeInsetsScreenHorizontal,
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  Gap(Dimens.spacing.sp12),
+                  Gap(
+                    formData?.disbursementType == .milestones
+                        ? Dimens.spacing.sp5
+                        : Dimens.spacing.sp12,
+                  ),
+                  if (formData?.disbursementType == .milestones)
+                    Container(
+                      margin: .only(bottom: Dimens.padding.p40),
+                      color: context.color.transparent,
+                      child: ExpansionTile(
+                        trailing: PhosphorIcon(
+                          PhosphorIcons.caretDown(),
+                          size: Dimens.size.s16,
+                          color: context.color.blue700,
+                        ),
+                        tilePadding: .zero,
+                        minTileHeight: 0,
+                        visualDensity: .comfortable,
+                        childrenPadding: .zero,
+                        collapsedShape: Border(
+                          bottom: BorderSide(
+                            color: context.color.black.withValues(alpha: .10),
+                          ),
+                        ),
+                        shape: Border(),
+                        title: Text(
+                          l10n.milestoneBreakdown,
+                          style: context.typo.titleSmall.copyWith(
+                            color: context.color.grey700,
+                          ),
+                        ),
+                        children: List.generate(
+                          formData?.milestones?.length ?? 0,
+                          (int index) {
+                            final milestone = formData?.milestones?[index];
+                            return Container(
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  top: index == 0
+                                      ? BorderSide(
+                                          color: context.color.black.withValues(
+                                            alpha: .10,
+                                          ),
+                                        )
+                                      : .none,
+                                ),
+                              ),
+                              padding: .only(top: Dimens.padding.p12),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: Dimens.size.s16,
+                                    height: Dimens.size.s16,
+                                    decoration: BoxDecoration(
+                                      shape: .circle,
+                                      color: context.color.transparent,
+                                      border: .all(
+                                        color: context.color.outline,
+                                      ),
+                                    ),
+                                  ),
+                                  Gap(Dimens.spacing.sp8),
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisSize: .min,
+                                      crossAxisAlignment: .start,
+                                      children: [
+                                        Text(
+                                          "Milestone ${index + 1}",
+                                          style: context.typo.bodyMedium
+                                              .copyWith(
+                                                fontWeight:
+                                                    AppFontWeights.regular,
+                                                color: context.color.grey600,
+                                              ),
+                                        ),
+                                        Gap(Dimens.spacing.sp2),
+                                        Row(
+                                          mainAxisAlignment: .spaceBetween,
+                                          children: [
+                                            Text(
+                                              milestone?.name ?? '',
+                                              style: context.typo.bodyMedium
+                                                  .copyWith(
+                                                    fontWeight:
+                                                        AppFontWeights.regular,
+                                                  ),
+                                            ),
+                                            Text(
+                                              "${l10n.nairaSign} ${NumberFormat('#,###.##').format(milestone?.amount)}",
+                                              style: context.typo.labelMedium,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   Container(
                     padding: .all(Dimens.padding.p12),
                     decoration: BoxDecoration(
@@ -61,9 +165,13 @@ class AgreementReviewStep extends HookConsumerWidget {
                                 color: context.color.grey600,
                               ),
                             ),
-                            Text(
-                              "${l10n.nairaSign}${NumberFormat('#,###.##').format(double.parse(formData!.amount))}",
-                              style: context.typo.labelMedium,
+                            Gap(Dimens.spacing.sp28),
+                            Expanded(
+                              child: Text(
+                                "${l10n.nairaSign}${NumberFormat('#,###.##').format(double.parse(formData!.amount))}",
+                                style: context.typo.labelMedium,
+                                textAlign: .end,
+                              ),
                             ),
                           ],
                         ),
@@ -77,10 +185,15 @@ class AgreementReviewStep extends HookConsumerWidget {
                                 color: context.color.grey600,
                               ),
                             ),
-                            Text(
-                              formData.recipientResolution!.accountName,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
+                            Gap(Dimens.spacing.sp28),
+                            Expanded(
+                              child: Text(
+                                formData.recipientResolution!.accountName,
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                                textAlign: .end,
+                                overflow: .ellipsis,
                               ),
                             ),
                           ],
@@ -95,10 +208,15 @@ class AgreementReviewStep extends HookConsumerWidget {
                                 color: context.color.grey600,
                               ),
                             ),
-                            Text(
-                              formData.recipientBank!.name,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
+                            Gap(Dimens.spacing.sp28),
+                            Expanded(
+                              child: Text(
+                                formData.recipientBank!.name,
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                                textAlign: .end,
+                                overflow: .ellipsis,
                               ),
                             ),
                           ],
@@ -113,10 +231,15 @@ class AgreementReviewStep extends HookConsumerWidget {
                                 color: context.color.grey600,
                               ),
                             ),
-                            Text(
-                              formData.recipientAccountNumber,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
+                            Gap(Dimens.spacing.sp28),
+                            Expanded(
+                              child: Text(
+                                formData.recipientAccountNumber,
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                                textAlign: .end,
+                                overflow: .ellipsis,
                               ),
                             ),
                           ],
@@ -131,10 +254,15 @@ class AgreementReviewStep extends HookConsumerWidget {
                                 color: context.color.grey600,
                               ),
                             ),
-                            Text(
-                              formData.category!.label,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
+                            Gap(Dimens.spacing.sp28),
+                            Expanded(
+                              child: Text(
+                                formData.category!.label,
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                                textAlign: .end,
+                                overflow: .ellipsis,
                               ),
                             ),
                           ],
@@ -149,32 +277,45 @@ class AgreementReviewStep extends HookConsumerWidget {
                                 color: context.color.grey600,
                               ),
                             ),
-                            Text(
-                              '',
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
+                            Gap(Dimens.spacing.sp28),
+                            Expanded(
+                              child: Text(
+                                '',
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                                textAlign: .end,
+                                overflow: .ellipsis,
                               ),
                             ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: .spaceBetween,
-                          children: [
-                            Text(
-                              l10n.fundsReleaseDate,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
-                                color: context.color.grey600,
+                        if (formData.disbursementType == .oneTime)
+                          Row(
+                            mainAxisAlignment: .spaceBetween,
+                            children: [
+                              Text(
+                                l10n.fundsReleaseDate,
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                  color: context.color.grey600,
+                                ),
                               ),
-                            ),
-                            Text(
-                              DateFormat('dd/MM/yyyy').format(formData.releaseDate!),
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
+                              Gap(Dimens.spacing.sp28),
+                              Expanded(
+                                child: Text(
+                                  DateFormat(
+                                    'dd/MM/yyyy',
+                                  ).format(formData.releaseDate!),
+                                  style: context.typo.bodyMedium.copyWith(
+                                    fontWeight: AppFontWeights.regular,
+                                  ),
+                                  textAlign: .end,
+                                  overflow: .ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
                         Divider(
                           color: context.color.background,
                           height: Dimens.size.s1,
@@ -198,7 +339,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),

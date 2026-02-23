@@ -8,6 +8,7 @@ import 'package:cleer/ui/core/ui/bottom_sheets/bank_picker_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/step_header.dart';
+import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -87,10 +88,21 @@ class PayWithUSSDStep extends HookConsumerWidget {
                   child: Center(child: CircularProgressIndicator()),
                 );
               }
-              return ValueListenableBuilder<String>(
-                valueListenable: viewModel.generateUSSDCode,
-                builder: (BuildContext context, String note, Widget? child) {
-                  final ussd = note.extractUssd;
+              return ValueListenableBuilder<CommandResult<Bank?, String>>(
+                valueListenable: viewModel.generateUSSDCode.results,
+                builder: (BuildContext context, result, Widget? child) {
+                  if (result.isRunning) {
+                    return SizedBox(
+                      height: Dimens.size.s100,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  // 2. Check if the execution failed or if there is no data
+                  if (result.hasError || !result.hasData) {
+                    return SizedBox.shrink();
+                  }
+                  final ussd = result.data?.extractUssd;
                   if (ussd == null || ussd.isEmpty) {
                     return SizedBox.shrink();
                   }

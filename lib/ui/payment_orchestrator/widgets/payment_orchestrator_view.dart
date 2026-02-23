@@ -12,6 +12,7 @@ import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/buttons.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/cancel_agreement_bottom_sheet.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/choose_payment_method_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/continue_with_opay_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/enter_card_details_step.dart';
@@ -310,7 +311,12 @@ class _OrchestratorFooter extends ConsumerWidget {
                   onPressed: () => viewModel.changePaymentMethod(),
                 ),
                 Gap(Dimens.spacing.sp16),
-                CancelPaymentButton(onPressed: () {}),
+                CancelPaymentButton(
+                  onPressed: () => CancelAgreementBottomSheet.show(
+                    context,
+                    onCancelAgreement: () => viewModel.cancelAgreement(),
+                  ),
+                ),
               ],
             ),
             Gap(Dimens.spacing.sp54),
