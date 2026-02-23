@@ -341,5 +341,6 @@
   "cancelAgreement": "Cancel agreement",
   "fundsSecured": "Funds Secured",
   "shareThisLinkWithTheRecipientToAcceptTheAgreementFundsWillBeReleasedOnlyWhenYouConfirm": "Share this link with the recipient to accept the agreement.\nFunds will be released only when you confirm.",
-  "sendLink": "Send Link"
+  "sendLink": "Send Link",
+  "milestoneBreakdown": "Milestone Breakdown"
 }
