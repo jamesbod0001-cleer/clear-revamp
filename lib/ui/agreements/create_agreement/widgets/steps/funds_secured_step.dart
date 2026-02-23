@@ -1,4 +1,5 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -26,6 +27,11 @@ class FundsSecuredStep extends ConsumerWidget {
 
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        // If didPop is true, the screen is already closing.
+        if (didPop) return;
+        AgreementsRoute().go(context);
+      },
       child: CustomScrollView(
         slivers: [
           SliverPadding(
@@ -41,7 +47,9 @@ class FundsSecuredStep extends ConsumerWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       minimumSize: Size.zero,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      AgreementsRoute().go(context);
+                    },
                     icon: PhosphorIcon(
                       PhosphorIcons.x(.bold),
                       color: context.color.grey800,
