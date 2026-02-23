@@ -1,3 +1,4 @@
+import 'package:cleer/routing/router.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreements_screen.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/create_agreement_screen.dart';
@@ -98,7 +99,14 @@ class RegistrationSuccessRoute extends GoRouteData
       routes: [TypedGoRoute<HomeRoute>(path: '/home')],
     ),
     TypedStatefulShellBranch<AgreementsBranch>(
-      routes: [TypedGoRoute<AgreementsRoute>(path: '/agreements')],
+      routes: [
+        TypedGoRoute<AgreementsRoute>(
+          path: '/agreements',
+          routes: [
+            TypedGoRoute<CreateAgreementRoute>(path: 'create_agreement/:type'),
+          ],
+        ),
+      ],
     ),
     TypedStatefulShellBranch<ProfileBranch>(
       routes: [TypedGoRoute<ProfileRoute>(path: '/profile')],
@@ -140,6 +148,17 @@ class AgreementsRoute extends GoRouteData with $AgreementsRoute {
       const AgreementsScreen();
 }
 
+class CreateAgreementRoute extends GoRouteData with $CreateAgreementRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  final AgreementType type;
+
+  CreateAgreementRoute({required this.type});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      CreateAgreementScreen(type: type);
+}
+
 class ProfileBranch extends StatefulShellBranchData {
   const ProfileBranch();
 }
@@ -148,15 +167,4 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProfileScreen();
-}
-
-@TypedGoRoute<CreateAgreementRoute>(path: '/create_agreement/:type')
-class CreateAgreementRoute extends GoRouteData with $CreateAgreementRoute {
-  final AgreementType type;
-
-  CreateAgreementRoute({required this.type});
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      CreateAgreementScreen(type: type);
 }
