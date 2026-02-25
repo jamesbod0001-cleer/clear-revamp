@@ -352,5 +352,15 @@
   "contactSupportToEditYourDetails": "Contact support to edit your details",
   "passwordAndSecurity": "Password & Security",
   "changePassword": "Change Password",
-  "unverified": "Unverified"
+  "unverified": "Unverified",
+  "milestoneCount": "Milestone {count}",
+  "@milestoneCount": {
+    "description": "Label for a milestone with its sequence number",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  }
 }

@@ -6,6 +6,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +24,8 @@ class AgreementReviewStep extends HookConsumerWidget {
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
     final formData = state.value?.formData;
+
+    final isExpanded = useState(true);
 
     return PopScope(
       canPop: false,
@@ -52,8 +55,9 @@ class AgreementReviewStep extends HookConsumerWidget {
                       color: context.color.transparent,
                       child: ExpansionTile(
                         initiallyExpanded: true,
+                        onExpansionChanged: (value) => isExpanded.value = value,
                         trailing: PhosphorIcon(
-                          PhosphorIcons.caretDown(),
+                          isExpanded.value ? PhosphorIcons.caretUp() : PhosphorIcons.caretDown(),
                           size: Dimens.size.s16,
                           color: context.color.blue700,
                         ),
@@ -62,21 +66,22 @@ class AgreementReviewStep extends HookConsumerWidget {
                         visualDensity: .comfortable,
                         childrenPadding: .zero,
                         collapsedShape: Border(
-                          bottom: BorderSide(
-                            color: context.color.black.withValues(alpha: .10),
-                          ),
+                          bottom: BorderSide(color: context.color.outline),
                         ),
                         shape: Border(),
                         title: Text(
                           l10n.milestoneBreakdown,
-                          style: context.typo.titleSmall.copyWith(
-                            color: context.color.grey700,
+                          style: context.typo.labelSmall.copyWith(
+                            color: context.color.grey600,
                           ),
                         ),
                         children: List.generate(
                           formData?.milestones?.length ?? 0,
                           (int index) {
                             final milestone = formData?.milestones?[index];
+                            if (milestone == null) {
+                              return const SizedBox.shrink();
+                            }
                             return Container(
                               decoration: BoxDecoration(
                                 border: Border(
@@ -109,29 +114,50 @@ class AgreementReviewStep extends HookConsumerWidget {
                                       mainAxisSize: .min,
                                       crossAxisAlignment: .start,
                                       children: [
-                                        Text(
-                                          "Milestone ${index + 1}",
-                                          style: context.typo.bodyMedium
-                                              .copyWith(
-                                                fontWeight:
-                                                    AppFontWeights.regular,
-                                                color: context.color.grey600,
-                                              ),
+                                        Row(
+                                          mainAxisAlignment: .spaceBetween,
+                                          children: [
+                                            Text(
+                                              l10n.milestoneCount(index + 1),
+                                              style: context.typo.bodyMedium
+                                                  .copyWith(
+                                                    fontWeight:
+                                                        AppFontWeights.regular,
+                                                    color:
+                                                        context.color.grey600,
+                                                  ),
+                                            ),
+                                            Gap(Dimens.spacing.sp24),
+                                            Text(
+                                              DateFormat(
+                                                'dd/MM/yyyy',
+                                              ).format(milestone.releaseDate!),
+                                              style: context.typo.bodySmall
+                                                  .copyWith(
+                                                    color:
+                                                        context.color.grey600,
+                                                  ),
+                                            ),
+                                          ],
                                         ),
                                         Gap(Dimens.spacing.sp2),
                                         Row(
                                           mainAxisAlignment: .spaceBetween,
                                           children: [
-                                            Text(
-                                              milestone?.name ?? '',
-                                              style: context.typo.bodyMedium
-                                                  .copyWith(
-                                                    fontWeight:
-                                                        AppFontWeights.regular,
-                                                  ),
+                                            Expanded(
+                                              child: Text(
+                                                milestone.name,
+                                                style: context.typo.bodyMedium
+                                                    .copyWith(
+                                                      fontWeight: AppFontWeights
+                                                          .regular,
+                                                    ),
+                                                overflow: .ellipsis,
+                                              ),
                                             ),
+                                            Gap(Dimens.spacing.sp24),
                                             Text(
-                                              "${l10n.nairaSign} ${NumberFormat('#,###.##').format(milestone?.amount)}",
+                                              "${l10n.nairaSign} ${NumberFormat('#,###.##').format(milestone.amount)}",
                                               style: context.typo.labelMedium,
                                             ),
                                           ],
