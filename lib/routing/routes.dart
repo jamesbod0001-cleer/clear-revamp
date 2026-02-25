@@ -2,6 +2,7 @@ import 'package:cleer/routing/router.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreements_screen.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/create_agreement_screen.dart';
+import 'package:cleer/ui/auth/change_password/widgets/change_password_screen.dart';
 import 'package:cleer/ui/auth/create_account/widgets/create_account_screen.dart';
 import 'package:cleer/ui/auth/create_password/widgets/create_password_screen.dart';
 import 'package:cleer/ui/auth/forgot_password/widgets/forgot_password_screen.dart';
@@ -90,6 +91,13 @@ class RegistrationSuccessRoute extends GoRouteData
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const RegistrationSuccessScreen();
+}
+
+@TypedGoRoute<ChangePasswordRoute>(path: '/change_password')
+class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ChangePasswordScreen();
 }
 
 // --- PROTECTED SHELL ROUTES ---
