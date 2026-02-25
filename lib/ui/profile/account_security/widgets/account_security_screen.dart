@@ -76,7 +76,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                         color: context.color.grey600,
                       ),
                     ),
-                    Gap(Dimens.spacing.sp28),
+                    Gap(Dimens.spacing.sp24),
                     Expanded(
                       child: Text(
                         user?.firstName ?? '',
@@ -100,7 +100,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                         color: context.color.grey600,
                       ),
                     ),
-                    Gap(Dimens.spacing.sp28),
+                    Gap(Dimens.spacing.sp24),
                     Expanded(
                       child: Text(
                         user?.lastName ?? '',
@@ -125,7 +125,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                         color: context.color.grey600,
                       ),
                     ),
-                    Gap(Dimens.spacing.sp28),
+                    Gap(Dimens.spacing.sp24),
                     Expanded(
                       child: Text(
                         user?.phoneNumber.maskPhoneNumber ?? '',
@@ -150,7 +150,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                           color: context.color.grey600,
                         ),
                       ),
-                      Gap(Dimens.spacing.sp28),
+                      Gap(Dimens.spacing.sp24),
                       Expanded(
                         child: Text(
                           user?.email?.maskEmail ?? '',
