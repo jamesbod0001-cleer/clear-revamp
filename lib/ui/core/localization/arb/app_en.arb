@@ -362,5 +362,9 @@
         "example": "1"
       }
     }
-  }
+  },
+  "oldPassword": "Old Password",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "saveChanges": "Save Changes"
 }
