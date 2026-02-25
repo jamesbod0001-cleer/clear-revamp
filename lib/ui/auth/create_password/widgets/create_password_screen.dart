@@ -85,7 +85,7 @@ class CreatePasswordScreen extends HookConsumerWidget {
                       labelText: l10n.enterPassword,
                       isPassword: true,
                     ),
-                    Gap(Dimens.spacing.sp28),
+                    Gap(Dimens.spacing.sp20),
                     CustomTextFormField(
                       controller: confirmPasswordController,
                       labelText: l10n.confirmPassword,
