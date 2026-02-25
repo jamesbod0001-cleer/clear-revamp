@@ -124,7 +124,7 @@ class ProfileScreen extends ConsumerWidget {
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),
                       title: l10n.accountAndSecurity,
-                      content: l10n.updateYourEmailPhoneNumberAndPassword,
+                      content: l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
                       onTap: () => AccountSecurityRoute().go(context),
                     ),
                     ProfileMenuTile(
