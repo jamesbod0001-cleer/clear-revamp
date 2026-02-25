@@ -1,4 +1,5 @@
 import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -217,7 +218,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(Dimens.radius.r4),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () => ChangePasswordRoute().push(context),
                     child: Row(
                       children: [
                         PhosphorIcon(
