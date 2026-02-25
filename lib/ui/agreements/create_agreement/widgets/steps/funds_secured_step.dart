@@ -143,7 +143,7 @@ class FundsSecuredStep extends ConsumerWidget {
                           children: [
                             PhosphorIcon(
                               PhosphorIcons.copySimple(.fill),
-                              color: Color(0xFF013717),
+                              color: context.color.green900,
                               size: Dimens.size.s16,
                             ),
                             Gap(Dimens.spacing.sp4),
