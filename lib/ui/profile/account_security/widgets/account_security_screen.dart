@@ -139,8 +139,9 @@ class AccountSecurityScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Gap(Dimens.spacing.sp24),
-                if (user?.email != null)
+
+                if (user?.email != null) ...[
+                  Gap(Dimens.spacing.sp24),
                   Row(
                     mainAxisAlignment: .spaceBetween,
                     children: [
@@ -187,6 +188,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
+                ],
                 Gap(Dimens.spacing.sp40),
                 Container(
                   padding: .all(Dimens.padding.p8),
