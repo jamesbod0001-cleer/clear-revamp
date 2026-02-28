@@ -1,3 +1,4 @@
+import 'package:cleer/domain/providers/storage/file_url_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
@@ -6,13 +7,17 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/core/ui/images/app_image.dart';
+import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
+import 'package:cleer/ui/profile/account_security/view_mdoel/account_security_view_model.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class AccountSecurityScreen extends ConsumerWidget {
+class AccountSecurityScreen extends HookConsumerWidget {
   const AccountSecurityScreen({super.key});
 
   @override
@@ -20,6 +25,22 @@ class AccountSecurityScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final user = ref.watch(userProvider).value;
 
+    ref.watch(accountSecurityViewModelProvider);
+    final viewModel = ref.read(accountSecurityViewModelProvider.notifier);
+
+    final uploadProfilePictureCommand = viewModel.uploadProfilePicture;
+    useEffect(() {
+      void listener() {
+        if (uploadProfilePictureCommand.errors.value != null) {
+          debugPrint(
+            "Command Error: ${uploadProfilePictureCommand.errors.value?.error}",
+          );
+        }
+      }
+
+      uploadProfilePictureCommand.errors.addListener(listener);
+      return () => uploadProfilePictureCommand.errors.removeListener(listener);
+    }, [uploadProfilePictureCommand]);
     return Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
@@ -52,19 +73,7 @@ class AccountSecurityScreen extends ConsumerWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
-                Column(
-                  children: [
-                    CircleAvatar(radius: Dimens.radius.r40),
-                    Gap(Dimens.spacing.sp4),
-                    Text(
-                      l10n.tapToChangeImage,
-                      style: context.typo.bodyMedium.copyWith(
-                        fontWeight: AppFontWeights.regular,
-                        color: context.color.grey600,
-                      ),
-                    ),
-                  ],
-                ),
+                ProfilePicture(),
                 Gap(Dimens.spacing.sp40),
                 ProfileSectionHeader(title: l10n.personalInformation),
                 Row(
@@ -251,6 +260,88 @@ class AccountSecurityScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ProfilePicture extends ConsumerWidget {
+  const ProfilePicture({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    // Use watch for the command so the UI rebuilds when isRunning changes
+    final uploadCommand = ref
+        .watch(accountSecurityViewModelProvider.notifier)
+        .uploadProfilePicture;
+    final user = ref.watch(userProvider).value;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: () => uploadCommand.runAsync(),
+          child: Container(
+            width: Dimens.radius.r80, // radius * 2
+            height: Dimens.radius.r80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: context.color.grayComponent,
+            ),
+            child: ClipOval(
+              child: ValueListenableBuilder<bool>(
+                valueListenable: uploadCommand.isRunning,
+                builder: (context, isUploading, _) {
+                  // 1. Show Progress Loader if uploading
+                  if (isUploading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: context.color.blue700,
+                      ),
+                    );
+                  }
+
+                  // 2. No User/Picture? Show Placeholder
+                  if (user?.profilePicture == null) {
+                    return Center(
+                      child: PhosphorIcon(
+                        PhosphorIcons.user(),
+                        size: Dimens.size.s32,
+                        color: context.color.grey400,
+                      ),
+                    );
+                  }
+
+                  // 3. Show the Image with Cache Busting
+                  final profileUrlAsync = ref.watch(
+                    fileUrlProvider(user!.profilePicture!.key),
+                  );
+
+                  return profileUrlAsync.when(
+                    data: (url) => AppImage(
+                      imageUrl: url,
+                      blurHash: user.profilePicture!.blurHash ?? '',
+                      fit: BoxFit.cover,
+                    ),
+                    loading: () => BlurHashWidget(
+                      hash: user.profilePicture!.blurHash ?? '',
+                    ),
+                    error: (_, _) => Center(
+                      child: PhosphorIcon(PhosphorIcons.imageBroken()),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+        Gap(Dimens.spacing.sp8),
+        Text(
+          l10n.tapToChangeImage,
+          style: context.typo.bodySmall.copyWith(color: context.color.grey600),
+        ),
+      ],
     );
   }
 }

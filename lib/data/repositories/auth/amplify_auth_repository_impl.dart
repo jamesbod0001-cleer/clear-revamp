@@ -55,10 +55,11 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
   Future<ResultDart<AuthIdentity, AuthFailure>> getAuthIdentity() async {
     try {
       _log.info('Getting Current User Auth Identity');
-
+      final identityId = await _amplifyAuthServiceClient.getIdentityId();
+      _log.info('Got identity ID: $identityId');
       final attributes = await _amplifyAuthServiceClient
           .fetchCurrentUserAttributes();
-      final result = attributes.toDomain();
+      final result = attributes.toDomain(identityId);
       _log.info('Successfully got current user auth identity: $result');
       return Success(result);
     } on AuthException catch (e) {

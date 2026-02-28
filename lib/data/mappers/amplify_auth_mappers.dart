@@ -103,7 +103,7 @@ extension UpdatePasswordMapper on UpdatePasswordResult {
 }
 
 extension UserAttributeExtractor on List<AuthUserAttribute> {
-  AuthIdentity toDomain() {
+  AuthIdentity toDomain(String identityId) {
     String sub = firstWhere(
       (element) => element.userAttributeKey == CognitoUserAttributeKey.sub,
       orElse: () => throw Exception('Sub attribute not found'),
@@ -129,7 +129,8 @@ extension UserAttributeExtractor on List<AuthUserAttribute> {
     )?.value;
 
     return AuthIdentity(
-      id: sub,
+      userId: sub,
+      identityId: identityId,
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,

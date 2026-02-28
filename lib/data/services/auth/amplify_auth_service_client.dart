@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/services/amplify_providers.dart';
 import 'package:cleer/data/services/auth/models/confirm_reset_password/confirm_reset_password_request.dart';
@@ -119,5 +120,12 @@ class AmplifyAuthServiceClient {
 
   Future<List<AuthUserAttribute>> fetchCurrentUserAttributes() async {
     return await _amplifyAuth.fetchUserAttributes();
+  }
+
+  Future<String> getIdentityId() async {
+    final authSession =
+        await _amplifyAuth.fetchAuthSession() as CognitoAuthSession;
+    final identityId = authSession.identityIdResult.value;
+    return identityId;
   }
 }

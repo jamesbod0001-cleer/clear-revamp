@@ -9,7 +9,7 @@ part 'user_provider.g.dart';
 @Riverpod(keepAlive: true)
 Stream<User?> user(Ref ref) {
   final authState = ref.watch(authUseCaseProvider).value;
-  final userId = authState?.currentUserAuthIdentity?.id;
+  final userId = authState?.currentUserAuthIdentity?.userId;
 
   if (userId == null) {
     return Stream.value(null);

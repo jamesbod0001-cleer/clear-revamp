@@ -5,7 +5,8 @@ part 'auth_identity.freezed.dart';
 @freezed
 abstract class AuthIdentity with _$AuthIdentity {
   const factory AuthIdentity({
-    required String id,
+    required String userId,
+    required String identityId,
     required String firstName,
     required String lastName,
     required String phoneNumber,

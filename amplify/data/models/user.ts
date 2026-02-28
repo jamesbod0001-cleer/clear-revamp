@@ -2,11 +2,12 @@ import {a} from "@aws-amplify/backend"
 
 export const User = a.model({
     id: a.id().required(),
+    identityId: a.string().required(),
     phoneNumber: a.string().required(),
     firstName: a.string().required(),
     lastName: a.string().required(),
     email: a.string(),
-    profileImage: a.string(),
+    profilePicture: a.ref('Photo'),
 
     // Flutterwave
     flutterwaveCustomerId: a.string().required(),

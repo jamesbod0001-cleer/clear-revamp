@@ -28,11 +28,12 @@ import 'package:collection/collection.dart';
 class User extends amplify_core.Model {
   static const classType = const _UserModelType();
   final String id;
+  final String? _identityId;
   final String? _phoneNumber;
   final String? _firstName;
   final String? _lastName;
   final String? _email;
-  final String? _profileImage;
+  final Photo? _profilePicture;
   final String? _flutterwaveCustomerId;
   final List<String>? _flutterwavePaymentMethodIds;
   final List<Agreement>? _initiatedAgreements;
@@ -53,6 +54,19 @@ class User extends amplify_core.Model {
       return UserModelIdentifier(
         id: id
       );
+  }
+  
+  String get identityId {
+    try {
+      return _identityId!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   String get phoneNumber {
@@ -98,8 +112,8 @@ class User extends amplify_core.Model {
     return _email;
   }
   
-  String? get profileImage {
-    return _profileImage;
+  Photo? get profilePicture {
+    return _profilePicture;
   }
   
   String get flutterwaveCustomerId {
@@ -143,16 +157,17 @@ class User extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const User._internal({required this.id, required phoneNumber, required firstName, required lastName, email, profileImage, required flutterwaveCustomerId, flutterwavePaymentMethodIds, initiatedAgreements, sentAgreements, receivedAgreements, payoutDestinations, createdAt, updatedAt}): _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _profileImage = profileImage, _flutterwaveCustomerId = flutterwaveCustomerId, _flutterwavePaymentMethodIds = flutterwavePaymentMethodIds, _initiatedAgreements = initiatedAgreements, _sentAgreements = sentAgreements, _receivedAgreements = receivedAgreements, _payoutDestinations = payoutDestinations, _createdAt = createdAt, _updatedAt = updatedAt;
+  const User._internal({required this.id, required identityId, required phoneNumber, required firstName, required lastName, email, profilePicture, required flutterwaveCustomerId, flutterwavePaymentMethodIds, initiatedAgreements, sentAgreements, receivedAgreements, payoutDestinations, createdAt, updatedAt}): _identityId = identityId, _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _profilePicture = profilePicture, _flutterwaveCustomerId = flutterwaveCustomerId, _flutterwavePaymentMethodIds = flutterwavePaymentMethodIds, _initiatedAgreements = initiatedAgreements, _sentAgreements = sentAgreements, _receivedAgreements = receivedAgreements, _payoutDestinations = payoutDestinations, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory User({String? id, required String phoneNumber, required String firstName, required String lastName, String? email, String? profileImage, required String flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
+  factory User({String? id, required String identityId, required String phoneNumber, required String firstName, required String lastName, String? email, Photo? profilePicture, required String flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
     return User._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
+      identityId: identityId,
       phoneNumber: phoneNumber,
       firstName: firstName,
       lastName: lastName,
       email: email,
-      profileImage: profileImage,
+      profilePicture: profilePicture,
       flutterwaveCustomerId: flutterwaveCustomerId,
       flutterwavePaymentMethodIds: flutterwavePaymentMethodIds != null ? List<String>.unmodifiable(flutterwavePaymentMethodIds) : flutterwavePaymentMethodIds,
       initiatedAgreements: initiatedAgreements != null ? List<Agreement>.unmodifiable(initiatedAgreements) : initiatedAgreements,
@@ -170,11 +185,12 @@ class User extends amplify_core.Model {
     if (identical(other, this)) return true;
     return other is User &&
       id == other.id &&
+      _identityId == other._identityId &&
       _phoneNumber == other._phoneNumber &&
       _firstName == other._firstName &&
       _lastName == other._lastName &&
       _email == other._email &&
-      _profileImage == other._profileImage &&
+      _profilePicture == other._profilePicture &&
       _flutterwaveCustomerId == other._flutterwaveCustomerId &&
       DeepCollectionEquality().equals(_flutterwavePaymentMethodIds, other._flutterwavePaymentMethodIds) &&
       DeepCollectionEquality().equals(_initiatedAgreements, other._initiatedAgreements) &&
@@ -192,11 +208,12 @@ class User extends amplify_core.Model {
     
     buffer.write("User {");
     buffer.write("id=" + "$id" + ", ");
+    buffer.write("identityId=" + "$_identityId" + ", ");
     buffer.write("phoneNumber=" + "$_phoneNumber" + ", ");
     buffer.write("firstName=" + "$_firstName" + ", ");
     buffer.write("lastName=" + "$_lastName" + ", ");
     buffer.write("email=" + "$_email" + ", ");
-    buffer.write("profileImage=" + "$_profileImage" + ", ");
+    buffer.write("profilePicture=" + (_profilePicture != null ? _profilePicture!.toString() : "null") + ", ");
     buffer.write("flutterwaveCustomerId=" + "$_flutterwaveCustomerId" + ", ");
     buffer.write("flutterwavePaymentMethodIds=" + (_flutterwavePaymentMethodIds != null ? _flutterwavePaymentMethodIds!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
@@ -206,14 +223,15 @@ class User extends amplify_core.Model {
     return buffer.toString();
   }
   
-  User copyWith({String? phoneNumber, String? firstName, String? lastName, String? email, String? profileImage, String? flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
+  User copyWith({String? identityId, String? phoneNumber, String? firstName, String? lastName, String? email, Photo? profilePicture, String? flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
     return User._internal(
       id: id,
+      identityId: identityId ?? this.identityId,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
-      profileImage: profileImage ?? this.profileImage,
+      profilePicture: profilePicture ?? this.profilePicture,
       flutterwaveCustomerId: flutterwaveCustomerId ?? this.flutterwaveCustomerId,
       flutterwavePaymentMethodIds: flutterwavePaymentMethodIds ?? this.flutterwavePaymentMethodIds,
       initiatedAgreements: initiatedAgreements ?? this.initiatedAgreements,
@@ -223,11 +241,12 @@ class User extends amplify_core.Model {
   }
   
   User copyWithModelFieldValues({
+    ModelFieldValue<String>? identityId,
     ModelFieldValue<String>? phoneNumber,
     ModelFieldValue<String>? firstName,
     ModelFieldValue<String>? lastName,
     ModelFieldValue<String?>? email,
-    ModelFieldValue<String?>? profileImage,
+    ModelFieldValue<Photo?>? profilePicture,
     ModelFieldValue<String>? flutterwaveCustomerId,
     ModelFieldValue<List<String>?>? flutterwavePaymentMethodIds,
     ModelFieldValue<List<Agreement>?>? initiatedAgreements,
@@ -237,11 +256,12 @@ class User extends amplify_core.Model {
   }) {
     return User._internal(
       id: id,
+      identityId: identityId == null ? this.identityId : identityId.value,
       phoneNumber: phoneNumber == null ? this.phoneNumber : phoneNumber.value,
       firstName: firstName == null ? this.firstName : firstName.value,
       lastName: lastName == null ? this.lastName : lastName.value,
       email: email == null ? this.email : email.value,
-      profileImage: profileImage == null ? this.profileImage : profileImage.value,
+      profilePicture: profilePicture == null ? this.profilePicture : profilePicture.value,
       flutterwaveCustomerId: flutterwaveCustomerId == null ? this.flutterwaveCustomerId : flutterwaveCustomerId.value,
       flutterwavePaymentMethodIds: flutterwavePaymentMethodIds == null ? this.flutterwavePaymentMethodIds : flutterwavePaymentMethodIds.value,
       initiatedAgreements: initiatedAgreements == null ? this.initiatedAgreements : initiatedAgreements.value,
@@ -253,11 +273,16 @@ class User extends amplify_core.Model {
   
   User.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
+      _identityId = json['identityId'],
       _phoneNumber = json['phoneNumber'],
       _firstName = json['firstName'],
       _lastName = json['lastName'],
       _email = json['email'],
-      _profileImage = json['profileImage'],
+      _profilePicture = json['profilePicture'] != null
+          ? json['profilePicture']['serializedData'] != null
+              ? Photo.fromJson(new Map<String, dynamic>.from(json['profilePicture']['serializedData']))
+              : Photo.fromJson(new Map<String, dynamic>.from(json['profilePicture']))
+        : null,
       _flutterwaveCustomerId = json['flutterwaveCustomerId'],
       _flutterwavePaymentMethodIds = json['flutterwavePaymentMethodIds']?.cast<String>(),
       _initiatedAgreements = json['initiatedAgreements']  is Map
@@ -316,16 +341,17 @@ class User extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'profileImage': _profileImage, 'flutterwaveCustomerId': _flutterwaveCustomerId, 'flutterwavePaymentMethodIds': _flutterwavePaymentMethodIds, 'initiatedAgreements': _initiatedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'sentAgreements': _sentAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'receivedAgreements': _receivedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'payoutDestinations': _payoutDestinations?.map((PayoutDestination? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'identityId': _identityId, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'profilePicture': _profilePicture?.toJson(), 'flutterwaveCustomerId': _flutterwaveCustomerId, 'flutterwavePaymentMethodIds': _flutterwavePaymentMethodIds, 'initiatedAgreements': _initiatedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'sentAgreements': _sentAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'receivedAgreements': _receivedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'payoutDestinations': _payoutDestinations?.map((PayoutDestination? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
+    'identityId': _identityId,
     'phoneNumber': _phoneNumber,
     'firstName': _firstName,
     'lastName': _lastName,
     'email': _email,
-    'profileImage': _profileImage,
+    'profilePicture': _profilePicture,
     'flutterwaveCustomerId': _flutterwaveCustomerId,
     'flutterwavePaymentMethodIds': _flutterwavePaymentMethodIds,
     'initiatedAgreements': _initiatedAgreements,
@@ -338,11 +364,12 @@ class User extends amplify_core.Model {
 
   static final amplify_core.QueryModelIdentifier<UserModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<UserModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
+  static final IDENTITYID = amplify_core.QueryField(fieldName: "identityId");
   static final PHONENUMBER = amplify_core.QueryField(fieldName: "phoneNumber");
   static final FIRSTNAME = amplify_core.QueryField(fieldName: "firstName");
   static final LASTNAME = amplify_core.QueryField(fieldName: "lastName");
   static final EMAIL = amplify_core.QueryField(fieldName: "email");
-  static final PROFILEIMAGE = amplify_core.QueryField(fieldName: "profileImage");
+  static final PROFILEPICTURE = amplify_core.QueryField(fieldName: "profilePicture");
   static final FLUTTERWAVECUSTOMERID = amplify_core.QueryField(fieldName: "flutterwaveCustomerId");
   static final FLUTTERWAVEPAYMENTMETHODIDS = amplify_core.QueryField(fieldName: "flutterwavePaymentMethodIds");
   static final INITIATEDAGREEMENTS = amplify_core.QueryField(
@@ -387,6 +414,12 @@ class User extends amplify_core.Model {
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: User.IDENTITYID,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: User.PHONENUMBER,
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
@@ -410,10 +443,10 @@ class User extends amplify_core.Model {
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: User.PROFILEIMAGE,
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
+      fieldName: 'profilePicture',
       isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'Photo')
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(

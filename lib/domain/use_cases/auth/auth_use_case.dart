@@ -56,7 +56,8 @@ class AuthUseCase extends _$AuthUseCase {
         _log.info('Current user auth identity: $identity');
         final syncResult = await _userRepository.getOrCreateUserProfile(
           User(
-            id: identity.id,
+            id: identity.userId,
+            identityId: identity.identityId,
             firstName: identity.firstName,
             lastName: identity.lastName,
             phoneNumber: identity.phoneNumber,
@@ -70,7 +71,7 @@ class AuthUseCase extends _$AuthUseCase {
             Sentry.configureScope(
               (scope) => scope.setUser(
                 SentryUser(
-                  id: identity.id,
+                  id: identity.userId,
                   email: identity.email,
                   username: "${identity.firstName} ${identity.lastName}",
                   data: {'phone': identity.phoneNumber},
@@ -277,7 +278,7 @@ class AuthUseCase extends _$AuthUseCase {
           return await identityResult.fold(
             (identity) async {
               _log.info(
-                'Creating mandatory Flutterwave customer for: ${identity.id}',
+                'Creating mandatory Flutterwave customer for: ${identity.userId}',
               );
               final customerResult = await _flutterwaveRepository
                   .createCustomer(
@@ -286,13 +287,13 @@ class AuthUseCase extends _$AuthUseCase {
                       lastName: identity.lastName,
                       phoneNumber: phoneNumber,
                     ),
-                    userId: identity.id,
+                    userId: identity.userId,
                   );
 
               return await customerResult.fold(
                 (customer) async {
                   _log.info(
-                    'Successfully created mandatory Flutterwave customer for: ${identity.id}',
+                    'Successfully created mandatory Flutterwave customer for: ${identity.userId}',
                   );
                   final newState = await _syncUserProfile(
                     isCompilingRegistration: true,

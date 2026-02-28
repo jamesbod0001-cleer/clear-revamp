@@ -1,3 +1,4 @@
+import 'package:cleer/domain/providers/storage/file_url_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/routing/routes.dart';
@@ -8,6 +9,8 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/images/app_image.dart';
+import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
 import 'package:cleer/ui/core/ui/trust_score_badge.dart';
 import 'package:cleer/ui/profile/profile/widgets/payout_destination_card.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
@@ -101,7 +104,51 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         Gap(Dimens.spacing.sp20),
                         Column(
-                          children: [CircleAvatar(radius: Dimens.radius.r48)],
+                          children: [
+                            Container(
+                              width: Dimens.radius.r80, // radius * 2
+                              height: Dimens.radius.r80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: context.color.grayComponent,
+                              ),
+                              child: ClipOval(
+                                child: Builder(
+                                  builder: (BuildContext context) {
+                                    if (user.profilePicture == null) {
+                                      return Center(
+                                        child: PhosphorIcon(
+                                          PhosphorIcons.user(),
+                                          size: Dimens.size.s32,
+                                          color: context.color.grey400,
+                                        ),
+                                      );
+                                    }
+                                    final profileUrlAsync = ref.watch(
+                                      fileUrlProvider(user.profilePicture!.key),
+                                    );
+                                    return profileUrlAsync.when(
+                                      data: (url) => AppImage(
+                                        imageUrl: url,
+                                        blurHash:
+                                            user.profilePicture!.blurHash ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                                      loading: () => BlurHashWidget(
+                                        hash:
+                                            user.profilePicture!.blurHash ?? '',
+                                      ),
+                                      error: (_, _) => Center(
+                                        child: PhosphorIcon(
+                                          PhosphorIcons.imageBroken(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -124,7 +171,8 @@ class ProfileScreen extends ConsumerWidget {
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),
                       title: l10n.accountAndSecurity,
-                      content: l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
+                      content:
+                          l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
                       onTap: () => AccountSecurityRoute().go(context),
                     ),
                     ProfileMenuTile(
