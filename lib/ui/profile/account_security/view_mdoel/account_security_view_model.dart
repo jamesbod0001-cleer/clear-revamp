@@ -65,7 +65,7 @@ class AccountSecurityViewModel extends _$AccountSecurityViewModel {
                 ? '.jpg'
                 : p.extension(processedImage.file.path);
             final String fullPath =
-                'public/users/${user.identityId}/profile_picture$extension';
+                'public/users/${user.identityId}/profile_picture_${DateTime.now().millisecondsSinceEpoch}$extension';
 
             final uploadImageResult = await ref
                 .read(storageUseCaseProvider.notifier)
@@ -81,7 +81,10 @@ class AccountSecurityViewModel extends _$AccountSecurityViewModel {
                 await ref
                     .read(userUseCaseProvider.notifier)
                     .updateUserProfile(
-                      user.copyWith(profilePicture: result.toPhoto()),
+                      user.copyWith(
+                        profilePicture: result.toPhoto(),
+                        firstName: user.firstName + 's',
+                      ),
                     );
               },
               (failure) {
