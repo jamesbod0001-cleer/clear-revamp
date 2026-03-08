@@ -174,7 +174,9 @@ class AgreementSetupStep extends HookConsumerWidget {
                     visible: type == .send,
                     replacement: Column(
                       mainAxisSize: .min,
+                      crossAxisAlignment: .start,
                       children: [
+                        ProfileSectionHeader(title: l10n.recipientDetails),
                         TextButton(
                           style: TextButton.styleFrom(
                             backgroundColor: context.color.transparent,
