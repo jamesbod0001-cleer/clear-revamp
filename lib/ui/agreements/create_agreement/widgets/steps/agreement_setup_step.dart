@@ -1,3 +1,4 @@
+import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
@@ -169,42 +170,84 @@ class AgreementSetupStep extends HookConsumerWidget {
                   ),
                   Gap(Dimens.spacing.sp40),
 
-                  ProfileSectionHeader(title: l10n.recipientDetails),
-                  CustomTextFormField(
-                    controller: bankController,
-                    labelText: l10n.selectBank,
-                    readOnly: true,
-                    onTap: () =>
-                        _showBankPickerBottomSheet(context, selectedBank),
-                    suffixIcon: IconButton(
-                      onPressed: () =>
-                          _showBankPickerBottomSheet(context, selectedBank),
-                      icon: PhosphorIcon(
-                        PhosphorIcons.caretDown(),
-                        color: context.color.blue700,
-                      ),
+                  Visibility(
+                    visible: type == .send,
+                    replacement: Column(
+                      mainAxisSize: .min,
+                      children: [
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: context.color.transparent,
+                            foregroundColor: context.color.blue700,
+                            minimumSize: Size(0, 0),
+                            padding: EdgeInsets.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisSize: .min,
+                            children: [
+                              Assets.images.bank.image(
+                                width: Dimens.size.s23,
+                                height: Dimens.size.s23,
+                              ),
+                              Gap(Dimens.spacing.sp5),
+                              Text(
+                                l10n.selectPayoutDestination,
+                                style: context.typo.bodyLink.copyWith(
+                                  color: context.color.blue700,
+                                  decorationColor: context.color.blue700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: .min,
+                      children: [
+                        ProfileSectionHeader(title: l10n.recipientDetails),
+                        CustomTextFormField(
+                          controller: bankController,
+                          labelText: l10n.selectBank,
+                          readOnly: true,
+                          onTap: () =>
+                              _showBankPickerBottomSheet(context, selectedBank),
+                          suffixIcon: IconButton(
+                            onPressed: () => _showBankPickerBottomSheet(
+                              context,
+                              selectedBank,
+                            ),
+                            icon: PhosphorIcon(
+                              PhosphorIcons.caretDown(),
+                              color: context.color.blue700,
+                            ),
+                          ),
+                        ),
+                        Gap(Dimens.spacing.sp20),
+                        CustomTextFormField(
+                          controller: accountNumberController,
+                          labelText: l10n.accountNumber,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(10),
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
+                          textInputType: .number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return l10n.fieldRequired('account number');
+                            }
+                            if (value.length != 10) {
+                              return l10n.enterAValid10DigitsAccountNumber;
+                            }
+                            return null;
+                          },
+                        ),
+                        RecipientIdentityTile(type: type),
+                      ],
                     ),
                   ),
-                  Gap(Dimens.spacing.sp20),
-                  CustomTextFormField(
-                    controller: accountNumberController,
-                    labelText: l10n.accountNumber,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(10),
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    textInputType: .number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return l10n.fieldRequired('account number');
-                      }
-                      if (value.length != 10) {
-                        return l10n.enterAValid10DigitsAccountNumber;
-                      }
-                      return null;
-                    },
-                  ),
-                  RecipientIdentityTile(type: type),
                   Gap(Dimens.spacing.sp40),
 
                   ProfileSectionHeader(title: l10n.howWillThePaymentBeReleased),

@@ -6,7 +6,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/profile/payout_destination/view_model/payout_destination_view_model.dart';
-import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account.dart';
+import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account_trigger.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
