@@ -139,6 +139,11 @@
     }
   },
   "clickToViewAndResolve": "Click to view and resolve",
+  "payoutAccounts": "Payout Accounts",
+  "manageTheBankAccountThatReceivesReleasedFunds": "Manage the bank account that receives released funds.",
+  "whereReleasedFundsWillBeSentAfterASuccessfulAgreement": "Where released funds will be sent after a successful agreement.",
+  "fundsAreOnlyPaidOutToVerifiedBankAccountsInYourName": "Funds are only paid out to verified bank accounts in your name.",
+  "addAccount": "Add Account",
   "payoutDestination": "Payout Destination",
   "edit": "Edit",
   "addBankAccount": "Add Bank Account",
@@ -366,5 +371,9 @@
   "oldPassword": "Old Password",
   "newPassword": "New Password",
   "confirmNewPassword": "Confirm New Password",
-  "saveChanges": "Save Changes"
+  "saveChanges": "Save Changes",
+  "removePayoutAccount": "Remove Payout Account?",
+  "thisWillRemoveThisBankAccountsAsYourPayoutDestination": "This will remove this bank account as your payout destination.",
+  "removeAccount": "Remove Account",
+  "cancel": "Cancel"
 }

@@ -15,6 +15,7 @@ import 'package:cleer/ui/core/navigation/navigation_config.dart';
 import 'package:cleer/ui/home/home/widgets/home_screen.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
 import 'package:cleer/ui/profile/account_security/widgets/account_security_screen.dart';
+import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_screen.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +123,7 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
         TypedGoRoute<ProfileRoute>(
           path: '/profile',
           routes: [
+            TypedGoRoute<PayoutDestinationRoute>(path: 'payout_destination'),
             TypedGoRoute<AccountSecurityRoute>(path: 'account_security'),
           ],
         ),
@@ -183,6 +185,13 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProfileScreen();
+}
+
+class PayoutDestinationRoute extends GoRouteData with $PayoutDestinationRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      PayoutDestinationScreen();
 }
 
 class AccountSecurityRoute extends GoRouteData with $AccountSecurityRoute {

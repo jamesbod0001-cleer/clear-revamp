@@ -12,7 +12,6 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/images/app_image.dart';
 import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
 import 'package:cleer/ui/core/ui/trust_score_badge.dart';
-import 'package:cleer/ui/profile/profile/widgets/payout_destination_card.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:cleer/ui/profile/profile/widgets/user_performance_stats_card.dart';
@@ -162,11 +161,20 @@ class ProfileScreen extends ConsumerWidget {
                     Gap(Dimens.spacing.sp28),
 
                     ProfileSectionHeader(title: l10n.payoutDestination),
-                    PayoutDestinationCard(),
-                    Gap(Dimens.spacing.sp16),
-                    AddBankAccountButton(),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.bank(.duotone),
+                      title: l10n.payoutAccounts,
+                      content:
+                          l10n.manageTheBankAccountThatReceivesReleasedFunds,
+                      onTap: () => PayoutDestinationRoute().go(context),
+                      showBottomPadding: false,
+                    ),
                     Gap(Dimens.spacing.sp40),
 
+                    // PayoutDestinationCard(),
+                    // Gap(Dimens.spacing.sp16),
+                    // AddBankAccountButton(),
+                    // Gap(Dimens.spacing.sp40),
                     ProfileSectionHeader(title: l10n.settings),
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),

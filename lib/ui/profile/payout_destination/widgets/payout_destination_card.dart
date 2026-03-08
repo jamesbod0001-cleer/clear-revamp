@@ -1,14 +1,16 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/profile/payout_destination/widgets/remove_payout_account_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class PayoutDestinationCard extends StatelessWidget {
-  const PayoutDestinationCard({super.key});
+  const PayoutDestinationCard({super.key, required this.payoutDestination});
+  final PayoutDestination payoutDestination;
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +36,20 @@ class PayoutDestinationCard extends StatelessWidget {
                 spacing: Dimens.spacing.sp4,
                 children: [
                   Text(
-                    'CELESTINE EZIAMACHUKWU DAVID',
+                    payoutDestination.accountName,
                     style: context.typo.bodyMedium.copyWith(
                       fontWeight: AppFontWeights.regular,
                       color: context.color.grey800,
                     ),
                   ),
                   Text(
-                    '2026884938',
+                    payoutDestination.accountNumber,
                     style: context.typo.bodyMedium.copyWith(
                       color: context.color.grey800,
                     ),
                   ),
                   Text(
-                    'Kuda Bank',
+                    payoutDestination.bankName,
                     style: context.typo.bodyMedium.copyWith(
                       fontWeight: AppFontWeights.regular,
                       color: context.color.grey600,
@@ -69,53 +71,23 @@ class PayoutDestinationCard extends StatelessWidget {
                     borderRadius: .circular(Dimens.radius.r12),
                   ),
                 ),
-                Text(
-                  AppLocalizations.of(context)!.edit,
-                  style: context.typo.bodyLink.copyWith(
-                    color: context.color.blue700,
-                    decorationColor: context.color.blue700,
+                GestureDetector(
+                  onTap: () => RemovePayoutAccountBottomSheet.show(
+                    context,
+                    payoutDestination,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.remove,
+                    style: context.typo.bodyLink.copyWith(
+                      color: context.color.error,
+                      decorationColor: context.color.error,
+                    ),
                   ),
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class AddBankAccountButton extends StatelessWidget {
-  const AddBankAccountButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(
-        backgroundColor: context.color.transparent,
-        foregroundColor: context.color.blue700,
-        minimumSize: Size(0, 0),
-        padding: EdgeInsets.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
-      onPressed: () {},
-      child: Row(
-        mainAxisSize: .min,
-        children: [
-          PhosphorIcon(
-            PhosphorIcons.plus(),
-            size: Dimens.size.s16,
-            color: context.color.blue700,
-          ),
-          Gap(Dimens.spacing.sp5),
-          Text(
-            AppLocalizations.of(context)!.addBankAccount,
-            style: context.typo.bodyLink.copyWith(
-              color: context.color.blue700,
-              decorationColor: context.color.blue700,
-            ),
-          ),
-        ],
       ),
     );
   }

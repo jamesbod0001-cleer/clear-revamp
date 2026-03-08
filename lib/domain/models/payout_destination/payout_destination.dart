@@ -12,6 +12,6 @@ abstract class PayoutDestination with _$PayoutDestination {
     User? user,
     required String bankName,
     required String accountName,
-    @Default(false) bool isDefault,
+    DateTime? createdAt,
   }) = _PayoutDestination;
 }

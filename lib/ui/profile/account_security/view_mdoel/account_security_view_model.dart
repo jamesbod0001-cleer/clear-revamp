@@ -81,10 +81,7 @@ class AccountSecurityViewModel extends _$AccountSecurityViewModel {
                 await ref
                     .read(userUseCaseProvider.notifier)
                     .updateUserProfile(
-                      user.copyWith(
-                        profilePicture: result.toPhoto(),
-                        firstName: user.firstName + 's',
-                      ),
+                      user.copyWith(profilePicture: result.toPhoto()),
                     );
               },
               (failure) {

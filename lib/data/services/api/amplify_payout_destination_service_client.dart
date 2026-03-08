@@ -45,4 +45,44 @@ class AmplifyPayoutDestinationServiceClient with ApiErrorChecker {
     final response = await _amplifyAPI.mutate(request: request).response;
     return validateRequiredResponse(response);
   }
+
+  Future<PayoutDestination> deletePayoutDestination(
+    PayoutDestination payoutDestination,
+  ) async {
+    final request = ModelMutations.delete(
+      payoutDestination,
+      authorizationMode: APIAuthorizationType.userPools,
+    );
+    final response = await _amplifyAPI.mutate(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
+  Future<PaginatedResult<PayoutDestination>> queryPayoutDestinationsByUser(
+    String userId,
+  ) async {
+    final request = ModelQueries.list(
+      PayoutDestination.classType,
+      where: PayoutDestination.USER.eq(userId),
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
+  Stream<GraphQLResponse<PayoutDestination>>
+  observeUserPayoutDestinationsCreates(String userId) {
+    final subscriptionRequest = ModelSubscriptions.onCreate(
+      PayoutDestination.classType,
+      where: PayoutDestination.USER.eq(userId),
+    );
+    return _amplifyAPI.subscribe(subscriptionRequest);
+  }
+
+  Stream<GraphQLResponse<PayoutDestination>>
+  observeUserPayoutDestinationsDeletes(String userId) {
+    final subscriptionRequest = ModelSubscriptions.onDelete(
+      PayoutDestination.classType,
+      where: PayoutDestination.USER.eq(userId),
+    );
+    return _amplifyAPI.subscribe(subscriptionRequest);
+  }
 }

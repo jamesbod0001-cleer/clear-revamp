@@ -15,6 +15,7 @@ import 'package:cleer/domain/use_cases/flutterwave/params/create_charge_params.d
 import 'package:cleer/domain/use_cases/flutterwave/params/create_payment_method_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/create_virtual_account_params.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/list_charges_params.dart';
+import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:cleer/utils/reference_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -299,6 +300,24 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       },
       (failure) {
         _log.error('Error listing charges', failure);
+      },
+    );
+    return result;
+  }
+
+  Future<ResultDart<String, PaymentFailure>> resolveAccount(
+    ResolveAccountParams params,
+  ) async {
+    _log.info('Attempting to resolve account with params: $params');
+    final result = await _flutterwaveRepository.resolveAccount(params);
+    result.fold(
+      (account) {
+        _log.info('Successfully resolved account');
+        return Success(account);
+      },
+      (failure) {
+        _log.error('Error resolving account', failure);
+        return Failure(failure);
       },
     );
     return result;

@@ -32,7 +32,6 @@ class PayoutDestination extends amplify_core.Model {
   final String? _currency;
   final String? _bankName;
   final String? _accountName;
-  final bool? _isDefault;
   final User? _user;
   final List<Agreement>? _agreements;
   final amplify_core.TemporalDateTime? _createdAt;
@@ -126,10 +125,6 @@ class PayoutDestination extends amplify_core.Model {
     }
   }
   
-  bool? get isDefault {
-    return _isDefault;
-  }
-  
   User? get user {
     return _user;
   }
@@ -146,16 +141,15 @@ class PayoutDestination extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const PayoutDestination._internal({required accountNumber, required bankCode, required currency, required bankName, required accountName, isDefault, user, agreements, createdAt, updatedAt}): _accountNumber = accountNumber, _bankCode = bankCode, _currency = currency, _bankName = bankName, _accountName = accountName, _isDefault = isDefault, _user = user, _agreements = agreements, _createdAt = createdAt, _updatedAt = updatedAt;
+  const PayoutDestination._internal({required accountNumber, required bankCode, required currency, required bankName, required accountName, user, agreements, createdAt, updatedAt}): _accountNumber = accountNumber, _bankCode = bankCode, _currency = currency, _bankName = bankName, _accountName = accountName, _user = user, _agreements = agreements, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory PayoutDestination({required String accountNumber, required String bankCode, required String currency, required String bankName, required String accountName, bool? isDefault, User? user, List<Agreement>? agreements}) {
+  factory PayoutDestination({required String accountNumber, required String bankCode, required String currency, required String bankName, required String accountName, User? user, List<Agreement>? agreements}) {
     return PayoutDestination._internal(
       accountNumber: accountNumber,
       bankCode: bankCode,
       currency: currency,
       bankName: bankName,
       accountName: accountName,
-      isDefault: isDefault,
       user: user,
       agreements: agreements != null ? List<Agreement>.unmodifiable(agreements) : agreements);
   }
@@ -173,7 +167,6 @@ class PayoutDestination extends amplify_core.Model {
       _currency == other._currency &&
       _bankName == other._bankName &&
       _accountName == other._accountName &&
-      _isDefault == other._isDefault &&
       _user == other._user &&
       DeepCollectionEquality().equals(_agreements, other._agreements);
   }
@@ -191,7 +184,6 @@ class PayoutDestination extends amplify_core.Model {
     buffer.write("currency=" + "$_currency" + ", ");
     buffer.write("bankName=" + "$_bankName" + ", ");
     buffer.write("accountName=" + "$_accountName" + ", ");
-    buffer.write("isDefault=" + (_isDefault != null ? _isDefault!.toString() : "null") + ", ");
     buffer.write("user=" + (_user != null ? _user!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
@@ -200,14 +192,13 @@ class PayoutDestination extends amplify_core.Model {
     return buffer.toString();
   }
   
-  PayoutDestination copyWith({String? currency, String? bankName, String? accountName, bool? isDefault, User? user, List<Agreement>? agreements}) {
+  PayoutDestination copyWith({String? currency, String? bankName, String? accountName, User? user, List<Agreement>? agreements}) {
     return PayoutDestination._internal(
       accountNumber: accountNumber,
       bankCode: bankCode,
       currency: currency ?? this.currency,
       bankName: bankName ?? this.bankName,
       accountName: accountName ?? this.accountName,
-      isDefault: isDefault ?? this.isDefault,
       user: user ?? this.user,
       agreements: agreements ?? this.agreements);
   }
@@ -216,7 +207,6 @@ class PayoutDestination extends amplify_core.Model {
     ModelFieldValue<String>? currency,
     ModelFieldValue<String>? bankName,
     ModelFieldValue<String>? accountName,
-    ModelFieldValue<bool?>? isDefault,
     ModelFieldValue<User?>? user,
     ModelFieldValue<List<Agreement>?>? agreements
   }) {
@@ -226,7 +216,6 @@ class PayoutDestination extends amplify_core.Model {
       currency: currency == null ? this.currency : currency.value,
       bankName: bankName == null ? this.bankName : bankName.value,
       accountName: accountName == null ? this.accountName : accountName.value,
-      isDefault: isDefault == null ? this.isDefault : isDefault.value,
       user: user == null ? this.user : user.value,
       agreements: agreements == null ? this.agreements : agreements.value
     );
@@ -238,7 +227,6 @@ class PayoutDestination extends amplify_core.Model {
       _currency = json['currency'],
       _bankName = json['bankName'],
       _accountName = json['accountName'],
-      _isDefault = json['isDefault'],
       _user = json['user'] != null
         ? json['user']['serializedData'] != null
           ? User.fromJson(new Map<String, dynamic>.from(json['user']['serializedData']))
@@ -261,7 +249,7 @@ class PayoutDestination extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'accountNumber': _accountNumber, 'bankCode': _bankCode, 'currency': _currency, 'bankName': _bankName, 'accountName': _accountName, 'isDefault': _isDefault, 'user': _user?.toJson(), 'agreements': _agreements?.map((Agreement? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'accountNumber': _accountNumber, 'bankCode': _bankCode, 'currency': _currency, 'bankName': _bankName, 'accountName': _accountName, 'user': _user?.toJson(), 'agreements': _agreements?.map((Agreement? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -270,7 +258,6 @@ class PayoutDestination extends amplify_core.Model {
     'currency': _currency,
     'bankName': _bankName,
     'accountName': _accountName,
-    'isDefault': _isDefault,
     'user': _user,
     'agreements': _agreements,
     'createdAt': _createdAt,
@@ -283,7 +270,6 @@ class PayoutDestination extends amplify_core.Model {
   static final CURRENCY = amplify_core.QueryField(fieldName: "currency");
   static final BANKNAME = amplify_core.QueryField(fieldName: "bankName");
   static final ACCOUNTNAME = amplify_core.QueryField(fieldName: "accountName");
-  static final ISDEFAULT = amplify_core.QueryField(fieldName: "isDefault");
   static final USER = amplify_core.QueryField(
     fieldName: "user",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'User'));
@@ -299,7 +285,8 @@ class PayoutDestination extends amplify_core.Model {
         authStrategy: amplify_core.AuthStrategy.PRIVATE,
         operations: const [
           amplify_core.ModelOperation.CREATE,
-          amplify_core.ModelOperation.READ
+          amplify_core.ModelOperation.READ,
+          amplify_core.ModelOperation.DELETE
         ])
     ];
     
@@ -335,12 +322,6 @@ class PayoutDestination extends amplify_core.Model {
       key: PayoutDestination.ACCOUNTNAME,
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: PayoutDestination.ISDEFAULT,
-      isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.bool)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(

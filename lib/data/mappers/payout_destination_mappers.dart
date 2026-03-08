@@ -12,8 +12,8 @@ extension PayoutDestinationToDomainMapper on amplify_model.PayoutDestination {
       currency: currency,
       bankName: bankName,
       accountName: accountName,
-      isDefault: isDefault!,
       user: user?.toDomain(),
+      createdAt: createdAt?.getDateTimeInUtc()
     );
   }
 }
@@ -27,7 +27,6 @@ extension PayoutDestinationToAmplifyMapper on domain.PayoutDestination {
       currency: currency,
       bankName: bankName,
       accountName: accountName,
-      isDefault: isDefault,
       user: user?.toAmplify(),
     );
   }
