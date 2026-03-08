@@ -203,8 +203,7 @@ class _AgreementsEmptyState extends StatelessWidget {
                         _linkSpan(
                           context,
                           text: l10n.requestPayment,
-                          onTap: (){},
-                          // onTap: () => _handleRequestPayment(context),
+                          onTap: () => _handleRequestPayment(context),
                         ),
                         const TextSpan(text: ' '),
                         TextSpan(text: l10n.toGetStarted),
