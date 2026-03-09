@@ -14,6 +14,7 @@ enum CreateAgreementStep {
   review, // Maps to AgreementReviewStep
   payment,
   fundsSecured,
+  agreementCreated, // For request payment type
 }
 
 @freezed
@@ -22,7 +23,6 @@ abstract class CreateAgreementState with _$CreateAgreementState {
     @Default(AgreementType.send) AgreementType type,
     @Default(CreateAgreementStep.setup) CreateAgreementStep currentStep,
     required CreateAgreementFormData formData,
-    @Default(false) bool isResolvingRecipientDetails,
     Agreement? agreement,
   }) = _CreateAgreementState;
 }

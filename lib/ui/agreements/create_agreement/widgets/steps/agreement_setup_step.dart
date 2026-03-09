@@ -118,11 +118,18 @@ class AgreementSetupStep extends HookConsumerWidget {
     bool isRecipientDetailsValid =
         selectedBank.value != null && accountNumberController.text.length == 10;
 
+    final resolveRecipientDetailsCommand =
+        viewModel.resolveRecipientDetailsCommand;
+
     useEffect(() {
+      resolveRecipientDetailsCommand.clearErrors();
       if (isRecipientDetailsValid) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          viewModel.resolveRecipientDetails();
-        });
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        // viewModel.resolveRecipientDetails();
+        resolveRecipientDetailsCommand.run();
+        // });
+      } else {
+        resolveRecipientDetailsCommand.value = null;
       }
       return null;
     }, [selectedBank.value, accountNumberController.text]);

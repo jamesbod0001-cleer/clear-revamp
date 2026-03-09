@@ -234,6 +234,7 @@
   "expectedFundsReleaseDeadline": "Expected funds release deadline",
   "description": "Description",
   "whatExactlyAreYouPayingFor": "What exactly are you paying for? (e.g. “iPhone 13 – 128GB, black”)",
+  "whatExactlyAreYouReceivingFundsFor": "What exactly are you receiving funds for? (e.g. “iPhone 13 – 128GB, black”)",
   "fundsWillBeHeldSafelyAndOnlyReleasedWhenYouConfirmDelivery": "Funds will be held safely and only released when you confirm delivery.",
   "reviewDetails": "Review Details",
   "selectCategory": "Select Category",
@@ -346,7 +347,10 @@
   "cancelAgreement": "Cancel agreement",
   "fundsSecured": "Funds Secured",
   "shareThisLinkWithTheRecipientToAcceptTheAgreementFundsWillBeReleasedOnlyWhenYouConfirm": "Share this link with the recipient to accept the agreement.\nFunds will be released only when you confirm.",
-  "sendLink": "Send Link",
+  "agreementCreated": "Agreement Created",
+  "shareThisLinkWithThePersonPayingToAcceptTheAgreement": "Share this link with the person paying to accept the agreement.",
+  "agreementLink": "Agreement Link",
+  "shareLink": "Share Link",
   "milestoneBreakdown": "Milestone Breakdown",
   "continuePayment": "Continue Payment",
   "cancellingThisPaymentWillCancelTheEntireAgreement": "Cancelling this payment will cancel the entire agreement",
@@ -378,5 +382,8 @@
   "cancel": "Cancel",
   "selectPayoutDestination": "Select Payout Destination",
   "linkedBankAccounts": "Linked Bank Accounts",
-  "change": "Change"
+  "change": "Change",
+  "youCanNotSendMoneyToYourself": "You can't send money to yourself",
+  "theAccountNameMatchesYourNameCleerIsDesignedForSecurePaymentsBetweenDifferentParties": "The account name matches your name. Cleer is designed for secure payments between different parties.",
+  "confirm": "Confirm"
 }

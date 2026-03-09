@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -24,6 +25,8 @@ class FundsSecuredStep extends ConsumerWidget {
 
     final state = ref.watch(createAgreementViewModelProvider(type));
     // final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
+
+    final agreement = state.value!.agreement!;
 
     return PopScope(
       canPop: false,
@@ -111,9 +114,8 @@ class FundsSecuredStep extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           state.value!.agreement!.shareLink,
-                          style: context.typo.bodyLarge.copyWith(
-                            height: 1,
-                            letterSpacing: 0.16,
+                          style: context.typo.labelMedium.copyWith(
+                            color: context.color.grey800,
                           ),
                           overflow: .ellipsis,
                         ),
@@ -177,11 +179,11 @@ class FundsSecuredStep extends ConsumerWidget {
                       await SharePlus.instance.share(
                         ShareParams(
                           text:
-                              "Hey! I've secured our ₦500,000 agreement on Cleer. Click the link to view the terms and accept: ${state.value!.agreement!.shareLink}",
+                              "Hey! I've secured our ${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)} agreement on Cleer. Click the link to view the terms and accept: ${state.value!.agreement!.shareLink}",
                         ),
                       );
                     },
-                    child: Text(l10n.sendLink),
+                    child: Text(l10n.shareLink),
                   ),
                   Gap(Dimens.spacing.sp20),
                 ],

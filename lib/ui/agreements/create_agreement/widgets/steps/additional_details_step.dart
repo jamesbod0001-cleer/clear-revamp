@@ -190,7 +190,9 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                         ),
                         Gap(Dimens.spacing.sp4),
                         Text(
-                          l10n.whatExactlyAreYouPayingFor,
+                          type == .send
+                              ? l10n.whatExactlyAreYouPayingFor
+                              : l10n.whatExactlyAreYouReceivingFundsFor,
                           style: context.typo.bodyMedium.copyWith(
                             fontWeight: AppFontWeights.regular,
                             color: context.color.grey600,

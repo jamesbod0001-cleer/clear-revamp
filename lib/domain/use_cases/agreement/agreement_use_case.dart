@@ -56,10 +56,39 @@ class AgreementUseCase extends _$AgreementUseCase {
     return result;
   }
 
+  /// TODO I will remove this from here later
+  bool _isNameMatch({
+    required String userName,
+    required String resolveAccountName,
+  }) {
+    // 1. Normalize both strings: lowercase and remove extra whitespace
+    final userTokens = userName
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .where((t) => t.length > 1)
+        .toSet();
+    final bankTokens = resolveAccountName
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .where((t) => t.length > 1)
+        .toSet();
+
+    // 2. Check if all parts of the User's name are present in the Bank's name
+    // We use .every to ensure the User's First AND Last names are both there.
+    return userTokens.every((token) => bankTokens.contains(token));
+  }
+
   Future<ResultDart<RecipientResolution, Object>> resolveRecipientDetails({
     required String accountNumber,
     required String bankCode,
   }) async {
+    _log.info('Attempting to get user');
+    final user = ref.read(userProvider).value;
+    if (user == null) {
+      _log.error('User state is missing');
+      return Failure(DataFailure.notFound());
+    }
+
     _log.info('Attempting to resolve recipient details');
 
     final resolveAccountResult = await _flutterwaveRepository.resolveAccount(
@@ -69,6 +98,21 @@ class AgreementUseCase extends _$AgreementUseCase {
     return await resolveAccountResult.fold(
       (resolvedName) async {
         _log.info('Successfully resolved name via API: $resolvedName');
+
+        /// TODO: Here I will check if this account belongs to the user
+
+        final fullName = "${user.firstName} ${user.lastName}";
+
+        final isMatch = _isNameMatch(
+          userName: fullName,
+          resolveAccountName: resolvedName,
+        );
+
+        if (isMatch) {
+          _log.warn("You can't send money to yourself");
+          // Throw a custom failure that Cleer can catch and show in the UI
+          throw DataFailure.selfTransferFailure(accountName: resolvedName);
+        }
 
         final existingPayoutResult = await _payoutDestinationRepository
             .getPayoutDestination(
@@ -98,6 +142,14 @@ class AgreementUseCase extends _$AgreementUseCase {
                 _log.info(payout.toString());
                 if (payout.user != null) {
                   _log.info('User found on Cleer: ${payout.user!.firstName}');
+                  if (payout.user!.id == user.id) {
+                    _log.warn('User is the same as the initiator');
+                    _log.warn("You can't send money to yourself");
+                    // Throw a custom failure that Cleer can catch and show in the UI
+                    throw DataFailure.selfTransferFailure(
+                      accountName: payout.accountName,
+                    );
+                  }
                 } else {
                   _log.info('User not found on Cleer');
 

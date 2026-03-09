@@ -5,6 +5,7 @@ import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart'
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/additional_details_step.dart';
+import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_created_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_review_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_setup_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/funds_secured_step.dart';
@@ -60,6 +61,10 @@ class CreateAgreementScreen extends ConsumerWidget {
           key: ValueKey(currentStep),
           type: type,
         ),
+        CreateAgreementStep.agreementCreated => AgreementCreatedStep(
+          key: ValueKey(currentStep),
+          type: type,
+        ),
       };
     }
 
@@ -72,7 +77,8 @@ class CreateAgreementScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: currentStep == .payment || currentStep == .fundsSecured
+      backgroundColor: currentStep == .agreementCreated ? context.color.green900 : null,
+      appBar: currentStep == .payment || currentStep == .fundsSecured || currentStep == .agreementCreated
           ? null
           : AppBar(
               titleSpacing: Dimens.padding.p18,

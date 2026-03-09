@@ -27,6 +27,16 @@ class AgreementReviewStep extends HookConsumerWidget {
 
     final isExpanded = useState(true);
 
+    String? accountName = type == .send
+        ? formData?.recipientResolution?.accountName
+        : formData?.payoutDestination?.accountName;
+    String? bankName = type == .send
+        ? formData?.recipientBank?.name
+        : formData?.payoutDestination?.bankName;
+    String? accountNumber = type == .send
+        ? formData?.recipientAccountNumber
+        : formData?.payoutDestination?.accountNumber;
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -57,7 +67,9 @@ class AgreementReviewStep extends HookConsumerWidget {
                         initiallyExpanded: true,
                         onExpansionChanged: (value) => isExpanded.value = value,
                         trailing: PhosphorIcon(
-                          isExpanded.value ? PhosphorIcons.caretUp() : PhosphorIcons.caretDown(),
+                          isExpanded.value
+                              ? PhosphorIcons.caretUp()
+                              : PhosphorIcons.caretDown(),
                           size: Dimens.size.s16,
                           color: context.color.blue700,
                         ),
@@ -157,7 +169,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                                             ),
                                             Gap(Dimens.spacing.sp24),
                                             Text(
-                                              "${l10n.nairaSign} ${NumberFormat('#,###.##').format(milestone.amount)}",
+                                              "${l10n.nairaSign}${NumberFormat('#,###.##').format(milestone.amount)}",
                                               style: context.typo.labelMedium,
                                             ),
                                           ],
@@ -215,7 +227,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                             Gap(Dimens.spacing.sp28),
                             Expanded(
                               child: Text(
-                                formData.recipientResolution!.accountName,
+                                accountName ?? '',
                                 style: context.typo.bodyMedium.copyWith(
                                   fontWeight: AppFontWeights.regular,
                                 ),
@@ -238,7 +250,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                             Gap(Dimens.spacing.sp28),
                             Expanded(
                               child: Text(
-                                formData.recipientBank!.name,
+                                bankName ?? '',
                                 style: context.typo.bodyMedium.copyWith(
                                   fontWeight: AppFontWeights.regular,
                                 ),
@@ -261,7 +273,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                             Gap(Dimens.spacing.sp28),
                             Expanded(
                               child: Text(
-                                formData.recipientAccountNumber,
+                                accountNumber ?? '',
                                 style: context.typo.bodyMedium.copyWith(
                                   fontWeight: AppFontWeights.regular,
                                 ),
@@ -385,7 +397,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                     Gap(Dimens.spacing.sp30),
                     PrimaryButton(
                       onPressed: () => viewModel.initiateAgreement(),
-                      child: Text(l10n.confirmAndPay),
+                      child: Text(type == .send ? l10n.confirmAndPay : l10n.confirm),
                     ),
                     Gap(Dimens.spacing.sp20),
                   ],

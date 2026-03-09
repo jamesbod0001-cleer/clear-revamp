@@ -1,8 +1,10 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
+import 'package:cleer/domain/models/recipient_resolution/recipient_resolution.dart';
 import 'package:cleer/domain/use_cases/agreement/agreement_use_case.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
+import 'package:command_it/command_it.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'create_agreement_view_model.g.dart';
@@ -13,28 +15,34 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
 
   @override
   FutureOr<CreateAgreementState> build(AgreementType type) {
+    resolveRecipientDetailsCommand =
+        Command.createAsyncNoParam<RecipientResolution?>(
+          _resolveRecipientDetails,
+          errorFilter: const LocalErrorFilter(),
+          initialValue: null,
+        );
     return CreateAgreementState(
       type: type,
       formData: CreateAgreementFormData.empty(type),
     );
   }
 
-  Future<void> resolveRecipientDetails() async {
+  late Command<void, RecipientResolution?> resolveRecipientDetailsCommand;
+
+  Future<RecipientResolution?> _resolveRecipientDetails() async {
     final currentState = state.value;
-    if (currentState == null) return;
+    if (currentState == null) return null;
     final formData = state.value!.formData;
 
-    if (currentState.isResolvingRecipientDetails ||
-        (formData.recipientResolution?.accountNumber ==
-                formData.recipientAccountNumber &&
-            formData.recipientResolution?.bankCode ==
-                formData.recipientBank?.code)) {
-      return;
+    if (formData.recipientResolution?.accountNumber ==
+            formData.recipientAccountNumber &&
+        formData.recipientResolution?.bankCode ==
+            formData.recipientBank?.code) {
+      return formData.recipientResolution;
     }
 
     state = AsyncValue.data(
       state.value!.copyWith(
-        isResolvingRecipientDetails: true,
         formData: formData.copyWith(recipientResolution: null),
       ),
     );
@@ -46,13 +54,25 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
           bankCode: formData.recipientBank!.code,
         );
 
-    state = AsyncValue.data(
-      state.value!.copyWith(
-        isResolvingRecipientDetails: false,
-        formData: state.value!.formData.copyWith(
-          recipientResolution: result.getOrNull(),
-        ),
-      ),
+    return await result.fold(
+      (recipientResolution) {
+        state = AsyncValue.data(
+          state.value!.copyWith(
+            formData: state.value!.formData.copyWith(
+              recipientResolution: recipientResolution,
+            ),
+          ),
+        );
+        return recipientResolution;
+      },
+      (failure) {
+        state = AsyncValue.data(
+          state.value!.copyWith(
+            formData: state.value!.formData.copyWith(recipientResolution: null),
+          ),
+        );
+        throw failure;
+      },
     );
   }
 
@@ -72,7 +92,9 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
           _log.info('Agreement initiated successfully');
           return state.value!.copyWith(
             agreement: agreement,
-            currentStep: CreateAgreementStep.payment,
+            currentStep: formData.initiatorRole == .sender
+                ? CreateAgreementStep.payment
+                : CreateAgreementStep.agreementCreated,
           );
         },
         (failure) {
