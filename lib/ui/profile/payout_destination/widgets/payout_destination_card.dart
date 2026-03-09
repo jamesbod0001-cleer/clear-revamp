@@ -9,8 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class PayoutDestinationCard extends StatelessWidget {
-  const PayoutDestinationCard({super.key, required this.payoutDestination});
+  const PayoutDestinationCard({
+    super.key,
+    required this.payoutDestination,
+    this.action,
+    this.showRemove = true,
+  });
   final PayoutDestination payoutDestination;
+  final Widget? action;
+  final bool showRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +67,9 @@ class PayoutDestinationCard extends StatelessWidget {
             ),
 
             Column(
-              mainAxisAlignment: .spaceBetween,
+              mainAxisAlignment: action != null || showRemove == true
+                  ? .spaceBetween
+                  : .center,
               crossAxisAlignment: .end,
               children: [
                 Container(
@@ -71,19 +80,21 @@ class PayoutDestinationCard extends StatelessWidget {
                     borderRadius: .circular(Dimens.radius.r12),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () => RemoveBankAccountBottomSheet.show(
-                    context,
-                    payoutDestination,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.remove,
-                    style: context.typo.bodyLink.copyWith(
-                      color: context.color.error,
-                      decorationColor: context.color.error,
+                ?action,
+                if (action == null && showRemove)
+                  GestureDetector(
+                    onTap: () => RemoveBankAccountBottomSheet.show(
+                      context,
+                      payoutDestination,
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.remove,
+                      style: context.typo.bodyLink.copyWith(
+                        color: context.color.error,
+                        decorationColor: context.color.error,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ],

@@ -24,8 +24,8 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 class AddBankAccountBottomSheet extends HookConsumerWidget {
   const AddBankAccountBottomSheet({super.key});
 
-  static Future<void> show(BuildContext context) =>
-      CustomBottomSheet.show<void>(
+  static Future<PayoutDestination?> show(BuildContext context) =>
+      CustomBottomSheet.show<PayoutDestination>(
         context: context,
         isDismissible: true,
         child: const AddBankAccountBottomSheet(),
@@ -63,7 +63,7 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
       ) {
         if (payoutDestination != null) {
           if (context.mounted) {
-            context.pop();
+            context.pop(payoutDestination);
           }
         }
       });

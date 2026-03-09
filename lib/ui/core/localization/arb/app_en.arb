@@ -376,5 +376,7 @@
   "thisWillRemoveThisBankAccountsAsYourPayoutDestination": "This will remove this bank account as your payout destination.",
   "removeAccount": "Remove Account",
   "cancel": "Cancel",
-  "selectPayoutDestination": "Select Payout Destination"
+  "selectPayoutDestination": "Select Payout Destination",
+  "linkedBankAccounts": "Linked Bank Accounts",
+  "change": "Change"
 }

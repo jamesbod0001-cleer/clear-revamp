@@ -56,39 +56,6 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
     );
   }
 
-  // void updateMilestone(MilestoneDraft milestone) {
-  //   final createAgreementState = state.value;
-  //   if (createAgreementState == null) return;
-  //   final updatedMilestones = createAgreementState.formData.milestones!
-  //       .map((m) => m.id == milestone.id ? milestone : m)
-  //       .toList();
-  //   state = AsyncValue.data(
-  //     createAgreementState.copyWith(
-  //       formData: createAgreementState.formData.copyWith(
-  //         milestones: updatedMilestones,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // void addEmptyMilestone() {
-  //   final createAgreementState = state.value;
-  //   if (createAgreementState == null) return;
-  //   _log.info('adding...');
-  //   state = AsyncValue.data(
-  //     createAgreementState.copyWith(
-  //       formData: createAgreementState.formData.copyWith(
-  //         milestones: [
-  //           ...createAgreementState.formData.milestones ?? [],
-  //           MilestoneDraft(
-  //             id: DateTime.now().millisecondsSinceEpoch.toString(),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Future<void> initiateAgreement() async {
     _log.info('Initiating agreement');
     final currentState = state.value;

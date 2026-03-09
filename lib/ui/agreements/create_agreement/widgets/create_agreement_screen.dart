@@ -1,4 +1,5 @@
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
+import 'package:cleer/domain/providers/payout_destination/payout_destination_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
@@ -29,6 +30,7 @@ class CreateAgreementScreen extends ConsumerWidget {
 
     ref.watch(userProvider);
     ref.watch(getBanksProvider(.NG));
+    ref.watch(userPayoutDestinationsProvider);
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 

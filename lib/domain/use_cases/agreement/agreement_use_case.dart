@@ -146,36 +146,35 @@ class AgreementUseCase extends _$AgreementUseCase {
 
     PayoutDestination? payoutDestination;
 
-    if (formData.recipientResolution!.payoutDestination != null) {
-      _log.info('Using existing payout destination');
-      payoutDestination = formData.recipientResolution!.payoutDestination!;
-    } else {
-      _log.info('Creating new payout destination');
-      final recipientResolution = formData.recipientResolution!;
-      switch (formData.initiatorRole) {
-        case InitiatorRole.sender:
-          _log.info('Creating payout destination - initiator is sender');
-          final payoutDestinationResult = await _payoutDestinationRepository
-              .createPayoutDestination(
-                PayoutDestination(
-                  accountNumber: recipientResolution.accountNumber,
-                  bankCode: recipientResolution.bankCode,
-                  bankName: formData.recipientBank!.name,
-                  accountName: recipientResolution.accountName,
-                ),
-              );
-          if (payoutDestinationResult.isError()) {
-            final failure = payoutDestinationResult.exceptionOrNull();
-            _log.error('Error creating payout destination', failure);
-            return Failure(failure!);
-          }
-          _log.info('Successfully created payout destination');
-          payoutDestination = payoutDestinationResult.getOrThrow();
-        case InitiatorRole.recipient:
-          _log.info('Creating payout destination - initiator is recipient');
-          // TODO: Handle this case.
-          throw UnimplementedError();
+    if (formData.initiatorRole == .sender) {
+      _log.info('Initiator is sender');
+      if (formData.recipientResolution!.payoutDestination != null) {
+        _log.info('Using existing payout destination');
+        payoutDestination = formData.recipientResolution!.payoutDestination!;
+      } else {
+        _log.info('Creating new payout destination');
+        final recipientResolution = formData.recipientResolution!;
+
+        final payoutDestinationResult = await _payoutDestinationRepository
+            .createPayoutDestination(
+              PayoutDestination(
+                accountNumber: recipientResolution.accountNumber,
+                bankCode: recipientResolution.bankCode,
+                bankName: formData.recipientBank!.name,
+                accountName: recipientResolution.accountName,
+              ),
+            );
+        if (payoutDestinationResult.isError()) {
+          final failure = payoutDestinationResult.exceptionOrNull();
+          _log.error('Error creating payout destination', failure);
+          return Failure(failure!);
+        }
+        _log.info('Successfully created payout destination');
+        payoutDestination = payoutDestinationResult.getOrThrow();
       }
+    } else {
+      _log.info('Initiator is recipient');
+      payoutDestination = formData.payoutDestination;
     }
 
     _log.info('Here: Creating agreement');

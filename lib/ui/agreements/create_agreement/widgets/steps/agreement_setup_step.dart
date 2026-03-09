@@ -1,11 +1,14 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
+import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
+import 'package:cleer/domain/providers/payout_destination/payout_destination_provider.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/agreement_numpad_overlay.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/agreement_split_milestones_overlay.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/disbursement_type_selector.dart';
+import 'package:cleer/ui/agreements/create_agreement/widgets/linked_bank_accounts_bottom_sheet.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/recipient_identity_tile.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -13,6 +16,8 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/bottom_sheets/bank_picker_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
+import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account_trigger.dart';
+import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_card.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -56,6 +61,9 @@ class AgreementSetupStep extends HookConsumerWidget {
         useTextEditingController(
           text: state.value?.formData.recipientAccountNumber,
         );
+
+    final selectedPayoutDestination = useState<PayoutDestination?>(null);
+
     final ValueNotifier<DisbursementType?> selectedDisbursementType =
         useState<DisbursementType?>(state.value?.formData.disbursementType);
 
@@ -71,6 +79,7 @@ class AgreementSetupStep extends HookConsumerWidget {
             context,
             amountController,
             isAutomaticallyOpened: true,
+            ref: ref,
           );
         });
       }
@@ -93,6 +102,19 @@ class AgreementSetupStep extends HookConsumerWidget {
       [amountController.text, selectedBank.value, accountNumberController.text],
     );
 
+    useEffect(() {
+      if (selectedPayoutDestination.value != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          viewModel.onFormChanged(
+            state.value!.formData.copyWith(
+              payoutDestination: selectedPayoutDestination.value,
+            ),
+          );
+        });
+      }
+      return null;
+    }, [selectedPayoutDestination.value]);
+
     bool isRecipientDetailsValid =
         selectedBank.value != null && accountNumberController.text.length == 10;
 
@@ -108,12 +130,20 @@ class AgreementSetupStep extends HookConsumerWidget {
     final formData = state.value?.formData;
     final resolution = formData?.recipientResolution;
 
-    final bool isFormComplete =
-        (formData?.amount.isNotEmpty ?? false) &&
-        (formData?.recipientAccountNumber.length == 10) &&
-        (formData?.recipientBank != null) &&
-        (formData?.disbursementType != null) &&
-        (resolution != null);
+    bool isFormComplete() {
+      return switch (type) {
+        AgreementType.send =>
+          (formData?.amount.isNotEmpty ?? false) &&
+              (formData?.recipientAccountNumber.length == 10) &&
+              (formData?.recipientBank != null) &&
+              (formData?.disbursementType != null) &&
+              (resolution != null),
+        AgreementType.request =>
+          (formData?.amount.isNotEmpty ?? false) &&
+              (formData?.payoutDestination != null) &&
+              (formData?.disbursementType != null),
+      };
+    }
 
     return PopScope(
       canPop: true,
@@ -146,8 +176,11 @@ class AgreementSetupStep extends HookConsumerWidget {
                     controller: amountController,
                     labelText: l10n.amount,
                     readOnly: true,
-                    onTap: () =>
-                        _showAgreementNumpadOverlay(context, amountController),
+                    onTap: () => _showAgreementNumpadOverlay(
+                      context,
+                      amountController,
+                      ref: ref,
+                    ),
                     prefixIcon: Padding(
                       padding: EdgeInsets.only(right: Dimens.padding.p8),
                       child: Text(
@@ -161,6 +194,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                       onPressed: () => _showAgreementNumpadOverlay(
                         context,
                         amountController,
+                        ref: ref,
                       ),
                       icon: PhosphorIcon(
                         PhosphorIcons.numpad(),
@@ -170,46 +204,95 @@ class AgreementSetupStep extends HookConsumerWidget {
                   ),
                   Gap(Dimens.spacing.sp40),
 
+                  ProfileSectionHeader(
+                    title: type == .send
+                        ? l10n.recipientDetails
+                        : l10n.payoutDestination,
+                  ),
                   Visibility(
                     visible: type == .send,
-                    replacement: Column(
-                      mainAxisSize: .min,
-                      crossAxisAlignment: .start,
-                      children: [
-                        ProfileSectionHeader(title: l10n.recipientDetails),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            backgroundColor: context.color.transparent,
-                            foregroundColor: context.color.blue700,
-                            minimumSize: Size(0, 0),
-                            padding: EdgeInsets.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          onPressed: () {},
-                          child: Row(
-                            mainAxisSize: .min,
-                            children: [
-                              Assets.images.bank.image(
-                                width: Dimens.size.s23,
-                                height: Dimens.size.s23,
-                              ),
-                              Gap(Dimens.spacing.sp5),
-                              Text(
-                                l10n.selectPayoutDestination,
-                                style: context.typo.bodyLink.copyWith(
-                                  color: context.color.blue700,
-                                  decorationColor: context.color.blue700,
+                    replacement: Builder(
+                      builder: (context) {
+                        final userPayoutDestinationsState = ref.watch(
+                          userPayoutDestinationsProvider,
+                        );
+
+                        return userPayoutDestinationsState.when(
+                          data: (List<PayoutDestination> payoutDestinations) {
+                            if (payoutDestinations.isEmpty) {
+                              return AddBankAccountTrigger.card();
+                            } else {
+                              if (formData?.payoutDestination != null) {
+                                final payoutDestination =
+                                    formData!.payoutDestination!;
+                                return PayoutDestinationCard(
+                                  payoutDestination: payoutDestination,
+                                  action: GestureDetector(
+                                    onTap: () =>
+                                        _showLinkedBankAccountsBottomSheet(
+                                          context,
+                                          selectedPayoutDestination,
+                                        ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.change,
+                                      style: context.typo.bodyLink.copyWith(
+                                        color: context.color.blue700,
+                                        decorationColor: context.color.blue700,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return Align(
+                                alignment: .centerLeft,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: context.color.transparent,
+                                    foregroundColor: context.color.blue700,
+                                    minimumSize: Size(0, 0),
+                                    padding: EdgeInsets.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () =>
+                                      _showLinkedBankAccountsBottomSheet(
+                                        context,
+                                        selectedPayoutDestination,
+                                      ),
+                                  child: Row(
+                                    mainAxisSize: .min,
+                                    children: [
+                                      Assets.images.bank.image(
+                                        width: Dimens.size.s23,
+                                        height: Dimens.size.s23,
+                                      ),
+                                      Gap(Dimens.spacing.sp5),
+                                      Text(
+                                        l10n.selectPayoutDestination,
+                                        style: context.typo.bodyLink.copyWith(
+                                          color: context.color.blue700,
+                                          decorationColor:
+                                              context.color.blue700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                              );
+                            }
+                          },
+                          error: (Object error, StackTrace stackTrace) {
+                            // Will rarely occur
+                            return SizedBox.shrink();
+                          },
+                          loading: () =>
+                              Center(child: CircularProgressIndicator()),
+                        );
+                      },
                     ),
                     child: Column(
                       mainAxisSize: .min,
                       children: [
-                        ProfileSectionHeader(title: l10n.recipientDetails),
                         CustomTextFormField(
                           controller: bankController,
                           labelText: l10n.selectBank,
@@ -276,7 +359,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                   children: [
                     Gap(Dimens.spacing.sp30),
                     PrimaryButton(
-                      onPressed: isFormComplete
+                      onPressed: isFormComplete()
                           ? () {
                               if (formData?.disbursementType == .milestones) {
                                 showDialog(
@@ -315,6 +398,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     BuildContext context,
     TextEditingController amountController, {
     bool isAutomaticallyOpened = false,
+    required WidgetRef ref,
   }) => showDialog(
     context: context,
     useRootNavigator: true,
@@ -331,6 +415,15 @@ class AgreementSetupStep extends HookConsumerWidget {
         amountController.text = NumberFormat(
           '#,###.##',
         ).format(double.parse(value));
+        ref
+            .read(createAgreementViewModelProvider(type).notifier)
+            .onFormChanged(
+              ref
+                  .watch(createAgreementViewModelProvider(type))
+                  .value!
+                  .formData
+                  .copyWith(amount: value),
+            );
       },
       isAutomaticallyOpened: isAutomaticallyOpened,
     ),
@@ -342,6 +435,15 @@ class AgreementSetupStep extends HookConsumerWidget {
   ) => BankPickerBottomSheet.show(context).then((bank) {
     if (bank != null) {
       selectedBank.value = bank;
+    }
+  });
+
+  void _showLinkedBankAccountsBottomSheet(
+    BuildContext context,
+    ValueNotifier<PayoutDestination?> selectedPayoutDestination,
+  ) => LinkedBankAccountsBottomSheet.show(context).then((payoutDestination) {
+    if (payoutDestination != null) {
+      selectedPayoutDestination.value = payoutDestination;
     }
   });
 }

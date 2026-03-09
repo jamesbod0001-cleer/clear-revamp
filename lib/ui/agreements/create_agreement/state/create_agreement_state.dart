@@ -1,6 +1,7 @@
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
+import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/domain/models/recipient_resolution/recipient_resolution.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -31,9 +32,15 @@ abstract class CreateAgreementFormData with _$CreateAgreementFormData {
   const factory CreateAgreementFormData({
     required InitiatorRole initiatorRole,
     @Default('') String amount,
+
+    // For when initiator is sender
     Bank? recipientBank,
     @Default('') String recipientAccountNumber,
     RecipientResolution? recipientResolution,
+
+    // For when initiator is recipient
+    PayoutDestination? payoutDestination,
+
     DisbursementType? disbursementType,
     List<MilestoneDraft>? milestones,
     AgreementCategory? category,

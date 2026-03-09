@@ -93,7 +93,7 @@ class RemoveBankAccountBottomSheet extends HookConsumerWidget {
               textAlign: .center,
             ),
             Gap(Dimens.spacing.sp12),
-            PayoutDestinationCard(payoutDestination: payoutDestination),
+            PayoutDestinationCard(payoutDestination: payoutDestination, showRemove: false,),
             Gap(Dimens.spacing.sp24),
             PrimaryButton(
               backgroundColor: context.color.error,

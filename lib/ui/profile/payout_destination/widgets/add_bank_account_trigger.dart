@@ -1,4 +1,5 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
@@ -10,27 +11,32 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 enum _AddAccountType { button, card }
 
 class AddBankAccountTrigger extends StatelessWidget {
-  const AddBankAccountTrigger.button({super.key})
+  const AddBankAccountTrigger.button({super.key, this.onResult})
     : _type = _AddAccountType.button;
 
-  const AddBankAccountTrigger.card({super.key}) : _type = _AddAccountType.card;
+  const AddBankAccountTrigger.card({super.key, this.onResult})
+    : _type = _AddAccountType.card;
 
   final _AddAccountType _type;
+  final ValueChanged<PayoutDestination>? onResult;
 
   @override
   Widget build(BuildContext context) {
     return switch (_type) {
       _AddAccountType.button => _AddBankAccountButton(
-        onTap: () => _showAddBankAccountBottomSheet(context),
+        onTap: () => _handleTap(context),
       ),
       _AddAccountType.card => _AddBankAccountCard(
-        onTap: () => _showAddBankAccountBottomSheet(context),
+        onTap: () => _handleTap(context),
       ),
     };
   }
 
-  Future<void> _showAddBankAccountBottomSheet(BuildContext context) {
-    return AddBankAccountBottomSheet.show(context);
+  Future<void> _handleTap(BuildContext context) async {
+    final result = await AddBankAccountBottomSheet.show(context);
+    if (result != null && onResult != null) {
+      onResult!(result);
+    }
   }
 }
 
@@ -58,7 +64,7 @@ class _AddBankAccountCard extends StatelessWidget {
               height: Dimens.size.s23,
             ),
             Gap(Dimens.spacing.sp8),
-            _AddBankAccountButton(onTap: onTap),
+            IgnorePointer(child: _AddBankAccountButton(onTap: onTap)),
             Gap(9.5),
           ],
         ),
