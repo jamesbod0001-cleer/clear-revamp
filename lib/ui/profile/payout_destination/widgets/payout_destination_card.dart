@@ -4,7 +4,7 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
-import 'package:cleer/ui/profile/payout_destination/widgets/remove_payout_account_bottom_sheet.dart';
+import 'package:cleer/ui/profile/payout_destination/widgets/remove_bank_account_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -72,7 +72,7 @@ class PayoutDestinationCard extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => RemovePayoutAccountBottomSheet.show(
+                  onTap: () => RemoveBankAccountBottomSheet.show(
                     context,
                     payoutDestination,
                   ),

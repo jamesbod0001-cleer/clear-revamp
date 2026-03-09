@@ -14,8 +14,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:listen_it/listen_it.dart';
 
-class RemovePayoutAccountBottomSheet extends HookConsumerWidget {
-  const RemovePayoutAccountBottomSheet({
+class RemoveBankAccountBottomSheet extends HookConsumerWidget {
+  const RemoveBankAccountBottomSheet({
     super.key,
     required this.payoutDestination,
   });
@@ -27,7 +27,7 @@ class RemovePayoutAccountBottomSheet extends HookConsumerWidget {
   ) => CustomBottomSheet.show<void>(
     context: context,
     isDismissible: true,
-    child: RemovePayoutAccountBottomSheet(payoutDestination: payoutDestination),
+    child: RemoveBankAccountBottomSheet(payoutDestination: payoutDestination),
   );
 
   @override
@@ -81,7 +81,7 @@ class RemovePayoutAccountBottomSheet extends HookConsumerWidget {
             ),
             Gap(Dimens.spacing.sp48),
             Text(
-              '${l10n.removePayoutAccount}?',
+              '${l10n.removeBankAccount}?',
               style: context.typo.headlineSmall,
             ),
             Gap(Dimens.spacing.sp12),
