@@ -284,76 +284,6 @@ class RecipientIdentityTile extends HookConsumerWidget {
                                           color: context.color.grey600,
                                         ),
                                       ),
-                                      // Gap(Dimens.spacing.sp4),
-                                      // Row(
-                                      //   children: [
-                                      //     Text(
-                                      //       l10n.memberSince(formattedDate),
-                                      //       style: context.typo.bodyMedium.copyWith(
-                                      //         color: context.color.grey600,
-                                      //       ),
-                                      //     ),
-                                      //     Gap(Dimens.spacing.sp8),
-                                      //     Visibility(
-                                      //       visible: isRegisteredUser,
-                                      //       replacement: Material(
-                                      //         color: context.color.blue100.withAlpha(50),
-                                      //         borderRadius: BorderRadius.circular(
-                                      //           Dimens.radius.r20,
-                                      //         ),
-                                      //         child: Padding(
-                                      //           padding: EdgeInsets.symmetric(
-                                      //             horizontal: Dimens.padding.p8,
-                                      //             vertical: Dimens.padding.p2,
-                                      //           ),
-                                      //           child: Text(
-                                      //             l10n.newText,
-                                      //             style: context.typo.bodySmall.copyWith(
-                                      //               color: context.color.secondary,
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //       ),
-                                      //       child: Material(
-                                      //         color: lowTrustScore
-                                      //             ? context.color.errorLight.withAlpha(50)
-                                      //             : context.color.successLight,
-                                      //         borderRadius: BorderRadius.circular(
-                                      //           Dimens.radius.r20,
-                                      //         ),
-                                      //         child: Padding(
-                                      //           padding: EdgeInsets.symmetric(
-                                      //             horizontal: Dimens.padding.p8,
-                                      //             vertical: Dimens.padding.p2,
-                                      //           ),
-                                      //           child: Row(
-                                      //             mainAxisSize: MainAxisSize.min,
-                                      //             children: [
-                                      //               PhosphorIcon(
-                                      //                 PhosphorIcons.shootingStar(
-                                      //                   PhosphorIconsStyle.duotone,
-                                      //                 ),
-                                      //                 color: lowTrustScore
-                                      //                     ? context.color.error
-                                      //                     : context.color.success,
-                                      //                 size: Dimens.size.s16,
-                                      //               ),
-                                      //               Gap(Dimens.spacing.sp4),
-                                      //               Text(
-                                      //                 '$trustScore',
-                                      //                 style: context.typo.bodySmall.copyWith(
-                                      //                   color: lowTrustScore
-                                      //                       ? context.color.error
-                                      //                       : context.color.success,
-                                      //                 ),
-                                      //               ),
-                                      //             ],
-                                      //           ),
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ),
                                     ],
                                   ),
                                 ],
@@ -362,18 +292,20 @@ class RecipientIdentityTile extends HookConsumerWidget {
                               Container(
                                 padding: .all(Dimens.padding.p12),
                                 decoration: BoxDecoration(
-                                  color: context.color.warningLight,
+                                  color: context.color.errorLight,
                                   borderRadius: BorderRadius.circular(
                                     Dimens.radius.r8,
                                   ),
-                                  border: Border.all(color: Color(0xFFC39E71)),
+                                  border: Border.all(
+                                    color: context.color.error,
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
                                     PhosphorIcon(
-                                      PhosphorIcons.warning(.duotone),
+                                      PhosphorIcons.xCircle(.duotone),
                                       size: Dimens.size.s28,
-                                      color: context.color.warning,
+                                      color: context.color.error,
                                     ),
                                     Gap(Dimens.spacing.sp12),
                                     Expanded(
@@ -384,7 +316,7 @@ class RecipientIdentityTile extends HookConsumerWidget {
                                             l10n.youCanNotSendMoneyToYourself,
                                             style: context.typo.titleSmall
                                                 .copyWith(
-                                                  color: context.color.warning,
+                                                  color: context.color.error,
                                                 ),
                                           ),
                                           Gap(Dimens.spacing.sp6),
@@ -394,7 +326,7 @@ class RecipientIdentityTile extends HookConsumerWidget {
                                                 .copyWith(
                                                   fontWeight:
                                                       AppFontWeights.regular,
-                                                  color: context.color.warning,
+                                                  color: context.color.error,
                                                 ),
                                           ),
                                         ],
