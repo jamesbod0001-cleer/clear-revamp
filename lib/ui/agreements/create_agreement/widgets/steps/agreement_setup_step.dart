@@ -227,7 +227,12 @@ class AgreementSetupStep extends HookConsumerWidget {
                         return userPayoutDestinationsState.when(
                           data: (List<PayoutDestination> payoutDestinations) {
                             if (payoutDestinations.isEmpty) {
-                              return AddBankAccountTrigger.card();
+                              return AddBankAccountTrigger.card(
+                                onResult: (payoutDestination) {
+                                  selectedPayoutDestination.value =
+                                      payoutDestination;
+                                },
+                              );
                             } else {
                               if (formData?.payoutDestination != null) {
                                 final payoutDestination =
