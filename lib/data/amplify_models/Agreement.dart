@@ -35,6 +35,8 @@ class Agreement extends amplify_core.Model {
   final String? _category;
   final amplify_core.TemporalDate? _expectedReleaseDate;
   final String? _description;
+  final List<String>? _participants;
+  final String? _lastUpdatedBy;
   final AgreementInitiatorRole? _initiatorRole;
   final AgreementStatus? _status;
   final List<Milestone>? _milestones;
@@ -43,6 +45,7 @@ class Agreement extends amplify_core.Model {
   final User? _recipient;
   final PayoutDestination? _payoutDestination;
   final List<Transaction>? _transactions;
+  final List<StatusHistory>? _statusHistory;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -132,6 +135,14 @@ class Agreement extends amplify_core.Model {
     }
   }
   
+  List<String>? get participants {
+    return _participants;
+  }
+  
+  String? get lastUpdatedBy {
+    return _lastUpdatedBy;
+  }
+  
   AgreementInitiatorRole? get initiatorRole {
     return _initiatorRole;
   }
@@ -164,6 +175,10 @@ class Agreement extends amplify_core.Model {
     return _transactions;
   }
   
+  List<StatusHistory>? get statusHistory {
+    return _statusHistory;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -172,9 +187,9 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, statusHistory, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _statusHistory = statusHistory, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
+  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, List<StatusHistory>? statusHistory}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       shortCode: shortCode,
@@ -184,6 +199,8 @@ class Agreement extends amplify_core.Model {
       category: category,
       expectedReleaseDate: expectedReleaseDate,
       description: description,
+      participants: participants != null ? List<String>.unmodifiable(participants) : participants,
+      lastUpdatedBy: lastUpdatedBy,
       initiatorRole: initiatorRole,
       status: status,
       milestones: milestones != null ? List<Milestone>.unmodifiable(milestones) : milestones,
@@ -191,7 +208,8 @@ class Agreement extends amplify_core.Model {
       sender: sender,
       recipient: recipient,
       payoutDestination: payoutDestination,
-      transactions: transactions != null ? List<Transaction>.unmodifiable(transactions) : transactions);
+      transactions: transactions != null ? List<Transaction>.unmodifiable(transactions) : transactions,
+      statusHistory: statusHistory != null ? List<StatusHistory>.unmodifiable(statusHistory) : statusHistory);
   }
   
   bool equals(Object other) {
@@ -210,6 +228,8 @@ class Agreement extends amplify_core.Model {
       _category == other._category &&
       _expectedReleaseDate == other._expectedReleaseDate &&
       _description == other._description &&
+      DeepCollectionEquality().equals(_participants, other._participants) &&
+      _lastUpdatedBy == other._lastUpdatedBy &&
       _initiatorRole == other._initiatorRole &&
       _status == other._status &&
       DeepCollectionEquality().equals(_milestones, other._milestones) &&
@@ -217,7 +237,8 @@ class Agreement extends amplify_core.Model {
       _sender == other._sender &&
       _recipient == other._recipient &&
       _payoutDestination == other._payoutDestination &&
-      DeepCollectionEquality().equals(_transactions, other._transactions);
+      DeepCollectionEquality().equals(_transactions, other._transactions) &&
+      DeepCollectionEquality().equals(_statusHistory, other._statusHistory);
   }
   
   @override
@@ -236,6 +257,8 @@ class Agreement extends amplify_core.Model {
     buffer.write("category=" + "$_category" + ", ");
     buffer.write("expectedReleaseDate=" + (_expectedReleaseDate != null ? _expectedReleaseDate!.format() : "null") + ", ");
     buffer.write("description=" + "$_description" + ", ");
+    buffer.write("participants=" + (_participants != null ? _participants!.toString() : "null") + ", ");
+    buffer.write("lastUpdatedBy=" + "$_lastUpdatedBy" + ", ");
     buffer.write("initiatorRole=" + (_initiatorRole != null ? amplify_core.enumToString(_initiatorRole)! : "null") + ", ");
     buffer.write("status=" + (_status != null ? amplify_core.enumToString(_status)! : "null") + ", ");
     buffer.write("initiator=" + (_initiator != null ? _initiator!.toString() : "null") + ", ");
@@ -249,7 +272,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions}) {
+  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, List<StatusHistory>? statusHistory}) {
     return Agreement._internal(
       id: id,
       shortCode: shortCode ?? this.shortCode,
@@ -259,6 +282,8 @@ class Agreement extends amplify_core.Model {
       category: category ?? this.category,
       expectedReleaseDate: expectedReleaseDate ?? this.expectedReleaseDate,
       description: description ?? this.description,
+      participants: participants ?? this.participants,
+      lastUpdatedBy: lastUpdatedBy ?? this.lastUpdatedBy,
       initiatorRole: initiatorRole ?? this.initiatorRole,
       status: status ?? this.status,
       milestones: milestones ?? this.milestones,
@@ -266,7 +291,8 @@ class Agreement extends amplify_core.Model {
       sender: sender ?? this.sender,
       recipient: recipient ?? this.recipient,
       payoutDestination: payoutDestination ?? this.payoutDestination,
-      transactions: transactions ?? this.transactions);
+      transactions: transactions ?? this.transactions,
+      statusHistory: statusHistory ?? this.statusHistory);
   }
   
   Agreement copyWithModelFieldValues({
@@ -277,6 +303,8 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<String>? category,
     ModelFieldValue<amplify_core.TemporalDate?>? expectedReleaseDate,
     ModelFieldValue<String>? description,
+    ModelFieldValue<List<String>?>? participants,
+    ModelFieldValue<String?>? lastUpdatedBy,
     ModelFieldValue<AgreementInitiatorRole?>? initiatorRole,
     ModelFieldValue<AgreementStatus?>? status,
     ModelFieldValue<List<Milestone>?>? milestones,
@@ -284,7 +312,8 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<User?>? sender,
     ModelFieldValue<User?>? recipient,
     ModelFieldValue<PayoutDestination?>? payoutDestination,
-    ModelFieldValue<List<Transaction>?>? transactions
+    ModelFieldValue<List<Transaction>?>? transactions,
+    ModelFieldValue<List<StatusHistory>?>? statusHistory
   }) {
     return Agreement._internal(
       id: id,
@@ -295,6 +324,8 @@ class Agreement extends amplify_core.Model {
       category: category == null ? this.category : category.value,
       expectedReleaseDate: expectedReleaseDate == null ? this.expectedReleaseDate : expectedReleaseDate.value,
       description: description == null ? this.description : description.value,
+      participants: participants == null ? this.participants : participants.value,
+      lastUpdatedBy: lastUpdatedBy == null ? this.lastUpdatedBy : lastUpdatedBy.value,
       initiatorRole: initiatorRole == null ? this.initiatorRole : initiatorRole.value,
       status: status == null ? this.status : status.value,
       milestones: milestones == null ? this.milestones : milestones.value,
@@ -302,7 +333,8 @@ class Agreement extends amplify_core.Model {
       sender: sender == null ? this.sender : sender.value,
       recipient: recipient == null ? this.recipient : recipient.value,
       payoutDestination: payoutDestination == null ? this.payoutDestination : payoutDestination.value,
-      transactions: transactions == null ? this.transactions : transactions.value
+      transactions: transactions == null ? this.transactions : transactions.value,
+      statusHistory: statusHistory == null ? this.statusHistory : statusHistory.value
     );
   }
   
@@ -315,6 +347,8 @@ class Agreement extends amplify_core.Model {
       _category = json['category'],
       _expectedReleaseDate = json['expectedReleaseDate'] != null ? amplify_core.TemporalDate.fromString(json['expectedReleaseDate']) : null,
       _description = json['description'],
+      _participants = json['participants']?.cast<String>(),
+      _lastUpdatedBy = json['lastUpdatedBy'],
       _initiatorRole = amplify_core.enumFromString<AgreementInitiatorRole>(json['initiatorRole'], AgreementInitiatorRole.values),
       _status = amplify_core.enumFromString<AgreementStatus>(json['status'], AgreementStatus.values),
       _milestones = json['milestones']  is Map
@@ -363,11 +397,24 @@ class Agreement extends amplify_core.Model {
               .map((e) => Transaction.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
               .toList()
           : null),
+      _statusHistory = json['statusHistory']  is Map
+        ? (json['statusHistory']['items'] is List
+          ? (json['statusHistory']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => StatusHistory.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['statusHistory'] is List
+          ? (json['statusHistory'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => StatusHistory.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'statusHistory': _statusHistory?.map((StatusHistory? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -379,6 +426,8 @@ class Agreement extends amplify_core.Model {
     'category': _category,
     'expectedReleaseDate': _expectedReleaseDate,
     'description': _description,
+    'participants': _participants,
+    'lastUpdatedBy': _lastUpdatedBy,
     'initiatorRole': _initiatorRole,
     'status': _status,
     'milestones': _milestones,
@@ -387,6 +436,7 @@ class Agreement extends amplify_core.Model {
     'recipient': _recipient,
     'payoutDestination': _payoutDestination,
     'transactions': _transactions,
+    'statusHistory': _statusHistory,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -400,6 +450,8 @@ class Agreement extends amplify_core.Model {
   static final CATEGORY = amplify_core.QueryField(fieldName: "category");
   static final EXPECTEDRELEASEDATE = amplify_core.QueryField(fieldName: "expectedReleaseDate");
   static final DESCRIPTION = amplify_core.QueryField(fieldName: "description");
+  static final PARTICIPANTS = amplify_core.QueryField(fieldName: "participants");
+  static final LASTUPDATEDBY = amplify_core.QueryField(fieldName: "lastUpdatedBy");
   static final INITIATORROLE = amplify_core.QueryField(fieldName: "initiatorRole");
   static final STATUS = amplify_core.QueryField(fieldName: "status");
   static final MILESTONES = amplify_core.QueryField(
@@ -420,6 +472,9 @@ class Agreement extends amplify_core.Model {
   static final TRANSACTIONS = amplify_core.QueryField(
     fieldName: "transactions",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Transaction'));
+  static final STATUSHISTORY = amplify_core.QueryField(
+    fieldName: "statusHistory",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'StatusHistory'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Agreement";
     modelSchemaDefinition.pluralName = "Agreements";
@@ -427,7 +482,7 @@ class Agreement extends amplify_core.Model {
     modelSchemaDefinition.authRules = [
       amplify_core.AuthRule(
         authStrategy: amplify_core.AuthStrategy.OWNER,
-        ownerField: "owner",
+        ownerField: "participants",
         identityClaim: "cognito:username",
         provider: amplify_core.AuthRuleProvider.USERPOOLS,
         operations: const [
@@ -492,6 +547,19 @@ class Agreement extends amplify_core.Model {
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Agreement.PARTICIPANTS,
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Agreement.LASTUPDATEDBY,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: Agreement.INITIATORROLE,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.enumeration)
@@ -543,6 +611,13 @@ class Agreement extends amplify_core.Model {
       isRequired: false,
       ofModelName: 'Transaction',
       associatedKey: Transaction.AGREEMENT
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Agreement.STATUSHISTORY,
+      isRequired: false,
+      ofModelName: 'StatusHistory',
+      associatedKey: StatusHistory.AGREEMENT
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

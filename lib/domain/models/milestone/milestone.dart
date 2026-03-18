@@ -14,5 +14,7 @@ abstract class Milestone with _$Milestone {
     required MilestoneStatus status,
     required DateTime expectedReleaseDate,
     Agreement? agreement,
+    List<String>? participants,
+    String? lastUpdatedBy,
   }) = _Milestone;
 }

@@ -20,6 +20,8 @@ abstract class Agreement with _$Agreement {
     required String description,
     required InitiatorRole initiatorRole,
     @Default(AgreementStatus.draft) AgreementStatus status,
+    List<String>? participants,
+    String? lastUpdatedBy,
     PayoutDestination? payoutDestination,
     User? initiator,
     User? sender,

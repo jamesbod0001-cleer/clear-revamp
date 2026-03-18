@@ -16,12 +16,14 @@ MilestoneRepository milestoneRepository(Ref ref) =>
     );
 
 abstract class MilestoneRepository {
-  Future<ResultDart<List<Milestone>, DataFailure>>
-  getMilestonesByAgreement(String agreementId);
+  Future<ResultDart<List<Milestone>, DataFailure>> getMilestonesByAgreement(
+    String agreementId,
+  );
   Future<ResultDart<Milestone, DataFailure>> createMilestone(
     Milestone milestone,
   );
   Future<ResultDart<Milestone, DataFailure>> updateMilestone(
-    Milestone milestone,
-  );
+    Milestone milestone, {
+    required String currentUserId,
+  });
 }

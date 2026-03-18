@@ -15,6 +15,8 @@ extension MilestoneToDomainMapper on amplify_model.Milestone {
       expectedReleaseDate: expectedReleaseDate.getDateTime(),
       status: _mapMilestoneStatusToDomain(status!),
       agreement: agreement?.toDomain(),
+      participants: participants,
+      lastUpdatedBy: lastUpdatedBy,
     );
   }
 }
@@ -30,6 +32,8 @@ extension MilestoneToAmplifyMapper on domain.Milestone {
       expectedReleaseDate: TemporalDate(expectedReleaseDate),
       status: _mapMilestoneStatusToAmplify(status),
       agreement: agreement?.toAmplify(),
+      participants: participants,
+      lastUpdatedBy: lastUpdatedBy,
     );
   }
 }

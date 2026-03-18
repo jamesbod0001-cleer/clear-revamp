@@ -9,6 +9,11 @@ export const Agreement = a.model({
     expectedReleaseDate: a.date(),
     description: a.string().required(),
 
+    participants: a.string().array(),
+
+    // Tracker for your Lambda function
+    lastUpdatedBy: a.string(),
+
     // The person who physically clicked "Create Agreement"
     initiatorId: a.id().required(),
     // Tells us if the initiator is the one PAYING or GETTING PAID
@@ -31,7 +36,9 @@ export const Agreement = a.model({
     recipient: a.belongsTo('User', 'recipientId'),
     payoutDestination: a.belongsTo('PayoutDestination', ['recipientAccountNumber', 'recipientBankCode']),
     transactions: a.hasMany('Transaction', 'agreementId'),
+
+    statusHistory: a.hasMany('StatusHistory', 'agreementId'),
 }).secondaryIndexes((index) => [index("shortCode")]).authorization(allow => [
-    allow.owner(), // The initiator is the owner
+    allow.ownersDefinedIn('participants'),
     allow.authenticated().to(['read']),
 ]);

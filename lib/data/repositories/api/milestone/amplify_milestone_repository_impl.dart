@@ -59,13 +59,15 @@ class AmplifyMilestoneRepositoryImpl
 
   @override
   Future<ResultDart<Milestone, DataFailure>> updateMilestone(
-    Milestone milestone,
+    Milestone milestone,{
+        required String currentUserId,
+      }
   ) async {
     return await performDataOperation<Milestone>(
       operation: () async {
         log.info('Updating milestone: $milestone');
         final response = await _amplifyMilestoneServiceClient.updateMilestone(
-          milestone.toAmplify(),
+          milestone.copyWith(lastUpdatedBy: currentUserId).toAmplify(),
         );
         log.info('Milestone updated: $response');
         return response.toDomain();

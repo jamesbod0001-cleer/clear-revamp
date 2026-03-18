@@ -4,6 +4,7 @@ import 'package:cleer/data/repositories/api/milestone/milestone_repository.dart'
 import 'package:cleer/data/repositories/api/payout_destination/payout_destination_repository.dart';
 import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
 import 'package:cleer/domain/failures/data_failures.dart';
+import 'package:cleer/domain/models/user/user.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart';
@@ -42,8 +43,18 @@ class AgreementUseCase extends _$AgreementUseCase {
   Future<ResultDart<Agreement, DataFailure>> updateAgreement(
     Agreement agreement,
   ) async {
+    _log.info('Attempting to get user');
+    final user = ref.read(userProvider).value;
+    if (user == null) {
+      _log.error('User state is missing');
+      return Failure(DataFailure.notFound());
+    }
+
     _log.info('Updating agreement: $agreement');
-    final result = await _agreementRepository.updateAgreement(agreement);
+    final result = await _agreementRepository.updateAgreement(
+      agreement,
+      currentUserId: user.id,
+    );
     result.fold(
       (agreement) {
         _log.info('Agreement updated: $agreement');
@@ -231,6 +242,9 @@ class AgreementUseCase extends _$AgreementUseCase {
 
     _log.info('Here: Creating agreement');
 
+    User? sender = formData.initiatorRole == .sender ? initiator : null;
+    User? recipient = formData.initiatorRole == .recipient ? initiator : payoutDestination?.user;
+
     Agreement agreement = Agreement(
       id: null,
       shortCode: ShortCodeGenerator.generate(),
@@ -246,10 +260,13 @@ class AgreementUseCase extends _$AgreementUseCase {
       initiatorRole: formData.initiatorRole,
       status: .draft,
       initiator: initiator,
-      sender: formData.initiatorRole == InitiatorRole.sender ? initiator : null,
-      recipient: formData.initiatorRole == InitiatorRole.recipient
-          ? initiator
-          : null,
+      sender: sender,
+      recipient: recipient,
+      participants: [
+        if (sender != null) sender.id,
+        if (recipient != null) recipient.id,
+      ],
+      lastUpdatedBy: initiator.id,
     );
     _log.info('Attempting to create agreement');
     final result = await _agreementRepository.createAgreement(agreement);
@@ -271,6 +288,8 @@ class AgreementUseCase extends _$AgreementUseCase {
                     status: .pending,
                     expectedReleaseDate: milestone.releaseDate!,
                     agreement: agreement,
+                    participants: agreement.participants,
+                    lastUpdatedBy: initiator.id,
                   ),
                 );
               })
@@ -320,11 +339,27 @@ class AgreementUseCase extends _$AgreementUseCase {
   Future<ResultDart<Agreement, DataFailure>> markAgreementAsFunded(
     String id,
   ) async {
+    _log.info('Attempting to get user');
+    final user = ref.read(userProvider).value;
+    if (user == null) {
+      _log.error('User state is missing');
+      return Failure(DataFailure.notFound());
+    }
+
     _log.info('Attempting to mark agreement as funded');
     final agreementResult = await _agreementRepository.getAgreement(id);
     return await agreementResult.fold(
       (agreement) async {
         _log.info('Successfully retrieved agreement');
+
+        // 1. NEW IDEMPOTENCY CHECK: Did the webhook already do this?
+        if (agreement.status == AgreementStatus.awaitingRecipient ||
+            agreement.status == AgreementStatus.funded ||
+            agreement.status == AgreementStatus.inProgress) {
+          _log.info('Agreement already advanced by webhook. Returning success.');
+          return Success(agreement);
+        }
+
         late AgreementStatus updatedStatus;
         if (agreement.initiatorRole == InitiatorRole.sender &&
             agreement.status == .draft) {
@@ -341,6 +376,7 @@ class AgreementUseCase extends _$AgreementUseCase {
         _log.info('Attempting to update agreement');
         final updateResult = await _agreementRepository.updateAgreement(
           updatedAgreement,
+          currentUserId: user.id,
         );
         return await updateResult.fold(
           (updatedAgreement) async {
@@ -354,6 +390,7 @@ class AgreementUseCase extends _$AgreementUseCase {
               updatedAgreement = updatedAgreement.copyWith(status: .inProgress);
               final result = await _agreementRepository.updateAgreement(
                 updatedAgreement,
+                currentUserId: user.id,
               );
               if (updatedAgreement.disbursementType ==
                   DisbursementType.milestones) {
@@ -379,6 +416,7 @@ class AgreementUseCase extends _$AgreementUseCase {
                       );
                       final result = await _milestoneRepository.updateMilestone(
                         updatedMilestone,
+                        currentUserId: user.id,
                       );
                       return await result.fold(
                         (updatedMilestone) {

@@ -87,12 +87,13 @@ class AmplifyAgreementRepositoryImpl
 
   @override
   Future<ResultDart<Agreement, DataFailure>> updateAgreement(
-    Agreement agreement,
-  ) async {
+    Agreement agreement, {
+    required String currentUserId,
+  }) async {
     return await performDataOperation<Agreement>(
       operation: () async {
         final response = await _amplifyAgreementServiceClient.updateAgreement(
-          agreement.toAmplify(),
+          agreement.copyWith(lastUpdatedBy: currentUserId).toAmplify(),
         );
         return response.toDomain();
       },

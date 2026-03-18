@@ -21,6 +21,7 @@ abstract class AgreementRepository {
     Agreement agreement,
   );
   Future<ResultDart<Agreement, DataFailure>> updateAgreement(
-    Agreement agreement,
-  );
+    Agreement agreement, {
+    required String currentUserId,
+  });
 }

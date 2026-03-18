@@ -6,9 +6,15 @@ export const Milestone = a.model({
     amount: a.float().required(),
     order: a.integer().required(),
     expectedReleaseDate: a.date().required(),
+
+    participants: a.string().array(),
+    lastUpdatedBy: a.string(),
+
     status: a.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'PENDING_RELEASE', 'RELEASED', 'DISPUTED']),
     agreement: a.belongsTo('Agreement', 'agreementId'),
+
+    statusHistory: a.hasMany('StatusHistory', 'milestoneId'),
 }).authorization(allow => [
-    allow.owner(), // The initiator is the owner
+    allow.ownersDefinedIn('participants'),
     allow.authenticated().to(['read']),
 ]);

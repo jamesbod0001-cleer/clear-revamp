@@ -293,6 +293,15 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       throw Exception("Transaction record missing");
     }
     final transaction = transactionOption.toNullable()!;
+
+    if (transaction.status == .successful) {
+      _log.info('Transaction already marked successful (likely by webhook)');
+
+      // Just refresh the agreement to get the latest state from the backend
+      final updatedAgreement = await _fetchAgreement(state.value!.agreement.id!);
+      return state.value!.copyWith(agreement: updatedAgreement);
+    }
+
     switch (charge.status) {
       case ChargeStatus.succeeded:
         if (charge.amount < transaction.amount) {
@@ -334,6 +343,8 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   }
 
   Future<PaymentOrchestratorState> _verifyVirtualAccountTransaction() async {
+    /// TODO: I need to come back and have a look at this thing when flutterwave is life
+    /// And also do not forget to add the IDEMPOTENCY CHECK in case the webhook changed it to successful first
     _log.info('Attempting to verify virtual account transaction');
     final listChargesResult = await ref
         .read(flutterwaveUseCaseProvider.notifier)

@@ -8,7 +8,7 @@ export const Transaction = a.model({
     // The link to Flutterwave
     reference: a.string().required(), // Your unique ref: AGR_123_TIMESTAMP
     flutterwaveId: a.string().required(),        // The 'chg_...' ID
-    // Note: When paymentMethodType is 'BANK_TRANSFER', flutterwaveId will be the dynamic virtual account id. Otherwise it is the charge id as usual.
+    // Note: When paymentMethodType is 'BANK_TRANSFER', flutterwaveId will be the dynamic virtual account id. Otherwise, it is the charge id as usual.
 
     // The Money
     amount: a.float().required(),

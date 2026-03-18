@@ -1,9 +1,12 @@
-import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import {type ClientSchema, a, defineData} from '@aws-amplify/backend';
+import {statusTracker} from '../functions/status-tracker/resource';
+import {flutterwaveWebhook} from '../functions/flutterwave-webhook/resource'; // 1. Import it
 import {User} from "./models/user";
 import {Agreement} from "./models/agreement";
 import {PayoutDestination} from "./models/payout-destination";
 import {Transaction} from "./models/transaction";
 import {Milestone} from "./models/milestone";
+import {StatusHistory} from "./models/status-history";
 import {Photo} from "./custom-types/photo";
 
 const schema = a.schema({
@@ -13,7 +16,8 @@ const schema = a.schema({
     Milestone,
     Transaction,
     Photo,
-});
+    StatusHistory,
+}).authorization(allow => [allow.resource(statusTracker), allow.resource(flutterwaveWebhook)]);
 
 export type Schema = ClientSchema<typeof schema>;
 
