@@ -65,6 +65,7 @@ class _AppSpacing {
   final double sp46 = 46.0;
   final double sp48 = 48.0;
   final double sp54 = 54.0;
+  final double sp58 = 58.0;
   final double sp65 = 65.0;
   final double sp70 = 70.0;
 
@@ -79,7 +80,9 @@ class _AppPadding {
   const _AppPadding();
   final double p0 = 0.0;
   final double p2 = 2.0;
+  final double p3 = 3.0;
   final double p4 = 4.0;
+  final double p5 = 5.0;
   final double p6 = 6.0;
   final double p7 = 7.0;
   final double p8 = 8.0;

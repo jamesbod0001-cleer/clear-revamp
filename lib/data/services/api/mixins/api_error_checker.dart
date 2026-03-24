@@ -3,10 +3,9 @@ import 'package:cleer/data/exceptions/backend_exception.dart';
 
 mixin ApiErrorChecker {
   T? validateResponse<T>(GraphQLResponse<T> response) {
-    if (response.hasErrors) {
+    if (response.hasErrors && response.data == null) {
       throw BackendException(
-        response.errors.first.message,
-        code: response.errors.first.errorType,
+        response.errors.toString(),
       );
     }
     return response.data;

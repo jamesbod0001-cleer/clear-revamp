@@ -4,6 +4,8 @@ import 'package:cleer/data/mappers/payout_destination_mappers.dart';
 import 'package:cleer/data/mappers/user_mappers.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart' as domain;
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 /// Extensions on the Amplify Agreement model to convert it to the Domain Task entity.
 extension AgreementToDomainMapper on amplify_model.Agreement {
@@ -25,7 +27,7 @@ extension AgreementToDomainMapper on amplify_model.Agreement {
       initiator: initiator?.toDomain(),
       sender: sender?.toDomain(),
       recipient: recipient?.toDomain(),
-      createdAt: createdAt?.getDateTimeInUtc(),
+      createdAt: createdAt?.getDateTimeInUtc().toLocal(),
     );
   }
 }
@@ -41,7 +43,9 @@ extension AgreementToAmplifyMapper on domain.Agreement {
       disbursementType: _mapDisbursementTypeToAmplify(disbursementType),
       category: category.id,
       expectedReleaseDate: expectedReleaseDate != null
-          ? TemporalDate(expectedReleaseDate!)
+          ? TemporalDate.fromString(
+              DateFormat('yyyy-MM-dd').format(expectedReleaseDate!),
+            )
           : null,
       description: description,
       payoutDestination: payoutDestination?.toAmplify(),
@@ -52,6 +56,9 @@ extension AgreementToAmplifyMapper on domain.Agreement {
       initiator: initiator?.toAmplify(),
       sender: sender?.toAmplify(),
       recipient: recipient?.toAmplify(),
+      createdAt: createdAt != null
+          ? TemporalDateTime(createdAt!.toUtc())
+          : null,
     );
   }
 }
@@ -114,6 +121,8 @@ AgreementStatus _mapAgreementStatusToDomain(amplify_model.AgreementStatus p) {
       return AgreementStatus.inProgress;
     case amplify_model.AgreementStatus.CANCELLED:
       return AgreementStatus.cancelled;
+    case amplify_model.AgreementStatus.RELEASED:
+      return AgreementStatus.released;
   }
 }
 
@@ -131,5 +140,7 @@ amplify_model.AgreementStatus _mapAgreementStatusToAmplify(AgreementStatus p) {
       return amplify_model.AgreementStatus.IN_PROGRESS;
     case AgreementStatus.cancelled:
       return amplify_model.AgreementStatus.CANCELLED;
+    case AgreementStatus.released:
+      return amplify_model.AgreementStatus.RELEASED;
   }
 }

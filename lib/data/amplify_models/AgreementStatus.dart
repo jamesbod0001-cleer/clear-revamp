@@ -25,5 +25,6 @@ enum AgreementStatus {
   AWAITING_FUNDING,
   FUNDED,
   IN_PROGRESS,
-  CANCELLED
+  CANCELLED,
+  RELEASED
 }

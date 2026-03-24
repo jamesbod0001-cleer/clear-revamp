@@ -385,5 +385,48 @@
   "change": "Change",
   "youCanNotSendMoneyToYourself": "You can't send money to yourself",
   "theAccountNameMatchesYourNameCleerIsDesignedForSecurePaymentsBetweenDifferentParties": "The account name matches your name. Cleer is designed for secure payments between different parties.",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "pending": "Pending",
+  "awaitingPaymentStatus": "Awaiting Payment - {description}",
+  "@awaitingPaymentStatus": {
+    "description": "Status label for an agreement waiting for funds",
+    "placeholders": {
+      "description": {
+        "type": "String",
+        "example": "iPhone 13 Pro Max - 128GB"
+      }
+    }
+  },
+  "awaitingAcceptanceStatus": "Awaiting Acceptance - {description}",
+  "@awaitingAcceptanceStatus": {
+    "description": "Status label for an agreement waiting for acceptance",
+    "placeholders": {
+      "description": {
+        "type": "String",
+        "example": "iPhone 13 Pro Max - 128GB"
+      }
+    }
+  },
+  "agreementWith": "Agreement with {name}",
+  "@agreementWith": {
+    "description": "Header for an agreement between users",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "dueDate": "Due {date}",
+  "@dueDate": {
+    "description": "Label for an agreement deadline",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "17 Dec, 12:10 AM"
+      }
+    }
+  },
+  "awaitingResponse": "Awaiting Response",
+  "actionRequired": "Action Required"
 }

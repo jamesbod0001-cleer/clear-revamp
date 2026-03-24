@@ -2,7 +2,6 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/enums/card_network.dart';
 import 'package:cleer/domain/models/payment_method/payment_method.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
-import 'package:cleer/ui/core/extensions/card_network_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -47,7 +46,7 @@ class EnterCardDetailsStep extends HookConsumerWidget {
     useEffect(() {
       void listener() {
         final cleanValue = cardNumberController.text.replaceAll(' ', '');
-        network.value = CardNetworkExtensions.fromNumber(cleanValue);
+        network.value = CardNetwork.fromNumber(cleanValue);
 
         final expectedLength = (network.value == CardNetwork.verve) ? 19 : 16;
 

@@ -189,7 +189,7 @@ class Agreement extends amplify_core.Model {
   
   const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, statusHistory, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _statusHistory = statusHistory, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, List<StatusHistory>? statusHistory}) {
+  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, List<StatusHistory>? statusHistory, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       shortCode: shortCode,
@@ -209,7 +209,8 @@ class Agreement extends amplify_core.Model {
       recipient: recipient,
       payoutDestination: payoutDestination,
       transactions: transactions != null ? List<Transaction>.unmodifiable(transactions) : transactions,
-      statusHistory: statusHistory != null ? List<StatusHistory>.unmodifiable(statusHistory) : statusHistory);
+      statusHistory: statusHistory != null ? List<StatusHistory>.unmodifiable(statusHistory) : statusHistory,
+      createdAt: createdAt);
   }
   
   bool equals(Object other) {
@@ -238,7 +239,8 @@ class Agreement extends amplify_core.Model {
       _recipient == other._recipient &&
       _payoutDestination == other._payoutDestination &&
       DeepCollectionEquality().equals(_transactions, other._transactions) &&
-      DeepCollectionEquality().equals(_statusHistory, other._statusHistory);
+      DeepCollectionEquality().equals(_statusHistory, other._statusHistory) &&
+      _createdAt == other._createdAt;
   }
   
   @override
@@ -272,7 +274,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, List<StatusHistory>? statusHistory}) {
+  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, List<StatusHistory>? statusHistory, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id,
       shortCode: shortCode ?? this.shortCode,
@@ -292,7 +294,8 @@ class Agreement extends amplify_core.Model {
       recipient: recipient ?? this.recipient,
       payoutDestination: payoutDestination ?? this.payoutDestination,
       transactions: transactions ?? this.transactions,
-      statusHistory: statusHistory ?? this.statusHistory);
+      statusHistory: statusHistory ?? this.statusHistory,
+      createdAt: createdAt ?? this.createdAt);
   }
   
   Agreement copyWithModelFieldValues({
@@ -313,7 +316,8 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<User?>? recipient,
     ModelFieldValue<PayoutDestination?>? payoutDestination,
     ModelFieldValue<List<Transaction>?>? transactions,
-    ModelFieldValue<List<StatusHistory>?>? statusHistory
+    ModelFieldValue<List<StatusHistory>?>? statusHistory,
+    ModelFieldValue<amplify_core.TemporalDateTime?>? createdAt
   }) {
     return Agreement._internal(
       id: id,
@@ -334,7 +338,8 @@ class Agreement extends amplify_core.Model {
       recipient: recipient == null ? this.recipient : recipient.value,
       payoutDestination: payoutDestination == null ? this.payoutDestination : payoutDestination.value,
       transactions: transactions == null ? this.transactions : transactions.value,
-      statusHistory: statusHistory == null ? this.statusHistory : statusHistory.value
+      statusHistory: statusHistory == null ? this.statusHistory : statusHistory.value,
+      createdAt: createdAt == null ? this.createdAt : createdAt.value
     );
   }
   
@@ -475,6 +480,7 @@ class Agreement extends amplify_core.Model {
   static final STATUSHISTORY = amplify_core.QueryField(
     fieldName: "statusHistory",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'StatusHistory'));
+  static final CREATEDAT = amplify_core.QueryField(fieldName: "createdAt");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Agreement";
     modelSchemaDefinition.pluralName = "Agreements";
@@ -490,16 +496,12 @@ class Agreement extends amplify_core.Model {
           amplify_core.ModelOperation.UPDATE,
           amplify_core.ModelOperation.DELETE,
           amplify_core.ModelOperation.READ
-        ]),
-      amplify_core.AuthRule(
-        authStrategy: amplify_core.AuthStrategy.PRIVATE,
-        operations: const [
-          amplify_core.ModelOperation.READ
         ])
     ];
     
     modelSchemaDefinition.indexes = [
-      amplify_core.ModelIndex(fields: const ["shortCode"], name: "agreementsByShortCode")
+      amplify_core.ModelIndex(fields: const ["shortCode"], name: "agreementsByShortCode"),
+      amplify_core.ModelIndex(fields: const ["status", "createdAt"], name: "agreementsByStatusAndCreatedAt")
     ];
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
@@ -620,10 +622,9 @@ class Agreement extends amplify_core.Model {
       associatedKey: StatusHistory.AGREEMENT
     ));
     
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
-      fieldName: 'createdAt',
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Agreement.CREATEDAT,
       isRequired: false,
-      isReadOnly: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
     ));
     

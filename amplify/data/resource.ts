@@ -17,6 +17,11 @@ const schema = a.schema({
     Transaction,
     Photo,
     StatusHistory,
+    getServerTime: a
+        .query()
+        .returns(a.datetime())
+        .authorization(allow => [allow.authenticated()])
+        .handler(a.handler.custom({ entry: './resolvers/get-server-time.js' })),
 }).authorization(allow => [allow.resource(statusTracker), allow.resource(flutterwaveWebhook)]);
 
 export type Schema = ClientSchema<typeof schema>;

@@ -3,6 +3,7 @@ import 'package:cleer/data/amplify_models/ModelProvider.dart' as amplify_model;
 import 'package:cleer/data/mappers/agreement_mappers.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart' as domain;
 import 'package:cleer/domain/models/milestone/milestone_enums.dart';
+import 'package:intl/intl.dart';
 
 /// Extensions on the Amplify Milestone model to convert it to the Domain Task entity.
 extension MilestoneToDomainMapper on amplify_model.Milestone {
@@ -29,7 +30,9 @@ extension MilestoneToAmplifyMapper on domain.Milestone {
       order: order,
       name: name,
       amount: amount,
-      expectedReleaseDate: TemporalDate(expectedReleaseDate),
+      expectedReleaseDate: TemporalDate.fromString(
+        DateFormat('yyyy-MM-dd').format(expectedReleaseDate),
+      ),
       status: _mapMilestoneStatusToAmplify(status),
       agreement: agreement?.toAmplify(),
       participants: participants,

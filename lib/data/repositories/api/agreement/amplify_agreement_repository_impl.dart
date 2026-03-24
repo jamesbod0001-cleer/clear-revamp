@@ -1,9 +1,12 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cleer/data/amplify_models/ModelProvider.dart' as amplify_model;
 import 'package:cleer/data/exceptions/backend_exception.dart';
 import 'package:cleer/data/mappers/agreement_mappers.dart';
 import 'package:cleer/data/repositories/api/agreement/agreement_repository.dart';
 import 'package:cleer/data/services/api/amplify_agreement_service_client.dart';
+import 'package:cleer/data/services/api/models/paginated_request/paginated_request.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
+import 'package:cleer/domain/models/paginated_list/paginated_list.dart';
 import 'package:cleer/utils/short_code_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:cleer/data/repositories/api/mixins/amplify_api_repository_mixin.dart';
@@ -42,13 +45,20 @@ class AmplifyAgreementRepositoryImpl
           if (existing != null && existing.items.isEmpty) {
             log.info('ShortCode is unique. Proceeding with creation.');
 
+            final serverTime = await _amplifyAgreementServiceClient
+                .getServerTime();
+            log.warn(serverTime.toString());
             // Map and Create
             final response = await _amplifyAgreementServiceClient
                 .createAgreement(
-                  agreement.copyWith(shortCode: currentCode).toAmplify(),
+                  agreement
+                      .copyWith(shortCode: currentCode)
+                      .toAmplify()
+                      .copyWith(createdAt: serverTime),
                 );
-
-            return response.toDomain();
+            return (await _amplifyAgreementServiceClient.queryAgreement(
+              response.id,
+            )).toDomain();
           }
 
           // Collision logic
@@ -92,13 +102,102 @@ class AmplifyAgreementRepositoryImpl
   }) async {
     return await performDataOperation<Agreement>(
       operation: () async {
+        log.info(agreement.createdAt.toString());
         final response = await _amplifyAgreementServiceClient.updateAgreement(
           agreement.copyWith(lastUpdatedBy: currentUserId).toAmplify(),
         );
-        return response.toDomain();
+        log.info(response.createdAt.toString());
+        return (await _amplifyAgreementServiceClient.queryAgreement(
+          response.id,
+        )).toDomain();
       },
       operationName: 'UpdateAgreement',
       targetId: agreement.id,
     );
+  }
+
+  @override
+  Future<ResultDart<PaginatedList<Agreement>, DataFailure>>
+  getUserCompletedAgreements({dynamic nextRequest}) async {
+    return await performDataOperation<PaginatedList<Agreement>>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient
+            .queryUserAgreementsByStatus(
+              status: amplify_model.AgreementStatus.RELEASED,
+              limit: 20,
+              nextRequest: nextRequest,
+            );
+        return PaginatedList(
+          items: response.items
+              .whereType<amplify_model.Agreement>()
+              .map((e) => e.toDomain())
+              .toList(),
+          hasNextPage: response.hasNextResult,
+          nextRequest: response.requestForNextResult,
+        );
+      },
+      operationName: 'GetUserCompletedAgreements',
+    );
+  }
+
+  @override
+  Future<ResultDart<List<Agreement>, DataFailure>>
+  getUserOngoingAgreements() async {
+    return await performDataOperation<List<Agreement>>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient
+            .queryUserAgreements(
+              PaginatedRequest(
+                where: amplify_model.Agreement.STATUS
+                    .eq(amplify_model.AgreementStatus.AWAITING_RECIPIENT)
+                    .or(
+                      amplify_model.Agreement.STATUS.eq(
+                        amplify_model.AgreementStatus.AWAITING_FUNDING,
+                      ),
+                    )
+                    .or(
+                      amplify_model.Agreement.STATUS.eq(
+                        amplify_model.AgreementStatus.FUNDED,
+                      ),
+                    )
+                    .or(
+                      amplify_model.Agreement.STATUS.eq(
+                        amplify_model.AgreementStatus.IN_PROGRESS,
+                      ),
+                    ),
+              ),
+            );
+        log.info(response.items.length.toString());
+        return response.items
+            .whereType<amplify_model.Agreement>()
+            .map((e) => e.toDomain())
+            .toList();
+      },
+      operationName: 'GetUserOngoingAgreements',
+    );
+  }
+
+  @override
+  Stream<Agreement> observeUserAgreementsCreates() {
+    return _amplifyAgreementServiceClient
+        .observeUserAgreementsCreates()
+        .handleError((error) => log.error('Stream error for agreement', error))
+        .where((event) => event.data != null)
+        .map((event) {
+          log.info('New event: Agreement created: ${event.data}');
+          return event.data!.toDomain();
+        });
+  }
+
+  @override
+  Stream<Agreement> observeUserAgreementsUpdates() {
+    return _amplifyAgreementServiceClient
+        .observeUserAgreementsUpdates()
+        .handleError((error) => log.error('Stream error for agreement', error))
+        .where((event) => event.data != null)
+        .map((event) {
+          log.info('New event: Agreement updated: ${event.data}');
+          return event.data!.toDomain();
+        });
   }
 }

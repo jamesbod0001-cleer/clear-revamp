@@ -109,7 +109,7 @@ class AmplifyPayoutDestinationRepositoryImpl
   ) {
     return _amplifyPayoutDestinationServiceClient
         .observeUserPayoutDestinationsDeletes(userId)
-        .handleError((error) => log.error('Stream error for user', error))
+        .handleError((error) => log.error('Stream error for payout destination', error))
         .where((event) => event.data != null)
         .map((event) => event.data!.toDomain());
   }

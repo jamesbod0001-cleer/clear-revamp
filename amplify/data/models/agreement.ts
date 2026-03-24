@@ -27,7 +27,7 @@ export const Agreement = a.model({
     recipientAccountNumber: a.string().required(),
     recipientBankCode: a.string().required(),
 
-    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'CANCELLED']),
+    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'CANCELLED', 'RELEASED']),
 
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
@@ -38,7 +38,8 @@ export const Agreement = a.model({
     transactions: a.hasMany('Transaction', 'agreementId'),
 
     statusHistory: a.hasMany('StatusHistory', 'agreementId'),
-}).secondaryIndexes((index) => [index("shortCode")]).authorization(allow => [
+    createdAt: a.datetime(),
+}).secondaryIndexes((index) => [index("shortCode"), index("status")
+    .sortKeys(["createdAt"]).queryField("agreementsByStatus")]).authorization(allow => [
     allow.ownersDefinedIn('participants'),
-    allow.authenticated().to(['read']),
 ]);

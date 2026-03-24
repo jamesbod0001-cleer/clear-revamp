@@ -240,10 +240,10 @@ class AgreementUseCase extends _$AgreementUseCase {
       payoutDestination = formData.payoutDestination;
     }
 
-    _log.info('Here: Creating agreement');
-
     User? sender = formData.initiatorRole == .sender ? initiator : null;
-    User? recipient = formData.initiatorRole == .recipient ? initiator : payoutDestination?.user;
+    User? recipient = formData.initiatorRole == .recipient
+        ? initiator
+        : payoutDestination?.user;
 
     Agreement agreement = Agreement(
       id: null,
@@ -272,9 +272,17 @@ class AgreementUseCase extends _$AgreementUseCase {
     final result = await _agreementRepository.createAgreement(agreement);
 
     return await result.fold(
-      (agreement) async {
+      (createdAgreement) async {
         _log.info('Successfully created agreement');
-        if (agreement.disbursementType == .milestones) {
+        // createdAgreement = createdAgreement.copyWith(status: .awaitingFunding);
+        if (createdAgreement.initiatorRole == .recipient) {
+          _log.info(createdAgreement.createdAt.toString());
+          await _agreementRepository.updateAgreement(
+            createdAgreement.copyWith(status: .awaitingFunding),
+            currentUserId: initiator.id,
+          );
+        }
+        if (createdAgreement.disbursementType == .milestones) {
           List<Milestone> milestones = formData.milestones!
               .asMap()
               .map((index, milestone) {
@@ -287,8 +295,8 @@ class AgreementUseCase extends _$AgreementUseCase {
                     amount: milestone.amount,
                     status: .pending,
                     expectedReleaseDate: milestone.releaseDate!,
-                    agreement: agreement,
-                    participants: agreement.participants,
+                    agreement: createdAgreement,
+                    participants: createdAgreement.participants,
                     lastUpdatedBy: initiator.id,
                   ),
                 );
@@ -312,7 +320,7 @@ class AgreementUseCase extends _$AgreementUseCase {
           });
           await Future.wait(createMilestoneTasks);
         }
-        return Success(agreement);
+        return Success(createdAgreement);
       },
       (failure) {
         _log.error('Error creating agreement', failure);
@@ -356,7 +364,9 @@ class AgreementUseCase extends _$AgreementUseCase {
         if (agreement.status == AgreementStatus.awaitingRecipient ||
             agreement.status == AgreementStatus.funded ||
             agreement.status == AgreementStatus.inProgress) {
-          _log.info('Agreement already advanced by webhook. Returning success.');
+          _log.info(
+            'Agreement already advanced by webhook. Returning success.',
+          );
           return Success(agreement);
         }
 

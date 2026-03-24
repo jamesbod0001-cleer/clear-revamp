@@ -33,4 +33,5 @@ enum AgreementStatus {
   inProgress,
 
   cancelled,
+  released,
 }

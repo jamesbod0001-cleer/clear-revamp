@@ -60,7 +60,7 @@ mixin AmplifyApiRepositoryMixin {
       return Success(result);
     } on BackendException catch (e, st) {
       log.error(
-        'Server Logic Error during $operationName (ID: $targetId): ${e.message}',
+        'Server Logic Error during $operationName (ID: $targetId): code: ${e.code} message: ${e.message} recoverySuggestion: ${e.recoverySuggestion}',
         e,
         st,
       );

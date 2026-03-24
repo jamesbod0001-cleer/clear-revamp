@@ -1,4 +1,6 @@
+import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/routing/router.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/agreement_details_screen.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreements_screen.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/create_agreement_screen.dart';
@@ -114,6 +116,7 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
           path: '/agreements',
           routes: [
             TypedGoRoute<CreateAgreementRoute>(path: 'create_agreement/:type'),
+            TypedGoRoute<AgreementDetailsRoute>(path: 'details/:id'),
           ],
         ),
       ],
@@ -175,6 +178,19 @@ class CreateAgreementRoute extends GoRouteData with $CreateAgreementRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       CreateAgreementScreen(type: type);
+}
+
+class AgreementDetailsRoute extends GoRouteData with $AgreementDetailsRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  final String id;
+  final Agreement? $extra;
+
+  AgreementDetailsRoute({required this.id, this.$extra});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      AgreementDetailsScreen(agreementId: id, initialAgreement: $extra);
 }
 
 class ProfileBranch extends StatefulShellBranchData {

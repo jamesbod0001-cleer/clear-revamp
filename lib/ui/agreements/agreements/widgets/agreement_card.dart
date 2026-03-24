@@ -1,0 +1,142 @@
+import 'package:cleer/domain/models/agreement/agreement.dart';
+import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
+import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+
+class AgreementCard extends ConsumerWidget {
+  const AgreementCard({super.key, required this.agreement});
+
+  final Agreement agreement;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
+
+    final user = ref.watch(userProvider).value;
+
+    return Column(
+      mainAxisSize: .min,
+      children: [
+        InkWell(
+          onTap: () => AgreementDetailsRoute(
+            id: agreement.id!,
+            $extra: agreement,
+          ).go(context),
+          child: Row(
+            crossAxisAlignment: .start,
+            children: [
+              Ink(
+                decoration: BoxDecoration(
+                  shape: .circle,
+                  color: context.color.grayComponent,
+                ),
+                child: SizedBox.square(
+                  dimension: Dimens.size.s48,
+                  child: PhosphorIcon(
+                    PhosphorIcons.handshake(.fill),
+                    color: context.color.secondary,
+                    size: Dimens.size.s24,
+                  ),
+                ),
+              ),
+              Gap(Dimens.spacing.sp10),
+              Expanded(
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            Text(
+                              agreement.getDisplayTitle(
+                                context,
+                                currentUser: user,
+                              ),
+                              style: context.typo.bodyMedium.copyWith(
+                                color: context.color.grey800,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Gap(Dimens.spacing.sp4),
+                            Text(
+                              l10n.dueDate(
+                                DateFormat('d MMM').format(agreement.dueDate),
+                              ),
+                              style: context.typo.bodySmall.copyWith(
+                                color: context.color.grey600,
+                              ),
+                            ),
+                            Gap(Dimens.spacing.sp4),
+                            agreement.getActionWidget(
+                              context,
+                              currentUser: user,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp24),
+                      Column(
+                        crossAxisAlignment: .end,
+                        mainAxisAlignment: .spaceBetween,
+                        children: [
+                          Text(
+                            '${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)}',
+                            style: context.typo.titleMedium,
+                          ),
+                          Ink(
+                            decoration: BoxDecoration(
+                              color: agreement.getStatusPillColor(context),
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius.r20,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: .symmetric(
+                                horizontal: Dimens.padding.p6,
+                                vertical: Dimens.padding.p3,
+                              ),
+                              child: Text(
+                                agreement.getStatusText(context),
+                                style: context.typo.bodySmall.copyWith(
+                                  color: agreement.getStatusTextColor(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Gap(Dimens.spacing.sp16),
+        Row(
+          children: [
+            Gap(Dimens.spacing.sp58),
+            Expanded(
+              child: Divider(
+                color: context.color.outline,
+                thickness: Dimens.size.s1,
+                height: Dimens.size.s1,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
