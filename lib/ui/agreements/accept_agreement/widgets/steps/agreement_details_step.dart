@@ -45,6 +45,28 @@ class AgreementDetailsStep extends HookConsumerWidget {
       }
     }
 
+    // I need a better name for this function
+    bool enablePrimaryButton() {
+      if (user != null) {
+        if (previewAgreement?.initiatorRole == .sender) {
+          if (previewAgreement?.recipient != null) {
+            // Meaning yes a recipient is already connected to it
+            // Check if the signed in user is the same has the recipient connected to it
+            if (user.id == previewAgreement?.recipient?.id) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            // Meaning no a recipient is not connected to it
+            // Do a name match between the recipient account name and the signed in user full name
+
+          }
+        }
+      }
+      return true;
+    }
+
     return PopScope(
       child: Builder(
         builder: (context) {
