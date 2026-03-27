@@ -2,10 +2,9 @@ import 'package:cleer/ui/agreements/accept_agreement/state/accept_agreement_stat
 import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/steps/agreement_details_step.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AcceptAgreementScreen extends HookConsumerWidget {
+class AcceptAgreementScreen extends ConsumerWidget {
   const AcceptAgreementScreen({super.key, required this.shortCode});
 
   final String shortCode;
