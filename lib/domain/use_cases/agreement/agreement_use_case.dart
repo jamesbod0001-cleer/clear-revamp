@@ -15,6 +15,7 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:cleer/domain/use_cases/payout_destination/params/get_payout_destination_params.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
+import 'package:cleer/utils/identity_utils.dart';
 import 'package:cleer/utils/short_code_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -68,28 +69,6 @@ class AgreementUseCase extends _$AgreementUseCase {
     return result;
   }
 
-  /// TODO I will remove this from here later
-  bool _isNameMatch({
-    required String userName,
-    required String resolveAccountName,
-  }) {
-    // 1. Normalize both strings: lowercase and remove extra whitespace
-    final userTokens = userName
-        .toLowerCase()
-        .split(RegExp(r'\s+'))
-        .where((t) => t.length > 1)
-        .toSet();
-    final bankTokens = resolveAccountName
-        .toLowerCase()
-        .split(RegExp(r'\s+'))
-        .where((t) => t.length > 1)
-        .toSet();
-
-    // 2. Check if all parts of the User's name are present in the Bank's name
-    // We use .every to ensure the User's First AND Last names are both there.
-    return userTokens.every((token) => bankTokens.contains(token));
-  }
-
   Future<ResultDart<RecipientResolution, Object>> resolveRecipientDetails({
     required String accountNumber,
     required String bankCode,
@@ -115,9 +94,9 @@ class AgreementUseCase extends _$AgreementUseCase {
 
         final fullName = "${user.firstName} ${user.lastName}";
 
-        final isMatch = _isNameMatch(
+        final isMatch = IdentityUtils.isNameMatch(
           userName: fullName,
-          resolveAccountName: resolvedName,
+          bankAccountName: resolvedName,
         );
 
         if (isMatch) {

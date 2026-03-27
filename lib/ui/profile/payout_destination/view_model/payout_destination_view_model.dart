@@ -5,6 +5,7 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/flutterwave/flutterwave_use_case.dart';
 import 'package:cleer/domain/use_cases/flutterwave/params/resolve_account_params.dart';
 import 'package:cleer/domain/use_cases/payout_destination/payout_destination_use_case.dart';
+import 'package:cleer/utils/identity_utils.dart';
 import 'package:command_it/command_it.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -40,7 +41,8 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
   resolveAccountForPayoutDestinationCommand;
   late Command<PayoutDestination, PayoutDestination?>
   createPayoutDestinationCommand;
-  late Command<PayoutDestination, PayoutDestination?> deletePayoutDestinationCommand;
+  late Command<PayoutDestination, PayoutDestination?>
+  deletePayoutDestinationCommand;
 
   Future<String> _resolveAccountForPayoutDestination(
     ResolveAccountParams params,
@@ -54,9 +56,9 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
       (resolveAccountName) {
         final fullName = "${user.firstName} ${user.lastName}";
 
-        final isMatch = _isNameMatch(
+        final isMatch = IdentityUtils.isNameMatch(
           userName: fullName,
-          resolveAccountName: resolveAccountName,
+          bankAccountName: resolveAccountName,
         );
 
         if (!isMatch) {
@@ -78,27 +80,6 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
         throw failure;
       },
     );
-  }
-
-  bool _isNameMatch({
-    required String userName,
-    required String resolveAccountName,
-  }) {
-    // 1. Normalize both strings: lowercase and remove extra whitespace
-    final userTokens = userName
-        .toLowerCase()
-        .split(RegExp(r'\s+'))
-        .where((t) => t.length > 1)
-        .toSet();
-    final bankTokens = resolveAccountName
-        .toLowerCase()
-        .split(RegExp(r'\s+'))
-        .where((t) => t.length > 1)
-        .toSet();
-
-    // 2. Check if all parts of the User's name are present in the Bank's name
-    // We use .every to ensure the User's First AND Last names are both there.
-    return userTokens.every((token) => bankTokens.contains(token));
   }
 
   Future<PayoutDestination?> _createPayoutDestination(
