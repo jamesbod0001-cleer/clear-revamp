@@ -204,7 +204,7 @@ class AmplifyAgreementRepositoryImpl
   }
 
   @override
-  Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreviewData(
+  Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreview(
     String shortCode,
   ) async {
     return await performDataOperation<AgreementPreview>(

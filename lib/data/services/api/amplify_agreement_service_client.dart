@@ -153,7 +153,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
           recipientBankName
           recipientAccountName
           recipientAccountNumber
-          milestones { id title amount status }
+          milestones { id name amount order expectedReleaseDate }
         }
       }
     ''';

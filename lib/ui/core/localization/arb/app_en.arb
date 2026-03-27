@@ -428,5 +428,35 @@
     }
   },
   "awaitingResponse": "Awaiting Response",
-  "actionRequired": "Action Required"
+  "actionRequired": "Action Required",
+  "wantsToPayYouSecurely": "{fullName} wants to pay you securely",
+  "@wantsToPayYouSecurely": {
+    "description": "Headline indicating that a specific user wants to send a secure payment",
+    "placeholders": {
+      "fullName": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+
+  "paymentAgreementFrom": "Payment Agreement from {fullName}",
+  "@paymentAgreementFrom": {
+    "description": "Title showing who created the payment agreement",
+    "placeholders": {
+      "fullName": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "fundsWillBeSentTo": "Funds will be sent to",
+  "purpose": "Purpose",
+  "paymentWillBeReleasedInMilestones": "Payment will be released in milestones",
+  "acceptAgreement": "Accept Agreement",
+  "declineAgreement": "Decline Agreement",
+  "continueToPayment": "Continue to Payment",
+  "yourFundsWillBeSecurelyHeldAndOnlyReleasedWhenYouApproveDelivery": "Your funds will be securely held and only released when you approve delivery.",
+  "acceptToCreateAnAccountAndReceivePaymentSecurely": "Accept to create an account and receive payment securely",
+  "acceptToReceivePaymentSecurely": "Accept to receive payment securely"
 }

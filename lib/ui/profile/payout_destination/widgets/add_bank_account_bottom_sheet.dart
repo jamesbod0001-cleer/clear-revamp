@@ -220,7 +220,7 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
                   crossAxisAlignment: .start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 3),
+                      padding: EdgeInsets.only(top: Dimens.padding.p3),
                       child: PhosphorIcon(
                         PhosphorIcons.info(),
                         color: context.color.grey800,

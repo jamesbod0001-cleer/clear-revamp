@@ -4,6 +4,7 @@ import 'package:cleer/data/repositories/api/milestone/milestone_repository.dart'
 import 'package:cleer/data/repositories/api/payout_destination/payout_destination_repository.dart';
 import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
 import 'package:cleer/domain/failures/data_failures.dart';
+import 'package:cleer/domain/models/agreement/agreement_preview.dart';
 import 'package:cleer/domain/models/user/user.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
@@ -470,5 +471,22 @@ class AgreementUseCase extends _$AgreementUseCase {
         return Failure(failure);
       },
     );
+  }
+
+  Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreview(
+    String shortCode,
+  ) async {
+    _log.info('Attempting to get agreement preview');
+    final result = await _agreementRepository.getAgreementPreview(shortCode);
+    result.fold(
+      (agreementPreview) {
+        _log.info('Successfully retrieved agreement preview');
+      },
+      (failure) {
+        _log.error('Error retrieving agreement preview', failure);
+        throw failure;
+      },
+    );
+    return result;
   }
 }
