@@ -9,6 +9,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/form_error.dart';
+import 'package:cleer/utils/identity_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -45,25 +46,58 @@ class AgreementDetailsStep extends HookConsumerWidget {
       }
     }
 
+    final ValueNotifier<String?> errorMessage = useState(null);
+    void setErrorMessage(String? message) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        errorMessage.value = message;
+      });
+    }
+
     // I need a better name for this function
-    bool enablePrimaryButton() {
+    bool enableActionButtons() {
       if (user != null) {
+        if (previewAgreement?.initiator?.id == user.id) {
+          setErrorMessage(
+            "You can not accept this agreement. You can't accept an agreement you created",
+          );
+          return false;
+        }
         if (previewAgreement?.initiatorRole == .sender) {
           if (previewAgreement?.recipient != null) {
             // Meaning yes a recipient is already connected to it
             // Check if the signed in user is the same has the recipient connected to it
             if (user.id == previewAgreement?.recipient?.id) {
+              // Meaning the signed in user is the same as the recipient
+              setErrorMessage(null);
               return true;
             } else {
+              // Meaning the signed in user is not the same as the recipient
+              setErrorMessage(
+                'You can not accept this agreement. You are not the recipient of this agreement',
+              );
               return false;
             }
           } else {
             // Meaning no a recipient is not connected to it
             // Do a name match between the recipient account name and the signed in user full name
-
+            if (IdentityUtils.isNameMatch(
+              userName: user.fullName,
+              bankAccountName: previewAgreement?.recipientAccountName ?? '',
+            )) {
+              // Meaning the bank account belongs to this user and can go on
+              setErrorMessage(null);
+              return true;
+            } else {
+              // Meaning the bank account does not belong to this user
+              setErrorMessage(
+                'You can not accept this agreement. You can only accept agreements where the recipient bank account is in your name.',
+              );
+              return false;
+            }
           }
         }
       }
+      setErrorMessage(null);
       return true;
     }
 
@@ -89,6 +123,7 @@ class AgreementDetailsStep extends HookConsumerWidget {
           if (previewAgreement == null) {
             return Center(child: CircularProgressIndicator());
           }
+
           return CustomScrollView(
             slivers: [
               PinnedHeaderSliver(
@@ -136,7 +171,11 @@ class AgreementDetailsStep extends HookConsumerWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     Gap(Dimens.spacing.sp24),
-
+                    FormError(
+                      hasError:
+                          !enableActionButtons() && errorMessage.value != null,
+                      errorMessage: errorMessage.value,
+                    ),
                     if (previewAgreement.disbursementType == .milestones)
                       Column(
                         crossAxisAlignment: .start,
@@ -515,7 +554,7 @@ class AgreementDetailsStep extends HookConsumerWidget {
                         ),
                       ),
                       PrimaryButton(
-                        onPressed: () {},
+                        onPressed: enableActionButtons() ? () {} : null,
                         child: Text(
                           previewAgreement.initiatorRole == InitiatorRole.sender
                               ? l10n.acceptAgreement
@@ -527,7 +566,7 @@ class AgreementDetailsStep extends HookConsumerWidget {
                         style: TextButton.styleFrom(
                           foregroundColor: context.color.error,
                         ),
-                        onPressed: () {},
+                        onPressed: enableActionButtons() ? () {} : null,
                         child: Text(l10n.declineAgreement),
                       ),
                       Gap(Dimens.spacing.sp20),

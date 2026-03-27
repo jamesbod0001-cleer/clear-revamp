@@ -5,6 +5,8 @@ part 'user.freezed.dart';
 
 @freezed
 abstract class User with _$User {
+  const User._();
+
   const factory User({
     required String id,
     required String identityId,
@@ -17,4 +19,6 @@ abstract class User with _$User {
     @Default([]) List<String> flutterwavePaymentMethodIds,
     DateTime? createdAt,
   }) = _User;
+
+  String get fullName => '$firstName $lastName';
 }
