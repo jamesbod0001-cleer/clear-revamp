@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/amplify_models/Agreement.dart';
+import 'package:cleer/data/amplify_models/AgreementPreview.dart';
 import 'package:cleer/data/amplify_models/AgreementStatus.dart';
+import 'package:cleer/data/exceptions/backend_exception.dart';
 import 'package:cleer/data/services/api/models/paginated_request/paginated_request.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -60,92 +62,6 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     final response = await _amplifyAPI.mutate(request: request).response;
     return validateRequiredResponse(response);
   }
-
-  // Future<PaginatedResult<Agreement>> queryUserAgreements(
-  //     PaginatedRequest<Agreement> request,
-  //     ) async {
-  //
-  //   // 1. Update the document to include nextToken for pagination
-  //   // and ALL required fields from your schema.
-  //   const graphQLDocument = '''
-  //   query AgreementsByStatus(\$status: AgreementStatus!, \$nextToken: String) {
-  //     agreementsByStatus(status: \$status, sortDirection: ASC, nextToken: \$nextToken) {
-  //       items {
-  //         id
-  //         shortCode
-  //         amount
-  //         currency
-  //         category
-  //         description
-  //         initiatorId
-  //         recipientAccountNumber
-  //         recipientBankCode
-  //         status
-  //         createdAt
-  //         disbursementType
-  //         initiatorRole
-  //       }
-  //       nextToken
-  //     }
-  //   }
-  // ''';
-  //
-  //   final draftReq = GraphQLRequest<String>(
-  //     document: graphQLDocument,
-  //     variables: {
-  //       'status': 'AWAITING_RECIPIENT',
-  //       // 'nextToken': request.nextToken, // Pass your token here if paginating
-  //     },
-  //   );
-  //
-  //   try {
-  //     final response = await _amplifyAPI.query(request: draftReq).response;
-  //
-  //     // 2. Check for GraphQL errors
-  //     if (response.errors.isNotEmpty) {
-  //       safePrint('GraphQL Errors: ${response.errors}');
-  //       throw Exception('Failed to query agreements');
-  //     }
-  //
-  //     // 3. Parse the JSON string
-  //     final String? data = response.data;
-  //     List<Agreement> agreements = [];
-  //     String? nextToken;
-  //
-  //     if (data != null) {
-  //       final Map<String, dynamic> jsonData = jsonDecode(data);
-  //       final agreementsData = jsonData['agreementsByStatus'];
-  //
-  //       if (agreementsData != null) {
-  //         // Extract the raw items list
-  //         final List<dynamic> items = agreementsData['items'] ?? [];
-  //
-  //         // Map each JSON object into your Amplify Agreement model
-  //         agreements = items.map((item) {
-  //           return Agreement.fromJson(item as Map<String, dynamic>);
-  //         }).toList();
-  //
-  //         // Extract the token for the next page
-  //         nextToken = agreementsData['nextToken'];
-  //       }
-  //     }
-  //
-  //     // 4. Return your PaginatedResult
-  //     // (Assuming PaginatedResult is a custom class in your app)
-  //     return PaginatedResult<Agreement>(
-  //        agreements,
-  //        request.limit,
-  //        nextToken,
-  //       null,
-  //       Agreement.classType,
-  //       null
-  //     );
-  //
-  //   } catch (e) {
-  //     safePrint('Error parsing agreements: $e');
-  //     rethrow;
-  //   }
-  // }
 
   Future<PaginatedResult<Agreement>> queryUserAgreementsByStatus({
     required AgreementStatus status,
@@ -218,6 +134,58 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     return _amplifyAPI.subscribe(subscriptionRequest);
   }
 
+  Future<AgreementPreview> getAgreementPreviewData(String shortCode) async {
+    const String document = '''
+      query GetAgreementPreview(\$shortCode: String!) {
+        getAgreementPreview(shortCode: \$shortCode) {
+          shortCode
+          amount
+          currency
+          category
+          description
+          status
+          initiatorRole
+          disbursementType
+          expectedReleaseDate
+          initiator { id firstName lastName }
+          sender { id firstName lastName }
+          recipient { id firstName lastName }
+          recipientBankName
+          recipientAccountName
+          recipientAccountNumber
+          milestones { id title amount status }
+        }
+      }
+    ''';
+    final request = GraphQLRequest<String>(
+      document: document,
+      variables: {'shortCode': shortCode},
+      // CRITICAL: Force API Key auth so web links work without login
+      authorizationMode: APIAuthorizationType.apiKey,
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+
+    if (response.hasErrors) {
+      throw BackendException(response.errors.first.message);
+    }
+
+    if (response.data == null) {
+      throw BackendException(
+        'No preview data returned from server.',
+        code: 'NotFound',
+      );
+    }
+
+    final Map<String, dynamic> jsonData = jsonDecode(response.data!);
+    final dynamic previewData = jsonData['getAgreementPreview'];
+
+    if (previewData == null) {
+      throw BackendException('Agreement not found.', code: 'NotFound');
+    }
+
+    return AgreementPreview.fromJson(previewData as Map<String, dynamic>);
+  }
+
   /// Fetches the authoritative AWS Server Time
   Future<TemporalDateTime> getServerTime() async {
     const String document = '''
@@ -230,7 +198,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     final response = await _amplifyAPI.query(request: request).response;
 
     if (response.hasErrors || response.data == null) {
-      throw Exception('Failed to fetch server time: ${response.errors}');
+      throw BackendException('Failed to fetch server time: ${response.errors}');
     }
 
     final Map<String, dynamic> data = jsonDecode(response.data!);

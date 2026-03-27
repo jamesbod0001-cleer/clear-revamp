@@ -2,10 +2,12 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/amplify_models/ModelProvider.dart' as amplify_model;
 import 'package:cleer/data/exceptions/backend_exception.dart';
 import 'package:cleer/data/mappers/agreement_mappers.dart';
+import 'package:cleer/data/mappers/agreement_preview_mappers.dart';
 import 'package:cleer/data/repositories/api/agreement/agreement_repository.dart';
 import 'package:cleer/data/services/api/amplify_agreement_service_client.dart';
 import 'package:cleer/data/services/api/models/paginated_request/paginated_request.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
+import 'package:cleer/domain/models/agreement/agreement_preview.dart';
 import 'package:cleer/domain/models/paginated_list/paginated_list.dart';
 import 'package:cleer/utils/short_code_generator.dart';
 import 'package:result_dart/result_dart.dart';
@@ -199,5 +201,20 @@ class AmplifyAgreementRepositoryImpl
           log.info('New event: Agreement updated: ${event.data}');
           return event.data!.toDomain();
         });
+  }
+
+  @override
+  Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreviewData(
+    String shortCode,
+  ) async {
+    return await performDataOperation<AgreementPreview>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient
+            .getAgreementPreviewData(shortCode);
+        return response.toDomain();
+      },
+      operationName: 'GetAgreementPreviewData',
+      targetId: shortCode,
+    );
   }
 }
