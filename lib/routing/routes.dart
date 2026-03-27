@@ -1,5 +1,6 @@
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/routing/router.dart';
+import 'package:cleer/ui/agreements/accept_agreement/widgets/accept_agreement_screen.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/agreement_details_screen.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreements_screen.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
@@ -102,6 +103,20 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
   Widget build(BuildContext context, GoRouterState state) =>
       const ChangePasswordScreen();
 }
+
+
+@TypedGoRoute<AcceptAgreementRoute>(path: '/a/:shortCode')
+class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
+  final String shortCode;
+
+  const AcceptAgreementRoute({required this.shortCode});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return AcceptAgreementScreen(shortCode: shortCode);
+  }
+}
+
 
 // --- PROTECTED SHELL ROUTES ---
 
