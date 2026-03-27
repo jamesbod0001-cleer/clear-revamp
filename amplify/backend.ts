@@ -15,6 +15,7 @@ import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 
 // 2. Import CDK enums for the Webhook URL
 import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
+import {previewAgreement} from "./functions/preview-agreement/resource";
 
 const backend = defineBackend({
     auth,
@@ -22,6 +23,7 @@ const backend = defineBackend({
     storage,
     statusTracker,
     flutterwaveWebhook, // 3. Add the webhook to the backend deployment
+    previewAgreement,
 });
 
 // --- Auth Overrides ---
