@@ -1,4 +1,5 @@
 import 'package:cleer/domain/models/agreement/agreement.dart';
+import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
@@ -26,10 +27,20 @@ class AgreementCard extends ConsumerWidget {
       mainAxisSize: .min,
       children: [
         InkWell(
-          onTap: () => AgreementDetailsRoute(
-            id: agreement.id!,
-            $extra: agreement,
-          ).go(context),
+          onTap: () {
+            if ((agreement.status == AgreementStatus.awaitingRecipient ||
+                    agreement.status == AgreementStatus.awaitingFunding) &&
+                agreement.initiator?.id != user?.id) {
+              AcceptAgreementRoute(
+                shortCode: agreement.shortCode,
+              ).push(context);
+            } else {
+              AgreementDetailsRoute(
+                id: agreement.id!,
+                $extra: agreement,
+              ).go(context);
+            }
+          },
           child: Row(
             crossAxisAlignment: .start,
             children: [

@@ -108,11 +108,12 @@ extension AgreementUIExtensions on Agreement {
   }
 
   DateTime get dueDate {
-    if (expectedReleaseDate != null) {
-      return expectedReleaseDate!;
-    } else {
-      /// TODO: I need to change this after Eziama responds
-      return DateTime.now();
+    switch(disbursementType){
+      case DisbursementType.oneTime:
+        return expectedReleaseDate!;
+      case DisbursementType.milestones:
+        /// TODO: Come back and set it to use the ongoing milestone date
+        return DateTime.now();
     }
   }
 }
