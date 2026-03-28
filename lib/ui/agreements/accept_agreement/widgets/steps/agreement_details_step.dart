@@ -1,6 +1,7 @@
 import 'package:cleer/domain/failures/data_failures.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/agreement/agreement_preview.dart';
+import 'package:cleer/domain/models/user/user.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -26,7 +27,7 @@ class AgreementDetailsStep extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    final user = ref.watch(userProvider).value;
+    final User? user = ref.watch(userProvider).value;
 
     final state = ref.watch(acceptAgreementViewModelProvider((shortCode)));
     final viewModel = ref.read(
