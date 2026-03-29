@@ -71,6 +71,11 @@ GoRouter router(Ref ref) {
         if (currentPath == createPasswordPath || currentPath == successPath) {
           return null; // Let them finish creating their account
         }
+        // THE FIX: When forcing them to the success screen, carry the intent forward!
+        if (intentPath != null && intentPath.isNotEmpty) {
+          // We append it to the success path
+          return '$successPath?redirectTo=$intentPath';
+        }
         return successPath; // Force them back to complete the process
       }
 
