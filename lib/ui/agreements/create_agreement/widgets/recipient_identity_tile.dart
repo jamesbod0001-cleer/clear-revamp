@@ -176,39 +176,67 @@ class RecipientIdentityTile extends HookConsumerWidget {
                           ),
                         ],
                       ),
-                      Gap(Dimens.spacing.sp12),
-                      Container(
-                        padding: .all(Dimens.padding.p12),
-                        decoration: BoxDecoration(
-                          color: context.color.warningLight,
-                          borderRadius: BorderRadius.circular(Dimens.radius.r8),
-                          border: Border.all(color: Color(0xFFC39E71)),
-                        ),
-                        child: Row(
-                          children: [
-                            PhosphorIcon(
-                              PhosphorIcons.warning(.duotone),
-                              size: Dimens.size.s28,
-                              color: context.color.warning,
+                      if (!isRegisteredUser || lowTrustScore) ...[
+                        Gap(Dimens.spacing.sp12),
+                        Container(
+                          padding: .all(Dimens.padding.p12),
+                          decoration: BoxDecoration(
+                            color: context.color.warningLight,
+                            borderRadius: BorderRadius.circular(
+                              Dimens.radius.r8,
                             ),
-                            Gap(Dimens.spacing.sp12),
-                            Expanded(
-                              child: Visibility(
-                                visible: !isRegisteredUser,
-                                replacement: Visibility(
-                                  visible: lowTrustScore,
+                            border: Border.all(color: Color(0xFFC39E71)),
+                          ),
+                          child: Row(
+                            children: [
+                              PhosphorIcon(
+                                PhosphorIcons.warning(.duotone),
+                                size: Dimens.size.s28,
+                                color: context.color.warning,
+                              ),
+                              Gap(Dimens.spacing.sp12),
+                              Expanded(
+                                child: Visibility(
+                                  visible: !isRegisteredUser,
+                                  replacement: Visibility(
+                                    visible: lowTrustScore,
+                                    child: Column(
+                                      crossAxisAlignment: .start,
+                                      children: [
+                                        Text(
+                                          l10n.lowTrustScoreAlert,
+                                          style: context.typo.titleSmall
+                                              .copyWith(
+                                                color: context.color.warning,
+                                              ),
+                                        ),
+                                        Gap(Dimens.spacing.sp6),
+                                        Text(
+                                          l10n.lowTrustScoreWarning(trustScore),
+                                          style: context.typo.bodyMedium
+                                              .copyWith(
+                                                fontWeight:
+                                                    AppFontWeights.regular,
+                                                color: context.color.warning,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   child: Column(
                                     crossAxisAlignment: .start,
                                     children: [
                                       Text(
-                                        l10n.lowTrustScoreAlert,
+                                        l10n.newUserAlert,
                                         style: context.typo.titleSmall.copyWith(
                                           color: context.color.warning,
                                         ),
                                       ),
                                       Gap(Dimens.spacing.sp6),
                                       Text(
-                                        l10n.lowTrustScoreWarning(trustScore),
+                                        l10n.noHistoryWarning(
+                                          recipientResolution.accountName,
+                                        ),
                                         style: context.typo.bodyMedium.copyWith(
                                           fontWeight: AppFontWeights.regular,
                                           color: context.color.warning,
@@ -217,32 +245,11 @@ class RecipientIdentityTile extends HookConsumerWidget {
                                     ],
                                   ),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: .start,
-                                  children: [
-                                    Text(
-                                      l10n.newUserAlert,
-                                      style: context.typo.titleSmall.copyWith(
-                                        color: context.color.warning,
-                                      ),
-                                    ),
-                                    Gap(Dimens.spacing.sp6),
-                                    Text(
-                                      l10n.noHistoryWarning(
-                                        recipientResolution.accountName,
-                                      ),
-                                      style: context.typo.bodyMedium.copyWith(
-                                        fontWeight: AppFontWeights.regular,
-                                        color: context.color.warning,
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   );
                 }
