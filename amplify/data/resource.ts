@@ -12,6 +12,7 @@ import {previewAgreement} from "../functions/preview-agreement/resource";
 import {UserPreview} from "./custom-types/user-preview";
 import {AgreementPreview} from "./custom-types/agreement-preview";
 import {MilestonePreview} from "./custom-types/milestone-preview";
+import {joinAgreement} from "../functions/join-agreement/resource";
 
 const schema = a.schema({
     User,
@@ -33,8 +34,13 @@ const schema = a.schema({
         .arguments({ shortCode: a.string().required() })
         .returns(a.ref('AgreementPreview'))
         .authorization(allow => [allow.publicApiKey()])
-        .handler(a.handler.function(previewAgreement))
-}).authorization(allow => [allow.resource(statusTracker), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement)]);
+        .handler(a.handler.function(previewAgreement)),
+    joinAgreement: a.mutation()
+        .arguments({ shortCode: a.string().required() })
+        .returns(a.string()) // Returns the Agreement ID
+        .authorization(allow => [allow.authenticated()]) // Only logged-in users!
+        .handler(a.handler.function(joinAgreement))
+}).authorization(allow => [allow.resource(statusTracker), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement)]);
 
 export type Schema = ClientSchema<typeof schema>;
 
