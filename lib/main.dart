@@ -3,11 +3,15 @@ import 'package:cleer/config/amplify_setup.dart';
 import 'package:cleer/config/sentry_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 Future<void> main() async {
   SentryWidgetsFlutterBinding.ensureInitialized();
+  GoRouter.optionURLReflectsImperativeAPIs = true;
+  usePathUrlStrategy();
   await configureAmplify();
   await SentryFlutter.init(
     (options) {
@@ -32,12 +36,12 @@ Future<void> main() async {
         defaultValue: kDebugMode ? 'development' : 'production',
       );
     },
-    appRunner: () => runApp(
-      SentryWidget(
-        child: ProviderScope(
-          observers: [CleerSentryObserver()],
-          child: MainApp(),
-        ),
+  );
+  runApp(
+    SentryWidget(
+      child: ProviderScope(
+        observers: [CleerSentryObserver()],
+        child: MainApp(),
       ),
     ),
   );
