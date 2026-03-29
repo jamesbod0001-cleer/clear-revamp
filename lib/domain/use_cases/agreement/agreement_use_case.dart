@@ -468,4 +468,21 @@ class AgreementUseCase extends _$AgreementUseCase {
     );
     return result;
   }
+
+  Future<ResultDart<String, DataFailure>> joinAgreement(
+    String shortCode,
+  ) async {
+    _log.info('Attempting to join agreement');
+    final result = await _agreementRepository.joinAgreement(shortCode);
+    result.fold(
+      (agreementPreview) {
+        _log.info('Successfully joined agreement');
+      },
+      (failure) {
+        _log.error('Error joining agreement', failure);
+        throw failure;
+      },
+    );
+    return result;
+  }
 }

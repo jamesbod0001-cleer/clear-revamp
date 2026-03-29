@@ -217,4 +217,20 @@ class AmplifyAgreementRepositoryImpl
       targetId: shortCode,
     );
   }
+
+  @override
+  Future<ResultDart<String, DataFailure>> joinAgreement(
+    String shortCode,
+  ) async {
+    return await performDataOperation<String>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient.joinAgreement(
+          shortCode,
+        );
+        return response;
+      },
+      operationName: 'JoinAgreement',
+      targetId: shortCode,
+    );
+  }
 }

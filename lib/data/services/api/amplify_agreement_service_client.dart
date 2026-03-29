@@ -186,6 +186,54 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     return AgreementPreview.fromJson(previewData as Map<String, dynamic>);
   }
 
+  /// Calls the custom Admin Lambda function to securely inject the logged-in user
+  /// into the Agreement's participants array, bypassing standard @auth rules.
+  /// Returns the Agreement ID on success.
+  Future<String> joinAgreement(String shortCode) async {
+    const String document = '''
+      mutation JoinAgreement(\$shortCode: String!) {
+        joinAgreement(shortCode: \$shortCode)
+      }
+    ''';
+
+    final request = GraphQLRequest<String>(
+      document: document,
+      variables: {'shortCode': shortCode},
+      // CRITICAL: We explicitly use userPools because the Lambda needs
+      // the caller's secure identity token to verify who they are.
+      authorizationMode: APIAuthorizationType.userPools,
+    );
+
+    // Note: We use _amplifyAPI.mutate instead of .query here
+    final response = await _amplifyAPI.mutate(request: request).response;
+
+    if (response.hasErrors) {
+      // If the Lambda throws an error (e.g. "Unauthorized", "Not found"), it bubbles up here
+      throw BackendException(response.errors.first.message);
+    }
+
+    if (response.data == null) {
+      throw BackendException(
+        'No data returned from server while joining agreement.',
+        code: 'UnknownError',
+      );
+    }
+
+    // The response data is a JSON string. We decode it to extract our returned string.
+    final Map<String, dynamic> jsonData = jsonDecode(response.data!);
+    final dynamic joinedAgreementId = jsonData['joinAgreement'];
+
+    if (joinedAgreementId == null) {
+      throw BackendException(
+          'Failed to parse the joined agreement ID.',
+          code: 'ParseError'
+      );
+    }
+
+    // Return the actual Agreement ID so the UseCase can query it natively!
+    return joinedAgreementId as String;
+  }
+
   /// Fetches the authoritative AWS Server Time
   Future<TemporalDateTime> getServerTime() async {
     const String document = '''

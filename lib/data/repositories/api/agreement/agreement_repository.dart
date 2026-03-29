@@ -33,4 +33,5 @@ abstract class AgreementRepository {
   Stream<Agreement> observeUserAgreementsUpdates();
 
   Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreview(String shortCode);
+  Future<ResultDart<String, DataFailure>> joinAgreement(String shortCode);
 }
