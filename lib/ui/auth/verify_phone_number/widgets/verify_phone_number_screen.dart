@@ -20,8 +20,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pinput/pinput.dart';
 
 class VerifyPhoneNumberScreen extends HookConsumerWidget {
-  const VerifyPhoneNumberScreen({super.key, required this.details});
+  const VerifyPhoneNumberScreen({super.key, required this.details, this.redirectTo});
   final VerificationDetails details;
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,10 +37,10 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
 
         signUpDomainResult.when(
           success: () {
-            CreatePasswordRoute(phoneNumber: details.username).push(context);
+            CreatePasswordRoute(phoneNumber: details.username, redirectTo: redirectTo).push(context);
           },
           confirmationRequired: (String destination, String deliveryMedium) {
-            VerifyPhoneRoute($extra: details).push(context);
+            VerifyPhoneRoute($extra: details, redirectTo: redirectTo).push(context);
           },
         );
       });

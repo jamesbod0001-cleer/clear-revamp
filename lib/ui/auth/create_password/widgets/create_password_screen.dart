@@ -16,9 +16,10 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CreatePasswordScreen extends HookConsumerWidget {
-  const CreatePasswordScreen({super.key, required this.phoneNumber});
+  const CreatePasswordScreen({super.key, required this.phoneNumber, this.redirectTo});
 
   final String phoneNumber;
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

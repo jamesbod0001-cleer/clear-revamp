@@ -16,7 +16,9 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class LoginScreen extends ConsumerWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.redirectTo});
+
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,7 +43,7 @@ class LoginScreen extends ConsumerWidget {
               deliveryMedium: deliveryMedium,
             );
             ref.read(loginViewModelProvider.notifier).resetResult();
-            VerifyPhoneRoute($extra: details).push(context);
+            VerifyPhoneRoute($extra: details, redirectTo: redirectTo).push(context);
           },
           orElse: () {
             debugPrint(result.runtimeType.toString());
@@ -89,7 +91,7 @@ class LoginScreen extends ConsumerWidget {
                       ),
                     ),
                     Gap(Dimens.spacing.sp32),
-                    Expanded(child: LoginForm()),
+                    Expanded(child: LoginForm(redirectTo: redirectTo,)),
                   ],
                 ),
               ),

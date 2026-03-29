@@ -17,7 +17,9 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CreateAccountScreen extends ConsumerWidget {
-  const CreateAccountScreen({super.key});
+  const CreateAccountScreen({super.key, this.redirectTo});
+
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +45,7 @@ class CreateAccountScreen extends ConsumerWidget {
               deliveryMedium: deliveryMedium,
             );
             ref.read(createAccountViewModelProvider.notifier).resetResult();
-            VerifyPhoneRoute($extra: details).push(context);
+            VerifyPhoneRoute($extra: details, redirectTo: redirectTo).push(context);
           },
         );
       });
@@ -94,7 +96,7 @@ class CreateAccountScreen extends ConsumerWidget {
                       ),
                     ),
                     Gap(Dimens.spacing.sp32),
-                    Expanded(child: CreateAccountForm()),
+                    Expanded(child: CreateAccountForm(redirectTo: redirectTo,)),
                   ],
                 ),
               ),

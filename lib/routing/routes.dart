@@ -49,8 +49,12 @@ class OnboardingRoute extends GoRouteData with $OnboardingRoute {
   routes: [TypedGoRoute<ForgotPasswordRoute>(path: 'forgot_password')],
 )
 class LoginRoute extends GoRouteData with $LoginRoute {
+  final String? redirectTo;
+
+  LoginRoute({this.redirectTo});
+
   @override
-  Widget build(BuildContext context, GoRouterState state) => LoginScreen();
+  Widget build(BuildContext context, GoRouterState state) => LoginScreen(redirectTo: redirectTo,);
 }
 
 class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
@@ -63,34 +67,45 @@ class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
 
 @TypedGoRoute<CreateAccountRoute>(path: '/create_account')
 class CreateAccountRoute extends GoRouteData with $CreateAccountRoute {
+  final String? redirectTo;
+
+  CreateAccountRoute({this.redirectTo});
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      CreateAccountScreen();
+      CreateAccountScreen(redirectTo: redirectTo,);
 }
 
 @TypedGoRoute<VerifyPhoneRoute>(path: '/verify_phone')
 class VerifyPhoneRoute extends GoRouteData with $VerifyPhoneRoute {
   final VerificationDetails $extra;
-  VerifyPhoneRoute({required this.$extra});
+  final String? redirectTo;
+
+  VerifyPhoneRoute({required this.$extra, this.redirectTo});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      VerifyPhoneNumberScreen(details: $extra);
+      VerifyPhoneNumberScreen(details: $extra, redirectTo: redirectTo,);
 }
 
 @TypedGoRoute<CreatePasswordRoute>(path: '/create_password')
 class CreatePasswordRoute extends GoRouteData with $CreatePasswordRoute {
   final String phoneNumber;
-  CreatePasswordRoute({required this.phoneNumber});
+  final String? redirectTo;
+
+  CreatePasswordRoute({required this.phoneNumber, this.redirectTo});
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      CreatePasswordScreen(phoneNumber: phoneNumber);
+      CreatePasswordScreen(phoneNumber: phoneNumber, redirectTo: redirectTo);
 }
 
 @TypedGoRoute<RegistrationSuccessRoute>(path: '/registration_success')
 class RegistrationSuccessRoute extends GoRouteData
     with $RegistrationSuccessRoute {
-  const RegistrationSuccessRoute();
+  final String? redirectTo;
+
+  const RegistrationSuccessRoute({this.redirectTo});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>

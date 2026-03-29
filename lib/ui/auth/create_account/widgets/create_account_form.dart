@@ -16,7 +16,9 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CreateAccountForm extends HookConsumerWidget {
-  const CreateAccountForm({super.key});
+  const CreateAccountForm({super.key, this.redirectTo});
+
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -129,7 +131,7 @@ class CreateAccountForm extends HookConsumerWidget {
                     decorationColor: context.color.blue700,
                   ),
                   recognizer: TapGestureRecognizer()
-                    ..onTap = () => LoginRoute().pushReplacement(context),
+                    ..onTap = () => LoginRoute(redirectTo: redirectTo).pushReplacement(context),
                 ),
               ],
             ),

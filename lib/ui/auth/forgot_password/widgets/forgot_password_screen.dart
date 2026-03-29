@@ -1,6 +1,5 @@
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
-import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
 import 'package:cleer/ui/auth/forgot_password/state/forgot_password_state.dart';
 import 'package:cleer/ui/auth/forgot_password/view_model/forgot_password_view_model.dart';
@@ -38,7 +37,7 @@ class ForgotPasswordScreen extends HookConsumerWidget {
             prev?.value?.resetPasswordDomainResult) {
           state.resetPasswordDomainResult?.maybeWhen(
             success: () {
-              LoginRoute().pushReplacement(context);
+              context.pop();
             },
             orElse: () {},
           );
