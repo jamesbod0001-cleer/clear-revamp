@@ -27,57 +27,75 @@ GoRouter router(Ref ref) {
     redirect: (context, state) {
       final authStateValue = ref.read(authUseCaseProvider);
       final authState = authStateValue.value;
+      final currentPath = state.uri.path;
+
+      // Capture any redirect intent from the query parameters
+      final String? intentPath = state.uri.queryParameters['redirectTo'];
 
       if (authStateValue.isLoading ||
           authState == null ||
           authState is Unknown) {
-        return state.uri.path == const SplashRoute().location
+        return currentPath == const SplashRoute().location
             ? null
             : const SplashRoute().location;
       }
 
       final isAuthenticated = authState.isAuthenticated;
-      // Use our new helper
       final isReadyForHome = authState.isFullyAuthenticated;
-      final currentPath = state.uri.path;
 
       final onboardingPath = const OnboardingRoute().location;
       final createPasswordPath = '/create_password';
-      final successPath = '/registration_success'; // Your new success screen
+      final successPath = '/registration_success';
 
-      // 1. If not authenticated, keep them in the auth/onboarding loop
+      // --- LOGIC FOR UNAUTHENTICATED USERS ---
       if (!isAuthenticated) {
-        final publicRoutes = [
-          onboardingPath,
-          '/login',
-          '/create_account',
-          '/verify_phone',
-          createPasswordPath,
-        ];
-        final isPublic = publicRoutes.any(
-          (path) => currentPath.startsWith(path),
-        );
-        return isPublic ? null : onboardingPath;
+        // ALLOWED paths for guests.
+        final isPublicRoute = currentPath == onboardingPath ||
+            currentPath.startsWith('/login') ||
+            currentPath.startsWith('/create_account') ||
+            currentPath.startsWith('/verify_phone') ||
+            currentPath.startsWith(createPasswordPath) ||
+            currentPath.startsWith('/a/'); // Allow guests to get to accept agreement
+
+        if (isPublicRoute) {
+          return null; // Let them proceed to the public route without interference
+        } else {
+          // Catch-all: If they try to go to /home or /profile unauthenticated, send to onboarding
+          return onboardingPath;
+        }
       }
 
-      // 2. If authenticated BUT registration is not complete
+      // --- LOGIC FOR PARTIALLY AUTHENTICATED USERS (Creating Account) ---
       if (isAuthenticated && !isReadyForHome) {
         // Only allow them to be on the Password or Success screen
         if (currentPath == createPasswordPath || currentPath == successPath) {
-          return null;
+          return null; // Let them finish creating their account
         }
-        // Otherwise, force them back to complete the process
-        return successPath;
+        return successPath; // Force them back to complete the process
       }
 
-      // 3. If fully authenticated and ready for home
+      // --- LOGIC FOR FULLY AUTHENTICATED USERS ---
       if (isReadyForHome) {
-        // If they try to go back to login/onboarding/password pages, send them Home
-        if (currentPath == const SplashRoute().location ||
+        // If they are on a "guest" page (login, onboarding, splash, success), we need to move them.
+        final isOnGuestPage = currentPath == const SplashRoute().location ||
             currentPath == onboardingPath ||
             currentPath == createPasswordPath ||
-            currentPath == successPath) {
+            currentPath == successPath ||
+            currentPath.startsWith('/login') ||
+            currentPath.startsWith('/create_account');
+
+        if (isOnGuestPage) {
+          // THE FIX: If they have an intent to view an agreement, go there!
+          if (intentPath != null && intentPath.isNotEmpty) {
+            return intentPath;
+          }
+          // Otherwise, default to Home
           return HomeRoute().location;
+        }
+
+        // If they are on /a/shortCode and are signed in, let them stay there!
+        if (currentPath.startsWith('/a/')) {
+          return null;
         }
       }
 
