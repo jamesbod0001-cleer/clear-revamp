@@ -2,6 +2,7 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/charge/charge.dart';
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -50,6 +51,12 @@ class PaymentOrchestratorView extends ConsumerWidget {
           ref
               .read(createAgreementViewModelProvider(.send).notifier)
               .goTo(.fundsSecured);
+        } else if (next.value?.agreement.initiatorRole == .recipient &&
+            next.value?.agreement.status == .inProgress) {
+          final shortCode = next.value!.agreement.shortCode;
+          ref
+              .read(acceptAgreementViewModelProvider(shortCode).notifier)
+              .goToSuccessStep(next.value!.agreement);
         }
       }
     });
@@ -244,11 +251,6 @@ class _StepSwitcher extends StatelessWidget {
           loadingMessage:
               l10n.weWillUpdateThisScreenOnceYourBankConfirmsThePayment,
         ),
-        // PaymentOrchestratorStep.paymentSecuredSuccessfully =>
-        //   PaymentSecuredSuccessfullyStep(
-        //     key: const ValueKey('success'),
-        //     agreementId: agreementId,
-        //   ),
         PaymentOrchestratorStep.paymentNotSecured => PaymentNotSecuredStep(
           key: const ValueKey('failed'),
           agreementId: agreementId,
@@ -275,11 +277,6 @@ class _OrchestratorFooter extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // if (step == PaymentOrchestratorStep.paymentSecuredSuccessfully) ...[
-        //   PrimaryButton(onPressed: () {}, child: Text(l10n.viewAgreement)),
-        //   Gap(Dimens.spacing.sp12),
-        //   TextButton(onPressed: () {}, child: Text(l10n.goToDashboard)),
-        // ] else
         if (step == PaymentOrchestratorStep.paymentNotSecured) ...[
           Text(
             l10n.ifAnyAmountWasDebitedItWillBeAutomaticallyReversedByYourBank,
