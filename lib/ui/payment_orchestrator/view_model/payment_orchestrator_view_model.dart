@@ -313,7 +313,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
             .then((r) => r.getOrThrow());
         final updatedAgreement = await ref
             .read(agreementUseCaseProvider.notifier)
-            .markAgreementAsFunded(charge.agreementId)
+            .processFundingSuccess(charge.agreementId)
             .then((r) => r.getOrThrow());
         return state.value!.copyWith(
           // currentStep: .paymentSecuredSuccessfully,
@@ -389,7 +389,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
           .then((r) => r.getOrThrow());
       final updatedAgreement = await ref
           .read(agreementUseCaseProvider.notifier)
-          .markAgreementAsFunded(state.value!.agreement.id!)
+          .processFundingSuccess(state.value!.agreement.id!)
           .then((r) => r.getOrThrow());
       return state.value!.copyWith(
         // currentStep: .paymentSecuredSuccessfully,
