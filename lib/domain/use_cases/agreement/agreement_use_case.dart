@@ -324,7 +324,7 @@ class AgreementUseCase extends _$AgreementUseCase {
     return result;
   }
 
-  Future<ResultDart<Agreement, DataFailure>> markAgreementAsFunded(
+  Future<ResultDart<Agreement, DataFailure>> processFundingSuccess(
     String id,
   ) async {
     _log.info('Attempting to get user');
@@ -334,122 +334,90 @@ class AgreementUseCase extends _$AgreementUseCase {
       return Failure(DataFailure.notFound());
     }
 
-    _log.info('Attempting to mark agreement as funded');
+    _log.info('Attempting to process funding success');
     final agreementResult = await _agreementRepository.getAgreement(id);
-    return await agreementResult.fold(
-      (agreement) async {
-        _log.info('Successfully retrieved agreement');
+    if (agreementResult.isError()) {
+      _log.error('Error retrieving agreement', agreementResult.exceptionOrNull());
+      return Failure(agreementResult.exceptionOrNull()!);
+    }
 
-        // 1. NEW IDEMPOTENCY CHECK: Did the webhook already do this?
-        if (agreement.status == AgreementStatus.awaitingRecipient ||
-            agreement.status == AgreementStatus.funded ||
-            agreement.status == AgreementStatus.inProgress) {
-          _log.info(
-            'Agreement already advanced by webhook. Returning success.',
-          );
-          return Success(agreement);
+    final agreement = agreementResult.getOrNull()!;
+
+    // IDEMPOTENCY CHECK: Did the webhook already do this?
+    if ([
+      AgreementStatus.awaitingRecipient,
+      AgreementStatus.funded,
+      AgreementStatus.inProgress,
+    ].contains(agreement.status)) {
+      _log.info('Agreement already advanced by webhook. Returning success.');
+      return Success(agreement);
+    }
+
+    // HANDLE SENDER SCENARIO (Only one step)
+    if (agreement.initiatorRole == InitiatorRole.sender && agreement.status == .draft) {
+      final updated = agreement.copyWith(status: .awaitingRecipient);
+      return await _agreementRepository.updateAgreement(updated, currentUserId: user.id);
+    }
+
+    // HANDLE RECIPIENT SCENARIO (The Two-Step Tracker Requirement)
+    if (agreement.initiatorRole == InitiatorRole.recipient && agreement.status == .awaitingFunding) {
+      // Hit the 'Funded' state so the tracker picks it up
+      _log.info('Transitioning to FUNDED for status tracker');
+      final fundedAgreement = agreement.copyWith(status: .funded);
+      final fundedResult = await _agreementRepository.updateAgreement(
+        fundedAgreement,
+        currentUserId: user.id,
+      );
+
+      if(fundedResult.isError()) {
+        _log.error('Error updating agreement to funded', fundedResult.exceptionOrNull());
+        return Failure(fundedResult.exceptionOrNull()!);
+      }
+
+      // Immediately advance to 'In Progress'
+      _log.info('Transitioning to IN_PROGRESS');
+      final inProgressAgreement = fundedResult.getOrNull()!.copyWith(status: .inProgress);
+      final inProgressResult = await _agreementRepository.updateAgreement(
+        inProgressAgreement,
+        currentUserId: user.id,
+      );
+
+      if(inProgressResult.isError()) {
+        _log.error('Error updating agreement to in progress', inProgressResult.exceptionOrNull());
+        return Failure(inProgressResult.exceptionOrNull()!);
+      }
+
+      // Activate the First Milestone
+      if (inProgressAgreement.disbursementType == DisbursementType.milestones) {
+        _log.info('Activating first milestone');
+        final milestonesResult = await _milestoneRepository.getMilestonesByAgreement(inProgressAgreement.id!);
+
+        if(milestonesResult.isError()) {
+          _log.error('Error retrieving milestones', milestonesResult.exceptionOrNull());
+          return Failure(milestonesResult.exceptionOrNull()!);
         }
 
-        late AgreementStatus updatedStatus;
-        if (agreement.initiatorRole == InitiatorRole.sender &&
-            agreement.status == .draft) {
-          updatedStatus = .awaitingRecipient;
-        } else if (agreement.initiatorRole == InitiatorRole.recipient &&
-            agreement.status == .awaitingFunding) {
-          updatedStatus = .funded;
-        } else {
-          _log.error('Invalid agreement status for funding');
-          _log.error('Agreement current status: ${agreement.status}');
-          return Failure(DataFailure.notFound());
-        }
-        final updatedAgreement = agreement.copyWith(status: updatedStatus);
-        _log.info('Attempting to update agreement');
-        final updateResult = await _agreementRepository.updateAgreement(
-          updatedAgreement,
+        final milestones = milestonesResult.getOrNull()!;
+        final firstMilestone = milestones.where((m) => m.order == 0).firstOrNull;
+
+        if (firstMilestone == null) return Failure(DataFailure.unknown(message: 'No milestones found'));
+
+        final updatedMilestone = firstMilestone.copyWith(status: .inProgress);
+        final milestoneResult = await _milestoneRepository.updateMilestone(
+          updatedMilestone,
           currentUserId: user.id,
         );
-        return await updateResult.fold(
-          (updatedAgreement) async {
-            _log.info('Successfully updated agreement');
-            if (updatedAgreement.status == .funded) {
-              _log.info(
-                'Updating agreement to in progress because it is funded already',
-              );
 
-              /// TODO: meaning I need to take it to in progress immediately
-              updatedAgreement = updatedAgreement.copyWith(status: .inProgress);
-              final result = await _agreementRepository.updateAgreement(
-                updatedAgreement,
-                currentUserId: user.id,
-              );
-              if (updatedAgreement.disbursementType ==
-                  DisbursementType.milestones) {
-                _log.info('Updating first milestone to in progress');
+        if(milestoneResult.isError()) {
+          _log.error('Error updating milestone to in progress', milestoneResult.exceptionOrNull());
+          return Failure(milestoneResult.exceptionOrNull()!);
+        }
+      }
+      // Success! Everything was tracked and advanced properly.
+      return Success(inProgressResult.getOrNull()!);
+    }
 
-                /// TODO: It should update the first milestone to in progress
-                final milestonesResult = await _milestoneRepository
-                    .getMilestonesByAgreement(updatedAgreement.id!);
-                return await milestonesResult.fold(
-                  (milestones) async {
-                    final firstMilestone = milestones.where(
-                      (milestone) => milestone.order == 0,
-                    );
-                    if (firstMilestone.isEmpty) {
-                      _log.error('No milestones found for agreement');
-                      return Failure(
-                        DataFailure.unknown(message: 'No milestones found'),
-                      );
-                    } else {
-                      final firstMilestoneToUpdate = firstMilestone.first;
-                      final updatedMilestone = firstMilestoneToUpdate.copyWith(
-                        status: .inProgress,
-                      );
-                      final result = await _milestoneRepository.updateMilestone(
-                        updatedMilestone,
-                        currentUserId: user.id,
-                      );
-                      return await result.fold(
-                        (updatedMilestone) {
-                          _log.info('Successfully updated milestone');
-                          return Success(updatedAgreement);
-                        },
-                        (failure) {
-                          _log.error('Error updating milestone', failure);
-                          return Failure(failure);
-                        },
-                      );
-                    }
-                  },
-                  (failure) {
-                    _log.error('Error retrieving milestones', failure);
-                    return Failure(failure);
-                  },
-                );
-              }
-              return await result.fold(
-                (updatedAgreement) {
-                  _log.info('Successfully updated agreement');
-                  return Success(updatedAgreement);
-                },
-                (failure) {
-                  _log.error('Error updating agreement', failure);
-                  return Failure(failure);
-                },
-              );
-            }
-            return Success(updatedAgreement);
-          },
-          (failure) {
-            _log.error('Error updating agreement', failure);
-            return Failure(failure);
-          },
-        );
-      },
-      (failure) {
-        _log.error('Error retrieving agreement', failure);
-        return Failure(failure);
-      },
-    );
+    return Failure(DataFailure.unknown(message: 'Invalid agreement status'));
   }
 
   Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreview(
