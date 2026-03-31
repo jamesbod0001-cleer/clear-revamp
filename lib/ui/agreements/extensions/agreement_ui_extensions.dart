@@ -14,8 +14,10 @@ extension AgreementUIExtensions on Agreement {
         return context.color.warningLight;
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
-      case AgreementStatus.cancelled:
+        return context.color.infoLight;
       case AgreementStatus.released:
+        return context.color.successLight;
+      case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
         return context.color.grayComponent;
     }
@@ -29,8 +31,11 @@ extension AgreementUIExtensions on Agreement {
         return context.color.warning;
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
-      case AgreementStatus.cancelled:
+        return context.color.info;
       case AgreementStatus.released:
+        return context.color.success;
+      case AgreementStatus.cancelled:
+        // TODO: Update these with your actual colors when ready
         return context.color.grey800;
     }
   }
@@ -44,8 +49,10 @@ extension AgreementUIExtensions on Agreement {
         return l10n.pending;
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
-      case AgreementStatus.cancelled:
+        return l10n.fundsHeld;
       case AgreementStatus.released:
+        return l10n.released;
+      case AgreementStatus.cancelled:
         // TODO: Add actual l10n strings later
         return "Unknown";
     }
@@ -108,10 +115,11 @@ extension AgreementUIExtensions on Agreement {
   }
 
   DateTime get dueDate {
-    switch(disbursementType){
+    switch (disbursementType) {
       case DisbursementType.oneTime:
         return expectedReleaseDate!;
       case DisbursementType.milestones:
+
         /// TODO: Come back and set it to use the ongoing milestone date
         return DateTime.now();
     }
