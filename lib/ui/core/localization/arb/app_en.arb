@@ -462,7 +462,7 @@
   "confirmYourIdentity": "Confirm your identity",
   "thisHelpsUsToKeepPaymentsSecureAndCompliant": "This helps us keep payments secure and compliant.",
   "verifyYourIdentityToReceiveFunds": "Verify your Identity to Receive Funds",
-  "theBuyerFundsAreNowHeldSafelyYouWillReceivePaymentOnceTheAgreedConditionsAreMet": "The buyer’s funds are now held safely. You’ll receive payment once the agreed conditions are met.",
+  "thePaymentIsNowHeldSecurelyYouWillReceiveFundsOnceTheAgreedConditionsAreMet": "The payment is now held securely. You’ll receive funds once the agreed conditions are met.",
   "agreementWithAccountIsActive": "Your agreement with {accountName} is now active.",
   "@agreementWithAccountIsActive": {
     "description": "Success message shown after an agreement is successfully activated or accepted.",
