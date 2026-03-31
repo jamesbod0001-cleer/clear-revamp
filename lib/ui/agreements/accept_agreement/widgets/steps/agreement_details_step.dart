@@ -170,7 +170,8 @@ class AgreementDetailsStep extends HookConsumerWidget {
                     ),
                     if (previewAgreement.disbursementType == .milestones)
                       _MilestoneBreakdown(
-                        milestones: previewAgreement.milestones!,
+                        milestones: previewAgreement.milestones!
+                          ..sort((a, b) => a.order.compareTo(b.order)),
                       ),
                     _AgreementSummaryCard(previewAgreement: previewAgreement),
                   ]),
