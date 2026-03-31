@@ -76,4 +76,16 @@ class AmplifyMilestoneRepositoryImpl
       targetId: milestone.id,
     );
   }
+
+  @override
+  Stream<Milestone> observeAgreementMilestonesUpdates(String agreementId) {
+    return _amplifyMilestoneServiceClient
+        .observeAgreementMilestonesUpdates(agreementId)
+        .handleError((error) => log.error('Stream error for milestone', error))
+        .where((event) => event.data != null)
+        .map((event) {
+      log.info('New event: Milestone updated: ${event.data}');
+      return event.data!.toDomain();
+    });
+  }
 }

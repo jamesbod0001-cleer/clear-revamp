@@ -26,4 +26,6 @@ abstract class MilestoneRepository {
     Milestone milestone, {
     required String currentUserId,
   });
+
+  Stream<Milestone> observeAgreementMilestonesUpdates(String agreementId);
 }

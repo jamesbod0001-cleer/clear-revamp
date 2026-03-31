@@ -3,7 +3,6 @@ import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:collection/collection.dart';
-import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'agreement_provider.g.dart';
@@ -18,9 +17,14 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
     final updateSub = repository.observeUserAgreementsUpdates().listen((
       incompleteUpdatedItem,
     ) async {
-      final updatedItem = await repository
-          .getAgreement(incompleteUpdatedItem.id!)
-          .getOrThrow();
+      final agreementResult = await repository.getAgreement(
+        incompleteUpdatedItem.id!,
+      );
+      if (agreementResult.isError()) {
+        return;
+      }
+
+      final updatedItem = agreementResult.getOrNull()!;
       final currentList = state.value ?? [];
       final oldItem = currentList.singleWhereOrNull(
         (item) => item.id == updatedItem.id,

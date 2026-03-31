@@ -28,6 +28,16 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
     return validateRequiredResponse(response);
   }
 
+  Stream<GraphQLResponse<Milestone>> observeAgreementMilestonesUpdates(
+    String agreementId,
+  ) {
+    final subscriptionRequest = ModelSubscriptions.onUpdate(
+      Milestone.classType,
+      where: Milestone.AGREEMENT.eq(agreementId),
+    );
+    return _amplifyAPI.subscribe(subscriptionRequest);
+  }
+
   Future<Milestone> createMilestone(Milestone milestone) async {
     final request = ModelMutations.create(
       milestone,
