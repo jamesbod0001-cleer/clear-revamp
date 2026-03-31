@@ -74,6 +74,7 @@ class ChoosePaymentMethodStep extends ConsumerWidget {
               CancelPaymentButton(
                 onPressed: () => CancelAgreementBottomSheet.show(
                   context,
+                  agreement: state.value!.agreement,
                   onCancelAgreement: () => viewModel.cancelAgreement(),
                 ),
               ),

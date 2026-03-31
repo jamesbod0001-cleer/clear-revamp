@@ -473,5 +473,6 @@
       }
     }
   },
-  "yourFundsAreSecurelyHeldYouRemainInControlMoneyIsOnlyReleasedWhenYouApprove": "Your funds are securely held. You remain in control — money is only released when you approve."
+  "yourFundsAreSecurelyHeldYouRemainInControlMoneyIsOnlyReleasedWhenYouApprove": "Your funds are securely held. You remain in control — money is only released when you approve.",
+  "cancellingThisPaymentWillDeclineThisAgreement" :"Cancelling this payment will decline this agreement"
 }

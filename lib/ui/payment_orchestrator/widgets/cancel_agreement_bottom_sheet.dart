@@ -1,32 +1,41 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
+import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CancelAgreementBottomSheet extends StatelessWidget {
+class CancelAgreementBottomSheet extends ConsumerWidget {
   const CancelAgreementBottomSheet({
     super.key,
     required this.onCancelAgreement,
+    required this.agreement,
   });
 
+  final Agreement agreement;
   final VoidCallback onCancelAgreement;
 
   static Future<void> show(
     BuildContext context, {
+    required Agreement agreement,
     required VoidCallback onCancelAgreement,
   }) => CustomBottomSheet.show<void>(
     context: context,
     isDismissible: true,
-    child: CancelAgreementBottomSheet(onCancelAgreement: onCancelAgreement),
+    child: CancelAgreementBottomSheet(
+      onCancelAgreement: onCancelAgreement,
+      agreement: agreement,
+    ),
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
@@ -47,10 +56,15 @@ class CancelAgreementBottomSheet extends StatelessWidget {
           child: Assets.images.x.image(height: Dimens.size.s60),
         ),
         Gap(Dimens.spacing.sp48),
-        Text('${l10n.cancelAgreement}?', style: context.typo.headlineSmall),
+        Text(
+          '${agreement.initiatorRole == .sender ? l10n.cancelAgreement : l10n.declineAgreement}?',
+          style: context.typo.headlineSmall,
+        ),
         Gap(Dimens.spacing.sp12),
         Text(
-          l10n.cancellingThisPaymentWillCancelTheEntireAgreement,
+          agreement.initiatorRole == .sender
+              ? l10n.cancellingThisPaymentWillCancelTheEntireAgreement
+              : l10n.cancellingThisPaymentWillDeclineThisAgreement,
           style: context.typo.bodyMedium.copyWith(color: context.color.grey600),
           textAlign: .center,
         ),
@@ -62,7 +76,7 @@ class CancelAgreementBottomSheet extends StatelessWidget {
         Gap(Dimens.spacing.sp12),
         TextButton(
           style: TextButton.styleFrom(foregroundColor: context.color.error),
-          onPressed: (){
+          onPressed: () {
             context.pop();
             onCancelAgreement();
           },

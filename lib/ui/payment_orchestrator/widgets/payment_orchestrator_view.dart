@@ -270,6 +270,7 @@ class _OrchestratorFooter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
+    final state = ref.watch(paymentOrchestratorViewModelProvider(agreementId));
     final viewModel = ref.read(
       paymentOrchestratorViewModelProvider(agreementId).notifier,
     );
@@ -311,6 +312,7 @@ class _OrchestratorFooter extends ConsumerWidget {
                 CancelPaymentButton(
                   onPressed: () => CancelAgreementBottomSheet.show(
                     context,
+                    agreement: state.value!.agreement,
                     onCancelAgreement: () => viewModel.cancelAgreement(),
                   ),
                 ),
