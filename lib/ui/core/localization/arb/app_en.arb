@@ -474,5 +474,9 @@
     }
   },
   "yourFundsAreSecurelyHeldYouRemainInControlMoneyIsOnlyReleasedWhenYouApprove": "Your funds are securely held. You remain in control — money is only released when you approve.",
-  "cancellingThisPaymentWillDeclineThisAgreement" :"Cancelling this payment will decline this agreement"
+  "cancellingThisPaymentWillDeclineThisAgreement" :"Cancelling this payment will decline this agreement",
+  "youCannotAcceptAnAgreementYouCreated": "You cannot accept an agreement you created.",
+  "youAreNotTheRecipientOfThisAgreement": "You are not the recipient of this agreement.",
+  "youCanOnlyAcceptAgreementsWhereTheRecipientBankAccountIsInYourName": "You can only accept agreements where the recipient bank account is in your name.",
+  "thisAgreementDoesNotBelongToYou": "This agreement does not belong to you."
 }

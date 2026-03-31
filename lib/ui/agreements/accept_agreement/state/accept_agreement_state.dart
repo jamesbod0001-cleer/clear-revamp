@@ -10,6 +10,13 @@ enum AcceptAgreementStep {
   success, // Maps to SuccessStep
 }
 
+enum EligibilityErrorType {
+  cannotAcceptOwn,
+  notTheRecipient,
+  nameMismatch,
+  doesNotBelongToYou,
+}
+
 @freezed
 abstract class AcceptAgreementState with _$AcceptAgreementState {
   const factory AcceptAgreementState({
