@@ -28,83 +28,73 @@ GoRouter router(Ref ref) {
       final authStateValue = ref.read(authUseCaseProvider);
       final authState = authStateValue.value;
       final currentPath = state.uri.path;
-
-      // Capture any redirect intent from the query parameters
-      final String? intentPath = state.uri.queryParameters['redirectTo'];
-
-      if (authStateValue.isLoading ||
-          authState == null ||
-          authState is Unknown) {
-        return currentPath == const SplashRoute().location
-            ? null
-            : const SplashRoute().location;
-      }
-
-      final isAuthenticated = authState.isAuthenticated;
-      final isReadyForHome = authState.isFullyAuthenticated;
+      final String? intentPath = state.uri.queryParameters['redirect-to'] ?? state.uri.queryParameters['redirectTo'];
 
       final onboardingPath = const OnboardingRoute().location;
       final createPasswordPath = '/create_password';
       final successPath = '/registration_success';
 
+      bool isPublicPath(String path) {
+        return path == onboardingPath ||
+            path.startsWith('/login') ||
+            path.startsWith('/create_account') ||
+            path.startsWith('/verify_phone') ||
+            path.startsWith(createPasswordPath) ||
+            path.startsWith('/a/');
+      }
+
+      // --- APP INITIALIZING ---
+      if (authStateValue.isLoading || authState == null || authState is Unknown) {
+
+        // ONLY let deep links bypass the Splash screen during loading!
+        // This prevents the "Onboarding Flash" if the app remembers an old route.
+        if (currentPath.startsWith('/a/')) return null;
+
+        // Force everything else (including onboarding) to wait safely on the Splash screen
+        return currentPath == const SplashRoute().location ? null : const SplashRoute().location;
+      }
+
+      final isAuthenticated = authState.isAuthenticated;
+      final isReadyForHome = authState.isFullyAuthenticated;
+
       // --- LOGIC FOR UNAUTHENTICATED USERS ---
       if (!isAuthenticated) {
-        // ALLOWED paths for guests.
-        final isPublicRoute = currentPath == onboardingPath ||
-            currentPath.startsWith('/login') ||
-            currentPath.startsWith('/create_account') ||
-            currentPath.startsWith('/verify_phone') ||
-            currentPath.startsWith(createPasswordPath) ||
-            currentPath.startsWith('/a/'); // Allow guests to get to accept agreement
-
-        if (isPublicRoute) {
-          return null; // Let them proceed to the public route without interference
-        } else {
-          // Catch-all: If they try to go to /home or /profile unauthenticated, send to onboarding
-          return onboardingPath;
+        if (isPublicPath(currentPath)) {
+          return null;
         }
+        return onboardingPath;
       }
 
       // --- LOGIC FOR PARTIALLY AUTHENTICATED USERS (Creating Account) ---
       if (isAuthenticated && !isReadyForHome) {
-        // Only allow them to be on the Password or Success screen
         if (currentPath == createPasswordPath || currentPath == successPath) {
-          return null; // Let them finish creating their account
+          return null;
         }
-        // THE FIX: When forcing them to the success screen, carry the intent forward!
+
         if (intentPath != null && intentPath.isNotEmpty) {
-          // We append it to the success path
-          return '$successPath?redirectTo=$intentPath';
+          return '$successPath?redirectTo=${Uri.encodeComponent(intentPath)}';
         }
-        return successPath; // Force them back to complete the process
+        return successPath;
       }
 
       // --- LOGIC FOR FULLY AUTHENTICATED USERS ---
       if (isReadyForHome) {
-        // If they are on a "guest" page (login, onboarding, splash, success), we need to move them.
+        if (currentPath.startsWith('/a/')) {
+          return null;
+        }
+
         final isOnGuestPage = currentPath == const SplashRoute().location ||
-            currentPath == onboardingPath ||
-            currentPath == createPasswordPath ||
-            currentPath == successPath ||
-            currentPath.startsWith('/login') ||
-            currentPath.startsWith('/create_account');
+            isPublicPath(currentPath) ||
+            currentPath == successPath;
 
         if (isOnGuestPage) {
-          // THE FIX: If they have an intent to view an agreement, go there!
           if (intentPath != null && intentPath.isNotEmpty) {
             return intentPath;
           }
-          // Otherwise, default to Home
           return HomeRoute().location;
-        }
-
-        // If they are on /a/shortCode and are signed in, let them stay there!
-        if (currentPath.startsWith('/a/')) {
-          return null;
         }
       }
 
       return null;
-    },
-  );
+    },  );
 }

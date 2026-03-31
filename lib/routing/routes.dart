@@ -30,7 +30,10 @@ part 'routes.g.dart';
 
 @TypedGoRoute<SplashRoute>(path: '/')
 class SplashRoute extends GoRouteData with $SplashRoute {
-  const SplashRoute();
+  final String? redirectTo;
+
+  const SplashRoute({this.redirectTo});
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SplashScreen();
@@ -123,12 +126,13 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
 @TypedGoRoute<AcceptAgreementRoute>(path: '/a/:shortCode')
 class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
   final String shortCode;
+  final String? action;
 
-  const AcceptAgreementRoute({required this.shortCode});
+  const AcceptAgreementRoute({required this.shortCode, this.action});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return AcceptAgreementScreen(shortCode: shortCode);
+    return AcceptAgreementScreen(shortCode: shortCode, action: action,);
   }
 }
 
