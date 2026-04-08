@@ -1,8 +1,8 @@
 enum MilestoneStatus {
   pending,
   inProgress,
-  completed,
-  pendingRelease,
+  readyForRelease,
+  processingRelease,
   released,
   disputed,
 }

@@ -47,10 +47,10 @@ MilestoneStatus _mapMilestoneStatusToDomain(amplify_model.MilestoneStatus p) {
       return MilestoneStatus.pending;
     case amplify_model.MilestoneStatus.IN_PROGRESS:
       return MilestoneStatus.inProgress;
-    case amplify_model.MilestoneStatus.COMPLETED:
-      return MilestoneStatus.completed;
-    case amplify_model.MilestoneStatus.PENDING_RELEASE:
-      return MilestoneStatus.pendingRelease;
+    case amplify_model.MilestoneStatus.READY_FOR_RELEASE:
+      return MilestoneStatus.readyForRelease;
+    case amplify_model.MilestoneStatus.PROCESSING_RELEASE:
+      return MilestoneStatus.processingRelease;
     case amplify_model.MilestoneStatus.RELEASED:
       return MilestoneStatus.released;
     case amplify_model.MilestoneStatus.DISPUTED:
@@ -64,10 +64,10 @@ amplify_model.MilestoneStatus _mapMilestoneStatusToAmplify(MilestoneStatus p) {
       return amplify_model.MilestoneStatus.PENDING;
     case MilestoneStatus.inProgress:
       return amplify_model.MilestoneStatus.IN_PROGRESS;
-    case MilestoneStatus.completed:
-      return amplify_model.MilestoneStatus.COMPLETED;
-    case MilestoneStatus.pendingRelease:
-      return amplify_model.MilestoneStatus.PENDING_RELEASE;
+    case MilestoneStatus.readyForRelease:
+      return amplify_model.MilestoneStatus.READY_FOR_RELEASE;
+    case MilestoneStatus.processingRelease:
+      return amplify_model.MilestoneStatus.PROCESSING_RELEASE;
     case MilestoneStatus.released:
       return amplify_model.MilestoneStatus.RELEASED;
     case MilestoneStatus.disputed:

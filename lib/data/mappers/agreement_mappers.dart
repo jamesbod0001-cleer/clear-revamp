@@ -4,7 +4,6 @@ import 'package:cleer/data/mappers/payout_destination_mappers.dart';
 import 'package:cleer/data/mappers/user_mappers.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart' as domain;
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 /// Extensions on the Amplify Agreement model to convert it to the Domain Task entity.
@@ -119,6 +118,10 @@ AgreementStatus _mapAgreementStatusToDomain(amplify_model.AgreementStatus p) {
       return AgreementStatus.funded;
     case amplify_model.AgreementStatus.IN_PROGRESS:
       return AgreementStatus.inProgress;
+    case amplify_model.AgreementStatus.READY_FOR_RELEASE:
+      return AgreementStatus.readyForRelease;
+    case amplify_model.AgreementStatus.PROCESSING_RELEASE:
+      return AgreementStatus.processingRelease;
     case amplify_model.AgreementStatus.CANCELLED:
       return AgreementStatus.cancelled;
     case amplify_model.AgreementStatus.RELEASED:
@@ -138,6 +141,10 @@ amplify_model.AgreementStatus _mapAgreementStatusToAmplify(AgreementStatus p) {
       return amplify_model.AgreementStatus.FUNDED;
     case AgreementStatus.inProgress:
       return amplify_model.AgreementStatus.IN_PROGRESS;
+    case AgreementStatus.readyForRelease:
+      return amplify_model.AgreementStatus.READY_FOR_RELEASE;
+    case AgreementStatus.processingRelease:
+      return amplify_model.AgreementStatus.PROCESSING_RELEASE;
     case AgreementStatus.cancelled:
       return amplify_model.AgreementStatus.CANCELLED;
     case AgreementStatus.released:
