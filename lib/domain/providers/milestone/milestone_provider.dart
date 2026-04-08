@@ -1,5 +1,6 @@
 import 'package:cleer/data/repositories/api/milestone/milestone_repository.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart';
+import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -33,5 +34,35 @@ class AgreementMilestones extends _$AgreementMilestones {
     // Return the initial fetch
     final result = await repository.getMilestonesByAgreement(agreementId);
     return result.getOrThrow()..sort((a, b) => a.order.compareTo(b.order));
+  }
+}
+
+@Riverpod(keepAlive: true)
+class MilestoneStatusHistory extends _$MilestoneStatusHistory {
+  @override
+  FutureOr<List<StatusHistory>> build(String milestoneId) async {
+    ref.watch(userProvider);
+    final repository = ref.watch(milestoneRepositoryProvider);
+
+    final createSub = repository
+        .observeMilestoneStatusHistoryCreates(milestoneId)
+        .listen((createdItem) {
+          final currentList = state.value ?? [];
+
+          state = AsyncData(
+            [...currentList, createdItem]
+              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
+          );
+        });
+
+    // Clean up when the provider is disposed (or when the user changes)
+    ref.onDispose(() {
+      createSub.cancel();
+    });
+
+    // Return the initial fetch
+    final result = await repository.getMilestoneStatusHistory(milestoneId);
+    return result.getOrThrow()
+      ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
   }
 }

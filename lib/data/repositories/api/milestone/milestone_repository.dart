@@ -1,6 +1,7 @@
 import 'package:cleer/data/repositories/api/milestone/amplify_milestone_repository_impl.dart';
 import 'package:cleer/data/services/api/amplify_milestone_service_client.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart';
+import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cleer/domain/failures/data_failures.dart';
@@ -28,4 +29,7 @@ abstract class MilestoneRepository {
   });
 
   Stream<Milestone> observeAgreementMilestonesUpdates(String agreementId);
+
+  Future<ResultDart<List<StatusHistory>, DataFailure>> getMilestoneStatusHistory(String milestoneId);
+  Stream<StatusHistory> observeMilestoneStatusHistoryCreates(String milestoneId);
 }

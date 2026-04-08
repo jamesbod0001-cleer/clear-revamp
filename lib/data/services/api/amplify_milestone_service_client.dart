@@ -1,6 +1,7 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/amplify_models/Milestone.dart';
+import 'package:cleer/data/amplify_models/StatusHistory.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cleer/data/services/amplify_providers.dart';
 import 'package:cleer/data/services/api/mixins/api_error_checker.dart';
@@ -34,6 +35,27 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
     final subscriptionRequest = ModelSubscriptions.onUpdate(
       Milestone.classType,
       where: Milestone.AGREEMENT.eq(agreementId),
+    );
+    return _amplifyAPI.subscribe(subscriptionRequest);
+  }
+
+  Future<PaginatedResult<StatusHistory>> queryMilestoneStatusHistory(
+      String milestoneId,
+      ) async {
+    final request = ModelQueries.list(
+      StatusHistory.classType,
+      where: StatusHistory.MILESTONE.eq(milestoneId),
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
+  Stream<GraphQLResponse<StatusHistory>> observeMilestoneStatusHistoryCreates(
+      String milestoneId,
+      ) {
+    final subscriptionRequest = ModelSubscriptions.onCreate(
+      StatusHistory.classType,
+      where: StatusHistory.MILESTONE.eq(milestoneId),
     );
     return _amplifyAPI.subscribe(subscriptionRequest);
   }

@@ -1,8 +1,10 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/mappers/milestone_mappers.dart';
+import 'package:cleer/data/mappers/status_history_mappers.dart';
 import 'package:cleer/data/repositories/api/milestone/milestone_repository.dart';
 import 'package:cleer/data/services/api/amplify_milestone_service_client.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart';
+import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:cleer/data/repositories/api/mixins/amplify_api_repository_mixin.dart';
 import 'package:cleer/domain/failures/data_failures.dart';
@@ -85,6 +87,40 @@ class AmplifyMilestoneRepositoryImpl
         .where((event) => event.data != null)
         .map((event) {
       log.info('New event: Milestone updated: ${event.data}');
+      return event.data!.toDomain();
+    });
+  }
+
+  @override
+  Future<ResultDart<List<StatusHistory>, DataFailure>>
+  getMilestoneStatusHistory(String milestoneId) async {
+    return await performDataOperation(
+      operation: () async {
+        log.info('Getting status history for milestone: $milestoneId');
+        final response = await _amplifyMilestoneServiceClient
+            .queryMilestoneStatusHistory(milestoneId);
+        log.info('Status history retrieved: ${response.items.length}');
+        return response.items
+            .whereType<amplify_model.StatusHistory>()
+            .map((e) => e.toDomain())
+            .toList();
+      },
+      operationName: 'GetAgreementStatusHistory',
+    );
+  }
+
+  @override
+  Stream<StatusHistory> observeMilestoneStatusHistoryCreates(
+      String milestoneId,
+      ) {
+    return _amplifyMilestoneServiceClient
+        .observeMilestoneStatusHistoryCreates(milestoneId)
+        .handleError(
+          (error) => log.error('Stream error for status history', error),
+    )
+        .where((event) => event.data != null)
+        .map((event) {
+      log.info('New event: Status history created: ${event.data}');
       return event.data!.toDomain();
     });
   }
