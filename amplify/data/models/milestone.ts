@@ -10,7 +10,7 @@ export const Milestone = a.model({
     participants: a.string().array(),
     lastUpdatedBy: a.string(),
 
-    status: a.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'PENDING_RELEASE', 'RELEASED', 'DISPUTED']),
+    status: a.enum(['PENDING', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'RELEASED', 'DISPUTED']),
     agreement: a.belongsTo('Agreement', 'agreementId'),
 
     statusHistory: a.hasMany('StatusHistory', 'milestoneId'),

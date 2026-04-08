@@ -27,7 +27,7 @@ export const Agreement = a.model({
     recipientAccountNumber: a.string().required(),
     recipientBankCode: a.string().required(),
 
-    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'CANCELLED', 'RELEASED']),
+    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'CANCELLED', 'RELEASED']),
 
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
