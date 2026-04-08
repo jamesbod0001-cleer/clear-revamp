@@ -480,5 +480,10 @@
   "youCanOnlyAcceptAgreementsWhereTheRecipientBankAccountIsInYourName": "You can only accept agreements where the recipient bank account is in your name.",
   "thisAgreementDoesNotBelongToYou": "This agreement does not belong to you.",
   "fundsHeld": "Funds Held",
-  "released": "Released"
+  "released": "Released",
+  "agreementStatus": "Agreement Status",
+  "agreementInitiated": "Agreement Initiated",
+  "fundsLocked": "Funds Locked",
+  "agreementAccepted": "Agreement Accepted",
+  "fundsReleased": "Funds Released"
 }
