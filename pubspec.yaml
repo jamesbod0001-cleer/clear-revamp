@@ -77,6 +77,7 @@ dependencies:
   flutter_blurhash: ^0.9.1
   cached_network_image: ^3.4.1
   octo_image: ^2.1.0
+  dotted_line: ^3.2.3
 
 dev_dependencies:
   sentry_dart_plugin: ^3.2.1
