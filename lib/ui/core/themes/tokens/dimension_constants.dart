@@ -5,7 +5,9 @@ class _AppSize {
   final double s0 = 0.0;
   final double s1 = 1.0;
   final double s2 = 2.0;
+  final double s3 = 3.0;
   final double s4 = 4.0;
+  final double s5 = 5.0;
   final double s6 = 6.0;
   final double s8 = 8.0;
 
@@ -24,6 +26,7 @@ class _AppSize {
   final double s44 = 44.0;
   final double s48 = 48.0;
 
+  final double s50 = 50.0;
   final double s52 = 52.0;
   final double s54 = 54.0;
   final double s56 = 56.0;
@@ -51,6 +54,7 @@ class _AppSpacing {
   final double sp10 = 10.0;
   final double sp12 = 12.0;
   final double sp14 = 14.0;
+  final double sp15 = 15.0;
   final double sp16 = 16.0;
 
   final double sp20 = 20.0;
