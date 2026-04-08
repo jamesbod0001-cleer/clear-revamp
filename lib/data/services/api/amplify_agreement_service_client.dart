@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:cleer/data/amplify_models/Agreement.dart';
-import 'package:cleer/data/amplify_models/AgreementPreview.dart';
-import 'package:cleer/data/amplify_models/AgreementStatus.dart';
+import 'package:cleer/data/amplify_models/ModelProvider.dart';
 import 'package:cleer/data/exceptions/backend_exception.dart';
 import 'package:cleer/data/services/api/models/paginated_request/paginated_request.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cleer/data/services/amplify_providers.dart';
 import 'package:cleer/data/services/api/mixins/api_error_checker.dart';
@@ -30,7 +27,6 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
       AgreementModelIdentifier(id: id),
     );
     final response = await _amplifyAPI.query(request: request).response;
-    debugPrint(response.data?.toJson().toString());
     return validateRequiredResponse(response);
   }
 
@@ -120,16 +116,30 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     return validateRequiredResponse(response);
   }
 
-  Stream<GraphQLResponse<Agreement>> observeUserAgreementsCreates() {
-    final subscriptionRequest = ModelSubscriptions.onCreate(
+  Stream<GraphQLResponse<Agreement>> observeUserAgreementsUpdates() {
+    final subscriptionRequest = ModelSubscriptions.onUpdate(
       Agreement.classType,
     );
     return _amplifyAPI.subscribe(subscriptionRequest);
   }
 
-  Stream<GraphQLResponse<Agreement>> observeUserAgreementsUpdates() {
-    final subscriptionRequest = ModelSubscriptions.onUpdate(
-      Agreement.classType,
+  Future<PaginatedResult<StatusHistory>> queryAgreementStatusHistory(
+    String agreementId,
+  ) async {
+    final request = ModelQueries.list(
+      StatusHistory.classType,
+      where: StatusHistory.AGREEMENT.eq(agreementId),
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
+  Stream<GraphQLResponse<StatusHistory>> observeAgreementStatusHistoryCreates(
+    String agreementId,
+  ) {
+    final subscriptionRequest = ModelSubscriptions.onCreate(
+      StatusHistory.classType,
+      where: StatusHistory.AGREEMENT.eq(agreementId),
     );
     return _amplifyAPI.subscribe(subscriptionRequest);
   }
@@ -225,8 +235,8 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
 
     if (joinedAgreementId == null) {
       throw BackendException(
-          'Failed to parse the joined agreement ID.',
-          code: 'ParseError'
+        'Failed to parse the joined agreement ID.',
+        code: 'ParseError',
       );
     }
 

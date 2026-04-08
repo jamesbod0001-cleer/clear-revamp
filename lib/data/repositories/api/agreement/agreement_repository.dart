@@ -3,6 +3,7 @@ import 'package:cleer/data/services/api/amplify_agreement_service_client.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_preview.dart';
 import 'package:cleer/domain/models/paginated_list/paginated_list.dart';
+import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cleer/domain/failures/data_failures.dart';
@@ -29,8 +30,10 @@ abstract class AgreementRepository {
 
   Future<ResultDart<List<Agreement>, DataFailure>> getUserOngoingAgreements();
   Future<ResultDart<PaginatedList<Agreement>, DataFailure>> getUserCompletedAgreements({dynamic nextRequest});
-  Stream<Agreement> observeUserAgreementsCreates();
   Stream<Agreement> observeUserAgreementsUpdates();
+
+  Future<ResultDart<List<StatusHistory>, DataFailure>> getAgreementStatusHistory(String agreementId);
+  Stream<StatusHistory> observeAgreementStatusHistoryCreates(String agreementId);
 
   Future<ResultDart<AgreementPreview, DataFailure>> getAgreementPreview(String shortCode);
   Future<ResultDart<String, DataFailure>> joinAgreement(String shortCode);

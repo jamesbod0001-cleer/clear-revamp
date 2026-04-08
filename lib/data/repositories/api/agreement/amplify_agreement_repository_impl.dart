@@ -3,12 +3,14 @@ import 'package:cleer/data/amplify_models/ModelProvider.dart' as amplify_model;
 import 'package:cleer/data/exceptions/backend_exception.dart';
 import 'package:cleer/data/mappers/agreement_mappers.dart';
 import 'package:cleer/data/mappers/agreement_preview_mappers.dart';
+import 'package:cleer/data/mappers/status_history_mappers.dart';
 import 'package:cleer/data/repositories/api/agreement/agreement_repository.dart';
 import 'package:cleer/data/services/api/amplify_agreement_service_client.dart';
 import 'package:cleer/data/services/api/models/paginated_request/paginated_request.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_preview.dart';
 import 'package:cleer/domain/models/paginated_list/paginated_list.dart';
+import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:cleer/utils/short_code_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:cleer/data/repositories/api/mixins/amplify_api_repository_mixin.dart';
@@ -180,18 +182,6 @@ class AmplifyAgreementRepositoryImpl
   }
 
   @override
-  Stream<Agreement> observeUserAgreementsCreates() {
-    return _amplifyAgreementServiceClient
-        .observeUserAgreementsCreates()
-        .handleError((error) => log.error('Stream error for agreement', error))
-        .where((event) => event.data != null)
-        .map((event) {
-          log.info('New event: Agreement created: ${event.data}');
-          return event.data!.toDomain();
-        });
-  }
-
-  @override
   Stream<Agreement> observeUserAgreementsUpdates() {
     return _amplifyAgreementServiceClient
         .observeUserAgreementsUpdates()
@@ -232,5 +222,39 @@ class AmplifyAgreementRepositoryImpl
       operationName: 'JoinAgreement',
       targetId: shortCode,
     );
+  }
+
+  @override
+  Future<ResultDart<List<StatusHistory>, DataFailure>>
+  getAgreementStatusHistory(String agreementId) async {
+    return await performDataOperation(
+      operation: () async {
+        log.info('Getting status history for agreement: $agreementId');
+        final response = await _amplifyAgreementServiceClient
+            .queryAgreementStatusHistory(agreementId);
+        log.info('Status history retrieved: ${response.items.length}');
+        return response.items
+            .whereType<amplify_model.StatusHistory>()
+            .map((e) => e.toDomain())
+            .toList();
+      },
+      operationName: 'GetAgreementStatusHistory',
+    );
+  }
+
+  @override
+  Stream<StatusHistory> observeAgreementStatusHistoryCreates(
+    String agreementId,
+  ) {
+    return _amplifyAgreementServiceClient
+        .observeAgreementStatusHistoryCreates(agreementId)
+        .handleError(
+          (error) => log.error('Stream error for status history', error),
+        )
+        .where((event) => event.data != null)
+        .map((event) {
+          log.info('New event: Status history created: ${event.data}');
+          return event.data!.toDomain();
+        });
   }
 }
