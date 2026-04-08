@@ -1,5 +1,6 @@
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:cleer/domain/models/milestone/milestone.dart';
 import 'package:cleer/domain/models/user/user.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart'; // For context.color and context.typo
@@ -17,6 +18,8 @@ extension AgreementUIExtensions on Agreement {
         return context.color.infoLight;
       case AgreementStatus.released:
         return context.color.successLight;
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
         return context.color.grayComponent;
@@ -34,6 +37,8 @@ extension AgreementUIExtensions on Agreement {
         return context.color.info;
       case AgreementStatus.released:
         return context.color.success;
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
         return context.color.grey800;
@@ -52,6 +57,8 @@ extension AgreementUIExtensions on Agreement {
         return l10n.fundsHeld;
       case AgreementStatus.released:
         return l10n.released;
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
       case AgreementStatus.cancelled:
         // TODO: Add actual l10n strings later
         return "Unknown";
@@ -78,8 +85,10 @@ extension AgreementUIExtensions on Agreement {
         return l10n.awaitingPaymentStatus(description);
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
-      case AgreementStatus.cancelled:
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
       case AgreementStatus.released:
+      case AgreementStatus.cancelled:
         return l10n.agreementWith(partnerName);
     }
   }
@@ -114,14 +123,15 @@ extension AgreementUIExtensions on Agreement {
     return const SizedBox.shrink();
   }
 
-  DateTime get dueDate {
+  DateTime? dueDate({Milestone? currentlyRunning}) {
     switch (disbursementType) {
       case DisbursementType.oneTime:
         return expectedReleaseDate!;
       case DisbursementType.milestones:
-
-        /// TODO: Come back and set it to use the ongoing milestone date
-        return DateTime.now();
+        if (currentlyRunning != null) {
+          return currentlyRunning.expectedReleaseDate;
+        }
+        return null;
     }
   }
 }
