@@ -1,6 +1,7 @@
 import 'package:cleer/data/repositories/api/agreement/agreement_repository.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:collection/collection.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -68,6 +69,36 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
 
     // Return the initial fetch
     final result = await repository.getUserOngoingAgreements();
+    return result.getOrThrow()
+      ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+  }
+}
+
+@Riverpod(keepAlive: true)
+class AgreementStatusHistory extends _$AgreementStatusHistory {
+  @override
+  FutureOr<List<StatusHistory>> build(String agreementId) async {
+    ref.watch(userProvider);
+    final repository = ref.watch(agreementRepositoryProvider);
+
+    final createSub = repository
+        .observeAgreementStatusHistoryCreates(agreementId)
+        .listen((createdItem) {
+          final currentList = state.value ?? [];
+
+          state = AsyncData(
+            [...currentList, createdItem]
+              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
+          );
+        });
+
+    // Clean up when the provider is disposed (or when the user changes)
+    ref.onDispose(() {
+      createSub.cancel();
+    });
+
+    // Return the initial fetch
+    final result = await repository.getAgreementStatusHistory(agreementId);
     return result.getOrThrow()
       ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
   }
