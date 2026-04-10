@@ -485,5 +485,22 @@
   "agreementInitiated": "Agreement Initiated",
   "fundsLocked": "Funds Locked",
   "agreementAccepted": "Agreement Accepted",
-  "fundsReleased": "Funds Released"
+  "fundsReleased": "Funds Released",
+  "paymentMilestones": "Payment Milestones",
+  "initiatedBy": "Initiated by {name}",
+  "@initiatedBy": {
+    "description": "Shows who created or started the agreement",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Eziamachukwu"
+      }
+    }
+  },
+  "fundsAreSecurelyHeld": "Funds are securely held",
+  "theAgreementIsNowActive": "The agreement is now active",
+  "fundsHaveBeenReleasedToThePayoutAccount": "Funds have been released to the payout account",
+  "agreementHasBeenCompleted": "Agreement has been completed",
+  "inProgress": "In Progress",
+  "inDispute": "In Dispute"
 }
