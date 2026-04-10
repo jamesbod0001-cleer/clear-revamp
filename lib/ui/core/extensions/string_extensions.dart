@@ -48,4 +48,16 @@ extension StringExtensions on String {
     final match = ussdRegex.firstMatch(this);
     return match?.group(0);
   }
+
+  String get maskAccountNumber {
+    String cleanAccount = replaceAll(RegExp(r'[^\d]'), '');
+
+    if (cleanAccount.length < 6) return cleanAccount;
+
+    String prefix = cleanAccount.substring(0, 2);
+    String suffix = cleanAccount.substring(cleanAccount.length - 4);
+    String mask = '*' * (cleanAccount.length - 6);
+
+    return '$prefix$mask$suffix';
+  }
 }
