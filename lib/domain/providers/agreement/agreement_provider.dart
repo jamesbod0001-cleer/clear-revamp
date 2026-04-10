@@ -4,6 +4,7 @@ import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:collection/collection.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'agreement_provider.g.dart';
@@ -12,7 +13,11 @@ part 'agreement_provider.g.dart';
 class UserOngoingAgreements extends _$UserOngoingAgreements {
   @override
   FutureOr<List<Agreement>> build() async {
-    ref.watch(userProvider);
+    final userId = ref.watch(userProvider.select((user) => user.value?.id));
+
+    if (userId == null) {
+      return [];
+    }
     final repository = ref.watch(agreementRepositoryProvider);
 
     final updateSub = repository.observeUserAgreementsUpdates().listen((
@@ -74,11 +79,10 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
   }
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 class AgreementStatusHistory extends _$AgreementStatusHistory {
   @override
   FutureOr<List<StatusHistory>> build(String agreementId) async {
-    ref.watch(userProvider);
     final repository = ref.watch(agreementRepositoryProvider);
 
     final createSub = repository
