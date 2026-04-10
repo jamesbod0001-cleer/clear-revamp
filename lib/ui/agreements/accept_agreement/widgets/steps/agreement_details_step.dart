@@ -7,6 +7,7 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/accept_agreement/state/accept_agreement_state.dart';
 import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
+import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -324,7 +325,12 @@ class _AgreementSummaryCard extends StatelessWidget {
               Gap(Dimens.spacing.sp28),
               Expanded(
                 child: Text(
-                  previewAgreement.recipientAccountNumber ?? '',
+                  previewAgreement.initiatorRole == .recipient
+                      ? previewAgreement
+                                .recipientAccountNumber
+                                ?.maskAccountNumber ??
+                            ''
+                      : previewAgreement.recipientAccountNumber ?? '',
                   style: context.typo.bodyMedium.copyWith(
                     fontWeight: AppFontWeights.regular,
                   ),
