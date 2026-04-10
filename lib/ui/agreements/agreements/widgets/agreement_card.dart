@@ -125,16 +125,14 @@ class AgreementCard extends ConsumerWidget {
                                 Dimens.radius.r20,
                               ),
                             ),
-                            child: Padding(
-                              padding: .symmetric(
-                                horizontal: Dimens.padding.p6,
-                                vertical: Dimens.padding.p3,
-                              ),
-                              child: Text(
-                                agreement.getStatusText(context),
-                                style: context.typo.bodySmall.copyWith(
-                                  color: agreement.getStatusTextColor(context),
-                                ),
+                            padding: .symmetric(
+                              horizontal: Dimens.padding.p6,
+                              vertical: Dimens.padding.p3,
+                            ),
+                            child: Text(
+                              agreement.getStatusText(context),
+                              style: context.typo.bodySmall.copyWith(
+                                color: agreement.getStatusTextColor(context),
                               ),
                             ),
                           ),
