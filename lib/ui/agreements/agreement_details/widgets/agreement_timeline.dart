@@ -1,13 +1,19 @@
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:cleer/domain/models/milestone/milestone.dart';
+import 'package:cleer/domain/models/milestone/milestone_enums.dart';
 import 'package:cleer/domain/models/status_history/status_history.dart';
+import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
@@ -64,7 +70,7 @@ class _StepperItem extends StatelessWidget {
                       dashGapLength: Dimens.size.s3,
                       dashColor: nextLineIsCompleted
                           ? context.color.green800
-                          : Color(0xFFA0BCA2),
+                          : context.color.grey300,
                     ),
                   ),
                 ),
@@ -95,7 +101,6 @@ class _StepperItem extends StatelessWidget {
                       Text(
                         step.title,
                         style: context.typo.bodyMedium.copyWith(
-                          height: 1,
                           color: context.color.grey600,
                         ),
                       ),
@@ -117,11 +122,11 @@ class _StepperItem extends StatelessWidget {
                       ],
                     ],
                   ),
-                  Gap(Dimens.spacing.sp8),
+                  Gap(Dimens.spacing.sp4),
                   Text(
                     step.subtitle,
                     style: context.typo.bodyMedium.copyWith(
-                      height: 1,
+                      fontWeight: AppFontWeights.regular,
                       color: context.color.grey600,
                     ),
                   ),
@@ -135,14 +140,232 @@ class _StepperItem extends StatelessWidget {
   }
 }
 
-class AgreementTimeline extends StatelessWidget {
+class _MilestoneTimelineTile extends HookConsumerWidget {
+  const _MilestoneTimelineTile({
+    required this.milestone,
+    required this.index,
+    required this.isLast,
+  });
+  final Milestone milestone;
+  final int index;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final isExpanded = useState(true);
+    final historyState = ref.watch(
+      milestoneStatusHistoryProvider(milestone.id!),
+    );
+
+    Widget? statusPill() {
+      switch (milestone.status) {
+        case MilestoneStatus.pending:
+          return null;
+        case MilestoneStatus.inProgress:
+        case MilestoneStatus.readyForRelease:
+        case MilestoneStatus.processingRelease:
+          return Ink(
+            decoration: BoxDecoration(
+              color: context.color.warningLight,
+              borderRadius: BorderRadius.circular(Dimens.radius.r20),
+            ),
+            padding: .symmetric(
+              horizontal: Dimens.padding.p6,
+              vertical: Dimens.padding.p3,
+            ),
+            child: Text(
+              l10n.inProgress,
+              style: context.typo.bodySmall.copyWith(
+                color: context.color.warning,
+              ),
+            ),
+          );
+        case MilestoneStatus.released:
+          return Ink(
+            decoration: BoxDecoration(
+              color: context.color.successLight,
+              borderRadius: BorderRadius.circular(Dimens.radius.r20),
+            ),
+            padding: .symmetric(
+              horizontal: Dimens.padding.p6,
+              vertical: Dimens.padding.p3,
+            ),
+            child: Text(
+              l10n.completed,
+              style: context.typo.bodySmall.copyWith(
+                color: context.color.success,
+              ),
+            ),
+          );
+        case MilestoneStatus.disputed:
+          return Ink(
+            decoration: BoxDecoration(
+              color: context.color.errorLight,
+              borderRadius: BorderRadius.circular(Dimens.radius.r20),
+            ),
+            padding: .symmetric(
+              horizontal: Dimens.padding.p6,
+              vertical: Dimens.padding.p3,
+            ),
+            child: Text(
+              l10n.inDispute,
+              style: context.typo.bodySmall.copyWith(
+                color: context.color.error,
+              ),
+            ),
+          );
+      }
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: isLast ? Dimens.padding.p0 : Dimens.padding.p12,
+      ),
+      child: ExpansionTile(
+        backgroundColor: context.color.infoLight,
+        collapsedBackgroundColor: context.color.infoLight,
+        shape: RoundedRectangleBorder(
+          borderRadius: .circular(Dimens.radius.r8),
+        ),
+        collapsedShape: RoundedRectangleBorder(
+          borderRadius: .circular(Dimens.radius.r8),
+        ),
+        childrenPadding: .fromLTRB(
+          37,
+          Dimens.padding.p4,
+          Dimens.padding.p0,
+          Dimens.padding.p12,
+        ),
+        expandedAlignment: .centerLeft,
+        tilePadding: .symmetric(
+          horizontal: Dimens.padding.p12,
+          vertical: Dimens.padding.p4,
+        ),
+        minTileHeight: Dimens.size.s0,
+        initiallyExpanded: true,
+        onExpansionChanged: (value) => isExpanded.value = value,
+        trailing: PhosphorIcon(
+          isExpanded.value
+              ? PhosphorIcons.caretUp()
+              : PhosphorIcons.caretDown(),
+          color: context.color.blue700,
+        ),
+        title: Row(
+          crossAxisAlignment: .start,
+          children: [
+            Padding(
+              padding: statusPill() == null
+                  ? .zero
+                  : EdgeInsets.only(top: Dimens.padding.p2),
+              child: PhosphorIcon(
+                milestone.status == .released
+                    ? PhosphorIcons.checkCircle(.fill)
+                    : PhosphorIcons.circleDashed(.bold),
+                size: Dimens.size.s20,
+                color: context.color.green800,
+              ),
+            ),
+            Gap(Dimens.spacing.sp5),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  spacing: Dimens.spacing.sp8,
+                  children: [
+                    Text(
+                      l10n.milestoneCount(index + 1),
+                      style: context.typo.titleMedium.copyWith(
+                        color: context.color.grey800,
+                      ),
+                    ),
+                    ?statusPill(),
+                  ],
+                ),
+                Gap(Dimens.spacing.sp4),
+                Row(
+                  children: [
+                    Text(
+                      milestone.name,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey600,
+                      ),
+                    ),
+                    Gap(Dimens.spacing.sp4),
+                    Text(
+                      "${l10n.nairaSign}${NumberFormat('#,###.##').format(milestone.amount)}",
+                      style: context.typo.bodyMedium,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        children: [
+          historyState.when(
+            data: (List<StatusHistory> history) {
+              final statusDates = <MilestoneStatus, DateTime>{};
+              for (final h in history) {
+                final status = h.parsedMilestoneStatus;
+                if (status != null && h.createdAt != null) {
+                  statusDates.putIfAbsent(status, () => h.createdAt!);
+                }
+              }
+              final List<Step> steps = [
+                Step(
+                  title: l10n.fundsReleased,
+                  subtitle: l10n.fundsHaveBeenReleasedToThePayoutAccount,
+                  // state: statusDates[] != null
+                  state: false ? StepState.completed : StepState.pending,
+                  date: null,
+                ),
+                Step(
+                  title: l10n.completed,
+                  subtitle: l10n.agreementHasBeenCompleted,
+                  state: false ? StepState.completed : StepState.pending,
+                  date: null,
+                ),
+              ];
+
+              return Column(
+                children: List.generate(steps.length, (mIndex) {
+                  return _StepperItem(
+                    step: steps[mIndex],
+                    isLastStep: mIndex == steps.length - 1,
+                    nextLineIsCompleted:
+                        mIndex < steps.length - 1 &&
+                        steps[mIndex + 1].state.isCompleted,
+                  );
+                }),
+              );
+            },
+
+            /// TODO: Show proper error here
+            error: (Object error, StackTrace stackTrace) =>
+                const SizedBox.shrink(),
+            loading: () => Padding(
+              padding: .symmetric(vertical: Dimens.padding.p16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AgreementTimeline extends HookWidget {
   const AgreementTimeline({
     super.key,
     required this.agreement,
     required this.statusHistory,
+    this.milestones,
   });
   final Agreement agreement;
   final List<StatusHistory> statusHistory;
+  final List<Milestone>? milestones;
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +374,7 @@ class AgreementTimeline extends StatelessWidget {
 
     final sortedHistory = statusHistory.toList()
       ..sort(
-            (a, b) => (a.createdAt ?? DateTime.now()).compareTo(
+        (a, b) => (a.createdAt ?? DateTime.now()).compareTo(
           b.createdAt ?? DateTime.now(),
         ),
       );
@@ -169,7 +392,9 @@ class AgreementTimeline extends StatelessWidget {
       steps.add(
         Step(
           title: l10n.agreementInitiated,
-          subtitle: 'You created the agreement', // Add your l10n here
+          subtitle: l10n.initiatedBy(
+            agreement.initiator!.firstName,
+          ), // Add your l10n here
           state: StepState.completed,
           date: agreement.createdAt,
         ),
@@ -178,7 +403,7 @@ class AgreementTimeline extends StatelessWidget {
       steps.add(
         Step(
           title: l10n.fundsLocked,
-          subtitle: 'Your money is safely held',
+          subtitle: l10n.fundsAreSecurelyHeld,
           state: fundsLockedDate != null
               ? StepState.completed
               : StepState.pending,
@@ -187,56 +412,58 @@ class AgreementTimeline extends StatelessWidget {
       );
       final agreementAcceptedDate =
           statusDates[AgreementStatus.funded] ??
-              statusDates[AgreementStatus.inProgress];
+          statusDates[AgreementStatus.inProgress];
       steps.add(
         Step(
           title: l10n.agreementAccepted,
-          subtitle: 'The agreement is now active',
+          subtitle: l10n.theAgreementIsNowActive,
           state: agreementAcceptedDate != null
               ? StepState.completed
               : StepState.pending,
           date: agreementAcceptedDate,
         ),
       );
-      final fundsReleasedDate = null;
-      steps.add(
-        Step(
-          title: l10n.fundsReleased,
-          subtitle: 'Funds have been released',
-          state: fundsReleasedDate != null
-              ? StepState.completed
-              : StepState.pending,
-          date: fundsReleasedDate,
-        ),
-      );
+      if (agreement.disbursementType == .oneTime) {
+        final fundsReleasedDate = null;
+        steps.add(
+          Step(
+            title: l10n.fundsReleased,
+            subtitle: l10n.fundsHaveBeenReleasedToThePayoutAccount,
+            state: fundsReleasedDate != null
+                ? StepState.completed
+                : StepState.pending,
+            date: fundsReleasedDate,
+          ),
+        );
 
-      final completedDate = null;
-      steps.add(
-        Step(
-          title: l10n.completed,
-          subtitle: 'Agreement has been completed',
-          state: completedDate != null
-              ? StepState.completed
-              : StepState.pending,
-          date: completedDate,
-        ),
-      );
+        final completedDate = null;
+        steps.add(
+          Step(
+            title: l10n.completed,
+            subtitle: l10n.agreementHasBeenCompleted,
+            state: completedDate != null
+                ? StepState.completed
+                : StepState.pending,
+            date: completedDate,
+          ),
+        );
+      }
     } else {
       steps.add(
         Step(
           title: l10n.agreementInitiated,
-          subtitle: 'You created the agreement', // Add your l10n here
+          subtitle: l10n.initiatedBy(agreement.initiator!.firstName),
           state: StepState.completed,
           date: agreement.createdAt,
         ),
       );
       final agreementAcceptedDate =
           statusDates[AgreementStatus.funded] ??
-              statusDates[AgreementStatus.inProgress];
+          statusDates[AgreementStatus.inProgress];
       steps.add(
         Step(
           title: l10n.agreementAccepted,
-          subtitle: 'The agreement is now active',
+          subtitle: l10n.theAgreementIsNowActive,
           state: agreementAcceptedDate != null
               ? StepState.completed
               : StepState.pending,
@@ -245,55 +472,80 @@ class AgreementTimeline extends StatelessWidget {
       );
       final fundsLockedDate =
           statusDates[AgreementStatus.funded] ??
-              statusDates[AgreementStatus.inProgress];
+          statusDates[AgreementStatus.inProgress];
       steps.add(
         Step(
           title: l10n.fundsLocked,
-          subtitle: 'Your money is safely held',
+          subtitle: l10n.fundsAreSecurelyHeld,
           state: fundsLockedDate != null
               ? StepState.completed
               : StepState.pending,
           date: fundsLockedDate,
         ),
       );
-      final fundsReleasedDate = null;
-      steps.add(
-        Step(
-          title: l10n.fundsReleased,
-          subtitle: 'Funds have been released',
-          state: fundsReleasedDate != null
-              ? StepState.completed
-              : StepState.pending,
-          date: fundsReleasedDate,
-        ),
-      );
+      if (agreement.disbursementType == .oneTime) {
+        final fundsReleasedDate = null;
+        steps.add(
+          Step(
+            title: l10n.fundsReleased,
+            subtitle: l10n.fundsHaveBeenReleasedToThePayoutAccount,
+            state: fundsReleasedDate != null
+                ? StepState.completed
+                : StepState.pending,
+            date: fundsReleasedDate,
+          ),
+        );
 
-      final completedDate = null;
-      steps.add(
-        Step(
-          title: l10n.completed,
-          subtitle: 'Agreement has been completed',
-          state: completedDate != null
-              ? StepState.completed
-              : StepState.pending,
-          date: completedDate,
-        ),
-      );
+        final completedDate = null;
+        steps.add(
+          Step(
+            title: l10n.completed,
+            subtitle: l10n.agreementHasBeenCompleted,
+            state: completedDate != null
+                ? StepState.completed
+                : StepState.pending,
+            date: completedDate,
+          ),
+        );
+      }
     }
+
     return Column(
       children: [
-        ProfileSectionHeader(title: l10n.agreementStatus),
-        ...List.generate(steps.length, (index) {
-          return _StepperItem(
-            step: steps[index],
-            isLastStep: index == steps.length - 1,
-            // Next line is green if the NEXT step is completed
-            nextLineIsCompleted:
-            index < steps.length - 1 && steps[index + 1].state.isCompleted,
-          );
-        }),
+        ProfileSectionHeader(
+          title: agreement.disbursementType == .oneTime
+              ? l10n.agreementStatus
+              : l10n.paymentMilestones,
+        ),
+        Padding(
+          padding: agreement.disbursementType == .oneTime
+              ? .zero
+              : .only(left: Dimens.padding.p12, bottom: Dimens.padding.p12),
+          child: Column(
+            children: List.generate(steps.length, (index) {
+              return _StepperItem(
+                step: steps[index],
+                isLastStep: index == steps.length - 1,
+                // Next line is green if the NEXT step is completed
+                nextLineIsCompleted:
+                    index < steps.length - 1 &&
+                    steps[index + 1].state.isCompleted,
+              );
+            }),
+          ),
+        ),
+        if (agreement.disbursementType == DisbursementType.milestones &&
+            milestones != null) ...[
+          Gap(Dimens.spacing.sp12),
+          ...List.generate(milestones!.length, (index) {
+            return _MilestoneTimelineTile(
+              milestone: milestones![index],
+              index: index,
+              isLast: (index + 1) == milestones!.length,
+            );
+          }),
+        ],
       ],
     );
   }
 }
-
