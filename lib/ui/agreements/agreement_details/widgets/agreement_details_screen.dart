@@ -60,11 +60,12 @@ class AgreementDetailsScreen extends ConsumerWidget {
           }
 
           Milestone? currentlyRunning;
+          AsyncValue<List<Milestone>>? milestonesState;
           if (agreement!.disbursementType == .milestones) {
-            final milestonesState = ref.watch(
+            milestonesState = ref.watch(
               agreementMilestonesProvider(agreement.id!),
             );
-            currentlyRunning = milestonesState.value?.currentlyRunning;
+            currentlyRunning = milestonesState!.value?.currentlyRunning;
           }
 
           DateTime? dueDate = agreement.dueDate(
@@ -237,6 +238,11 @@ class AgreementDetailsScreen extends ConsumerWidget {
                       data: (history) => AgreementTimeline(
                         agreement: agreement,
                         statusHistory: history,
+                        milestones:
+                            agreement.disbursementType ==
+                                DisbursementType.milestones
+                            ? milestonesState!.value
+                            : null,
                       ),
                       loading: () => Padding(
                         padding: EdgeInsets.symmetric(
