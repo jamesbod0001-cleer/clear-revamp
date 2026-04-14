@@ -1,7 +1,7 @@
-import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,20 +25,7 @@ class PaymentNotSecuredStep extends ConsumerWidget {
         child: Column(
           mainAxisSize: .min,
           children: [
-            Container(
-              width: Dimens.size.s100,
-              height: Dimens.size.s100,
-              alignment: .center,
-              decoration: BoxDecoration(
-                color: Color(0xFFF11010).withValues(alpha: .07),
-                shape: BoxShape.circle,
-                border: .all(
-                  color: Color(0xFF933B3B).withValues(alpha: .1),
-                  width: Dimens.size.s2,
-                ),
-              ),
-              child: Assets.images.x.image(height: Dimens.size.s60),
-            ),
+            StatusCircleIcon(type: .error),
             Gap(Dimens.spacing.sp48),
             Text(
               l10n.paymentCouldNotBeSecured,

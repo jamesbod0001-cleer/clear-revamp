@@ -1,4 +1,3 @@
-import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart';
@@ -15,6 +14,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -157,24 +157,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                             ),
                           ),
                           Gap(Dimens.spacing.sp24),
-                          Container(
-                            width: Dimens.size.s100,
-                            height: Dimens.size.s100,
-                            alignment: .center,
-                            decoration: BoxDecoration(
-                              color: context.color.white,
-                              shape: BoxShape.circle,
-                              border: .all(
-                                color: context.color.blue800.withValues(
-                                  alpha: .1,
-                                ),
-                                width: Dimens.size.s2,
-                              ),
-                            ),
-                            child: Assets.images.handshake.image(
-                              height: Dimens.size.s50,
-                            ),
-                          ),
+                          StatusCircleIcon(type: .handshake),
                         ],
                       ),
                     ),

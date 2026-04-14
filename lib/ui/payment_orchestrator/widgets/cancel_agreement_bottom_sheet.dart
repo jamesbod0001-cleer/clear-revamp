@@ -1,10 +1,10 @@
-import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
@@ -40,20 +40,7 @@ class CancelAgreementBottomSheet extends ConsumerWidget {
     return Column(
       mainAxisSize: .min,
       children: [
-        Container(
-          width: Dimens.size.s100,
-          height: Dimens.size.s100,
-          alignment: .center,
-          decoration: BoxDecoration(
-            color: Color(0xFFF11010).withValues(alpha: .07),
-            shape: BoxShape.circle,
-            border: .all(
-              color: Color(0xFF933B3B).withValues(alpha: .1),
-              width: Dimens.size.s2,
-            ),
-          ),
-          child: Assets.images.x.image(height: Dimens.size.s60),
-        ),
+        StatusCircleIcon(type: .error),
         Gap(Dimens.spacing.sp48),
         Text(
           '${agreement.initiatorRole == .sender ? l10n.cancelAgreement : l10n.declineAgreement}?',

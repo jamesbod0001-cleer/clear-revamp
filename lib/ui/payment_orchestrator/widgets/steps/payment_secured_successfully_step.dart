@@ -1,7 +1,7 @@
-import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -26,20 +26,7 @@ class PaymentSecuredSuccessfullyStep extends ConsumerWidget {
         child: Column(
           mainAxisSize: .min,
           children: [
-            Container(
-              width: Dimens.size.s100,
-              height: Dimens.size.s100,
-              alignment: .center,
-              decoration: BoxDecoration(
-                color: context.color.white,
-                shape: BoxShape.circle,
-                border: .all(
-                  color: context.color.green700.withValues(alpha: .1),
-                  width: Dimens.size.s2
-                ),
-              ),
-              child: Assets.images.checkmark.image(height: Dimens.size.s60),
-            ),
+            StatusCircleIcon(type: .successOutlined),
             Gap(Dimens.spacing.sp48),
             Text(
               l10n.paymentSecuredSuccessfully,

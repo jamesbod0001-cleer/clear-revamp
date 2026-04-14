@@ -1,10 +1,10 @@
-import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -43,22 +43,7 @@ class SuccessStep extends ConsumerWidget {
                 children: [
                   const Spacer(flex: 148),
                   Gap(Dimens.spacing.sp48),
-                  Container(
-                    width: Dimens.size.s100,
-                    height: Dimens.size.s100,
-                    alignment: .center,
-                    decoration: BoxDecoration(
-                      color: context.color.white,
-                      shape: BoxShape.circle,
-                      border: .all(
-                        color: context.color.green700.withValues(alpha: .1),
-                        width: Dimens.size.s2,
-                      ),
-                    ),
-                    child: Assets.images.checkmark.image(
-                      height: Dimens.size.s60,
-                    ),
-                  ),
+                  StatusCircleIcon(type: .successOutlined),
                   Gap(Dimens.spacing.sp48),
                   Text(
                     agreement.initiatorRole == .sender

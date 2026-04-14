@@ -1,4 +1,3 @@
-import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
@@ -7,6 +6,7 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -60,20 +60,7 @@ class FundsSecuredStep extends ConsumerWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp84),
-                Container(
-                  width: Dimens.size.s100,
-                  height: Dimens.size.s100,
-                  alignment: .center,
-                  decoration: BoxDecoration(
-                    color: context.color.white,
-                    shape: BoxShape.circle,
-                    border: .all(
-                      color: context.color.blue800.withValues(alpha: .1),
-                      width: Dimens.size.s2,
-                    ),
-                  ),
-                  child: Assets.images.shield.image(height: Dimens.size.s60),
-                ),
+                StatusCircleIcon(type: .secured),
                 Gap(Dimens.spacing.sp48),
                 Text(
                   l10n.fundsSecured,
