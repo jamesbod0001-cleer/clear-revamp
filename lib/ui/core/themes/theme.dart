@@ -208,10 +208,12 @@ abstract class AppTheme {
 
   static final _outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
+      foregroundColor: _Palette.blue700,
       backgroundColor: _Palette.transparent,
       minimumSize: Dimens.mobile.buttonMinimumSize,
       textStyle: _labelMedium,
       padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
+      side: BorderSide(color: _Palette.blue700),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.radius.r8),
       ),
