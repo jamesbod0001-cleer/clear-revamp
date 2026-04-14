@@ -7,6 +7,8 @@ part 'transaction.freezed.dart';
 
 @freezed
 abstract class Transaction with _$Transaction {
+  const Transaction._();
+
   const factory Transaction({
     required String? id,
     required PaymentMethodType paymentMethodType,
@@ -18,4 +20,9 @@ abstract class Transaction with _$Transaction {
     String? flutterwavePaymentMethodId,
     Agreement? agreement,
   }) = _Transaction;
+
+  bool get isTerminal =>
+      status == TransactionStatus.successful ||
+      status == TransactionStatus.failed ||
+      status == TransactionStatus.cancelled;
 }

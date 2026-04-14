@@ -13,7 +13,7 @@ import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/buttons.dart';
-import 'package:cleer/ui/payment_orchestrator/widgets/cancel_agreement_bottom_sheet.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/agreement_rejection_bottom_sheet.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/choose_payment_method_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/continue_with_opay_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/enter_card_details_step.dart';
@@ -294,7 +294,7 @@ class _OrchestratorFooter extends ConsumerWidget {
           Gap(Dimens.spacing.sp12),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: context.color.error),
-            onPressed: () => viewModel.cancelAgreement(),
+            onPressed: () => viewModel.handleRejectionFromPaymentFlow(),
             child: Text(l10n.cancelAgreement),
           ),
         ] else ...[
@@ -310,10 +310,10 @@ class _OrchestratorFooter extends ConsumerWidget {
                 ),
                 Gap(Dimens.spacing.sp16),
                 CancelPaymentButton(
-                  onPressed: () => CancelAgreementBottomSheet.show(
+                  onPressed: () => AgreementRejectionBottomSheet.show(
                     context,
                     agreement: state.value!.agreement,
-                    onCancelAgreement: () => viewModel.cancelAgreement(),
+                    onConfirm: () => viewModel.handleRejectionFromPaymentFlow(),
                   ),
                 ),
               ],

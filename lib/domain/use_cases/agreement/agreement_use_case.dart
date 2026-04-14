@@ -343,11 +343,13 @@ class AgreementUseCase extends _$AgreementUseCase {
 
     final agreement = agreementResult.getOrNull()!;
 
-    // IDEMPOTENCY CHECK: Did the webhook already do this?
+    // IDEMPOTENCY CHECK: Did the webhook already do this? Or is the agreement already in a terminal state?
     if ([
       AgreementStatus.awaitingRecipient,
       AgreementStatus.funded,
       AgreementStatus.inProgress,
+      AgreementStatus.cancelled,
+      AgreementStatus.rejected,
     ].contains(agreement.status)) {
       _log.info('Agreement already advanced by webhook. Returning success.');
       return Success(agreement);

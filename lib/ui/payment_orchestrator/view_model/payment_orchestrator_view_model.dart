@@ -294,13 +294,32 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     }
     final transaction = transactionOption.toNullable()!;
 
-    if (transaction.status == .successful) {
-      _log.info('Transaction already marked successful (likely by webhook)');
+    // If the transaction is already "finished" in the DB, don't ask Flutterwave anything.
+    if (transaction.isTerminal) {
+      _log.info(
+        'Transaction already in terminal state: ${transaction.status.name}',
+      );
 
-      // Just refresh the agreement to get the latest state from the backend
-      final updatedAgreement = await _fetchAgreement(state.value!.agreement.id!);
-      return state.value!.copyWith(agreement: updatedAgreement);
+      if (transaction.status == .successful) {
+        final updatedAgreement = await _fetchAgreement(
+          state.value!.agreement.id!,
+        );
+        return state.value!.copyWith(agreement: updatedAgreement);
+      } else {
+        // If it failed or was cancelled in the background, take them back to method selection
+        return state.value!.copyWith(currentStep: .paymentNotSecured);
+      }
     }
+
+    // if (transaction.status == .successful) {
+    //   _log.info('Transaction already marked successful (likely by webhook)');
+    //
+    //   // Just refresh the agreement to get the latest state from the backend
+    //   final updatedAgreement = await _fetchAgreement(
+    //     state.value!.agreement.id!,
+    //   );
+    //   return state.value!.copyWith(agreement: updatedAgreement);
+    // }
 
     switch (charge.status) {
       case ChargeStatus.succeeded:
@@ -415,22 +434,42 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     });
   }
 
-  Future<void> cancelAgreement() async {
+  Future<void> _cleanupActivePayments(
+    PaymentOrchestratorState stateToUse,
+  ) async {
+    final charge = stateToUse.ongoingCharge;
+    final virtualAccount = stateToUse.ongoingVirtualAccount;
+    final currentStep = stateToUse.currentStep;
+
+    // Kill USSD/Card Charge
+    if (charge != null && currentStep == PaymentOrchestratorStep.payWithUSSD) {
+      await cancelTransaction(charge.id);
+    }
+
+    // Kill Bank Transfer
+    if (virtualAccount != null &&
+        currentStep == PaymentOrchestratorStep.payWithBankTransfer) {
+      await cancelTransaction(virtualAccount.id);
+    }
+  }
+
+  Future<void> handleRejectionFromPaymentFlow() async {
     if (state.value!.currentStep != PaymentOrchestratorStep.paymentNotSecured) {
       state = AsyncData(state.value!.copyWith(currentStep: .paymentNotSecured));
       _log.info('Attempting to cancel ongoing transaction');
-      if (state.value!.ongoingCharge != null) {
-        _log.info('Cancelling ongoing transaction');
-        if (state.value!.currentStep == .payWithUSSD) {
-          await cancelTransaction(state.value!.ongoingCharge!.id);
-        }
-      }
-      if (state.value!.ongoingVirtualAccount != null) {
-        if (state.value!.currentStep == .payWithBankTransfer) {
-          _log.info('Cancelling transaction');
-          await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
-        }
-      }
+      await _cleanupActivePayments(state.value!);
+      // if (state.value!.ongoingCharge != null) {
+      //   _log.info('Cancelling ongoing transaction');
+      //   if (state.value!.currentStep == .payWithUSSD) {
+      //     await cancelTransaction(state.value!.ongoingCharge!.id);
+      //   }
+      // }
+      // if (state.value!.ongoingVirtualAccount != null) {
+      //   if (state.value!.currentStep == .payWithBankTransfer) {
+      //     _log.info('Cancelling transaction');
+      //     await cancelTransaction(state.value!.ongoingVirtualAccount!.id);
+      //   }
+      // }
     }
     state = AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -451,8 +490,20 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
           },
         );
       } else {
-        _log.info('Initiator is recipient, cancelling transaction');
-        throw UnimplementedError();
+        _log.info('Initiator is recipient, declining (rejecting) agreement');
+        final result = await ref
+            .read(agreementUseCaseProvider.notifier)
+            .updateAgreement(
+              state.value!.agreement.copyWith(status: .rejected),
+            );
+        return result.fold(
+          (updatedAgreement) {
+            return state.value!.copyWith(agreement: updatedAgreement);
+          },
+          (failure) {
+            throw failure;
+          },
+        );
       }
     });
   }
@@ -467,18 +518,19 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       ),
     );
     _log.info('Attempting to change payment method');
-    if (oldState.ongoingCharge != null) {
-      _log.info('Cancelling ongoing transaction');
-      if (oldState.currentStep == .payWithUSSD) {
-        await cancelTransaction(oldState.ongoingCharge!.id);
-      }
-    }
-    if (oldState.ongoingVirtualAccount != null) {
-      if (oldState.currentStep == .payWithBankTransfer) {
-        _log.info('Cancelling transaction');
-        await cancelTransaction(oldState.ongoingVirtualAccount!.id);
-      }
-    }
+    await _cleanupActivePayments(oldState);
+    // if (oldState.ongoingCharge != null) {
+    //   _log.info('Cancelling ongoing transaction');
+    //   if (oldState.currentStep == .payWithUSSD) {
+    //     await cancelTransaction(oldState.ongoingCharge!.id);
+    //   }
+    // }
+    // if (oldState.ongoingVirtualAccount != null) {
+    //   if (oldState.currentStep == .payWithBankTransfer) {
+    //     _log.info('Cancelling transaction');
+    //     await cancelTransaction(oldState.ongoingVirtualAccount!.id);
+    //   }
+    // }
   }
 
   void retryPayment() async {

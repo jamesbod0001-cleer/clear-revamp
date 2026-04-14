@@ -5,7 +5,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/buttons.dart';
-import 'package:cleer/ui/payment_orchestrator/widgets/cancel_agreement_bottom_sheet.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/agreement_rejection_bottom_sheet.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -72,10 +72,10 @@ class ChoosePaymentMethodStep extends ConsumerWidget {
               ),
               Gap(Dimens.spacing.sp46),
               CancelPaymentButton(
-                onPressed: () => CancelAgreementBottomSheet.show(
+                onPressed: () => AgreementRejectionBottomSheet.show(
                   context,
                   agreement: state.value!.agreement,
-                  onCancelAgreement: () => viewModel.cancelAgreement(),
+                  onConfirm: () => viewModel.handleRejectionFromPaymentFlow(),
                 ),
               ),
             ],

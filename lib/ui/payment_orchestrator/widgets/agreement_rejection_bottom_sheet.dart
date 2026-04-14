@@ -10,25 +10,25 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CancelAgreementBottomSheet extends ConsumerWidget {
-  const CancelAgreementBottomSheet({
+class AgreementRejectionBottomSheet extends ConsumerWidget {
+  const AgreementRejectionBottomSheet({
     super.key,
-    required this.onCancelAgreement,
+    required this.onConfirm,
     required this.agreement,
   });
 
   final Agreement agreement;
-  final VoidCallback onCancelAgreement;
+  final VoidCallback onConfirm;
 
   static Future<void> show(
     BuildContext context, {
     required Agreement agreement,
-    required VoidCallback onCancelAgreement,
+    required VoidCallback onConfirm,
   }) => CustomBottomSheet.show<void>(
     context: context,
     isDismissible: true,
-    child: CancelAgreementBottomSheet(
-      onCancelAgreement: onCancelAgreement,
+    child: AgreementRejectionBottomSheet(
+      onConfirm: onConfirm,
       agreement: agreement,
     ),
   );
@@ -37,20 +37,21 @@ class CancelAgreementBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
+    final isSender = agreement.initiatorRole == .sender;
+    final title = isSender ? l10n.cancelAgreement : l10n.declineAgreement;
+    final description = isSender
+        ? l10n.cancellingThisPaymentWillCancelTheEntireAgreement
+        : l10n.cancellingThisPaymentWillDeclineThisAgreement;
+
     return Column(
       mainAxisSize: .min,
       children: [
         StatusCircleIcon(type: .error),
         Gap(Dimens.spacing.sp48),
-        Text(
-          '${agreement.initiatorRole == .sender ? l10n.cancelAgreement : l10n.declineAgreement}?',
-          style: context.typo.headlineSmall,
-        ),
+        Text('$title?', style: context.typo.headlineSmall),
         Gap(Dimens.spacing.sp12),
         Text(
-          agreement.initiatorRole == .sender
-              ? l10n.cancellingThisPaymentWillCancelTheEntireAgreement
-              : l10n.cancellingThisPaymentWillDeclineThisAgreement,
+          description,
           style: context.typo.bodyMedium.copyWith(color: context.color.grey600),
           textAlign: .center,
         ),
@@ -64,9 +65,9 @@ class CancelAgreementBottomSheet extends ConsumerWidget {
           style: TextButton.styleFrom(foregroundColor: context.color.error),
           onPressed: () {
             context.pop();
-            onCancelAgreement();
+            onConfirm();
           },
-          child: Text(l10n.cancelAgreement),
+          child: Text(title),
         ),
         Gap(Dimens.spacing.sp20),
       ],
