@@ -141,6 +141,8 @@ amplify_model.AgreementStatus _mapAgreementStatusToAmplify(AgreementStatus p) {
       return amplify_model.AgreementStatus.READY_FOR_RELEASE;
     case AgreementStatus.processingRelease:
       return amplify_model.AgreementStatus.PROCESSING_RELEASE;
+    case AgreementStatus.rejected:
+      return amplify_model.AgreementStatus.REJECTED;
     case AgreementStatus.cancelled:
       return amplify_model.AgreementStatus.CANCELLED;
     case AgreementStatus.released:

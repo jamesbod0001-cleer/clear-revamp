@@ -122,6 +122,8 @@ AgreementStatus _mapAgreementStatusToDomain(amplify_model.AgreementStatus p) {
       return AgreementStatus.readyForRelease;
     case amplify_model.AgreementStatus.PROCESSING_RELEASE:
       return AgreementStatus.processingRelease;
+    case amplify_model.AgreementStatus.REJECTED:
+      return AgreementStatus.rejected;
     case amplify_model.AgreementStatus.CANCELLED:
       return AgreementStatus.cancelled;
     case amplify_model.AgreementStatus.RELEASED:
@@ -145,6 +147,8 @@ amplify_model.AgreementStatus _mapAgreementStatusToAmplify(AgreementStatus p) {
       return amplify_model.AgreementStatus.READY_FOR_RELEASE;
     case AgreementStatus.processingRelease:
       return amplify_model.AgreementStatus.PROCESSING_RELEASE;
+    case AgreementStatus.rejected:
+      return amplify_model.AgreementStatus.REJECTED;
     case AgreementStatus.cancelled:
       return amplify_model.AgreementStatus.CANCELLED;
     case AgreementStatus.released:

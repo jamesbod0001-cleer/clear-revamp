@@ -35,5 +35,6 @@ enum AgreementStatus {
   processingRelease,
 
   cancelled,
+  rejected,
   released,
 }

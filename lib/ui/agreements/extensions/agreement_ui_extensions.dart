@@ -20,6 +20,7 @@ extension AgreementUIExtensions on Agreement {
         return context.color.successLight;
       case AgreementStatus.readyForRelease:
       case AgreementStatus.processingRelease:
+      case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
         return context.color.grayComponent;
@@ -39,6 +40,7 @@ extension AgreementUIExtensions on Agreement {
         return context.color.success;
       case AgreementStatus.readyForRelease:
       case AgreementStatus.processingRelease:
+      case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
         return context.color.grey800;
@@ -59,6 +61,7 @@ extension AgreementUIExtensions on Agreement {
         return l10n.released;
       case AgreementStatus.readyForRelease:
       case AgreementStatus.processingRelease:
+      case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Add actual l10n strings later
         return "Unknown";
@@ -88,6 +91,7 @@ extension AgreementUIExtensions on Agreement {
       case AgreementStatus.readyForRelease:
       case AgreementStatus.processingRelease:
       case AgreementStatus.released:
+      case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         return l10n.agreementWith(partnerName);
     }
