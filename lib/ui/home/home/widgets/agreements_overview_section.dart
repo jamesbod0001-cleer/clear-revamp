@@ -43,7 +43,7 @@ class AgreementsOverviewSection extends StatelessWidget {
             children: [
               Expanded(
                 child: _AgreementSummaryCard(
-                  label: l10n.waitingForApproval,
+                  label: l10n.needsYourAction,
                   count: waitingCount,
                   amount: waitingAmount,
                   onTap: () {},
@@ -52,7 +52,7 @@ class AgreementsOverviewSection extends StatelessWidget {
               Gap(Dimens.spacing.sp8),
               Expanded(
                 child: _AgreementSummaryCard(
-                  label: l10n.readyForRelease,
+                  label: l10n.waitingToRelease,
                   count: readyCount,
                   amount: readyAmount,
                   onTap: () {},
