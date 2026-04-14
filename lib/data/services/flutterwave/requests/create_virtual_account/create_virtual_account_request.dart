@@ -37,4 +37,6 @@ class CreateVirtualAccountRequest {
   });
 
   Map<String, dynamic> toJson() => _$CreateVirtualAccountRequestToJson(this);
+
+  factory CreateVirtualAccountRequest.fromJson(Map<String, dynamic> json) => _$CreateVirtualAccountRequestFromJson(json);
 }

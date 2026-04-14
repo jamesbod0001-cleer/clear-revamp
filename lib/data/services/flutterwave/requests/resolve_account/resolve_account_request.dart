@@ -10,6 +10,9 @@ class ResolveAccountRequest {
   ResolveAccountRequest({this.currency = 'NGN',required this.account});
 
   Map<String, dynamic> toJson() => _$ResolveAccountRequestToJson(this);
+
+  factory ResolveAccountRequest.fromJson(Map<String, dynamic> json) =>
+      _$ResolveAccountRequestFromJson(json);
 }
 
 @JsonSerializable()

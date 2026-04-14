@@ -33,4 +33,6 @@ class CreateChargeRequest {
   });
 
   Map<String, dynamic> toJson() => _$CreateChargeRequestToJson(this);
+
+  factory CreateChargeRequest.fromJson(Map<String, dynamic> json) => _$CreateChargeRequestFromJson(json);
 }

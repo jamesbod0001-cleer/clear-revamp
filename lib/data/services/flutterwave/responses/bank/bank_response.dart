@@ -12,4 +12,6 @@ class BankResponse {
 
   factory BankResponse.fromJson(Map<String, dynamic> json) =>
       _$BankResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BankResponseToJson(this);
 }

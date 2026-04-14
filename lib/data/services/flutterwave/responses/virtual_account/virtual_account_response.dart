@@ -45,4 +45,6 @@ class VirtualAccountResponse {
 
   factory VirtualAccountResponse.fromJson(Map<String, dynamic> json) =>
       _$VirtualAccountResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VirtualAccountResponseToJson(this);
 }

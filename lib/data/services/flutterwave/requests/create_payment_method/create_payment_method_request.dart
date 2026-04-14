@@ -23,6 +23,9 @@ class CreatePaymentMethodRequest {
   });
 
   Map<String, dynamic> toJson() => _$CreatePaymentMethodRequestToJson(this);
+
+  factory CreatePaymentMethodRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreatePaymentMethodRequestFromJson(json);
 }
 
 @JsonSerializable(explicitToJson: true)

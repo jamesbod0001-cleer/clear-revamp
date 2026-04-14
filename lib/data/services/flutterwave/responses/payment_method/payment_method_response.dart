@@ -39,6 +39,8 @@ class PaymentMethodResponse {
 
   factory PaymentMethodResponse.fromJson(Map<String, dynamic> json) =>
       _$PaymentMethodResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PaymentMethodResponseToJson(this);
 }
 
 @JsonSerializable()

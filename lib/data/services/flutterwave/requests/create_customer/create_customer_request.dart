@@ -22,4 +22,6 @@ class CreateCustomerRequest {
   });
 
   Map<String, dynamic> toJson() => _$CreateCustomerRequestToJson(this);
+
+  factory CreateCustomerRequest.fromJson(Map<String, dynamic> json) => _$CreateCustomerRequestFromJson(json);
 }

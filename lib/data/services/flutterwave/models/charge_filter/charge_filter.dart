@@ -33,4 +33,7 @@ class ChargeFilter {
   });
 
   Map<String, dynamic> toJson() => _$ChargeFilterToJson(this);
+
+  static ChargeFilter fromJson(Map<String, dynamic> json) =>
+      _$ChargeFilterFromJson(json);
 }

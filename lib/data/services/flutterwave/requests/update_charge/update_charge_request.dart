@@ -11,4 +11,6 @@ class UpdateChargeRequest {
   UpdateChargeRequest({this.meta, this.authorization});
 
   Map<String, dynamic> toJson() => _$UpdateChargeRequestToJson(this);
+
+  factory UpdateChargeRequest.fromJson(Map<String, dynamic> json) => _$UpdateChargeRequestFromJson(json);
 }

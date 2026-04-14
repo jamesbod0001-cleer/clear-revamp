@@ -19,4 +19,6 @@ class ResolveAccountResponse {
 
   factory ResolveAccountResponse.fromJson(Map<String, dynamic> json) =>
       _$ResolveAccountResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResolveAccountResponseToJson(this);
 }

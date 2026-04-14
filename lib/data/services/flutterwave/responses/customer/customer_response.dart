@@ -28,4 +28,7 @@ class CustomerResponse {
 
   factory CustomerResponse.fromJson(Map<String, dynamic> json) =>
       _$CustomerResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CustomerResponseToJson(this);
+
 }
