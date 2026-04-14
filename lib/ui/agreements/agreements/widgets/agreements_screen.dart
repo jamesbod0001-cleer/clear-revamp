@@ -3,6 +3,7 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -33,41 +34,49 @@ class AgreementsScreen extends ConsumerWidget {
           bottom: false,
           child: CustomScrollView(
             slivers: [
+              PinnedHeaderSliver(
+                child: Container(
+                  color: context.color.background,
+                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                    top: Dimens.padding.p4,
+                    bottom: Dimens.padding.p4,
+                  ),
+                  child: _TabBar(l10n: l10n),
+                ),
+              ),
               SliverFillRemaining(
                 child: Padding(
                   padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
                     bottom: MediaQuery.of(context).padding.bottom,
                   ),
-                  child: Column(
+                  child: TabBarView(
                     children: [
-                      Gap(Dimens.spacing.sp4),
-                      _TabBar(l10n: l10n),
-                      Gap(Dimens.spacing.sp28),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            Builder(
+                      Column(
+                        children: [
+                          const _OngoingFiltersRow(),
+                          Expanded(
+                            child: Builder(
                               builder: (BuildContext context) {
+                                final filteredState = ref.watch(
+                                  filteredOngoingAgreementsProvider,
+                                );
 
-                                final userOngoingAgreementsState = ref.watch(userOngoingAgreementsProvider);
-
-                                bool isLoading =
-                                    userOngoingAgreementsState.isLoading;
-
-                                if (isLoading) {
-                                  return Center(
+                                if (filteredState.isLoading) {
+                                  return const Center(
                                     child: CircularProgressIndicator(),
                                   );
                                 }
 
-                                final ongoingAgreements = userOngoingAgreementsState.value;
+                                final ongoingAgreements = filteredState.value;
 
                                 if (ongoingAgreements == null ||
                                     ongoingAgreements.isEmpty) {
+                                  /// TODO: Add empty state
                                   return SizedBox.shrink();
                                 }
 
                                 return ListView.separated(
+                                  padding: .only(top: Dimens.padding.p24),
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                         final agreement =
@@ -86,10 +95,10 @@ class AgreementsScreen extends ConsumerWidget {
                                 );
                               },
                             ),
-                            SingleChildScrollView(),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                      SingleChildScrollView(),
                     ],
                   ),
                 ),
@@ -163,6 +172,73 @@ class _TabBar extends ConsumerWidget {
           ),
           Tab(text: l10n.completed),
         ],
+      ),
+    );
+  }
+}
+
+class _OngoingFiltersRow extends ConsumerWidget {
+  const _OngoingFiltersRow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final currentFilter = ref.watch(ongoingFilterStateProvider);
+    return Container(
+      color: context.color.background,
+      child: Align(
+        alignment: .centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: .horizontal,
+          padding: .only(top: Dimens.padding.p24, bottom: Dimens.padding.p4),
+          child: Row(
+            mainAxisSize: .min,
+            spacing: Dimens.spacing.sp8,
+            children: OngoingAgreementFilter.values.map((filter) {
+              final isSelected = filter == currentFilter;
+              String getFilterText() {
+                return switch (filter) {
+                  OngoingAgreementFilter.all => l10n.all,
+                  OngoingAgreementFilter.needsAction => l10n.needsYourAction,
+                  OngoingAgreementFilter.waitingToRelease =>
+                    l10n.readyToRelease,
+                };
+              }
+
+              return ChoiceChip(
+                label: Text(getFilterText()),
+                selected: isSelected,
+                onSelected: (_) {
+                  ref
+                      .read(ongoingFilterStateProvider.notifier)
+                      .setFilter(filter);
+                },
+                showCheckmark: false,
+                padding: .symmetric(vertical: Dimens.padding.p4),
+                materialTapTargetSize: .shrinkWrap,
+                visualDensity: VisualDensity.compact,
+                color: WidgetStateColor.resolveWith((state) {
+                  if (state.contains(WidgetState.selected)) {
+                    return context.color.blue200;
+                  }
+                  return context.color.background;
+                }),
+                shape: RoundedRectangleBorder(
+                  borderRadius: .circular(Dimens.radius.r32),
+                  side: BorderSide(
+                    color: isSelected
+                        ? context.color.blue700
+                        : context.color.outline,
+                  ),
+                ),
+                labelStyle: context.typo.bodyMedium.copyWith(
+                  fontWeight: AppFontWeights.regular,
+                  color: context.color.grey800,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
