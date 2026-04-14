@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -10,15 +11,30 @@ import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
 import 'package:cleer/ui/home/home/widgets/secured_funds_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+
+    final ongoingState = ref.watch(userOngoingAgreementsProvider);
+    final needsActionList = ref.watch(needsActionAgreementsProvider);
+    final readyForReleaseList = ref.watch(readyForReleaseAgreementsProvider);
+
+    final isLoading = ongoingState.isLoading;
+    final isOngoingEmpty = (ongoingState.value ?? []).isEmpty;
+
+    final shouldShowAgreementsSection =
+        !isLoading &&
+        (isOngoingEmpty ||
+            needsActionList.isNotEmpty ||
+            readyForReleaseList.isNotEmpty);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -165,8 +181,18 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Gap(Dimens.spacing.sp40),
-                    AgreementsOverviewSection(hasAgreements: false),
-                    Gap(Dimens.spacing.sp40),
+                    if (isLoading) ...[
+                      const Center(child: CircularProgressIndicator()),
+                      Gap(Dimens.spacing.sp40),
+                    ]
+                    else if (shouldShowAgreementsSection) ...[
+                      AgreementsOverviewSection(
+                        isOngoingEmpty: isOngoingEmpty,
+                        waitingCount: needsActionList.length,
+                        readyCount: readyForReleaseList.length,
+                      ),
+                      Gap(Dimens.spacing.sp40),
+                    ],
                     QuickActionsSection(),
                     Gap(Dimens.spacing.sp40),
                     Row(

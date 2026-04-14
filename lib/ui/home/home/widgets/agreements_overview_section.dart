@@ -1,4 +1,7 @@
-import 'package:cleer/routing/routes.dart' show CreateAgreementRoute;
+import 'package:cleer/routing/routes.dart'
+    show CreateAgreementRoute, AgreementsRoute;
+import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
+import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -6,27 +9,28 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class AgreementsOverviewSection extends StatelessWidget {
+class AgreementsOverviewSection extends ConsumerWidget {
   const AgreementsOverviewSection({
     super.key,
-    required this.hasAgreements,
+    required this.isOngoingEmpty,
     this.waitingCount = 0,
-    this.waitingAmount = '₦0',
     this.readyCount = 0,
-    this.readyAmount = '₦0',
   });
 
-  final bool hasAgreements;
+  final bool isOngoingEmpty;
   final int waitingCount;
-  final String waitingAmount;
   final int readyCount;
-  final String readyAmount;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+
+    if (!isOngoingEmpty && waitingCount == 0 && readyCount == 0) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +40,7 @@ class AgreementsOverviewSection extends StatelessWidget {
           style: context.typo.titleSmall.copyWith(color: context.color.grey800),
         ),
         Gap(Dimens.spacing.sp12),
-        if (!hasAgreements)
+        if (isOngoingEmpty)
           const _AgreementsEmptyState()
         else
           Row(
@@ -45,8 +49,13 @@ class AgreementsOverviewSection extends StatelessWidget {
                 child: _AgreementSummaryCard(
                   label: l10n.needsYourAction,
                   count: waitingCount,
-                  amount: waitingAmount,
-                  onTap: () {},
+                  onTap: () {
+                    ref.read(agreementsViewModelProvider.notifier)
+                      ..setTabIndex(0)
+                      ..setFilter(OngoingAgreementFilter.needsAction);
+
+                    AgreementsRoute().go(context);
+                  },
                 ),
               ),
               Gap(Dimens.spacing.sp8),
@@ -54,8 +63,13 @@ class AgreementsOverviewSection extends StatelessWidget {
                 child: _AgreementSummaryCard(
                   label: l10n.waitingToRelease,
                   count: readyCount,
-                  amount: readyAmount,
-                  onTap: () {},
+                  onTap: () {
+                    ref.read(agreementsViewModelProvider.notifier)
+                      ..setTabIndex(0)
+                      ..setFilter(OngoingAgreementFilter.waitingToRelease);
+
+                    AgreementsRoute().go(context);
+                  },
                 ),
               ),
             ],
@@ -69,13 +83,11 @@ class _AgreementSummaryCard extends StatelessWidget {
   const _AgreementSummaryCard({
     required this.label,
     required this.count,
-    required this.amount,
     required this.onTap,
   });
 
   final String label;
   final int count;
-  final String amount;
   final VoidCallback onTap;
 
   @override
