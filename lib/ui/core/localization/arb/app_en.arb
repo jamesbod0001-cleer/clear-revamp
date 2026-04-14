@@ -508,5 +508,7 @@
   "requestRelease": "Request Release",
   "raiseDispute": "Raise Dispute",
   "milestoneHasBeenCompleted": "Milestone has been completed",
-  "view": "View"
+  "view": "View",
+  "all": "All",
+  "readyToRelease": "Ready to Release"
 }
