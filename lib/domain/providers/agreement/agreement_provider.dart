@@ -14,9 +14,9 @@ part 'agreement_provider.g.dart';
 class UserOngoingAgreements extends _$UserOngoingAgreements {
   @override
   FutureOr<List<Agreement>> build() async {
-    final userId = ref.watch(userProvider.select((user) => user.value?.id));
+    final user = await ref.watch(userProvider.future);
 
-    if (userId == null) {
+    if (user == null) {
       return [];
     }
     final repository = ref.watch(agreementRepositoryProvider);
@@ -114,4 +114,23 @@ class AgreementStatusHistory extends _$AgreementStatusHistory {
     return result.getOrThrow()
       ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
   }
+}
+
+@riverpod
+List<Agreement> needsActionAgreements(Ref ref) {
+  final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
+  final currentUser = ref.watch(userProvider).value;
+
+  return agreements.where((agreement) {
+    final isPending = agreement.status == AgreementStatus.awaitingRecipient ||
+        agreement.status == AgreementStatus.awaitingFunding;
+    final amINotInitiator = agreement.initiator?.id != currentUser?.id;
+    return isPending && amINotInitiator;
+  }).toList();
+}
+
+@riverpod
+List<Agreement> readyForReleaseAgreements(Ref ref) {
+  final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
+  return agreements.where((a) => a.status == AgreementStatus.readyForRelease).toList();
 }

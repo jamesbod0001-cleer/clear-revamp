@@ -1,15 +1,16 @@
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
-import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
+import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
+import 'package:cleer/ui/agreements/agreements/widgets/ongoing_agreements_view.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
-import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AgreementsScreen extends ConsumerWidget {
+class AgreementsScreen extends HookConsumerWidget {
   const AgreementsScreen({super.key});
 
   @override
@@ -17,94 +18,78 @@ class AgreementsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     ref.watch(userProvider);
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: Dimens.padding.p18,
-          titleTextStyle: context.typo.headlineSmall,
-          title: Container(
-            height: Dimens.size.s54,
-            alignment: .bottomLeft,
-            child: Text(l10n.agreements),
-          ),
-          toolbarHeight: Dimens.size.s70,
+    final initialTabIndex = ref
+        .read(agreementsViewModelProvider)
+        .selectedTabIndex;
+
+    final tabController = useTabController(
+      initialLength: 2,
+      initialIndex: initialTabIndex,
+    );
+
+    useEffect(() {
+      void handleTabChange() {
+        final currentRiverpodIndex = ref
+            .read(agreementsViewModelProvider)
+            .selectedTabIndex;
+
+        if (tabController.index != currentRiverpodIndex) {
+          ref
+              .read(agreementsViewModelProvider.notifier)
+              .setTabIndex(tabController.index);
+        }
+      }
+
+      tabController.addListener(handleTabChange);
+      return () => tabController.removeListener(handleTabChange);
+    }, [tabController]);
+
+    ref.listen(
+      agreementsViewModelProvider.select((state) => state.selectedTabIndex),
+      (previous, next) {
+        if (tabController.index != next) {
+          tabController.animateTo(next);
+        }
+      },
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        titleSpacing: Dimens.padding.p18,
+        titleTextStyle: context.typo.headlineSmall,
+        title: Container(
+          height: Dimens.size.s54,
+          alignment: .bottomLeft,
+          child: Text(l10n.agreements),
         ),
-        body: SafeArea(
-          bottom: false,
-          child: CustomScrollView(
-            slivers: [
-              PinnedHeaderSliver(
-                child: Container(
-                  color: context.color.background,
-                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                    top: Dimens.padding.p4,
-                    bottom: Dimens.padding.p4,
-                  ),
-                  child: _TabBar(l10n: l10n),
+        toolbarHeight: Dimens.size.s70,
+      ),
+      body: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          slivers: [
+            PinnedHeaderSliver(
+              child: Container(
+                color: context.color.background,
+                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                  top: Dimens.padding.p4,
+                  bottom: Dimens.padding.p4,
+                ),
+                child: _TabBar(controller: tabController, l10n: l10n),
+              ),
+            ),
+            SliverFillRemaining(
+              child: Padding(
+                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                  bottom: MediaQuery.of(context).padding.bottom,
+                ),
+                child: TabBarView(
+                  controller: tabController,
+                  children: [OngoingAgreementsView(), SingleChildScrollView()],
                 ),
               ),
-              SliverFillRemaining(
-                child: Padding(
-                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                    bottom: MediaQuery.of(context).padding.bottom,
-                  ),
-                  child: TabBarView(
-                    children: [
-                      Column(
-                        children: [
-                          const _OngoingFiltersRow(),
-                          Expanded(
-                            child: Builder(
-                              builder: (BuildContext context) {
-                                final filteredState = ref.watch(
-                                  filteredOngoingAgreementsProvider,
-                                );
-
-                                if (filteredState.isLoading) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-
-                                final ongoingAgreements = filteredState.value;
-
-                                if (ongoingAgreements == null ||
-                                    ongoingAgreements.isEmpty) {
-                                  /// TODO: Add empty state
-                                  return SizedBox.shrink();
-                                }
-
-                                return ListView.separated(
-                                  padding: .only(top: Dimens.padding.p24),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                        final agreement =
-                                            ongoingAgreements[index];
-                                        return AgreementCard(
-                                          agreement: agreement,
-                                        );
-                                      },
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                        return SizedBox(
-                                          height: Dimens.spacing.sp16,
-                                        );
-                                      },
-                                  itemCount: ongoingAgreements.length,
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      SingleChildScrollView(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -112,9 +97,10 @@ class AgreementsScreen extends ConsumerWidget {
 }
 
 class _TabBar extends ConsumerWidget {
-  const _TabBar({required this.l10n});
+  const _TabBar({required this.l10n, required this.controller});
 
   final AppLocalizations l10n;
+  final TabController controller;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -129,6 +115,7 @@ class _TabBar extends ConsumerWidget {
         borderRadius: BorderRadius.circular(Dimens.radius.r80),
       ),
       child: TabBar(
+        controller: controller,
         dividerColor: Colors.transparent,
         indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimens.radius.r48),
@@ -172,73 +159,6 @@ class _TabBar extends ConsumerWidget {
           ),
           Tab(text: l10n.completed),
         ],
-      ),
-    );
-  }
-}
-
-class _OngoingFiltersRow extends ConsumerWidget {
-  const _OngoingFiltersRow();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final currentFilter = ref.watch(ongoingFilterStateProvider);
-    return Container(
-      color: context.color.background,
-      child: Align(
-        alignment: .centerLeft,
-        child: SingleChildScrollView(
-          scrollDirection: .horizontal,
-          padding: .only(top: Dimens.padding.p24, bottom: Dimens.padding.p4),
-          child: Row(
-            mainAxisSize: .min,
-            spacing: Dimens.spacing.sp8,
-            children: OngoingAgreementFilter.values.map((filter) {
-              final isSelected = filter == currentFilter;
-              String getFilterText() {
-                return switch (filter) {
-                  OngoingAgreementFilter.all => l10n.all,
-                  OngoingAgreementFilter.needsAction => l10n.needsYourAction,
-                  OngoingAgreementFilter.waitingToRelease =>
-                    l10n.readyToRelease,
-                };
-              }
-
-              return ChoiceChip(
-                label: Text(getFilterText()),
-                selected: isSelected,
-                onSelected: (_) {
-                  ref
-                      .read(ongoingFilterStateProvider.notifier)
-                      .setFilter(filter);
-                },
-                showCheckmark: false,
-                padding: .symmetric(vertical: Dimens.padding.p4),
-                materialTapTargetSize: .shrinkWrap,
-                visualDensity: VisualDensity.compact,
-                color: WidgetStateColor.resolveWith((state) {
-                  if (state.contains(WidgetState.selected)) {
-                    return context.color.blue200;
-                  }
-                  return context.color.background;
-                }),
-                shape: RoundedRectangleBorder(
-                  borderRadius: .circular(Dimens.radius.r32),
-                  side: BorderSide(
-                    color: isSelected
-                        ? context.color.blue700
-                        : context.color.outline,
-                  ),
-                ),
-                labelStyle: context.typo.bodyMedium.copyWith(
-                  fontWeight: AppFontWeights.regular,
-                  color: context.color.grey800,
-                ),
-              );
-            }).toList(),
-          ),
-        ),
       ),
     );
   }
