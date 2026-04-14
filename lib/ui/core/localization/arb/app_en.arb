@@ -455,6 +455,7 @@
   "paymentWillBeReleasedInMilestones": "Payment will be released in milestones",
   "acceptAgreement": "Accept Agreement",
   "declineAgreement": "Decline Agreement",
+  "areYouSureYouWantToDeclineThisAgreement": "Are you sure you want to decline this agreement?",
   "continueToPayment": "Continue to Payment",
   "yourFundsWillBeSecurelyHeldAndOnlyReleasedWhenYouApproveDelivery": "Your funds will be securely held and only released when you approve delivery.",
   "acceptToCreateAnAccountAndReceivePaymentSecurely": "Accept to create an account and receive payment securely",
@@ -510,5 +511,7 @@
   "milestoneHasBeenCompleted": "Milestone has been completed",
   "view": "View",
   "all": "All",
-  "readyToRelease": "Ready to Release"
+  "readyToRelease": "Ready to Release",
+  "yesDecline": "Yes, Decline",
+  "close": "Close"
 }
