@@ -168,8 +168,8 @@
   "help": "Help",
   "logs": "Logs",
   "activeAgreements": "Active Agreements",
-  "waitingForApproval": "Waiting for Approval",
-  "readyForRelease": "Ready for Release",
+  "needsYourAction": "Needs your Action",
+  "waitingToRelease": "Waiting to Release",
   "startATransaction": "Start a Transaction",
   "sendFunds": "Send Funds",
   "yourMoneyIsHeldSafelyUntilYouConfirm": "Your money is held safely until you confirm",
@@ -507,5 +507,6 @@
   "releaseFunds": "Release Funds",
   "requestRelease": "Request Release",
   "raiseDispute": "Raise Dispute",
-  "milestoneHasBeenCompleted": "Milestone has been completed"
+  "milestoneHasBeenCompleted": "Milestone has been completed",
+  "view": "View"
 }
