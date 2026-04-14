@@ -82,16 +82,19 @@ class PayoutDestinationCard extends StatelessWidget {
                 ),
                 ?action,
                 if (action == null && showRemove)
-                  GestureDetector(
-                    onTap: () => RemoveBankAccountBottomSheet.show(
-                      context,
-                      payoutDestination,
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.remove,
-                      style: context.typo.bodyLink.copyWith(
-                        color: context.color.error,
-                        decorationColor: context.color.error,
+                  Visibility(
+                    visible: false,
+                    child: GestureDetector(
+                      onTap: () => RemoveBankAccountBottomSheet.show(
+                        context,
+                        payoutDestination,
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.remove,
+                        style: context.typo.bodyLink.copyWith(
+                          color: context.color.error,
+                          decorationColor: context.color.error,
+                        ),
                       ),
                     ),
                   ),
