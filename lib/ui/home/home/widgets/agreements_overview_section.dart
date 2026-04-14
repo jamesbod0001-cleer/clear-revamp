@@ -80,6 +80,8 @@ class _AgreementSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(Dimens.radius.r8),
@@ -87,23 +89,17 @@ class _AgreementSummaryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.color.grayComponent,
           borderRadius: BorderRadius.circular(Dimens.radius.r8),
-          border: Border.all(color: context.color.outline.withAlpha(30)),
+          border: Border.all(
+            color: context.color.outline.withValues(alpha: .30),
+          ),
         ),
-        padding: EdgeInsets.all(Dimens.padding.p12),
+        padding: EdgeInsets.symmetric(
+          horizontal: Dimens.padding.p12,
+          vertical: Dimens.padding.p8,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _Badge(count: count),
-                PhosphorIcon(
-                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
-                  size: Dimens.size.s20,
-                ),
-              ],
-            ),
-            Gap(Dimens.spacing.sp8),
             Text(
               label,
               style: context.typo.bodyMedium.copyWith(
@@ -111,41 +107,49 @@ class _AgreementSummaryCard extends StatelessWidget {
                 fontWeight: AppFontWeights.regular,
               ),
             ),
-            Gap(Dimens.spacing.sp4),
-            Text(
-              amount,
-              style: context.typo.titleSmall.copyWith(
-                color: context.color.grey800,
-              ),
+            Gap(Dimens.spacing.sp8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: .symmetric(horizontal: Dimens.padding.p6),
+                  decoration: BoxDecoration(
+                    color: context.color.outline,
+                    borderRadius: BorderRadius.circular(Dimens.radius.r80),
+                  ),
+
+                  child: Row(
+                    children: [
+                      Text(
+                        l10n.view,
+                        style: context.typo.bodySmall.copyWith(
+                          color: context.color.grey600,
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp4),
+                      Text(
+                        count.toString(),
+                        style: context.typo.bodyMedium.copyWith(
+                          color: context.color.blue700,
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp4),
+                      Text(
+                        l10n.agreements,
+                        style: context.typo.bodySmall.copyWith(
+                          color: context.color.grey600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PhosphorIcon(
+                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                  size: Dimens.size.s20,
+                ),
+              ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  const _Badge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.color.outline,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.radius.r40),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Dimens.padding.p6),
-        child: Center(
-          child: Text(
-            '$count',
-            style: context.typo.bodyMedium.copyWith(
-              color: context.color.blue700,
-            ),
-          ),
         ),
       ),
     );
