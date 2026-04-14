@@ -3,6 +3,7 @@ import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:collection/collection.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -83,6 +84,13 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
 class AgreementStatusHistory extends _$AgreementStatusHistory {
   @override
   FutureOr<List<StatusHistory>> build(String agreementId) async {
+    ref.cacheFor(const Duration(minutes: 5));
+
+    final userId = ref.watch(userProvider.select((user) => user.value?.id));
+    if (userId == null) {
+      return [];
+    }
+
     final repository = ref.watch(agreementRepositoryProvider);
 
     final createSub = repository

@@ -22,7 +22,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'flutterwave_use_case.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   late final FlutterwaveRepository _flutterwaveRepository;
   late final UserRepository _userRepository;
@@ -37,57 +37,6 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     _transactionRepository = ref.watch(transactionRepositoryProvider);
     return;
   }
-
-  // Future<ResultDart<void, Object>> createPaymentMethod(
-  //   CreatePaymentMethodParams params,
-  // ) async {
-  //   _log.info(
-  //     'Attempting to create payment method with type: ${params.runtimeType}',
-  //   );
-  //   final result = await _flutterwaveRepository.createPaymentMethod(params);
-  //   return await result.fold(
-  //     (paymentMethod) async {
-  //       _log.info(
-  //         'Successfully created payment method with id: ${paymentMethod.id}',
-  //       );
-  //       final User user = ref.watch(userProvider).requireValue!;
-  //
-  //       final updatedUser = user.copyWith(
-  //         flutterwavePaymentMethodIds: [
-  //           ...user.flutterwavePaymentMethodIds,
-  //           paymentMethod.id,
-  //         ],
-  //       );
-  //       _log.info(
-  //         'Updating user profile with new payment method id: ${paymentMethod.id}',
-  //       );
-  //       return await _userRepository
-  //           .updateUserProfile(updatedUser)
-  //           .fold(
-  //             (updatedUser) {
-  //               _log.info(
-  //                 'Successfully updated user profile with new payment method id: ${paymentMethod.id}',
-  //               );
-  //               return Success.unit();
-  //             },
-  //             (failure) {
-  //               _log.error(
-  //                 'Error updating user profile with new payment method id: ${paymentMethod.id}',
-  //                 failure,
-  //               );
-  //               return Failure(failure);
-  //             },
-  //           );
-  //     },
-  //     (failure) {
-  //       _log.error(
-  //         'Error creating payment method with type: ${params.runtimeType}',
-  //         failure,
-  //       );
-  //       return Failure(failure);
-  //     },
-  //   );
-  // }
 
   Future<ResultDart<PaymentMethod, Object>> createPaymentMethod(
     CreatePaymentMethodParams params, {

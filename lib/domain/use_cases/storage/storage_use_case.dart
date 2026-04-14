@@ -1,5 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:cleer/data/repositories/media/media_repository.dart';
@@ -23,6 +25,8 @@ class StorageUseCase extends _$StorageUseCase {
 
   @override
   void build() {
+    ref.watch(userProvider.select((user) => user.value?.id));
+
     _storageRepository = ref.watch(storageRepositoryProvider);
     _mediaRepository = ref.watch(mediaRepositoryProvider);
   }
@@ -76,18 +80,7 @@ class StorageUseCase extends _$StorageUseCase {
     String? altText,
     void Function(double)? onProgress,
   }) async {
-    // final user = ref.read(userProvider).value;
-    // if (user == null) {
-    //   _log.error('User state is missing during update');
-    //   return Failure(DataFailure.notFound());
-    // }
     _log.info("Uploading image");
-    // final String extension = p.extension(processedImageResult.file.path).isEmpty
-    //     ? '.jpg'
-    //     : p.extension(processedImageResult.file.path);
-    // final String fullPath =
-    //     'public/users/${user.identityId}/profile_picture$extension';
-    // _log.info('Constructing upload path: $fullPath');
 
     final result = await _storageRepository.uploadFile(
       UploadFileParams(

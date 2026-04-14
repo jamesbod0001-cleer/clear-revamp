@@ -25,7 +25,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'auth_use_case.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthUseCase extends _$AuthUseCase {
   late final AuthRepository _authRepository;
   late final UserRepository _userRepository;

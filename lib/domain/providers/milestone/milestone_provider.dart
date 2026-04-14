@@ -2,6 +2,7 @@ import 'package:cleer/data/repositories/api/milestone/milestone_repository.dart'
 import 'package:cleer/domain/models/milestone/milestone.dart';
 import 'package:cleer/domain/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -45,6 +46,13 @@ class AgreementMilestones extends _$AgreementMilestones {
 class MilestoneStatusHistory extends _$MilestoneStatusHistory {
   @override
   FutureOr<List<StatusHistory>> build(String milestoneId) async {
+    ref.cacheFor(const Duration(minutes: 5));
+
+    final userId = ref.watch(userProvider.select((user) => user.value?.id));
+    if (userId == null) {
+      return [];
+    }
+
     final repository = ref.watch(milestoneRepositoryProvider);
 
     final createSub = repository
