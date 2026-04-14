@@ -316,15 +316,18 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
               final List<Step> steps = [
                 Step(
                   title: l10n.fundsReleased,
-                  subtitle: l10n.fundsHaveBeenReleasedToThePayoutAccount,
-                  // state: statusDates[] != null
-                  state: false ? StepState.completed : StepState.pending,
+                  subtitle: l10n.releaseInitiatedCompletingIn2Hours,
+                  state: statusDates[MilestoneStatus.processingRelease] != null
+                      ? StepState.completed
+                      : StepState.pending,
                   date: null,
                 ),
                 Step(
                   title: l10n.completed,
-                  subtitle: l10n.agreementHasBeenCompleted,
-                  state: false ? StepState.completed : StepState.pending,
+                  subtitle: l10n.milestoneHasBeenCompleted,
+                  state: statusDates[MilestoneStatus.released] != null
+                      ? StepState.completed
+                      : StepState.pending,
                   date: null,
                 ),
               ];
@@ -424,11 +427,12 @@ class AgreementTimeline extends HookWidget {
         ),
       );
       if (agreement.disbursementType == .oneTime) {
-        final fundsReleasedDate = null;
+        final fundsReleasedDate =
+            statusDates[AgreementStatus.processingRelease];
         steps.add(
           Step(
             title: l10n.fundsReleased,
-            subtitle: l10n.fundsHaveBeenReleasedToThePayoutAccount,
+            subtitle: l10n.releaseInitiatedCompletingIn2Hours,
             state: fundsReleasedDate != null
                 ? StepState.completed
                 : StepState.pending,
@@ -436,7 +440,7 @@ class AgreementTimeline extends HookWidget {
           ),
         );
 
-        final completedDate = null;
+        final completedDate = statusDates[AgreementStatus.released];
         steps.add(
           Step(
             title: l10n.completed,
@@ -484,11 +488,12 @@ class AgreementTimeline extends HookWidget {
         ),
       );
       if (agreement.disbursementType == .oneTime) {
-        final fundsReleasedDate = null;
+        final fundsReleasedDate =
+            statusDates[AgreementStatus.processingRelease];
         steps.add(
           Step(
             title: l10n.fundsReleased,
-            subtitle: l10n.fundsHaveBeenReleasedToThePayoutAccount,
+            subtitle: l10n.releaseInitiatedCompletingIn2Hours,
             state: fundsReleasedDate != null
                 ? StepState.completed
                 : StepState.pending,
@@ -496,7 +501,7 @@ class AgreementTimeline extends HookWidget {
           ),
         );
 
-        final completedDate = null;
+        final completedDate = statusDates[AgreementStatus.released];
         steps.add(
           Step(
             title: l10n.completed,

@@ -499,12 +499,13 @@
   },
   "fundsAreSecurelyHeld": "Funds are securely held",
   "theAgreementIsNowActive": "The agreement is now active",
-  "fundsHaveBeenReleasedToThePayoutAccount": "Funds have been released to the payout account",
+  "releaseInitiatedCompletingIn2Hours": "Release initiated. Completing in 2 hours.",
   "agreementHasBeenCompleted": "Agreement has been completed",
   "inProgress": "In Progress",
   "inDispute": "In Dispute",
   "agreementDetails": "Agreement Details",
   "releaseFunds": "Release Funds",
   "requestRelease": "Request Release",
-  "raiseDispute": "Raise Dispute"
+  "raiseDispute": "Raise Dispute",
+  "milestoneHasBeenCompleted": "Milestone has been completed"
 }
