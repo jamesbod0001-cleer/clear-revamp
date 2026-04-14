@@ -7,7 +7,7 @@ extension UserToDomainMapper on amplify_model.User {
   domain.User toDomain() {
     return domain.User(
       id: id,
-      identityId: identityId ?? '',
+      identityId: identityId,
       phoneNumber: phoneNumber,
       firstName: firstName,
       lastName: lastName,

@@ -1,4 +1,3 @@
-import 'package:cleer/domain/models/milestone/milestone_enums.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'milestone_preview.freezed.dart';
