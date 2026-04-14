@@ -34,7 +34,7 @@ class RemoveBankAccountBottomSheet extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    final state = ref.watch(payoutDestinationViewModelProvider);
+    ref.watch(payoutDestinationViewModelProvider);
     final viewModel = ref.read(payoutDestinationViewModelProvider.notifier);
 
     final deletePayoutDestinationCommand =

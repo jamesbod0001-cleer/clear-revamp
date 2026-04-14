@@ -23,7 +23,7 @@ class RecipientIdentityTile extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    final state = ref.watch(createAgreementViewModelProvider(type));
+    ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 
     final resolveRecipientDetailsCommand =

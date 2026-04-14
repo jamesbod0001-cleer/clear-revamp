@@ -36,7 +36,7 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     ref.watch(getBanksProvider(.NG));
 
-    final state = ref.watch(payoutDestinationViewModelProvider);
+    ref.watch(payoutDestinationViewModelProvider);
     final viewModel = ref.read(payoutDestinationViewModelProvider.notifier);
     final resolveAccountCommand =
         viewModel.resolveAccountForPayoutDestinationCommand;
