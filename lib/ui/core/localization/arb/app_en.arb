@@ -502,5 +502,9 @@
   "fundsHaveBeenReleasedToThePayoutAccount": "Funds have been released to the payout account",
   "agreementHasBeenCompleted": "Agreement has been completed",
   "inProgress": "In Progress",
-  "inDispute": "In Dispute"
+  "inDispute": "In Dispute",
+  "agreementDetails": "Agreement Details",
+  "releaseFunds": "Release Funds",
+  "requestRelease": "Request Release",
+  "raiseDispute": "Raise Dispute"
 }
