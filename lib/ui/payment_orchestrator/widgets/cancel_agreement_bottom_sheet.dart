@@ -5,7 +5,6 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
-import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
