@@ -16,19 +16,21 @@ class AgreementsOverviewSection extends ConsumerWidget {
   const AgreementsOverviewSection({
     super.key,
     required this.isOngoingEmpty,
-    this.waitingCount = 0,
-    this.readyCount = 0,
+    this.needsActionCount = 0,
+    this.awaitingOtherPartyCount = 0,
   });
 
   final bool isOngoingEmpty;
-  final int waitingCount;
-  final int readyCount;
+  final int needsActionCount;
+  final int awaitingOtherPartyCount;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    if (!isOngoingEmpty && waitingCount == 0 && readyCount == 0) {
+    if (!isOngoingEmpty &&
+        needsActionCount == 0 &&
+        awaitingOtherPartyCount == 0) {
       return const SizedBox.shrink();
     }
 
@@ -48,7 +50,7 @@ class AgreementsOverviewSection extends ConsumerWidget {
               Expanded(
                 child: _AgreementSummaryCard(
                   label: l10n.needsYourAction,
-                  count: waitingCount,
+                  count: needsActionCount,
                   onTap: () {
                     ref.read(agreementsViewModelProvider.notifier)
                       ..setTabIndex(0)
@@ -61,12 +63,12 @@ class AgreementsOverviewSection extends ConsumerWidget {
               Gap(Dimens.spacing.sp8),
               Expanded(
                 child: _AgreementSummaryCard(
-                  label: l10n.waitingToRelease,
-                  count: readyCount,
+                  label: l10n.awaitingOtherParty,
+                  count: awaitingOtherPartyCount,
                   onTap: () {
                     ref.read(agreementsViewModelProvider.notifier)
                       ..setTabIndex(0)
-                      ..setFilter(OngoingAgreementFilter.waitingToRelease);
+                      ..setFilter(OngoingAgreementFilter.awaitingOtherParty);
 
                     AgreementsRoute().go(context);
                   },

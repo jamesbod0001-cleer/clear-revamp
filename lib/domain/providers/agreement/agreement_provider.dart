@@ -36,35 +36,43 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
       final oldItem = currentList.singleWhereOrNull(
         (item) => item.id == updatedItem.id,
       );
+
+      // Define what makes an agreement "Ongoing"
+      final isOngoingStatus = [
+        AgreementStatus.awaitingFunding,
+        AgreementStatus.awaitingRecipient,
+        AgreementStatus.funded,
+        AgreementStatus.inProgress,
+        AgreementStatus.readyForRelease,
+      ].contains(updatedItem.status);
+
+      // Define what makes an agreement "Dead"
+      final isTerminalStatus = [
+        AgreementStatus.released,
+        AgreementStatus.rejected,
+        AgreementStatus.cancelled,
+      ].contains(updatedItem.status);
+
       if (oldItem == null) {
-        // Meaning it is new to ongoing
-        if (updatedItem.status == .awaitingFunding ||
-            updatedItem.status == .awaitingRecipient) {
-          // It is ongoing
+        // It's new to the list. If it's an ongoing state, add it!
+        if (isOngoingStatus) {
           state = AsyncData(
             [updatedItem, ...currentList]
               ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
           );
         }
       } else {
-        // Meaning it is already part of ongoing
-        if ([
-          AgreementStatus.funded,
-          AgreementStatus.inProgress,
-        ].contains(updatedItem.status)) {
+        // It's already in the list.
+        if (isOngoingStatus) {
+          // It's still ongoing, so just update the data
           state = AsyncData(
             currentList
                 .map((item) => item.id == updatedItem.id ? updatedItem : item)
                 .toList()
               ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
           );
-        } else if (updatedItem.status == AgreementStatus.released) {
-          // Meaning it is completed now
-          state = AsyncData(
-            currentList.where((item) => item.id != updatedItem.id).toList()
-              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
-          );
-        } else if (updatedItem.status == AgreementStatus.rejected) {
+        } else if (isTerminalStatus) {
+          // It reached a final state, remove it from the ongoing list!
           state = AsyncData(
             currentList.where((item) => item.id != updatedItem.id).toList()
               ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
@@ -131,14 +139,27 @@ List<Agreement> needsActionAgreements(Ref ref) {
         agreement.status == AgreementStatus.awaitingRecipient ||
         agreement.status == AgreementStatus.awaitingFunding;
     final amINotInitiator = agreement.initiator?.id != currentUser?.id;
-    return isPending && amINotInitiator;
+    final isSender = agreement.sender?.id == currentUser?.id;
+
+    return (isPending && amINotInitiator) ||
+        (agreement.status == .readyForRelease && isSender);
   }).toList();
 }
 
 @riverpod
-List<Agreement> readyForReleaseAgreements(Ref ref) {
+List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
   final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
-  return agreements
-      .where((a) => a.status == AgreementStatus.readyForRelease)
-      .toList();
+  final currentUser = ref.watch(userProvider).value;
+
+  return agreements.where((agreement) {
+    final isPending =
+        agreement.status == AgreementStatus.awaitingRecipient ||
+        agreement.status == AgreementStatus.awaitingFunding;
+    final amIInitiator = agreement.initiator?.id == currentUser?.id;
+
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
+
+    return (isPending && amIInitiator) ||
+        (agreement.status == .readyForRelease && isRecipient);
+  }).toList();
 }

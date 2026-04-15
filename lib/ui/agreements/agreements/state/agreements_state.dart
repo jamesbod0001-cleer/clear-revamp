@@ -5,7 +5,7 @@ part 'agreements_state.freezed.dart';
 enum OngoingAgreementFilter {
   all,
   needsAction,
-  waitingToRelease,
+  awaitingOtherParty,
 }
 
 @freezed

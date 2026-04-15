@@ -46,7 +46,7 @@ AsyncValue<List<Agreement>> agreementsScreenList(Ref ref) {
       return AsyncData(agreementsState.value ?? []);
     case OngoingAgreementFilter.needsAction:
       return AsyncData(ref.watch(needsActionAgreementsProvider));
-    case OngoingAgreementFilter.waitingToRelease:
-      return AsyncData(ref.watch(readyForReleaseAgreementsProvider));
+    case OngoingAgreementFilter.awaitingOtherParty:
+      return AsyncData(ref.watch(awaitingOtherPartyAgreementsProvider));
   }
 }

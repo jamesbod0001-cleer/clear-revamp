@@ -169,7 +169,6 @@
   "logs": "Logs",
   "activeAgreements": "Active Agreements",
   "needsYourAction": "Needs your Action",
-  "waitingToRelease": "Waiting to Release",
   "startATransaction": "Start a Transaction",
   "sendFunds": "Send Funds",
   "yourMoneyIsHeldSafelyUntilYouConfirm": "Your money is held safely until you confirm",
@@ -528,7 +527,7 @@
   "milestoneHasBeenCompleted": "Milestone has been completed",
   "view": "View",
   "all": "All",
-  "readyToRelease": "Ready to Release",
+  "awaitingOtherParty": "Awaiting Other Party",
   "yesDecline": "Yes, Decline",
   "close": "Close"
 }

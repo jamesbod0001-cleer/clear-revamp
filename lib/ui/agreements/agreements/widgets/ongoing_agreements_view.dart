@@ -76,8 +76,8 @@ class _OngoingFiltersRow extends ConsumerWidget {
                 return switch (filter) {
                   OngoingAgreementFilter.all => l10n.all,
                   OngoingAgreementFilter.needsAction => l10n.needsYourAction,
-                  OngoingAgreementFilter.waitingToRelease =>
-                    l10n.readyToRelease,
+                  OngoingAgreementFilter.awaitingOtherParty =>
+                    l10n.awaitingOtherParty,
                 };
               }
 

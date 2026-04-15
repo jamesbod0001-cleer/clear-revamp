@@ -24,7 +24,7 @@ class HomeScreen extends ConsumerWidget {
 
     final ongoingState = ref.watch(userOngoingAgreementsProvider);
     final needsActionList = ref.watch(needsActionAgreementsProvider);
-    final readyForReleaseList = ref.watch(readyForReleaseAgreementsProvider);
+    final readyForReleaseList = ref.watch(awaitingOtherPartyAgreementsProvider);
 
     final isLoading = ongoingState.isLoading;
     final isOngoingEmpty = (ongoingState.value ?? []).isEmpty;
@@ -188,8 +188,8 @@ class HomeScreen extends ConsumerWidget {
                     else if (shouldShowAgreementsSection) ...[
                       AgreementsOverviewSection(
                         isOngoingEmpty: isOngoingEmpty,
-                        waitingCount: needsActionList.length,
-                        readyCount: readyForReleaseList.length,
+                        needsActionCount: needsActionList.length,
+                        awaitingOtherPartyCount: readyForReleaseList.length,
                       ),
                       Gap(Dimens.spacing.sp40),
                     ],
