@@ -233,7 +233,7 @@ abstract class AppTheme {
     ),
   );
 
-  static ThemeData lightTheme = ThemeData(
+  static final ThemeData lightTheme = ThemeData(
     fontFamily: _AppFontConstants.rethinkSans,
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
