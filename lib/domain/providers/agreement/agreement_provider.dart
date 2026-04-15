@@ -64,6 +64,11 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
             currentList.where((item) => item.id != updatedItem.id).toList()
               ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
           );
+        } else if (updatedItem.status == AgreementStatus.rejected) {
+          state = AsyncData(
+            currentList.where((item) => item.id != updatedItem.id).toList()
+              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
+          );
         }
       }
     });
@@ -122,7 +127,8 @@ List<Agreement> needsActionAgreements(Ref ref) {
   final currentUser = ref.watch(userProvider).value;
 
   return agreements.where((agreement) {
-    final isPending = agreement.status == AgreementStatus.awaitingRecipient ||
+    final isPending =
+        agreement.status == AgreementStatus.awaitingRecipient ||
         agreement.status == AgreementStatus.awaitingFunding;
     final amINotInitiator = agreement.initiator?.id != currentUser?.id;
     return isPending && amINotInitiator;
@@ -132,5 +138,7 @@ List<Agreement> needsActionAgreements(Ref ref) {
 @riverpod
 List<Agreement> readyForReleaseAgreements(Ref ref) {
   final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
-  return agreements.where((a) => a.status == AgreementStatus.readyForRelease).toList();
+  return agreements
+      .where((a) => a.status == AgreementStatus.readyForRelease)
+      .toList();
 }
