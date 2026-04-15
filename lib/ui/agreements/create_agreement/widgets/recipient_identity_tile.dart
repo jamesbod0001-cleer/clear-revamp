@@ -23,8 +23,20 @@ class RecipientIdentityTile extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    ref.watch(createAgreementViewModelProvider(type));
+    final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
+
+    // --- ADD THIS UI KILL SWITCH ---
+    final formData = state.value?.formData;
+    final isRecipientDetailsValid = formData?.recipientBank != null &&
+        formData?.recipientAccountNumber.length == 10;
+
+    // If the input is invalid (e.g. 9 digits), instantly hide the tile.
+    // This stops the loading spinner, hides old errors, and hides old names immediately!
+    if (!isRecipientDetailsValid) {
+      return const SizedBox.shrink();
+    }
+    // -------------------------------
 
     final resolveRecipientDetailsCommand =
         viewModel.resolveRecipientDetailsCommand;

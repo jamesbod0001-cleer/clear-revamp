@@ -30,51 +30,130 @@ class CreateAgreementViewModel extends _$CreateAgreementViewModel {
   late Command<void, RecipientResolution?> resolveRecipientDetailsCommand;
 
   Future<RecipientResolution?> _resolveRecipientDetails() async {
-    final currentState = state.value;
-    if (currentState == null) return null;
-    final formData = state.value!.formData;
+    // A continuous loop inside the locked command!
+    while (true) {
+      final currentState = state.value;
+      if (currentState == null) return null;
+      final formData = currentState.formData;
 
-    if (formData.recipientResolution?.accountNumber ==
-            formData.recipientAccountNumber &&
-        formData.recipientResolution?.bankCode ==
-            formData.recipientBank?.code) {
-      return formData.recipientResolution;
-    }
+      // 1. Capture the targets
+      final targetAccountNumber = formData.recipientAccountNumber;
+      final targetBankCode = formData.recipientBank?.code;
 
-    state = AsyncValue.data(
-      state.value!.copyWith(
-        formData: formData.copyWith(recipientResolution: null),
-      ),
-    );
+      if (targetBankCode == null || targetAccountNumber.length != 10) {
+        return null; // Safety exit
+      }
 
-    final result = await ref
-        .read(agreementUseCaseProvider.notifier)
-        .resolveRecipientDetails(
-          accountNumber: formData.recipientAccountNumber,
-          bankCode: formData.recipientBank!.code,
+      if (formData.recipientResolution?.accountNumber == targetAccountNumber &&
+          formData.recipientResolution?.bankCode == targetBankCode) {
+        return formData.recipientResolution;
+      }
+
+      // ---------------------------------------------------------
+      // THE NEW DEBOUNCE:
+      // Wait 500ms BEFORE hitting the API. Because we are already inside
+      // the command, the UI is already showing a beautiful loading spinner!
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Check if the user typed something else while we were waiting
+      final postDelayFormData = state.value?.formData;
+      if (postDelayFormData?.recipientAccountNumber != targetAccountNumber ||
+          postDelayFormData?.recipientBank?.code != targetBankCode) {
+        _log.info(
+          'Input changed during debounce delay. Looping to catch new input.',
         );
+        continue;
+      }
+      // ---------------------------------------------------------
 
-    return await result.fold(
-      (recipientResolution) {
-        state = AsyncValue.data(
-          state.value!.copyWith(
-            formData: state.value!.formData.copyWith(
-              recipientResolution: recipientResolution,
+      // 2. Make the API Call
+      final result = await ref
+          .read(agreementUseCaseProvider.notifier)
+          .resolveRecipientDetails(
+            accountNumber: targetAccountNumber,
+            bankCode: targetBankCode,
+          );
+
+      // 3. THE MAGIC CHECK: Did the user change the text field during the API call?
+      final latestFormData = state.value?.formData;
+      if (latestFormData?.recipientAccountNumber != targetAccountNumber ||
+          latestFormData?.recipientBank?.code != targetBankCode) {
+        _log.info('Input changed during API call. Silently looping.');
+        continue;
+      }
+
+      // 4. It matches! Safely update the state and return to the UI.
+      return await result.fold(
+        (recipientResolution) {
+          state = AsyncValue.data(
+            state.value!.copyWith(
+              formData: state.value!.formData.copyWith(
+                recipientResolution: recipientResolution,
+              ),
             ),
-          ),
-        );
-        return recipientResolution;
-      },
-      (failure) {
-        state = AsyncValue.data(
-          state.value!.copyWith(
-            formData: state.value!.formData.copyWith(recipientResolution: null),
-          ),
-        );
-        throw failure;
-      },
-    );
+          );
+          return recipientResolution;
+        },
+        (failure) {
+          state = AsyncValue.data(
+            state.value!.copyWith(
+              formData: state.value!.formData.copyWith(
+                recipientResolution: null,
+              ),
+            ),
+          );
+          throw failure;
+        },
+      );
+    }
   }
+
+  // Future<RecipientResolution?> _resolveRecipientDetails() async {
+  //   final currentState = state.value;
+  //   if (currentState == null) return null;
+  //   final formData = state.value!.formData;
+  //
+  //   if (formData.recipientResolution?.accountNumber ==
+  //           formData.recipientAccountNumber &&
+  //       formData.recipientResolution?.bankCode ==
+  //           formData.recipientBank?.code) {
+  //     return formData.recipientResolution;
+  //   }
+  //
+  //   state = AsyncValue.data(
+  //     state.value!.copyWith(
+  //       formData: formData.copyWith(recipientResolution: null),
+  //     ),
+  //   );
+  //
+  //   final result = await ref
+  //       .read(agreementUseCaseProvider.notifier)
+  //       .resolveRecipientDetails(
+  //         accountNumber: formData.recipientAccountNumber,
+  //         bankCode: formData.recipientBank!.code,
+  //       );
+  //
+  //   return await result.fold(
+  //     (recipientResolution) {
+  //       state = AsyncValue.data(
+  //         state.value!.copyWith(
+  //           formData: state.value!.formData.copyWith(
+  //             recipientResolution: recipientResolution,
+  //           ),
+  //         ),
+  //       );
+  //       return recipientResolution;
+  //     },
+  //     (failure) {
+  //       state = AsyncValue.data(
+  //         state.value!.copyWith(
+  //           formData: state.value!.formData.copyWith(recipientResolution: null),
+  //         ),
+  //       );
+  //       throw failure;
+  //     },
+  //   );
+  // }
 
   Future<void> initiateAgreement() async {
     _log.info('Initiating agreement');

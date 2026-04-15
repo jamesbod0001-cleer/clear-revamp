@@ -121,6 +121,24 @@ class AgreementSetupStep extends HookConsumerWidget {
     final resolveRecipientDetailsCommand =
         viewModel.resolveRecipientDetailsCommand;
 
+    // useEffect(() {
+    //   // 1. Instantly clear old errors and old values the millisecond they type
+    //   resolveRecipientDetailsCommand.clearErrors();
+    //   resolveRecipientDetailsCommand.value = null;
+    //
+    //   Timer? debounceTimer;
+    //
+    //   if (isRecipientDetailsValid) {
+    //     // Wait 500ms before hitting the API.
+    //     debounceTimer = Timer(const Duration(milliseconds: 500), () {
+    //       resolveRecipientDetailsCommand.run();
+    //     });
+    //   }
+    //
+    //   // Cleanup the timer
+    //   return () => debounceTimer?.cancel();
+    // }, [selectedBank.value, accountNumberController.text]);
+
     useEffect(() {
       resolveRecipientDetailsCommand.clearErrors();
       if (isRecipientDetailsValid) {
