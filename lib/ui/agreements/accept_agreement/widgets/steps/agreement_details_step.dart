@@ -7,6 +7,7 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/accept_agreement/state/accept_agreement_state.dart';
 import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
+import 'package:cleer/ui/agreements/accept_agreement/widgets/decline_agreement_bottom_sheet.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
@@ -14,6 +15,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/form_error.dart';
+import 'package:cleer/ui/core/ui/status_circle_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -44,12 +46,16 @@ class AgreementDetailsStep extends HookConsumerWidget {
     String? getErrorMessage() {
       switch (errorType) {
         case EligibilityErrorType.cannotAcceptOwn:
-          return l10n.youCannotAcceptAnAgreementYouCreated;
+          return l10n.youCannotActionAnAgreementYouCreated(
+            action ?? l10n.accept.toLowerCase(),
+          );
         case EligibilityErrorType.notTheRecipient:
           return l10n.youAreNotTheRecipientOfThisAgreement;
         case EligibilityErrorType.nameMismatch:
           return l10n
-              .youCanOnlyAcceptAgreementsWhereTheRecipientBankAccountIsInYourName;
+              .youCanOnlyActionAgreementsWhereTheRecipientBankAccountIsInYourName(
+                action ?? l10n.accept.toLowerCase(),
+              );
         case EligibilityErrorType.doesNotBelongToYou:
           return l10n.thisAgreementDoesNotBelongToYou;
         case null:
@@ -85,11 +91,18 @@ class AgreementDetailsStep extends HookConsumerWidget {
       }
     }
 
-    void handleDecline() {
-      // TODO: Call viewModel.declineAgreement()
-    }
-
     final isAutoProcessing = useState(action != null);
+
+    Future<void> handleDecline() async {
+      bool? isDeclining = await DeclineAgreementBottomSheet.show(
+        context,
+        onConfirm: () async {
+          context.pop(true);
+          await viewModel.declineAgreement();
+        },
+      );
+      isAutoProcessing.value = isDeclining ?? false;
+    }
 
     final hasAutoTriggered = useRef(false);
     useEffect(() {
@@ -140,16 +153,28 @@ class AgreementDetailsStep extends HookConsumerWidget {
           if (state.hasError &&
               state.error is UnknownDataFailure &&
               (state.error as UnknownDataFailure).code == 'BackendException') {
+            String? errorMessage =
+                state.error != null && state.error is UnknownDataFailure
+                ? (state.error as UnknownDataFailure).message
+                : null;
             return Padding(
               padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-              child: Center(
-                child: FormError(
-                  hasError: state.hasError,
-                  errorMessage:
-                      state.error != null && state.error is UnknownDataFailure
-                      ? (state.error as UnknownDataFailure).message
-                      : null,
-                ),
+              child: Column(
+                children: [
+                  const Spacer(flex: 196),
+                  StatusCircleIcon(type: .error),
+                  Gap(Dimens.spacing.sp24),
+                  Text(
+                    errorMessage ?? l10n.unknownExceptionMessage,
+                    style: context.typo.headlineSmall,
+                  ),
+                  const Spacer(flex: 328),
+                  OutlinedButton(
+                    onPressed: () => HomeRoute().go(context),
+                    child: Text(l10n.goToDashboard),
+                  ),
+                  Gap(Dimens.spacing.sp20),
+                ],
               ),
             );
           }

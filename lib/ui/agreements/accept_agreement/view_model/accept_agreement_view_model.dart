@@ -216,4 +216,22 @@ class AcceptAgreementViewModel extends _$AcceptAgreementViewModel {
       );
     }
   }
+
+  Future<void> declineAgreement() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final agreement = await _joinAndGetAgreement();
+      final updateResult = await ref
+          .read(agreementUseCaseProvider.notifier)
+          .updateAgreement(agreement.copyWith(status: .rejected));
+      return updateResult.fold(
+        (updatedAgreement) {
+          return state.value!.copyWith(agreement: updatedAgreement);
+        },
+        (failure) {
+          throw failure;
+        },
+      );
+    });
+  }
 }

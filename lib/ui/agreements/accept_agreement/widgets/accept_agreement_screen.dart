@@ -1,3 +1,4 @@
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/accept_agreement/state/accept_agreement_state.dart';
 import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/steps/agreement_details_step.dart';
@@ -19,6 +20,14 @@ class AcceptAgreementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(acceptAgreementViewModelProvider((shortCode)));
+
+    ref.listen(acceptAgreementViewModelProvider((shortCode)), (previous, next) {
+      if (previous?.value?.agreement?.status != next.value?.agreement?.status) {
+        if (next.value?.agreement?.status == .rejected) {
+          HomeRoute().go(context);
+        }
+      }
+    });
 
     final currentStep =
         state.value?.currentStep ?? AcceptAgreementStep.agreementDetails;
