@@ -39,7 +39,8 @@ class PaymentOrchestratorView extends ConsumerWidget {
       next,
     ) {
       if (previous?.value?.agreement.status != next.value?.agreement.status) {
-        if (next.value?.agreement.status == .cancelled) {
+        if (next.value?.agreement.status == .cancelled ||
+            next.value?.agreement.status == .rejected) {
           /// TODO: It might not go home if the user is on the web
           HomeRoute().go(context);
         }
