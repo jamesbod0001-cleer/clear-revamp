@@ -15,6 +15,15 @@ part 'payout_destination_view_model.g.dart';
 class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
   final _log = AmplifyLogger("PayoutDestinationViewModel");
 
+  // 1. ADD THESE TO TRACK LIVE INPUT
+  String? _targetBankCode;
+  String? _targetAccountNumber;
+
+  void updateResolutionTargets(String? bankCode, String? accountNumber) {
+    _targetBankCode = bankCode;
+    _targetAccountNumber = accountNumber;
+  }
+
   @override
   void build() {
     resolveAccountForPayoutDestinationCommand =
@@ -45,42 +54,107 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
   deletePayoutDestinationCommand;
 
   Future<String> _resolveAccountForPayoutDestination(
-    ResolveAccountParams params,
-  ) async {
+      ResolveAccountParams params,
+      ) async {
     final user = ref.read(userProvider).value;
     if (user == null) throw DataFailure.notFound();
-    final result = await ref
-        .read(flutterwaveUseCaseProvider.notifier)
-        .resolveAccount(params);
-    return result.fold(
-      (resolveAccountName) {
-        final fullName = "${user.firstName} ${user.lastName}";
 
-        final isMatch = IdentityUtils.isNameMatch(
-          userName: fullName,
-          bankAccountName: resolveAccountName,
-        );
+    // 2. THE SELF-HEALING LOOP
+    while (true) {
+      final bankCode = _targetBankCode;
+      final accountNumber = _targetAccountNumber;
 
-        if (!isMatch) {
-          _log.warn(
-            "Name Mismatch: App ($fullName) vs Bank ($resolveAccountName)",
+      // Safety exit if they deleted the input
+      if (bankCode == null || accountNumber == null || accountNumber.length != 10) {
+        return '';
+      }
+
+      // Wait 500ms before hitting Flutterwave
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Did the user type a new number while we waited?
+      if (_targetBankCode != bankCode || _targetAccountNumber != accountNumber) {
+        _log.info('Input changed during debounce. Looping.');
+        continue;
+      }
+
+      // Hit the API using the safely captured variables
+      final result = await ref
+          .read(flutterwaveUseCaseProvider.notifier)
+          .resolveAccount(
+        ResolveAccountParams(bankCode: bankCode, accountNumber: accountNumber),
+      );
+
+      // Did the user type a new number while the API was loading?
+      if (_targetBankCode != bankCode || _targetAccountNumber != accountNumber) {
+        _log.info('Input changed during API call. Silently looping.');
+        continue;
+      }
+
+      // 4. Safe to process and return
+      return result.fold(
+            (resolveAccountName) {
+          final fullName = "${user.firstName} ${user.lastName}";
+          final isMatch = IdentityUtils.isNameMatch(
+            userName: fullName,
+            bankAccountName: resolveAccountName,
           );
-          // Throw a custom failure that Cleer can catch and show in the UI
-          throw DataFailure.unknown(
-            message:
-                "The resolved account name '$resolveAccountName' does not match your profile name. Please use an account in your name.",
-          );
-        }
 
-        _log.info("Account verified: $resolveAccountName");
-        return resolveAccountName;
-      },
-      (failure) {
-        _log.error("Error resolving account: $failure");
-        throw failure;
-      },
-    );
+          if (!isMatch) {
+            _log.warn("Name Mismatch: App ($fullName) vs Bank ($resolveAccountName)");
+            throw DataFailure.unknown(
+              message: "The resolved account name '$resolveAccountName' does not match your profile name. Please use an account in your name.",
+            );
+          }
+
+          _log.info("Account verified: $resolveAccountName");
+          return resolveAccountName;
+        },
+            (failure) {
+          _log.error("Error resolving account: $failure");
+          throw failure;
+        },
+      );
+    }
   }
+
+  // Future<String> _resolveAccountForPayoutDestination(
+  //   ResolveAccountParams params,
+  // ) async {
+  //   final user = ref.read(userProvider).value;
+  //   if (user == null) throw DataFailure.notFound();
+  //   final result = await ref
+  //       .read(flutterwaveUseCaseProvider.notifier)
+  //       .resolveAccount(params);
+  //   return result.fold(
+  //     (resolveAccountName) {
+  //       final fullName = "${user.firstName} ${user.lastName}";
+  //
+  //       final isMatch = IdentityUtils.isNameMatch(
+  //         userName: fullName,
+  //         bankAccountName: resolveAccountName,
+  //       );
+  //
+  //       if (!isMatch) {
+  //         _log.warn(
+  //           "Name Mismatch: App ($fullName) vs Bank ($resolveAccountName)",
+  //         );
+  //         // Throw a custom failure that Cleer can catch and show in the UI
+  //         throw DataFailure.unknown(
+  //           message:
+  //               "The resolved account name '$resolveAccountName' does not match your profile name. Please use an account in your name.",
+  //         );
+  //       }
+  //
+  //       _log.info("Account verified: $resolveAccountName");
+  //       return resolveAccountName;
+  //     },
+  //     (failure) {
+  //       _log.error("Error resolving account: $failure");
+  //       throw failure;
+  //     },
+  //   );
+  // }
 
   Future<PayoutDestination?> _createPayoutDestination(
     PayoutDestination payoutDestination,

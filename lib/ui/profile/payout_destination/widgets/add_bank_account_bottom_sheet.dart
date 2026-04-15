@@ -81,9 +81,15 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
     }, [createPayoutDestinationCommand]);
 
     useEffect(() {
-      resolveAccountCommand.clearErrors();
-      // createPayoutDestinationCommand.clearErrors();
+      // Feed the live text to the ViewModel so the loop knows what to look for
+      viewModel.updateResolutionTargets(
+        selectedBank.value?.code,
+        accountNumberController.text,
+      );
+
       if (isFormValid) {
+        resolveAccountCommand.clearErrors();
+        // The loop inside handles the 500ms delay, so we run instantly here
         resolveAccountCommand.run(
           ResolveAccountParams(
             bankCode: selectedBank.value!.code,
@@ -91,11 +97,30 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
           ),
         );
       } else {
+        // Eager reset if they hit backspace
+        resolveAccountCommand.clearErrors();
         resolveAccountCommand.value = '';
         createPayoutDestinationCommand.value = null;
       }
       return null;
     }, [isFormValid, selectedBank.value, accountNumberController.text]);
+
+    // useEffect(() {
+    //   resolveAccountCommand.clearErrors();
+    //   // createPayoutDestinationCommand.clearErrors();
+    //   if (isFormValid) {
+    //     resolveAccountCommand.run(
+    //       ResolveAccountParams(
+    //         bankCode: selectedBank.value!.code,
+    //         accountNumber: accountNumberController.text,
+    //       ),
+    //     );
+    //   } else {
+    //     resolveAccountCommand.value = '';
+    //     createPayoutDestinationCommand.value = null;
+    //   }
+    //   return null;
+    // }, [isFormValid, selectedBank.value, accountNumberController.text]);
 
     return Stack(
       children: [
@@ -161,6 +186,10 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
               ValueListenableBuilder(
                 valueListenable: resolveAccountCommand.isRunning,
                 builder: (BuildContext context, bool isRunning, Widget? child) {
+                  if (!isFormValid) {
+                    return const SizedBox.shrink();
+                  }
+
                   if (isRunning) {
                     return Padding(
                       padding: EdgeInsets.only(top: Dimens.padding.p16),
