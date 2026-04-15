@@ -77,8 +77,14 @@ class CreateAgreementScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: currentStep == .agreementCreated ? context.color.green900 : null,
-      appBar: currentStep == .payment || currentStep == .fundsSecured || currentStep == .agreementCreated
+      backgroundColor: currentStep == .agreementCreated
+          ? context.color.green900
+          : null,
+      appBar:
+          state.isLoading ||
+              currentStep == .payment ||
+              currentStep == .fundsSecured ||
+              currentStep == .agreementCreated
           ? null
           : AppBar(
               titleSpacing: Dimens.padding.p18,
