@@ -9,7 +9,7 @@
   "itemDeliveredServiceDoneClickReleaseToPayInstantlyNotSatisfiedGetARefund": "Item delivered? Service done? Click 'Release' to pay instantly. Not satisfied? Get a refund.",
   "zeroRiskTransactions": "Zero Risk Transactions.",
   "letsGetYouStarted": "Let’s get you started.",
-  "aFewQuickStepsToSetUpYourAccountAndSecureYourFunds": "A few quick steps to set up your account and secure your funds.",
+  "justAFewStepsToSetUpYourAccountAndKeepYourMoneySafe": "Just a few steps to set up your account and keep your money safe.",
   "firstName": "First Name",
   "lastName": "Last Name",
   "phoneNumber": "Phone Number",
@@ -17,12 +17,21 @@
   "optional": "(optional)",
   "next": "Next",
   "login": "Login",
-  "byClickingContinueYouAgreeToCleer": "By clicking continue, you agree to Cleer",
-  "terms": "Terms.",
+  "byTappingNextYouAgreeToCleerTermsOfService": "By tapping Next, you agree to Cleer’s Terms of Service",
   "wellOnlyUseThisForReceiptsAndImportantUpdates": "We’ll only use this for receipts and important updates.",
   "verifyPhoneNumber": "Verify Phone Number",
-  "weSentA6DigitCodeToYourPhoneForVerification": "We sent a 6-digit code to your phone for verification.",
-  "didntReceiveOTP": "Didn’t receive OTP?",
+  "enterVerificationCode": "Enter the verification code we sent to {phone}",
+  "@enterVerificationCode": {
+    "description": "Instructional text for the OTP verification screen",
+    "placeholders": {
+      "phone": {
+        "type": "String",
+        "example": "+234 90***413"
+      }
+    }
+  },
+  "didntGetTheCode": "Didn’t get the code?",
+  "resendIn": "Resend in",
   "resend": "Resend",
   "verify": "Verify",
   "youreCleerYourAccountIsSecured": "You're Cleer! Your account is secured.",
@@ -57,6 +66,7 @@
   "invalidEmailAddress": "Please enter a valid email address",
   "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)",
   "createYourPassword": "Create your Password",
+  "createAPasswordToProtectYourAccount": "Create a password to protect your account.",
   "enterPassword": "Enter Password",
   "confirmPassword": "Confirm Password",
   "createPassword": "Create Password",
@@ -92,7 +102,16 @@
   "signUp": "Sign Up",
   "profile": "Profile",
   "trustScore": "Trust Score",
-  "memberSince": "Member since",
+  "memberSince": "Member since {date}",
+  "@memberSince": {
+    "description": "Label showing when the user joined the platform",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Jan 2026"
+      }
+    }
+  },
   "logout": "Logout",
   "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
   "requestCode": "Request Code",
@@ -120,18 +139,23 @@
     }
   },
   "clickToViewAndResolve": "Click to view and resolve",
+  "payoutAccounts": "Payout Accounts",
+  "manageTheBankAccountThatReceivesReleasedFunds": "Manage the bank account that receives released funds.",
+  "whereReleasedFundsWillBeSentAfterASuccessfulAgreement": "Where released funds will be sent after a successful agreement.",
+  "fundsAreOnlyPaidOutToVerifiedBankAccountsInYourName": "Funds are only paid out to verified bank accounts in your name.",
+  "addAccount": "Add Account",
   "payoutDestination": "Payout Destination",
   "edit": "Edit",
   "addBankAccount": "Add Bank Account",
   "settings": "Settings",
-  "updateContactAndPassword": "Update Contact & Password",
-  "updateYourNameEmailPhoneNumberAndPassword": "Update your name, email, phone number, and password.",
+  "accountAndSecurity": "Account & Security",
+  "viewYourAccountDetailsAndChangeYourLoginPassword": "View your account details and Change your login password",
   "manageNotifications": "Manage Notifications",
   "chooseHowYouReceiveAlertsForReleasesNewDealsAndStatusChanges": "Choose how you receive alerts for releases, new deals, and status changes.",
   "legalAndPolicies": "Legal & Policies",
-  "termsOfServiceAndPolicies": "Terms of Service & Policies",
+  "termsAndPolicies": "Terms & Policies",
   "viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform": "View the rules and agreements that govern your use of the Cleer platform.",
-  "dataDisclosureAndUsage": "Data Disclosure & Usage",
+  "dataUsageAndPrivacy": "Data Usage & Privacy",
   "seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals": "See how your transaction and identity data is used to secure your deals.",
   "assistanceAndFeedback": "Assistance & Feedback",
   "helpAndSupport": "Help & Support",
@@ -142,13 +166,13 @@
   "completed": "Completed",
   "totalFundsSecured": "Total Funds Secured",
   "help": "Help",
+  "logs": "Logs",
   "activeAgreements": "Active Agreements",
-  "waitingForApproval": "Waiting for Approval",
-  "readyForRelease": "Ready for Release",
+  "needsYourAction": "Needs your Action",
   "startATransaction": "Start a Transaction",
-  "sendFunds": "Send\nFunds",
+  "sendFunds": "Send Funds",
   "yourMoneyIsHeldSafelyUntilYouConfirm": "Your money is held safely until you confirm",
-  "requestPayment": "Request\nPayment",
+  "requestPayment": "Request Payment",
   "fundsAreSecuredUntilTheDealIsComplete": "Funds are secured until the deal is complete",
   "recentActivity": "Recent Activity",
   "viewAll": "View All",
@@ -157,5 +181,353 @@
   "unlockHigherTransactionLimits": "Unlock higher transaction limits",
   "youHaveNoActiveTransactions": "You have no Active Transactions",
   "or": "or",
-  "toGetStarted": "to Get Started"
+  "toGetStarted": "to Get Started",
+  "requestFunds": "Request Funds",
+  "amount": "Amount",
+  "nairaSign": "₦",
+  "enterAmountToSecure": "Enter amount to secure",
+  "recipientDetails": "Recipient Details",
+  "selectBank": "Select Bank",
+  "bankName": "Bank Name",
+  "accountNumber": "Account Number",
+  "howWillThePaymentBeReleased": "How will the payment be released?",
+  "oneTimeRelease": "One-Time Release",
+  "bestForPhysicalGoodsOrSimpleServicesWherePaymentIsReleasedOnceAfterDelivery": "Best for: Physical goods or simple services where payment is released once after delivery.",
+  "milestonePayments": "Milestone Payments",
+  "bestForLargeJobsOrLongProjectsPayInStagesAsWorkIsCompleted": "Best for: Large jobs or long projects.\nPay in stages as work is completed.",
+  "search": "Search",
+  "searchNotFound": "Search not found",
+  "enterAValid10DigitsAccountNumber": "Enter a valid 10 digits account number",
+  "newUserAlert": "New User Alert",
+  "@newUserAlert": {
+    "description": "Short title for the alert shown when a recipient is not found in the database"
+  },
+  "noHistoryWarning": "No history for {name}. Funds are secured. Proceed with caution.",
+  "@noHistoryWarning": {
+    "description": "Warning message displayed when a user is new to the platform, emphasizing that funds are safe in escrow.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ajadi Jackson"
+      }
+    }
+  },
+  "lowTrustScoreAlert": "Low Trust Score Alert",
+  "@lowTrustScoreAlert": {
+    "description": "Title for the alert shown when a recipient has a poor history on the platform"
+  },
+  "lowTrustScoreWarning": "This recipient has a low Trust Score ({score}%). They have a history of disputes or cancellations. Proceed with caution.",
+  "@lowTrustScoreWarning": {
+    "description": "Warning message for users with low trust ratings",
+    "placeholders": {
+      "score": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+  "newText": "New",
+  "additionalDetails": "Additional Details",
+  "paymentCategory": "Payment Category",
+  "releaseDate": "Release Date",
+  "expectedFundsReleaseDeadline": "Expected funds release deadline",
+  "description": "Description",
+  "whatExactlyAreYouPayingFor": "What exactly are you paying for? (e.g. “iPhone 13 – 128GB, black”)",
+  "whatExactlyAreYouReceivingFundsFor": "What exactly are you receiving funds for? (e.g. “iPhone 13 – 128GB, black”)",
+  "fundsWillBeHeldSafelyAndOnlyReleasedWhenYouConfirmDelivery": "Funds will be held safely and only released when you confirm delivery.",
+  "reviewDetails": "Review Details",
+  "selectCategory": "Select Category",
+  "amountToBeHeld": "Amount to be held",
+  "accountName": "Account Name",
+  "category": "Category",
+  "fees": "Fees",
+  "fundsReleaseDate": "Funds Release Date",
+  "confirmAndPay": "Confirm & Pay",
+  "ngn": "NGN",
+  "secureYourPayment": "Secure your payment",
+  "securedBy": "SECURED BY",
+  "payWithCard": "Pay with Card",
+  "payWithUSSD": "Pay with USSD",
+  "payWithBankTransfer": "Pay with Bank Transfer",
+  "payWithOpay": "Pay with Opay",
+  "cancelPayment": "Cancel Payment",
+  "fundsAreHeldSecurelyUntilYouConfirmRelease": "Funds are held securely until you approve release",
+  "continueWithOpay": "Continue with Opay",
+  "youllBeRedirectedToAuthorizeThisPayment": "You’ll be redirected to authorize this\npayment.",
+  "changePaymentMethod": "Change Payment Method",
+  "paymentSecuredSuccessfully": "Payment secured successfully",
+  "fundsHeldSecurely": "{amount} has now been held securely until it’s released by you",
+  "@fundsHeldSecurely": {
+    "description": "Message shown to the sender after successfully funding an agreement",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "NGN 500,005.89"
+      }
+    }
+  },
+  "viewAgreement": "View Agreement",
+  "goToDashboard": "Go to Dashboard",
+  "waitingForConfirmation": "Waiting for confirmation",
+  "weWillUpdateThisScreenOnceYourBankConfirmsThePayment" :"We’ll update this screen once your\nbank confirms the payment.",
+  "securingYourPayment": "Securing your payment",
+  "pleaseDontCloseThisScreenWeAreSafelyLockingYourFunds": "Please don’t close this screen.\nWe’re safely locking your funds.",
+  "redirecting": "Redirecting",
+  "pleaseDontCloseThisScreenWeAreRedirectingYou": "Please don’t close this screen.\nWe’re redirecting you.",
+  "dial": "Dial",
+  "iHaveCompletedTheUSSDPayment": "I’ve completed the USSD payment",
+  "enterYourCardDetailsToPay": "Enter your card details to pay",
+  "cardNumber": "Card Number",
+  "cardExpiry": "Card Expiry",
+  "cvv": "CVV",
+  "rememberThisCardForNextTime": "Remember this card for next time",
+  "invalidCardNumber": "Invalid card number",
+  "expiryDate": "Expiry date",
+  "invalidExpiryDate": "Invalid expiry date",
+  "invalidMonth": "Invalid month",
+  "invalidYear": "Invalid year",
+  "cardHasExpired": "Card has expired",
+  "invalidCvv": "Invalid CVV",
+  "invalidCvvLength": "CVV must be {expectedLength} digits",
+  "@invalidCvvLength": {
+    "description": "Error message for invalid CVV length",
+    "placeholders": {
+      "expectedLength": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "secureAmount": "Secure {formattedAmount}",
+  "@secureAmount": {
+    "description": "Text displayed on the button to initiate payment securing",
+    "placeholders": {
+      "formattedAmount": {
+        "type": "String",
+        "example": "NGN 500,005.89"
+      }
+    }
+  },
+  "remove": "Remove",
+  "usingSavedCard": "Using saved card",
+  "copy": "Copy",
+  "iHaveSentTheMoney": "I’ve sent the money",
+  "splitAmountIntoMilestones": "Split {amount} into Milestones",
+  "@splitAmountIntoMilestones": {
+    "description": "Label for the milestone split action",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦500,000"
+      }
+    }
+  },
+  "remaining": "Remaining",
+  "milestoneName": "Milestone Name",
+  "milestoneAmount": "Milestone Amount",
+  "addMilestone": "Add Milestone",
+  "milestonesTotalExceeded": "Total milestones cannot exceed {amount}",
+  "@milestonesTotalExceeded": {
+    "description": "Error message when the sum of milestones is greater than the agreement total",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦500,000"
+      }
+    }
+  },
+  "mustBeGreaterThanZero": "Must be greater than 0",
+  "invalidReleaseDate": "Invalid release date",
+  "removeMilestone": "Remove Milestone",
+  "paymentCouldNotBeSecured": "Payment couldn’t be secured",
+  "weCouldNotSecureYourPaymentNoMoneyHasBeenHeldOrTransferred": "We couldn’t secure your payment.\nNo money has been held or transferred.",
+  "ifAnyAmountWasDebitedItWillBeAutomaticallyReversedByYourBank": "If any amount was debited, it will be automatically reversed by your bank.",
+  "retryPayment": "Retry payment",
+  "cancelAgreement": "Cancel agreement",
+  "fundsSecured": "Funds Secured",
+  "shareThisLinkWithTheRecipientToAcceptTheAgreementFundsWillBeReleasedOnlyWhenYouConfirm": "Share this link with the recipient to accept the agreement.\nFunds will be released only when you confirm.",
+  "agreementCreated": "Agreement Created",
+  "shareThisLinkWithThePersonPayingToAcceptTheAgreement": "Share this link with the person paying to accept the agreement.",
+  "agreementLink": "Agreement Link",
+  "shareLink": "Share Link",
+  "milestoneBreakdown": "Milestone Breakdown",
+  "continuePayment": "Continue Payment",
+  "cancellingThisPaymentWillCancelTheEntireAgreement": "Cancelling this payment will cancel the entire agreement",
+  "manageYourPersonalDetailsAndLoginSecurity" :"Manage your personal details and login security.",
+  "tapToChangeImage": "Tap to Change Image",
+  "personalInformation": "Personal Information",
+  "contactDetails": "Contact Details",
+  "contactSupportToEditYourDetails": "Contact support to edit your details",
+  "passwordAndSecurity": "Password & Security",
+  "changePassword": "Change Password",
+  "unverified": "Unverified",
+  "milestoneCount": "Milestone {count}",
+  "@milestoneCount": {
+    "description": "Label for a milestone with its sequence number",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "oldPassword": "Old Password",
+  "newPassword": "New Password",
+  "confirmNewPassword": "Confirm New Password",
+  "saveChanges": "Save Changes",
+  "removeBankAccount": "Remove Bank Account",
+  "thisWillRemoveThisBankAccountsAsYourPayoutDestination": "This will remove this bank account as your payout destination.",
+  "removeAccount": "Remove Account",
+  "cancel": "Cancel",
+  "selectPayoutDestination": "Select Payout Destination",
+  "linkedBankAccounts": "Linked Bank Accounts",
+  "change": "Change",
+  "youCanNotSendMoneyToYourself": "You can't send money to yourself",
+  "theAccountNameMatchesYourNameCleerIsDesignedForSecurePaymentsBetweenDifferentParties": "The account name matches your name. Cleer is designed for secure payments between different parties.",
+  "confirm": "Confirm",
+  "pending": "Pending",
+  "awaitingPaymentStatus": "Awaiting Payment - {description}",
+  "@awaitingPaymentStatus": {
+    "description": "Status label for an agreement waiting for funds",
+    "placeholders": {
+      "description": {
+        "type": "String",
+        "example": "iPhone 13 Pro Max - 128GB"
+      }
+    }
+  },
+  "awaitingAcceptanceStatus": "Awaiting Acceptance - {description}",
+  "@awaitingAcceptanceStatus": {
+    "description": "Status label for an agreement waiting for acceptance",
+    "placeholders": {
+      "description": {
+        "type": "String",
+        "example": "iPhone 13 Pro Max - 128GB"
+      }
+    }
+  },
+  "agreementWith": "Agreement with {name}",
+  "@agreementWith": {
+    "description": "Header for an agreement between users",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "dueDate": "Due {date}",
+  "@dueDate": {
+    "description": "Label for an agreement deadline",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "17 Dec, 12:10 AM"
+      }
+    }
+  },
+  "awaitingResponse": "Awaiting Response",
+  "actionRequired": "Action Required",
+  "wantsToPayYouSecurely": "{fullName} wants to pay you securely",
+  "@wantsToPayYouSecurely": {
+    "description": "Headline indicating that a specific user wants to send a secure payment",
+    "placeholders": {
+      "fullName": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+
+  "paymentAgreementFrom": "Payment Agreement from {fullName}",
+  "@paymentAgreementFrom": {
+    "description": "Title showing who created the payment agreement",
+    "placeholders": {
+      "fullName": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+  "fundsWillBeSentTo": "Funds will be sent to",
+  "purpose": "Purpose",
+  "paymentWillBeReleasedInMilestones": "Payment will be released in milestones",
+  "acceptAgreement": "Accept Agreement",
+  "declineAgreement": "Decline Agreement",
+  "areYouSureYouWantToDeclineThisAgreement": "Are you sure you want to decline this agreement?",
+  "continueToPayment": "Continue to Payment",
+  "yourFundsWillBeSecurelyHeldAndOnlyReleasedWhenYouApproveDelivery": "Your funds will be securely held and only released when you approve delivery.",
+  "acceptToCreateAnAccountAndReceivePaymentSecurely": "Accept to create an account and receive payment securely",
+  "acceptToReceivePaymentSecurely": "Accept to receive payment securely",
+  "confirmYourIdentity": "Confirm your identity",
+  "thisHelpsUsToKeepPaymentsSecureAndCompliant": "This helps us keep payments secure and compliant.",
+  "verifyYourIdentityToReceiveFunds": "Verify your Identity to Receive Funds",
+  "thePaymentIsNowHeldSecurelyYouWillReceiveFundsOnceTheAgreedConditionsAreMet": "The payment is now held securely. You’ll receive funds once the agreed conditions are met.",
+  "agreementWithAccountIsActive": "Your agreement with {accountName} is now active.",
+  "@agreementWithAccountIsActive": {
+    "description": "Success message shown after an agreement is successfully activated or accepted.",
+    "placeholders": {
+      "accountName": {
+        "type": "String",
+        "example": "Oluwajomiloju"
+      }
+    }
+  },
+  "yourFundsAreSecurelyHeldYouRemainInControlMoneyIsOnlyReleasedWhenYouApprove": "Your funds are securely held. You remain in control — money is only released when you approve.",
+  "cancellingThisPaymentWillDeclineThisAgreement" :"Cancelling this payment will decline this agreement",
+  "youCannotActionAnAgreementYouCreated": "You cannot {action} an agreement you created.",
+  "@youCannotActionAnAgreementYouCreated": {
+    "placeholders": {
+      "action": {
+        "type": "String",
+        "example": "decline"
+      }
+    }
+  },
+  "youAreNotTheRecipientOfThisAgreement": "You are not the recipient of this agreement.",
+  "youCanOnlyActionAgreementsWhereTheRecipientBankAccountIsInYourName": "You can only {action} agreements where the recipient bank account is in your name.",
+  "@youCanOnlyActionAgreementsWhereTheRecipientBankAccountIsInYourName": {
+    "placeholders": {
+      "action": {
+        "type": "String",
+        "example": "accept"
+      }
+    }
+  },
+  "thisAgreementDoesNotBelongToYou": "This agreement does not belong to you.",
+  "accept": "Accept",
+  "fundsHeld": "Funds Held",
+  "released": "Released",
+  "agreementStatus": "Agreement Status",
+  "agreementInitiated": "Agreement Initiated",
+  "fundsLocked": "Funds Locked",
+  "agreementAccepted": "Agreement Accepted",
+  "fundsReleased": "Funds Released",
+  "paymentMilestones": "Payment Milestones",
+  "initiatedBy": "Initiated by {name}",
+  "@initiatedBy": {
+    "description": "Shows who created or started the agreement",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Eziamachukwu"
+      }
+    }
+  },
+  "fundsAreSecurelyHeld": "Funds are securely held",
+  "theAgreementIsNowActive": "The agreement is now active",
+  "releaseInitiatedCompletingIn2Hours": "Release initiated. Completing in 2 hours.",
+  "agreementHasBeenCompleted": "Agreement has been completed",
+  "inProgress": "In Progress",
+  "inDispute": "In Dispute",
+  "agreementDetails": "Agreement Details",
+  "releaseFunds": "Release Funds",
+  "requestRelease": "Request Release",
+  "raiseDispute": "Raise Dispute",
+  "milestoneHasBeenCompleted": "Milestone has been completed",
+  "view": "View",
+  "all": "All",
+  "awaitingOtherParty": "Awaiting Other Party",
+  "yesDecline": "Yes, Decline",
+  "close": "Close"
 }

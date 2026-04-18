@@ -1,3 +1,7 @@
+import 'package:cleer/routing/routes.dart'
+    show CreateAgreementRoute, AgreementsRoute;
+import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
+import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -5,27 +9,30 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class AgreementsOverviewSection extends StatelessWidget {
+class AgreementsOverviewSection extends ConsumerWidget {
   const AgreementsOverviewSection({
     super.key,
-    required this.hasAgreements,
-    this.waitingCount = 0,
-    this.waitingAmount = '₦0',
-    this.readyCount = 0,
-    this.readyAmount = '₦0',
+    required this.isOngoingEmpty,
+    this.needsActionCount = 0,
+    this.awaitingOtherPartyCount = 0,
   });
 
-  final bool hasAgreements;
-  final int waitingCount;
-  final String waitingAmount;
-  final int readyCount;
-  final String readyAmount;
+  final bool isOngoingEmpty;
+  final int needsActionCount;
+  final int awaitingOtherPartyCount;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+
+    if (!isOngoingEmpty &&
+        needsActionCount == 0 &&
+        awaitingOtherPartyCount == 0) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,26 +42,36 @@ class AgreementsOverviewSection extends StatelessWidget {
           style: context.typo.titleSmall.copyWith(color: context.color.grey800),
         ),
         Gap(Dimens.spacing.sp12),
-        if (!hasAgreements)
+        if (isOngoingEmpty)
           const _AgreementsEmptyState()
         else
           Row(
             children: [
               Expanded(
                 child: _AgreementSummaryCard(
-                  label: l10n.waitingForApproval,
-                  count: waitingCount,
-                  amount: waitingAmount,
-                  onTap: () {},
+                  label: l10n.needsYourAction,
+                  count: needsActionCount,
+                  onTap: () {
+                    ref.read(agreementsViewModelProvider.notifier)
+                      ..setTabIndex(0)
+                      ..setFilter(OngoingAgreementFilter.needsAction);
+
+                    AgreementsRoute().go(context);
+                  },
                 ),
               ),
               Gap(Dimens.spacing.sp8),
               Expanded(
                 child: _AgreementSummaryCard(
-                  label: l10n.readyForRelease,
-                  count: readyCount,
-                  amount: readyAmount,
-                  onTap: () {},
+                  label: l10n.awaitingOtherParty,
+                  count: awaitingOtherPartyCount,
+                  onTap: () {
+                    ref.read(agreementsViewModelProvider.notifier)
+                      ..setTabIndex(0)
+                      ..setFilter(OngoingAgreementFilter.awaitingOtherParty);
+
+                    AgreementsRoute().go(context);
+                  },
                 ),
               ),
             ],
@@ -68,17 +85,17 @@ class _AgreementSummaryCard extends StatelessWidget {
   const _AgreementSummaryCard({
     required this.label,
     required this.count,
-    required this.amount,
     required this.onTap,
   });
 
   final String label;
   final int count;
-  final String amount;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(Dimens.radius.r8),
@@ -86,23 +103,17 @@ class _AgreementSummaryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: context.color.grayComponent,
           borderRadius: BorderRadius.circular(Dimens.radius.r8),
-          border: Border.all(color: context.color.outline.withAlpha(30)),
+          border: Border.all(
+            color: context.color.outline.withValues(alpha: .30),
+          ),
         ),
-        padding: EdgeInsets.all(Dimens.padding.p12),
+        padding: EdgeInsets.symmetric(
+          horizontal: Dimens.padding.p12,
+          vertical: Dimens.padding.p8,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _Badge(count: count),
-                PhosphorIcon(
-                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
-                  size: Dimens.size.s20,
-                ),
-              ],
-            ),
-            Gap(Dimens.spacing.sp8),
             Text(
               label,
               style: context.typo.bodyMedium.copyWith(
@@ -110,41 +121,49 @@ class _AgreementSummaryCard extends StatelessWidget {
                 fontWeight: AppFontWeights.regular,
               ),
             ),
-            Gap(Dimens.spacing.sp4),
-            Text(
-              amount,
-              style: context.typo.titleSmall.copyWith(
-                color: context.color.grey800,
-              ),
+            Gap(Dimens.spacing.sp8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: .symmetric(horizontal: Dimens.padding.p6),
+                  decoration: BoxDecoration(
+                    color: context.color.outline,
+                    borderRadius: BorderRadius.circular(Dimens.radius.r80),
+                  ),
+
+                  child: Row(
+                    children: [
+                      Text(
+                        l10n.view,
+                        style: context.typo.bodySmall.copyWith(
+                          color: context.color.grey600,
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp4),
+                      Text(
+                        count.toString(),
+                        style: context.typo.bodyMedium.copyWith(
+                          color: context.color.blue700,
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp4),
+                      Text(
+                        l10n.agreements,
+                        style: context.typo.bodySmall.copyWith(
+                          color: context.color.grey600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PhosphorIcon(
+                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                  size: Dimens.size.s20,
+                ),
+              ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  const _Badge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.color.outline,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Dimens.radius.r40),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Dimens.padding.p6),
-        child: Center(
-          child: Text(
-            '$count',
-            style: context.typo.bodyMedium.copyWith(
-              color: context.color.blue700,
-            ),
-          ),
         ),
       ),
     );
@@ -193,7 +212,7 @@ class _AgreementsEmptyState extends StatelessWidget {
                       children: [
                         _linkSpan(
                           context,
-                          text: l10n.sendFunds.replaceAll('\n', ' '),
+                          text: l10n.sendFunds,
                           onTap: () => _handleSendFunds(context),
                         ),
                         const TextSpan(text: ' '),
@@ -201,7 +220,7 @@ class _AgreementsEmptyState extends StatelessWidget {
                         const TextSpan(text: ' '),
                         _linkSpan(
                           context,
-                          text: l10n.requestPayment.replaceAll('\n', ' '),
+                          text: l10n.requestPayment,
                           onTap: () => _handleRequestPayment(context),
                         ),
                         const TextSpan(text: ' '),
@@ -236,11 +255,8 @@ class _AgreementsEmptyState extends StatelessWidget {
     );
   }
 
-  void _handleSendFunds(BuildContext context) {
-    // Navigate to Send Funds Flow
-  }
-
-  void _handleRequestPayment(BuildContext context) {
-    // Navigate to Request Payment Flow
-  }
+  void _handleSendFunds(BuildContext context) =>
+      CreateAgreementRoute(type: .send).push(context);
+  void _handleRequestPayment(BuildContext context) =>
+      CreateAgreementRoute(type: .request).push(context);
 }

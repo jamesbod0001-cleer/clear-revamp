@@ -12,7 +12,7 @@ Dio flutterwaveDio(Ref ref) {
   final storage = ref.watch(secureStorageServiceProvider);
 
   dio.options.baseUrl = Env.flutterwaveIsLive
-      ? 'https://api.flutterwave.com/v4'
+      ? 'https://f4bexperience.flutterwave.com'
       : 'https://developersandbox-api.flutterwave.com';
 
   dio.options.connectTimeout = const Duration(seconds: 30);

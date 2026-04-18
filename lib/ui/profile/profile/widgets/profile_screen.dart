@@ -1,5 +1,7 @@
+import 'package:cleer/domain/providers/storage/file_url_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/log_out/view_model/log_out_view_model.dart';
 import 'package:cleer/ui/auth/log_out/widgets/log_out_button.dart';
@@ -7,8 +9,9 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/images/app_image.dart';
+import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
 import 'package:cleer/ui/core/ui/trust_score_badge.dart';
-import 'package:cleer/ui/profile/profile/widgets/payout_destination_card.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:cleer/ui/profile/profile/widgets/user_performance_stats_card.dart';
@@ -83,10 +86,14 @@ class ProfileScreen extends ConsumerWidget {
                                   color: context.color.grey600,
                                 ),
                               ),
-                             TrustScoreBadge(score: 99),
+                              TrustScoreBadge(score: 100),
                               Gap(Dimens.spacing.sp8),
                               Text(
-                                '${l10n.memberSince} ${DateFormat('d MMM, y').format(user!.createdAt!)}',
+                                l10n.memberSince(
+                                  DateFormat(
+                                    'd MMM, y',
+                                  ).format(user!.createdAt!),
+                                ),
                                 style: context.typo.bodySmall.copyWith(
                                   color: context.color.grey600,
                                 ),
@@ -96,31 +103,85 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         Gap(Dimens.spacing.sp20),
                         Column(
-                          children: [CircleAvatar(radius: Dimens.radius.r48)],
+                          children: [
+                            Container(
+                              width: Dimens.radius.r80, // radius * 2
+                              height: Dimens.radius.r80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: context.color.grayComponent,
+                              ),
+                              child: ClipOval(
+                                child: Builder(
+                                  builder: (BuildContext context) {
+                                    if (user.profilePicture == null) {
+                                      return Center(
+                                        child: PhosphorIcon(
+                                          PhosphorIcons.user(),
+                                          size: Dimens.size.s32,
+                                          color: context.color.grey400,
+                                        ),
+                                      );
+                                    }
+                                    final profileUrlAsync = ref.watch(
+                                      fileUrlProvider(user.profilePicture!.key),
+                                    );
+                                    return profileUrlAsync.when(
+                                      data: (url) => AppImage(
+                                        imageUrl: url,
+                                        blurHash:
+                                            user.profilePicture!.blurHash ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                                      loading: () => BlurHashWidget(
+                                        hash:
+                                            user.profilePicture!.blurHash ?? '',
+                                      ),
+                                      error: (_, _) => Center(
+                                        child: PhosphorIcon(
+                                          PhosphorIcons.imageBroken(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                     Gap(Dimens.spacing.sp28),
 
                     UserPerformanceStatsCard(
-                      successfulAgreements: 55,
-                      disputeFreeAgreements: 12,
-                      totalValueTransacted: '₦15.5M',
+                      successfulAgreements: 0,
+                      disputeFreeAgreements: 0,
+                      totalValueTransacted: '₦0',
                     ),
                     Gap(Dimens.spacing.sp28),
 
                     ProfileSectionHeader(title: l10n.payoutDestination),
-                    PayoutDestinationCard(),
-                    Gap(Dimens.spacing.sp16),
-                    AddBankAccountButton(),
+                    ProfileMenuTile(
+                      icon: PhosphorIcons.bank(.duotone),
+                      title: l10n.payoutAccounts,
+                      content:
+                          l10n.manageTheBankAccountThatReceivesReleasedFunds,
+                      onTap: () => PayoutDestinationRoute().go(context),
+                      showBottomPadding: false,
+                    ),
                     Gap(Dimens.spacing.sp40),
 
+                    // PayoutDestinationCard(),
+                    // Gap(Dimens.spacing.sp16),
+                    // AddBankAccountButton(),
+                    // Gap(Dimens.spacing.sp40),
                     ProfileSectionHeader(title: l10n.settings),
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),
-                      title: l10n.updateContactAndPassword,
-                      content: l10n.updateYourNameEmailPhoneNumberAndPassword,
-                      onTap: () {},
+                      title: l10n.accountAndSecurity,
+                      content:
+                          l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
+                      onTap: () => AccountSecurityRoute().go(context),
                     ),
                     ProfileMenuTile(
                       icon: PhosphorIcons.bell(.duotone),
@@ -135,14 +196,14 @@ class ProfileScreen extends ConsumerWidget {
                     ProfileSectionHeader(title: l10n.legalAndPolicies),
                     ProfileMenuTile(
                       icon: PhosphorIcons.scroll(.duotone),
-                      title: l10n.termsOfServiceAndPolicies,
+                      title: l10n.termsAndPolicies,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
                       onTap: () {},
                     ),
                     ProfileMenuTile(
                       icon: PhosphorIcons.fileLock(.duotone),
-                      title: l10n.dataDisclosureAndUsage,
+                      title: l10n.dataUsageAndPrivacy,
                       content: l10n
                           .seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals,
                       onTap: () {},
@@ -152,7 +213,7 @@ class ProfileScreen extends ConsumerWidget {
 
                     ProfileSectionHeader(title: l10n.assistanceAndFeedback),
                     ProfileMenuTile(
-                      icon: PhosphorIcons.scroll(.duotone),
+                      icon: PhosphorIcons.question(.duotone),
                       title: l10n.helpAndSupport,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,

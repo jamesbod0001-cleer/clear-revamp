@@ -11,6 +11,7 @@ part 'tokens/type_scales.dart';
 abstract class AppTheme {
   static final TextTheme _textTheme = TextTheme(
     displayMedium: _displayMedium,
+    headlineLarge: _headlineLarge,
     headlineMedium: _headlineMedium,
     headlineSmall: _headlineSmall,
     titleLarge: _titleLarge,
@@ -55,6 +56,7 @@ abstract class AppTheme {
     // Brand & Functional
     primary: _Palette.primary,
     primaryBlue: _Palette.primaryBlue,
+    primaryBlueLight: _Palette.primaryBlueLight,
     secondary: _Palette.secondary,
     background: _Palette.background,
     outline: _Palette.outline,
@@ -206,8 +208,24 @@ abstract class AppTheme {
 
   static final _outlinedButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
+      foregroundColor: _Palette.blue700,
       backgroundColor: _Palette.transparent,
       minimumSize: Dimens.mobile.buttonMinimumSize,
+      textStyle: _labelMedium,
+      padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
+      side: BorderSide(color: _Palette.blue700),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.radius.r8),
+      ),
+    ),
+  );
+
+  static final _textButtonTheme = TextButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      backgroundColor: _Palette.transparent,
+      foregroundColor: _Palette.blue700,
+      minimumSize: Dimens.mobile.buttonMinimumSize,
+      textStyle: _labelMedium,
       padding: EdgeInsets.symmetric(vertical: Dimens.padding.p16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.radius.r8),
@@ -215,7 +233,7 @@ abstract class AppTheme {
     ),
   );
 
-  static ThemeData lightTheme = ThemeData(
+  static final ThemeData lightTheme = ThemeData(
     fontFamily: _AppFontConstants.rethinkSans,
     brightness: Brightness.light,
     colorScheme: _lightColorScheme,
@@ -225,6 +243,7 @@ abstract class AppTheme {
     buttonTheme: _buttonTheme,
     filledButtonTheme: _filledButtonTheme,
     outlinedButtonTheme: _outlinedButtonTheme,
+    textButtonTheme: _textButtonTheme,
     iconTheme: _iconTheme,
     navigationBarTheme: _navigationBarTheme,
     useMaterial3: true,

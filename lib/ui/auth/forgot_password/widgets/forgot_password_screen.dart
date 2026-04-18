@@ -1,12 +1,12 @@
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
-import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
 import 'package:cleer/ui/auth/forgot_password/state/forgot_password_state.dart';
 import 'package:cleer/ui/auth/forgot_password/view_model/forgot_password_view_model.dart';
 import 'package:cleer/ui/core/localization/error_messages.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
@@ -37,7 +37,7 @@ class ForgotPasswordScreen extends HookConsumerWidget {
             prev?.value?.resetPasswordDomainResult) {
           state.resetPasswordDomainResult?.maybeWhen(
             success: () {
-              LoginRoute().pushReplacement(context);
+              context.pop();
             },
             orElse: () {},
           );
@@ -106,7 +106,7 @@ class ForgotPasswordScreen extends HookConsumerWidget {
                             l10n.forgotPassword,
                             style: context.typo.headlineSmall,
                           ),
-                          Gap(Dimens.spacing.sp12),
+                          Gap(Dimens.spacing.sp8),
                           Expanded(
                             child: AnimatedSwitcher(
                               duration: const Duration(milliseconds: 150),

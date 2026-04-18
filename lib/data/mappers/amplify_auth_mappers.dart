@@ -53,6 +53,15 @@ extension SignInMapper on SignInResult {
         return const SignInDomainResult.continueWithTotpSetup();
       case AuthSignInStep.continueSignInWithEmailMfaSetup:
         return const SignInDomainResult.continueWithEmailMfaSetup();
+      case AuthSignInStep.continueSignInWithFirstFactorSelection:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case AuthSignInStep.confirmSignInWithOtp:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case AuthSignInStep.confirmSignInWithPassword:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 }
@@ -94,7 +103,7 @@ extension UpdatePasswordMapper on UpdatePasswordResult {
 }
 
 extension UserAttributeExtractor on List<AuthUserAttribute> {
-  AuthIdentity toDomain() {
+  AuthIdentity toDomain(String identityId) {
     String sub = firstWhere(
       (element) => element.userAttributeKey == CognitoUserAttributeKey.sub,
       orElse: () => throw Exception('Sub attribute not found'),
@@ -120,7 +129,8 @@ extension UserAttributeExtractor on List<AuthUserAttribute> {
     )?.value;
 
     return AuthIdentity(
-      id: sub,
+      userId: sub,
+      identityId: identityId,
       firstName: firstName,
       lastName: lastName,
       phoneNumber: phoneNumber,

@@ -10,6 +10,7 @@ abstract class _Palette {
   static const Color background = Color(0xFFFAFAFA); // functional bg color
   static const Color primary = Color(0xFF60E491);    // functional Light Green
   static const Color primaryBlue = Color(0xFF62AFFF); // functional Light Blue
+  static const Color primaryBlueLight = Color(0xFFC0DFFF); // functional Light Blue 200
   static const Color secondary = Color(0xFF030551);  // functional Deep Blue
   static const Color outline = Color(0xFFE2E3E4);    // functional outline 100
   static const Color grayComponent = Color(0xFFF2F3F2); // functional gray component
@@ -17,7 +18,7 @@ abstract class _Palette {
 
   // Semantic Colors (State & Feedback)
   static const Color error = Color(0xFF9F1B1D);       // semantic red 1000
-  static const Color errorLight = Color(0xFFF7E1E7);  // semantic red 100
+  static const Color errorLight = Color(0xFFFBEEF2);  // semantic red 100
   static const Color success = Color(0xFF005833);     // semantic green 1000
   static const Color successLight = Color(0xFFEEFDF3);// semantic green 100
   static const Color warning = Color(0xFF563105);     // semantic orange 1000

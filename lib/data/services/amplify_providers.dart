@@ -11,3 +11,6 @@ AmplifyHub amplifyHub(Ref ref) => Amplify.Hub;
 
 @riverpod
 APICategory amplifyAPI(Ref ref) => Amplify.API;
+
+@riverpod
+StorageCategory amplifyStorage(Ref ref) => Amplify.Storage;

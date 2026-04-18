@@ -23,8 +23,7 @@ class AmplifyUserServiceClient with ApiErrorChecker {
       UserModelIdentifier(id: id),
     );
     final response = await _amplifyAPI.query(request: request).response;
-    validateResponse(response);
-    return response.data!;
+    return validateRequiredResponse(response);
   }
 
   Future<User> createUser(User user) async {
@@ -33,8 +32,16 @@ class AmplifyUserServiceClient with ApiErrorChecker {
       authorizationMode: APIAuthorizationType.userPools,
     );
     final response = await _amplifyAPI.mutate(request: request).response;
-    validateResponse(response);
-    return response.data!;
+    return validateRequiredResponse(response);
+  }
+
+  Future<User> updateUser(User user) async {
+    final request = ModelMutations.update(
+      user,
+      authorizationMode: APIAuthorizationType.userPools,
+    );
+    final response = await _amplifyAPI.mutate(request: request).response;
+    return validateRequiredResponse(response);
   }
 
   Stream<GraphQLResponse<User>> observeUserUpdates(String id) {

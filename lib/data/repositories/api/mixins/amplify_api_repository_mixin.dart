@@ -60,7 +60,7 @@ mixin AmplifyApiRepositoryMixin {
       return Success(result);
     } on BackendException catch (e, st) {
       log.error(
-        'Server Logic Error during $operationName (ID: $targetId): ${e.message}',
+        'Server Logic Error during $operationName (ID: $targetId): code: ${e.code} message: ${e.message} recoverySuggestion: ${e.recoverySuggestion}',
         e,
         st,
       );
@@ -76,9 +76,9 @@ mixin AmplifyApiRepositoryMixin {
       // Map a network/system failure to a DataFailure
       return Failure(AmplifyApiExceptionHandler.handleException(e));
     }
-    // catch (e, st) {
-    //   log.error('Unhandled exception caught during $operationName: $e', e, st);
-    //   return Failure(DataFailure.unknown( message: e.toString()));
-    // }
+    catch (e, st) {
+      log.error('Unhandled exception caught during $operationName: $e', e, st);
+      return Failure(DataFailure.unknown( message: e.toString()));
+    }
   }
 }

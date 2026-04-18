@@ -1,3 +1,4 @@
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -29,7 +30,7 @@ class QuickActionsSection extends StatelessWidget {
                 subtitle: l10n.yourMoneyIsHeldSafelyUntilYouConfirm,
                 backgroundColor: context.color.green400,
                 contentColor: context.color.green1000,
-                subtitleColor: context.color.green850,
+                subtitleColor: context.color.green900,
                 icon: PhosphorIcons.arrowUpRight(),
                 onTap: () => _handleSendFunds(context),
               ),
@@ -39,7 +40,7 @@ class QuickActionsSection extends StatelessWidget {
               child: _QuickActionCard(
                 title: l10n.requestPayment,
                 subtitle: l10n.fundsAreSecuredUntilTheDealIsComplete,
-                backgroundColor: const Color(0xFFC0DFFF),
+                backgroundColor: context.color.primaryBlueLight,
                 contentColor: context.color.secondary,
                 subtitleColor: context.color.secondary,
                 icon: PhosphorIcons.arrowDownLeft(),
@@ -52,10 +53,11 @@ class QuickActionsSection extends StatelessWidget {
     );
   }
 
-  void _handleSendFunds(BuildContext context) { /* TODO */ }
-  void _handleRequestPayment(BuildContext context) { /* TODO */ }
+  void _handleSendFunds(BuildContext context) =>
+      CreateAgreementRoute(type: .send).push(context);
+  void _handleRequestPayment(BuildContext context) =>
+      CreateAgreementRoute(type: .request).push(context);
 }
-
 
 class _QuickActionCard extends StatelessWidget {
   const _QuickActionCard({
@@ -97,12 +99,8 @@ class _QuickActionCard extends StatelessWidget {
               children: [
                 Gap(Dimens.spacing.sp40), // Space for the floating icon
                 Text(
-                  title,
-                  style: context.typo.titleLarge.copyWith(
-                    color: contentColor,
-                    fontWeight: AppFontWeights.semiBold,
-                    height: 1.4,
-                  ),
+                  title.replaceAll(' ', '\n'),
+                  style: context.typo.titleLarge.copyWith(color: contentColor),
                 ),
                 Gap(Dimens.spacing.sp8),
                 Text(

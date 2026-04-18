@@ -1,7 +1,7 @@
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/utils/constants.dart';
-import 'package:cleer/utils/validators/nigerian_phone_formatter.dart';
+import 'package:cleer/utils/text_input_formatters/nigerian_phone_formatter.dart';
 import 'package:cleer/utils/validators/phone_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +12,9 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     super.key,
+    this.fieldKey,
     this.labelText,
+    this.label,
     this.hintText,
     this.controller,
     this.validator,
@@ -22,10 +24,19 @@ class CustomTextFormField extends StatefulWidget {
     this.maxLines = 1,
     this.textCapitalization = TextCapitalization.none,
     this.isPassword = false,
+    this.obscureText,
     this.textInputType,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.onTap,
+    this.readOnly = false,
+    this.focusNode,
   });
 
+  final GlobalKey<FormFieldState>? fieldKey;
+
   final String? labelText;
+  final Widget? label;
   final String? hintText;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
@@ -35,7 +46,13 @@ class CustomTextFormField extends StatefulWidget {
   final int? maxLines;
   final TextCapitalization textCapitalization;
   final bool isPassword;
+  final bool? obscureText;
   final TextInputType? textInputType;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final VoidCallback? onTap;
+  final bool readOnly;
+  final FocusNode? focusNode;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -46,13 +63,28 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   void initState() {
-    obscureText = widget.isPassword;
+    obscureText = widget.obscureText ?? widget.isPassword;
     super.initState();
   }
+
+  Widget? get suffixIcon =>
+      widget.suffixIcon ??
+      (widget.isPassword
+          ? IconButton(
+              onPressed: () => setState(() => obscureText = !obscureText),
+              icon: PhosphorIcon(
+                obscureText ? PhosphorIcons.eye() : PhosphorIcons.eyeClosed(),
+                color: context.color.blue700,
+              ),
+            )
+          : null);
+
+  Widget? get prefixIcon => widget.prefixIcon;
 
   @override
   Widget build(BuildContext context) {
     return FormField<String>(
+      key: widget.fieldKey,
       validator: widget.validator,
       initialValue: widget.controller?.text,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -61,18 +93,26 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.labelText != null) ...[
-              Text(
-                widget.labelText!,
-                style: context.typo.bodyMedium.copyWith(
-                  color: context.color.grey600,
-                ),
-              ),
+            if (widget.labelText != null || widget.label != null) ...[
+              widget.label ??
+                  Text(
+                    widget.labelText!,
+                    style: context.typo.bodyMedium.copyWith(
+                      color: context.color.grey600,
+                    ),
+                  ),
               Gap(Dimens.spacing.sp4),
             ],
             TextField(
+              focusNode: widget.focusNode,
               controller: widget.controller,
               onChanged: (value) => state.didChange(value),
+              onTap: widget.onTap,
+              maxLines: widget.maxLines,
+              minLines: widget.minLines,
+              maxLength: widget.maxLength,
+              textCapitalization: widget.textCapitalization,
+              readOnly: widget.readOnly,
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 errorText: state.errorText,
@@ -83,18 +123,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 focusedBorder: state.hasError
                     ? context.theme.inputDecorationTheme.errorBorder
                     : null,
-                suffixIcon: widget.isPassword
-                    ? IconButton(
-                        onPressed: () =>
-                            setState(() => obscureText = !obscureText),
-                        icon: PhosphorIcon(
-                          obscureText
-                              ? PhosphorIcons.eye()
-                              : PhosphorIcons.eyeClosed(),
-                          color: context.color.blue700,
-                        ),
-                      )
-                    : null,
+                prefix: prefixIcon,
+                suffixIcon: suffixIcon,
               ),
               keyboardType: widget.textInputType,
               obscureText: obscureText,

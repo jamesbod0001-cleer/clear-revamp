@@ -1,12 +1,16 @@
+import 'package:cleer/domain/models/agreement/agreement_enums.dart';
+import 'package:cleer/domain/models/agreement/agreement_preview.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement_view_model.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/create_account/view_model/create_account_view_model.dart';
 import 'package:cleer/ui/auth/create_account/widgets/create_account_form.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/offline_warning_banner.dart';
@@ -16,11 +20,40 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CreateAccountScreen extends ConsumerWidget {
-  const CreateAccountScreen({super.key});
+  const CreateAccountScreen({super.key, this.redirectTo});
+
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+
+    String? shortCode;
+    if (redirectTo != null && redirectTo!.startsWith('/a/')) {
+      shortCode = redirectTo!.split('/a/').last.split('?').first;
+    }
+    AgreementPreview? preview;
+    if (shortCode != null) {
+      preview = ref
+          .watch(acceptAgreementViewModelProvider(shortCode))
+          .value
+          ?.agreementPreview;
+    }
+
+    String title = l10n.letsGetYouStarted;
+    String? subtitle = l10n.justAFewStepsToSetUpYourAccountAndKeepYourMoneySafe;
+
+    if (preview != null) {
+      if (preview.initiatorRole == InitiatorRole.sender) {
+        title = l10n.verifyYourIdentityToReceiveFunds;
+        subtitle =
+            null;
+      } else {
+        title = l10n.confirmYourIdentity;
+        subtitle = l10n.thisHelpsUsToKeepPaymentsSecureAndCompliant;
+      }
+    }
+
     ref.listen(createAccountViewModelProvider, (prev, next) {
       next.whenData((state) {
         final result = state.signUpDomainResult;
@@ -42,7 +75,10 @@ class CreateAccountScreen extends ConsumerWidget {
               deliveryMedium: deliveryMedium,
             );
             ref.read(createAccountViewModelProvider.notifier).resetResult();
-            VerifyPhoneRoute($extra: details).push(context);
+            VerifyPhoneRoute(
+              $extra: details,
+              redirectTo: redirectTo,
+            ).push(context);
           },
         );
       });
@@ -80,19 +116,19 @@ class CreateAccountScreen extends ConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp24),
                     OfflineWarningBanner(),
-                    Text(
-                      l10n.letsGetYouStarted,
-                      style: context.typo.headlineSmall,
-                    ),
-                    Gap(Dimens.spacing.sp12),
-                    Text(
-                      l10n.aFewQuickStepsToSetUpYourAccountAndSecureYourFunds,
-                      style: context.typo.labelSmall.copyWith(
-                        color: context.color.grey600,
+                    Text(title, style: context.typo.headlineSmall),
+                    if (subtitle != null) ...[
+                      Gap(Dimens.spacing.sp8),
+                      Text(
+                        subtitle,
+                        style: context.typo.bodyMedium.copyWith(
+                          fontWeight: AppFontWeights.regular,
+                          color: context.color.grey600,
+                        ),
                       ),
-                    ),
+                    ],
                     Gap(Dimens.spacing.sp32),
-                    Expanded(child: CreateAccountForm()),
+                    Expanded(child: CreateAccountForm(redirectTo: redirectTo)),
                   ],
                 ),
               ),

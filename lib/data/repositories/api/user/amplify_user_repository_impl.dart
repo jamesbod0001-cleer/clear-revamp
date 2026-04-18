@@ -51,6 +51,20 @@ class AmplifyUserRepositoryImpl
   }
 
   @override
+  Future<ResultDart<User, DataFailure>> updateUserProfile(User user) {
+    return performDataOperation<User>(
+      operation: () async {
+        final response = await _amplifyUserServiceClient.updateUser(
+          user.toAmplify(),
+        );
+        return response.toDomain();
+      },
+      operationName: 'UpdateUserProfile',
+      targetId: user.id,
+    );
+  }
+
+  @override
   Stream<User> watchUser(String id) async* {
     log.info('Starting watch for user: $id');
     final initialResult = await performDataOperation(

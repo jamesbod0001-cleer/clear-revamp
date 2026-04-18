@@ -5,6 +5,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
   // Brand & Functional
   final Color primary;
   final Color primaryBlue;
+  final Color primaryBlueLight;
   final Color secondary;
   final Color background;
   final Color outline;
@@ -74,6 +75,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
   const AppColorExtension({
     required this.primary,
     required this.primaryBlue,
+    required this.primaryBlueLight,
     required this.secondary,
     required this.background,
     required this.outline,
@@ -141,6 +143,7 @@ class AppColorExtension extends ThemeExtension<AppColorExtension> {
       // Ensure you add the new fields to the lerp method
       primary: Color.lerp(primary, other.primary, t)!,
       primaryBlue: Color.lerp(primaryBlue, other.primaryBlue, t)!,
+      primaryBlueLight: Color.lerp(primaryBlueLight, other.primaryBlueLight, t)!,
       secondary: Color.lerp(secondary, other.secondary, t)!,
       background: Color.lerp(background, other.background, t)!,
       outline: Color.lerp(outline, other.outline, t)!,

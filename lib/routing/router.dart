@@ -27,61 +27,74 @@ GoRouter router(Ref ref) {
     redirect: (context, state) {
       final authStateValue = ref.read(authUseCaseProvider);
       final authState = authStateValue.value;
-
-      if (authStateValue.isLoading ||
-          authState == null ||
-          authState is Unknown) {
-        return state.uri.path == const SplashRoute().location
-            ? null
-            : const SplashRoute().location;
-      }
-
-      final isAuthenticated = authState.isAuthenticated;
-      // Use our new helper
-      final isReadyForHome = authState.isFullyAuthenticated;
       final currentPath = state.uri.path;
+      final String? intentPath = state.uri.queryParameters['redirect-to'] ?? state.uri.queryParameters['redirectTo'];
 
       final onboardingPath = const OnboardingRoute().location;
       final createPasswordPath = '/create_password';
-      final successPath = '/registration_success'; // Your new success screen
+      final successPath = '/registration_success';
 
-      // 1. If not authenticated, keep them in the auth/onboarding loop
-      if (!isAuthenticated) {
-        final publicRoutes = [
-          onboardingPath,
-          '/login',
-          '/create_account',
-          '/verify_phone',
-          createPasswordPath,
-        ];
-        final isPublic = publicRoutes.any(
-          (path) => currentPath.startsWith(path),
-        );
-        return isPublic ? null : onboardingPath;
+      bool isPublicPath(String path) {
+        return path == onboardingPath ||
+            path.startsWith('/login') ||
+            path.startsWith('/create_account') ||
+            path.startsWith('/verify_phone') ||
+            path.startsWith(createPasswordPath) ||
+            path.startsWith('/a/');
       }
 
-      // 2. If authenticated BUT registration is not complete
+      // --- APP INITIALIZING ---
+      if (authStateValue.isLoading || authState == null || authState is Unknown) {
+
+        // ONLY let deep links bypass the Splash screen during loading!
+        // This prevents the "Onboarding Flash" if the app remembers an old route.
+        if (currentPath.startsWith('/a/')) return null;
+
+        // Force everything else (including onboarding) to wait safely on the Splash screen
+        return currentPath == const SplashRoute().location ? null : const SplashRoute().location;
+      }
+
+      final isAuthenticated = authState.isAuthenticated;
+      final isReadyForHome = authState.isFullyAuthenticated;
+
+      // --- LOGIC FOR UNAUTHENTICATED USERS ---
+      if (!isAuthenticated) {
+        if (isPublicPath(currentPath)) {
+          return null;
+        }
+        return onboardingPath;
+      }
+
+      // --- LOGIC FOR PARTIALLY AUTHENTICATED USERS (Creating Account) ---
       if (isAuthenticated && !isReadyForHome) {
-        // Only allow them to be on the Password or Success screen
         if (currentPath == createPasswordPath || currentPath == successPath) {
           return null;
         }
-        // Otherwise, force them back to complete the process
+
+        if (intentPath != null && intentPath.isNotEmpty) {
+          return '$successPath?redirectTo=${Uri.encodeComponent(intentPath)}';
+        }
         return successPath;
       }
 
-      // 3. If fully authenticated and ready for home
+      // --- LOGIC FOR FULLY AUTHENTICATED USERS ---
       if (isReadyForHome) {
-        // If they try to go back to login/onboarding/password pages, send them Home
-        if (currentPath == const SplashRoute().location ||
-            currentPath == onboardingPath ||
-            currentPath == createPasswordPath ||
-            currentPath == successPath) {
+        if (currentPath.startsWith('/a/')) {
+          return null;
+        }
+
+        final isOnGuestPage = currentPath == const SplashRoute().location ||
+            isPublicPath(currentPath) ||
+            currentPath == successPath;
+
+        if (isOnGuestPage) {
+          if (intentPath != null && intentPath.isNotEmpty) {
+            return intentPath;
+          }
           return HomeRoute().location;
         }
       }
 
       return null;
-    },
-  );
+    },  );
 }

@@ -8,16 +8,23 @@ class PrimaryButton extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.child,
+    this.foregroundColor,
+    this.backgroundColor,
   });
 
   final Widget child;
   final VoidCallback? onPressed;
 
+  final Color? foregroundColor;
+  final Color? backgroundColor;
+
   @override
   Widget build(BuildContext context) {
     return FilledButton(
       onPressed: onPressed,
-      style: Theme.of(context).filledButtonTheme.style?.copyWith(
+      style: FilledButton.styleFrom(
+        foregroundColor: foregroundColor ?? context.color.grey1000,
+        backgroundColor: backgroundColor ?? context.color.primary,
         backgroundBuilder: (context, states, internalChild) {
           final bool isDisabled = states.contains(WidgetState.disabled);
           final bool isPressed = states.contains(WidgetState.pressed);
@@ -30,7 +37,7 @@ class PrimaryButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(Dimens.radius.r8),
                 color: isDisabled
                     ? context.color.grey200
-                    : context.color.primary,
+                    : backgroundColor ?? context.color.primary,
                 boxShadow: isDisabled || isPressed
                     ? []
                     : [
@@ -38,13 +45,13 @@ class PrimaryButton extends StatelessWidget {
                           offset: Offset(0, 0),
                           blurRadius: 2,
                           spreadRadius: 0,
-                          color: context.color.primary.withAlpha(10),
+                          color: context.color.green500.withValues(alpha: .10),
                         ),
                         BoxShadow(
                           offset: Offset(0, 1),
                           blurRadius: 8,
                           spreadRadius: 0,
-                          color: context.color.primary.withAlpha(12),
+                          color: context.color.green500.withValues(alpha: .12),
                         ),
                       ],
               ),
@@ -64,7 +71,7 @@ class PrimaryButton extends StatelessWidget {
                         ),
                         child: const SizedBox.expand(),
                       ),
-                    if (internalChild != null) internalChild,
+                    ?internalChild,
                   ],
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:cleer/ui/auth/create_password/view_model/create_password_view_mo
 import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
+import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
@@ -15,9 +16,10 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CreatePasswordScreen extends HookConsumerWidget {
-  const CreatePasswordScreen({super.key, required this.phoneNumber});
+  const CreatePasswordScreen({super.key, required this.phoneNumber, this.redirectTo});
 
   final String phoneNumber;
+  final String? redirectTo;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,10 +72,11 @@ class CreatePasswordScreen extends HookConsumerWidget {
                       l10n.createYourPassword,
                       style: context.typo.headlineSmall,
                     ),
-                    Gap(Dimens.spacing.sp12),
+                    Gap(Dimens.spacing.sp8),
                     Text(
-                      l10n.aFewQuickStepsToSetUpYourAccountAndSecureYourFunds,
-                      style: context.typo.labelSmall.copyWith(
+                      l10n.createAPasswordToProtectYourAccount,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
                         color: context.color.grey600,
                       ),
                     ),
@@ -83,7 +86,7 @@ class CreatePasswordScreen extends HookConsumerWidget {
                       labelText: l10n.enterPassword,
                       isPassword: true,
                     ),
-                    Gap(Dimens.spacing.sp28),
+                    Gap(Dimens.spacing.sp20),
                     CustomTextFormField(
                       controller: confirmPasswordController,
                       labelText: l10n.confirmPassword,

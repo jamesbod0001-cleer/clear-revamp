@@ -13,6 +13,9 @@ abstract class Env {
   @EnviedField(varName: 'FLUTTERWAVE_CLIENT_SECRET')
   static final String flutterwaveClientSecret = _Env.flutterwaveClientSecret;
 
+  @EnviedField(varName: 'FLUTTERWAVE_ENCRYPTION_KEY')
+  static final String flutterwaveEncryptionKey = _Env.flutterwaveEncryptionKey;
+
   @EnviedField(varName: 'FLUTTERWAVE_PUBLIC_KEY')
   static final String flutterwavePublicKey = _Env.flutterwavePublicKey;
 

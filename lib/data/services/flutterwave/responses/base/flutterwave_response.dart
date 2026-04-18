@@ -18,4 +18,6 @@ class FlutterwaveResponse<T> {
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
   ) => _$FlutterwaveResponseFromJson(json, fromJsonT);
+
+  Map<String, dynamic> toJson(Object Function(T value) toJsonT) => _$FlutterwaveResponseToJson(this, toJsonT);
 }

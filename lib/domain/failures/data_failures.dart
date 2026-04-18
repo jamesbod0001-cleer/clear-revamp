@@ -9,6 +9,8 @@ abstract class DataFailure with _$DataFailure {
   const factory DataFailure.unknown({String? code, String? message}) =
       UnknownDataFailure;
 
+  const factory DataFailure.selfTransferFailure({String? accountName}) = SelfTransferFailure;
+
   const factory DataFailure.conditionalCheckFailed() =
       ConditionalCheckFailedException;
 }

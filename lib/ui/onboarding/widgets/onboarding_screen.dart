@@ -95,61 +95,59 @@ class OnboardingScreen extends HookWidget {
                           width: index == 2 ? 285 : null,
                         ),
                         const Spacer(flex: 3),
-                        Gap(Dimens.spacing.sp65),
-                        Padding(
-                          padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-                          child: Visibility(
-                            visible: index == 2,
-                            replacement: PrimaryButton(
-                              onPressed: () {
-                                pageController.animateToPage(
-                                  index + 1,
-                                  duration: const Duration(milliseconds: 400),
-                                  curve: Curves.fastOutSlowIn,
-                                );
-                              },
-                              child: Text(l10n.next),
-                            ),
-                            child: Column(
-                              children: [
-                                PrimaryButton(
-                                  onPressed: () =>
-                                      CreateAccountRoute().push(context),
-                                  child: Text(l10n.getStarted),
-                                ),
-                                Gap(Dimens.spacing.sp12),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: l10n.alreadyHaveAnAccount,
-                                        style: context.typo.bodyMedium.copyWith(
-                                          color: context.color.outline,
-                                        ),
-                                      ),
-                                      TextSpan(text: ' '),
-                                      TextSpan(
-                                        text: l10n.logIn,
-                                        style: context.typo.bodyLink.copyWith(
-                                          color: context.color.primaryBlue,
-                                        ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = () =>
-                                              LoginRoute().push(context),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Gap(Dimens.spacing.sp20),
                       ],
                     );
                   },
                 ),
               ),
+              Gap(Dimens.spacing.sp65),
+              Padding(
+                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                child: Visibility(
+                  visible: currentPage.value == 2,
+                  replacement: PrimaryButton(
+                    onPressed: () {
+                      pageController.animateToPage(
+                        currentPage.value + 1,
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.fastOutSlowIn,
+                      );
+                    },
+                    child: Text(l10n.next),
+                  ),
+                  child: Column(
+                    children: [
+                      PrimaryButton(
+                        onPressed: () => CreateAccountRoute().push(context),
+                        child: Text(l10n.getStarted),
+                      ),
+                      Gap(Dimens.spacing.sp12),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: l10n.alreadyHaveAnAccount,
+                              style: context.typo.bodyMedium.copyWith(
+                                color: context.color.outline,
+                              ),
+                            ),
+                            TextSpan(text: ' '),
+                            TextSpan(
+                              text: l10n.logIn,
+                              style: context.typo.bodyLink.copyWith(
+                                color: context.color.primaryBlue,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => LoginRoute().push(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Gap(Dimens.spacing.sp20),
             ],
           ),
         ),
