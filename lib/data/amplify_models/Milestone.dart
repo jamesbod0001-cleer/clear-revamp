@@ -36,7 +36,6 @@ class Milestone extends amplify_core.Model {
   final String? _lastUpdatedBy;
   final MilestoneStatus? _status;
   final Agreement? _agreement;
-  final List<StatusHistory>? _statusHistory;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -121,10 +120,6 @@ class Milestone extends amplify_core.Model {
     return _agreement;
   }
   
-  List<StatusHistory>? get statusHistory {
-    return _statusHistory;
-  }
-  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -133,9 +128,9 @@ class Milestone extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Milestone._internal({required this.id, required name, required amount, required order, required expectedReleaseDate, participants, lastUpdatedBy, status, agreement, statusHistory, createdAt, updatedAt}): _name = name, _amount = amount, _order = order, _expectedReleaseDate = expectedReleaseDate, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _status = status, _agreement = agreement, _statusHistory = statusHistory, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Milestone._internal({required this.id, required name, required amount, required order, required expectedReleaseDate, participants, lastUpdatedBy, status, agreement, createdAt, updatedAt}): _name = name, _amount = amount, _order = order, _expectedReleaseDate = expectedReleaseDate, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _status = status, _agreement = agreement, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Milestone({String? id, required String name, required double amount, required int order, required amplify_core.TemporalDate expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, MilestoneStatus? status, Agreement? agreement, List<StatusHistory>? statusHistory}) {
+  factory Milestone({String? id, required String name, required double amount, required int order, required amplify_core.TemporalDate expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, MilestoneStatus? status, Agreement? agreement}) {
     return Milestone._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       name: name,
@@ -145,8 +140,7 @@ class Milestone extends amplify_core.Model {
       participants: participants != null ? List<String>.unmodifiable(participants) : participants,
       lastUpdatedBy: lastUpdatedBy,
       status: status,
-      agreement: agreement,
-      statusHistory: statusHistory != null ? List<StatusHistory>.unmodifiable(statusHistory) : statusHistory);
+      agreement: agreement);
   }
   
   bool equals(Object other) {
@@ -165,8 +159,7 @@ class Milestone extends amplify_core.Model {
       DeepCollectionEquality().equals(_participants, other._participants) &&
       _lastUpdatedBy == other._lastUpdatedBy &&
       _status == other._status &&
-      _agreement == other._agreement &&
-      DeepCollectionEquality().equals(_statusHistory, other._statusHistory);
+      _agreement == other._agreement;
   }
   
   @override
@@ -193,7 +186,7 @@ class Milestone extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Milestone copyWith({String? name, double? amount, int? order, amplify_core.TemporalDate? expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, MilestoneStatus? status, Agreement? agreement, List<StatusHistory>? statusHistory}) {
+  Milestone copyWith({String? name, double? amount, int? order, amplify_core.TemporalDate? expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, MilestoneStatus? status, Agreement? agreement}) {
     return Milestone._internal(
       id: id,
       name: name ?? this.name,
@@ -203,8 +196,7 @@ class Milestone extends amplify_core.Model {
       participants: participants ?? this.participants,
       lastUpdatedBy: lastUpdatedBy ?? this.lastUpdatedBy,
       status: status ?? this.status,
-      agreement: agreement ?? this.agreement,
-      statusHistory: statusHistory ?? this.statusHistory);
+      agreement: agreement ?? this.agreement);
   }
   
   Milestone copyWithModelFieldValues({
@@ -215,8 +207,7 @@ class Milestone extends amplify_core.Model {
     ModelFieldValue<List<String>?>? participants,
     ModelFieldValue<String?>? lastUpdatedBy,
     ModelFieldValue<MilestoneStatus?>? status,
-    ModelFieldValue<Agreement?>? agreement,
-    ModelFieldValue<List<StatusHistory>?>? statusHistory
+    ModelFieldValue<Agreement?>? agreement
   }) {
     return Milestone._internal(
       id: id,
@@ -227,8 +218,7 @@ class Milestone extends amplify_core.Model {
       participants: participants == null ? this.participants : participants.value,
       lastUpdatedBy: lastUpdatedBy == null ? this.lastUpdatedBy : lastUpdatedBy.value,
       status: status == null ? this.status : status.value,
-      agreement: agreement == null ? this.agreement : agreement.value,
-      statusHistory: statusHistory == null ? this.statusHistory : statusHistory.value
+      agreement: agreement == null ? this.agreement : agreement.value
     );
   }
   
@@ -246,24 +236,11 @@ class Milestone extends amplify_core.Model {
           ? Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']['serializedData']))
           : Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']))
         : null,
-      _statusHistory = json['statusHistory']  is Map
-        ? (json['statusHistory']['items'] is List
-          ? (json['statusHistory']['items'] as List)
-              .where((e) => e != null)
-              .map((e) => StatusHistory.fromJson(new Map<String, dynamic>.from(e)))
-              .toList()
-          : null)
-        : (json['statusHistory'] is List
-          ? (json['statusHistory'] as List)
-              .where((e) => e?['serializedData'] != null)
-              .map((e) => StatusHistory.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
-              .toList()
-          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'amount': _amount, 'order': _order, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'status': amplify_core.enumToString(_status), 'agreement': _agreement?.toJson(), 'statusHistory': _statusHistory?.map((StatusHistory? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'amount': _amount, 'order': _order, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'status': amplify_core.enumToString(_status), 'agreement': _agreement?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -276,7 +253,6 @@ class Milestone extends amplify_core.Model {
     'lastUpdatedBy': _lastUpdatedBy,
     'status': _status,
     'agreement': _agreement,
-    'statusHistory': _statusHistory,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -293,9 +269,6 @@ class Milestone extends amplify_core.Model {
   static final AGREEMENT = amplify_core.QueryField(
     fieldName: "agreement",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
-  static final STATUSHISTORY = amplify_core.QueryField(
-    fieldName: "statusHistory",
-    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'StatusHistory'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Milestone";
     modelSchemaDefinition.pluralName = "Milestones";
@@ -369,13 +342,6 @@ class Milestone extends amplify_core.Model {
       isRequired: false,
       targetNames: ['agreementId'],
       ofModelName: 'Agreement'
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
-      key: Milestone.STATUSHISTORY,
-      isRequired: false,
-      ofModelName: 'StatusHistory',
-      associatedKey: StatusHistory.MILESTONE
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

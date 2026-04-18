@@ -27,11 +27,11 @@ import 'package:amplify_core/amplify_core.dart' as amplify_core;
 class StatusHistory extends amplify_core.Model {
   static const classType = const _StatusHistoryModelType();
   final String id;
+  final String? _entityId;
+  final String? _entityType;
   final String? _oldStatus;
   final String? _newStatus;
   final String? _changedBy;
-  final Agreement? _agreement;
-  final Milestone? _milestone;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -46,6 +46,32 @@ class StatusHistory extends amplify_core.Model {
       return StatusHistoryModelIdentifier(
         id: id
       );
+  }
+  
+  String get entityId {
+    try {
+      return _entityId!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
+  String get entityType {
+    try {
+      return _entityType!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   String? get oldStatus {
@@ -69,14 +95,6 @@ class StatusHistory extends amplify_core.Model {
     return _changedBy;
   }
   
-  Agreement? get agreement {
-    return _agreement;
-  }
-  
-  Milestone? get milestone {
-    return _milestone;
-  }
-  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -85,16 +103,16 @@ class StatusHistory extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const StatusHistory._internal({required this.id, oldStatus, required newStatus, changedBy, agreement, milestone, createdAt, updatedAt}): _oldStatus = oldStatus, _newStatus = newStatus, _changedBy = changedBy, _agreement = agreement, _milestone = milestone, _createdAt = createdAt, _updatedAt = updatedAt;
+  const StatusHistory._internal({required this.id, required entityId, required entityType, oldStatus, required newStatus, changedBy, createdAt, updatedAt}): _entityId = entityId, _entityType = entityType, _oldStatus = oldStatus, _newStatus = newStatus, _changedBy = changedBy, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory StatusHistory({String? id, String? oldStatus, required String newStatus, String? changedBy, Agreement? agreement, Milestone? milestone}) {
+  factory StatusHistory({String? id, required String entityId, required String entityType, String? oldStatus, required String newStatus, String? changedBy}) {
     return StatusHistory._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
+      entityId: entityId,
+      entityType: entityType,
       oldStatus: oldStatus,
       newStatus: newStatus,
-      changedBy: changedBy,
-      agreement: agreement,
-      milestone: milestone);
+      changedBy: changedBy);
   }
   
   bool equals(Object other) {
@@ -106,11 +124,11 @@ class StatusHistory extends amplify_core.Model {
     if (identical(other, this)) return true;
     return other is StatusHistory &&
       id == other.id &&
+      _entityId == other._entityId &&
+      _entityType == other._entityType &&
       _oldStatus == other._oldStatus &&
       _newStatus == other._newStatus &&
-      _changedBy == other._changedBy &&
-      _agreement == other._agreement &&
-      _milestone == other._milestone;
+      _changedBy == other._changedBy;
   }
   
   @override
@@ -122,11 +140,11 @@ class StatusHistory extends amplify_core.Model {
     
     buffer.write("StatusHistory {");
     buffer.write("id=" + "$id" + ", ");
+    buffer.write("entityId=" + "$_entityId" + ", ");
+    buffer.write("entityType=" + "$_entityType" + ", ");
     buffer.write("oldStatus=" + "$_oldStatus" + ", ");
     buffer.write("newStatus=" + "$_newStatus" + ", ");
     buffer.write("changedBy=" + "$_changedBy" + ", ");
-    buffer.write("agreement=" + (_agreement != null ? _agreement!.toString() : "null") + ", ");
-    buffer.write("milestone=" + (_milestone != null ? _milestone!.toString() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -134,77 +152,65 @@ class StatusHistory extends amplify_core.Model {
     return buffer.toString();
   }
   
-  StatusHistory copyWith({String? oldStatus, String? newStatus, String? changedBy, Agreement? agreement, Milestone? milestone}) {
+  StatusHistory copyWith({String? entityId, String? entityType, String? oldStatus, String? newStatus, String? changedBy}) {
     return StatusHistory._internal(
       id: id,
+      entityId: entityId ?? this.entityId,
+      entityType: entityType ?? this.entityType,
       oldStatus: oldStatus ?? this.oldStatus,
       newStatus: newStatus ?? this.newStatus,
-      changedBy: changedBy ?? this.changedBy,
-      agreement: agreement ?? this.agreement,
-      milestone: milestone ?? this.milestone);
+      changedBy: changedBy ?? this.changedBy);
   }
   
   StatusHistory copyWithModelFieldValues({
+    ModelFieldValue<String>? entityId,
+    ModelFieldValue<String>? entityType,
     ModelFieldValue<String?>? oldStatus,
     ModelFieldValue<String>? newStatus,
-    ModelFieldValue<String?>? changedBy,
-    ModelFieldValue<Agreement?>? agreement,
-    ModelFieldValue<Milestone?>? milestone
+    ModelFieldValue<String?>? changedBy
   }) {
     return StatusHistory._internal(
       id: id,
+      entityId: entityId == null ? this.entityId : entityId.value,
+      entityType: entityType == null ? this.entityType : entityType.value,
       oldStatus: oldStatus == null ? this.oldStatus : oldStatus.value,
       newStatus: newStatus == null ? this.newStatus : newStatus.value,
-      changedBy: changedBy == null ? this.changedBy : changedBy.value,
-      agreement: agreement == null ? this.agreement : agreement.value,
-      milestone: milestone == null ? this.milestone : milestone.value
+      changedBy: changedBy == null ? this.changedBy : changedBy.value
     );
   }
   
   StatusHistory.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
+      _entityId = json['entityId'],
+      _entityType = json['entityType'],
       _oldStatus = json['oldStatus'],
       _newStatus = json['newStatus'],
       _changedBy = json['changedBy'],
-      _agreement = json['agreement'] != null
-        ? json['agreement']['serializedData'] != null
-          ? Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']['serializedData']))
-          : Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']))
-        : null,
-      _milestone = json['milestone'] != null
-        ? json['milestone']['serializedData'] != null
-          ? Milestone.fromJson(new Map<String, dynamic>.from(json['milestone']['serializedData']))
-          : Milestone.fromJson(new Map<String, dynamic>.from(json['milestone']))
-        : null,
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'oldStatus': _oldStatus, 'newStatus': _newStatus, 'changedBy': _changedBy, 'agreement': _agreement?.toJson(), 'milestone': _milestone?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'entityId': _entityId, 'entityType': _entityType, 'oldStatus': _oldStatus, 'newStatus': _newStatus, 'changedBy': _changedBy, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
+    'entityId': _entityId,
+    'entityType': _entityType,
     'oldStatus': _oldStatus,
     'newStatus': _newStatus,
     'changedBy': _changedBy,
-    'agreement': _agreement,
-    'milestone': _milestone,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
 
   static final amplify_core.QueryModelIdentifier<StatusHistoryModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<StatusHistoryModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
+  static final ENTITYID = amplify_core.QueryField(fieldName: "entityId");
+  static final ENTITYTYPE = amplify_core.QueryField(fieldName: "entityType");
   static final OLDSTATUS = amplify_core.QueryField(fieldName: "oldStatus");
   static final NEWSTATUS = amplify_core.QueryField(fieldName: "newStatus");
   static final CHANGEDBY = amplify_core.QueryField(fieldName: "changedBy");
-  static final AGREEMENT = amplify_core.QueryField(
-    fieldName: "agreement",
-    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
-  static final MILESTONE = amplify_core.QueryField(
-    fieldName: "milestone",
-    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Milestone'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "StatusHistory";
     modelSchemaDefinition.pluralName = "StatusHistories";
@@ -213,11 +219,28 @@ class StatusHistory extends amplify_core.Model {
       amplify_core.AuthRule(
         authStrategy: amplify_core.AuthStrategy.PRIVATE,
         operations: const [
-          amplify_core.ModelOperation.READ
+          amplify_core.ModelOperation.READ,
+          amplify_core.ModelOperation.CREATE
         ])
     ];
     
+    modelSchemaDefinition.indexes = [
+      amplify_core.ModelIndex(fields: const ["entityId"], name: "statusHistoriesByEntityId")
+    ];
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.ENTITYID,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.ENTITYTYPE,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: StatusHistory.OLDSTATUS,
@@ -235,20 +258,6 @@ class StatusHistory extends amplify_core.Model {
       key: StatusHistory.CHANGEDBY,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
-      key: StatusHistory.AGREEMENT,
-      isRequired: false,
-      targetNames: ['agreementId'],
-      ofModelName: 'Agreement'
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
-      key: StatusHistory.MILESTONE,
-      isRequired: false,
-      targetNames: ['milestoneId'],
-      ofModelName: 'Milestone'
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
