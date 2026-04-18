@@ -37,7 +37,6 @@ export const Agreement = a.model({
     payoutDestination: a.belongsTo('PayoutDestination', ['recipientAccountNumber', 'recipientBankCode']),
     transactions: a.hasMany('Transaction', 'agreementId'),
 
-    statusHistory: a.hasMany('StatusHistory', 'agreementId'),
     createdAt: a.datetime(),
 }).secondaryIndexes((index) => [index("shortCode"), index("status")
     .sortKeys(["createdAt"]).queryField("agreementsByStatus")]).authorization(allow => [

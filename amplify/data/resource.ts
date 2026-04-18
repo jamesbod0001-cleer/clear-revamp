@@ -1,5 +1,4 @@
 import {type ClientSchema, a, defineData} from '@aws-amplify/backend';
-import {statusTracker} from '../functions/status-tracker/resource';
 import {flutterwaveWebhook} from '../functions/flutterwave-webhook/resource';
 import {User} from "./models/user";
 import {Agreement} from "./models/agreement";
@@ -13,6 +12,8 @@ import {UserPreview} from "./custom-types/user-preview";
 import {AgreementPreview} from "./custom-types/agreement-preview";
 import {MilestonePreview} from "./custom-types/milestone-preview";
 import {joinAgreement} from "../functions/join-agreement/resource";
+import {logAgreementStatus} from "../functions/log-agreement-status/resource";
+import {logMilestoneStatus} from "../functions/log-milestone-status/resource";
 
 const schema = a.schema({
     User,
@@ -40,7 +41,7 @@ const schema = a.schema({
         .returns(a.string()) // Returns the Agreement ID
         .authorization(allow => [allow.authenticated()]) // Only logged-in users!
         .handler(a.handler.function(joinAgreement))
-}).authorization(allow => [allow.resource(statusTracker), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement)]);
+}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement)]);
 
 export type Schema = ClientSchema<typeof schema>;
 

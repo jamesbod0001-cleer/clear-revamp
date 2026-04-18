@@ -1,16 +1,16 @@
-import {a} from "@aws-amplify/backend"
+import { a } from "@aws-amplify/backend"
 
 export const StatusHistory = a.model({
-    agreementId: a.id(),
-    milestoneId: a.id(),
+    entityId: a.id().required(),
+    entityType: a.string().required(), // 'AGREEMENT' or 'MILESTONE'
 
     oldStatus: a.string(),
     newStatus: a.string().required(),
     changedBy: a.string(),
 
-    // Relationships back to parents
-    agreement: a.belongsTo('Agreement', 'agreementId'),
-    milestone: a.belongsTo('Milestone', 'milestoneId'),
-}).authorization(allow => [
-    allow.authenticated().to(['read'])
+}).secondaryIndexes((index) => [
+    // Simplified index without sort keys
+    index("entityId").queryField("listByEntity")
+]).authorization(allow => [
+    allow.authenticated().to(['read', 'create'])
 ]);

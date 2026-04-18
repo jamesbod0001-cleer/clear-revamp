@@ -12,8 +12,6 @@ export const Milestone = a.model({
 
     status: a.enum(['PENDING', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'RELEASED', 'DISPUTED']),
     agreement: a.belongsTo('Agreement', 'agreementId'),
-
-    statusHistory: a.hasMany('StatusHistory', 'milestoneId'),
 }).authorization(allow => [
     allow.ownersDefinedIn('participants'),
     allow.authenticated().to(['read']),

@@ -1,28 +1,27 @@
-// amplify/backend.ts
 import { defineBackend } from '@aws-amplify/backend';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { storage } from "./storage/resource";
-import { statusTracker } from "./functions/status-tracker/resource";
 
-// 1. Import the webhook resource
 import { flutterwaveWebhook } from "./functions/flutterwave-webhook/resource";
 
 // CDK imports for DynamoDB Streams
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
-import { StartingPosition } from 'aws-cdk-lib/aws-lambda';
+import { StartingPosition, FilterCriteria, FilterRule } from 'aws-cdk-lib/aws-lambda';
 import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 
-// 2. Import CDK enums for the Webhook URL
 import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
 import {previewAgreement} from "./functions/preview-agreement/resource";
+import {logAgreementStatus} from "./functions/log-agreement-status/resource";
+import {logMilestoneStatus} from "./functions/log-milestone-status/resource";
 
 const backend = defineBackend({
     auth,
     data,
     storage,
-    statusTracker,
-    flutterwaveWebhook, // 3. Add the webhook to the backend deployment
+    logAgreementStatus,
+    logMilestoneStatus,
+    flutterwaveWebhook,
     previewAgreement,
 });
 
@@ -39,7 +38,7 @@ cfnUserPool.policies = {
 };
 
 // --- Webhook Configuration ---
-// 4. Generate a public, unauthenticated URL for Flutterwave to hit
+// Generate a public, unauthenticated URL for Flutterwave to hit
 const webhookLambda = backend.flutterwaveWebhook.resources.lambda;
 webhookLambda.addFunctionUrl({
     authType: FunctionUrlAuthType.NONE,
@@ -62,10 +61,27 @@ cfnResources.amplifyDynamoDbTables['Milestone'].streamSpecification = {
 const agreementTable = backend.data.resources.tables['Agreement'];
 const milestoneTable = backend.data.resources.tables['Milestone'];
 
-backend.statusTracker.resources.lambda.addEventSource(new DynamoEventSource(agreementTable, {
-    startingPosition: StartingPosition.LATEST,
-}));
+const statusChangeFilter = FilterCriteria.filter({
+    eventName: FilterRule.or('INSERT', 'MODIFY'),
+    dynamodb: {
+        NewImage: {
+            status: { S: FilterRule.exists() } // Only matches if the status field is present in the update
+        }
+    }
+});
 
-backend.statusTracker.resources.lambda.addEventSource(new DynamoEventSource(milestoneTable, {
-    startingPosition: StartingPosition.LATEST,
-}));
+// Sniper 1 (Agreement) with the filter
+backend.logAgreementStatus.resources.lambda.addEventSource(
+    new DynamoEventSource(agreementTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [statusChangeFilter],
+    })
+);
+
+// Sniper 2 (Milestone) with the filter
+backend.logMilestoneStatus.resources.lambda.addEventSource(
+    new DynamoEventSource(milestoneTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [statusChangeFilter],
+    })
+);
