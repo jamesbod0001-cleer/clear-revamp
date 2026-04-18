@@ -10,11 +10,11 @@ part 'status_history.freezed.dart';
 @freezed
 abstract class StatusHistory with _$StatusHistory {
   const factory StatusHistory({
+    required String entityId,
+    required String entityType,
     String? oldStatus,
     required String newStatus,
     String? changedBy,
-    Agreement? agreement,
-    Milestone? milestone,
     DateTime? createdAt,
   }) = _StatusHistory;
 }
@@ -24,13 +24,15 @@ extension StatusHistoryParsingX on StatusHistory {
   /// to the Dart enum (AgreementStatus.awaitingFunding)
   AgreementStatus? get parsedAgreementStatus {
     return AgreementStatus.values.firstWhereOrNull(
-            (e) => e.name.toLowerCase() == newStatus.replaceAll('_', '').toLowerCase()
+      (e) =>
+          e.name.toLowerCase() == newStatus.replaceAll('_', '').toLowerCase(),
     );
   }
 
   MilestoneStatus? get parsedMilestoneStatus {
     return MilestoneStatus.values.firstWhereOrNull(
-            (e) => e.name.toLowerCase() == newStatus.replaceAll('_', '').toLowerCase()
+      (e) =>
+          e.name.toLowerCase() == newStatus.replaceAll('_', '').toLowerCase(),
     );
   }
 }

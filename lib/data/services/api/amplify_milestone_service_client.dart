@@ -44,7 +44,7 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
       ) async {
     final request = ModelQueries.list(
       StatusHistory.classType,
-      where: StatusHistory.MILESTONE.eq(milestoneId),
+      where: StatusHistory.ENTITYID.eq(milestoneId),
     );
     final response = await _amplifyAPI.query(request: request).response;
     return validateRequiredResponse(response);
@@ -55,7 +55,7 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
       ) {
     final subscriptionRequest = ModelSubscriptions.onCreate(
       StatusHistory.classType,
-      where: StatusHistory.MILESTONE.eq(milestoneId),
+      where: StatusHistory.ENTITYID.eq(milestoneId),
     );
     return _amplifyAPI.subscribe(subscriptionRequest);
   }

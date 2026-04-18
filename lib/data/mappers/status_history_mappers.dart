@@ -1,6 +1,4 @@
 import 'package:cleer/data/amplify_models/ModelProvider.dart' as amplify_model;
-import 'package:cleer/data/mappers/agreement_mappers.dart';
-import 'package:cleer/data/mappers/milestone_mappers.dart';
 import 'package:cleer/domain/models/status_history/status_history.dart'
     as domain;
 
@@ -8,11 +6,11 @@ import 'package:cleer/domain/models/status_history/status_history.dart'
 extension StatusHistoryToDomainMapper on amplify_model.StatusHistory {
   domain.StatusHistory toDomain() {
     return domain.StatusHistory(
+      entityId: entityId,
+      entityType: entityType,
       oldStatus: oldStatus,
       newStatus: newStatus,
       changedBy: changedBy,
-      agreement: agreement?.toDomain(),
-      milestone: milestone?.toDomain(),
       createdAt: createdAt?.getDateTimeInUtc().toLocal(),
     );
   }
@@ -22,11 +20,11 @@ extension StatusHistoryToDomainMapper on amplify_model.StatusHistory {
 extension StatusHistoryToAmplifyMapper on domain.StatusHistory {
   amplify_model.StatusHistory toAmplify() {
     return amplify_model.StatusHistory(
+      entityId: entityId,
+      entityType: entityType,
       oldStatus: oldStatus,
       newStatus: newStatus,
       changedBy: changedBy,
-      agreement: agreement?.toAmplify(),
-      milestone: milestone?.toAmplify(),
     );
   }
 }

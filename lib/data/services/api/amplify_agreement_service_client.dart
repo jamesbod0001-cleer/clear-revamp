@@ -128,7 +128,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
   ) async {
     final request = ModelQueries.list(
       StatusHistory.classType,
-      where: StatusHistory.AGREEMENT.eq(agreementId),
+      where: StatusHistory.ENTITYID.eq(agreementId),
     );
     final response = await _amplifyAPI.query(request: request).response;
     return validateRequiredResponse(response);
@@ -139,7 +139,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
   ) {
     final subscriptionRequest = ModelSubscriptions.onCreate(
       StatusHistory.classType,
-      where: StatusHistory.AGREEMENT.eq(agreementId),
+      where: StatusHistory.ENTITYID.eq(agreementId),
     );
     return _amplifyAPI.subscribe(subscriptionRequest);
   }
