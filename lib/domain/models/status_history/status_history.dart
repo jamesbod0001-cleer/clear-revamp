@@ -1,6 +1,4 @@
-import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
-import 'package:cleer/domain/models/milestone/milestone.dart';
 import 'package:cleer/domain/models/milestone/milestone_enums.dart';
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
