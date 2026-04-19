@@ -9,7 +9,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/images/app_image.dart';
 import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
-import 'package:cleer/ui/profile/account_security/view_mdoel/account_security_view_model.dart';
+import 'package:cleer/ui/profile/account_security/view_model/account_security_view_model.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
