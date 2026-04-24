@@ -535,5 +535,10 @@
   "verifyEmailAddress": "Verify Email Address",
   "changeEmailAddress": "Change Email Address",
   "enterNewEmailAddress": "Enter New Email Address",
-  "minAmount": "Min. Amount"
+  "minAmount": "Min. Amount",
+  "chooseHowAndWhenYouReceiveUpdates": "Choose how and when you receive updates.",
+  "legalAgreementsThatGovernYourUseOfCleer": "Legal agreements that govern your use of Cleer.",
+  "understandHowYourDataIsCollectedUsedAndProtected": "Understand how your data is collected, used, and protected.",
+  "howCanWeHelpYou": "How can we help you?",
+  "getQuickAnswersOrTalkToOurSupportTeam": "Get quick answers or talk to our support team."
 }
