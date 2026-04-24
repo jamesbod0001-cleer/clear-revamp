@@ -530,5 +530,7 @@
   "awaitingOtherParty": "Awaiting Other Party",
   "yesDecline": "Yes, Decline",
   "close": "Close",
-  "verifyEmailAddress": "Verify Email Address"
+  "verifyEmailAddress": "Verify Email Address",
+  "changeEmailAddress": "Change Email Address",
+  "enterNewEmailAddress": "Enter New Email Address"
 }

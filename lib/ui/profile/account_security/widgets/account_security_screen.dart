@@ -163,37 +163,50 @@ class AccountSecurityScreen extends HookConsumerWidget {
                       ),
                       Gap(Dimens.spacing.sp24),
                       Expanded(
-                        child: Text(
-                          user?.email?.maskEmail ?? '',
-                          style: context.typo.titleSmall.copyWith(
-                            color: context.color.grey800,
+                        child: GestureDetector(
+                          onTap: () => (user?.isEmailVerified != true)
+                              ? VerifyEmailRoute().push(context)
+                              : null,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  user?.email?.maskEmail ?? '',
+                                  style: context.typo.titleSmall.copyWith(
+                                    color: context.color.grey800,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: .end,
+                                ),
+                              ),
+                              if (user?.isEmailVerified != true) ...[
+                                Gap(Dimens.spacing.sp8),
+                                Material(
+                                  color: context.color.warning,
+                                  borderRadius: .circular(Dimens.radius.r20),
+                                  child: Padding(
+                                    padding: .symmetric(
+                                      horizontal: Dimens.padding.p6,
+                                      vertical: Dimens.padding.p2,
+                                    ),
+                                    child: Text(
+                                      l10n.unverified,
+                                      style: context.typo.bodySmall.copyWith(
+                                        color: context.color.background,
+                                        fontStyle: .italic,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                PhosphorIcon(
+                                  PhosphorIcons.caretRight(),
+                                  size: Dimens.size.s20,
+                                  color: context.color.blue700,
+                                ),
+                              ],
+                            ],
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: .end,
                         ),
-                      ),
-                      Gap(Dimens.spacing.sp8),
-                      Material(
-                        color: context.color.warning,
-                        borderRadius: .circular(Dimens.radius.r20),
-                        child: Padding(
-                          padding: .symmetric(
-                            horizontal: Dimens.padding.p6,
-                            vertical: Dimens.padding.p2,
-                          ),
-                          child: Text(
-                            l10n.unverified,
-                            style: context.typo.bodySmall.copyWith(
-                              color: context.color.background,
-                              fontStyle: .italic,
-                            ),
-                          ),
-                        ),
-                      ),
-                      PhosphorIcon(
-                        PhosphorIcons.caretRight(),
-                        size: Dimens.size.s20,
-                        color: context.color.blue700,
                       ),
                     ],
                   ),
