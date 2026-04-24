@@ -12,11 +12,13 @@ import 'package:cleer/data/services/auth/models/update_password/update_password_
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/auth_identity/auth_identity.dart';
 import 'package:cleer/domain/models/code_delivery_details/code_delivery_details.dart';
+import 'package:cleer/domain/models/confirm_user_attribute_result/confirm_user_attribute_result.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
 import 'package:cleer/domain/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
 import 'package:cleer/domain/models/update_password_result/update_password_result.dart';
+import 'package:cleer/domain/models/update_user_attribute_result/update_user_attribute_result.dart';
 import 'package:cleer/domain/use_cases/auth/params/confirm_reset_password_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/confirm_sign_up_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_in_params.dart';
@@ -240,6 +242,58 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
       }
     } on AuthException catch (e) {
       _log.error('Error signing out user', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<CodeDeliveryDetails, AuthFailure>>
+  sendEmailVerificationCode() async {
+    try {
+      _log.info('Sending email verification code');
+      final amplifyResult = await _amplifyAuthServiceClient
+          .sendUserAttributeVerificationCode(.email);
+      _log.info('Email verification code sent successfully');
+
+      return Success(amplifyResult.codeDeliveryDetails.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error sending email verification code', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<ConfirmUserAttributeDomainResult, AuthFailure>>
+  confirmEmailVerificationCode(String confirmationCode) async {
+    try {
+      _log.info('Confirming email verification code');
+      final amplifyResult = await _amplifyAuthServiceClient
+          .confirmUserAttribute(
+            key: .email,
+            confirmationCode: confirmationCode,
+          );
+      _log.info("Email verification code confirmed successfully");
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error confirming email verification code', e);
+      return Failure(AmplifyAuthExceptionHandler.handleException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<UpdateUserAttributeDomainResult, AuthFailure>> updateEmail(
+    String newEmail,
+  ) async {
+    try {
+      _log.info('Updating user auth email');
+      final amplifyResult = await _amplifyAuthServiceClient.updateUserAttribute(
+        key: .email,
+        value: newEmail,
+      );
+      _log.info('Successfully updated user auth email');
+      return Success(amplifyResult.toDomain());
+    } on AuthException catch (e) {
+      _log.error('Error updating user auth email', e);
       return Failure(AmplifyAuthExceptionHandler.handleException(e));
     }
   }

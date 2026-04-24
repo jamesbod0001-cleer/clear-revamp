@@ -3,11 +3,13 @@ import 'package:cleer/data/services/auth/amplify_auth_service_client.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
 import 'package:cleer/domain/models/auth_identity/auth_identity.dart';
 import 'package:cleer/domain/models/code_delivery_details/code_delivery_details.dart';
+import 'package:cleer/domain/models/confirm_user_attribute_result/confirm_user_attribute_result.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
 import 'package:cleer/domain/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
 import 'package:cleer/domain/models/update_password_result/update_password_result.dart';
+import 'package:cleer/domain/models/update_user_attribute_result/update_user_attribute_result.dart';
 import 'package:cleer/domain/use_cases/auth/params/confirm_reset_password_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/confirm_sign_up_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_in_params.dart';
@@ -48,4 +50,12 @@ abstract class AuthRepository {
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>>
   confirmResetPassword(ConfirmResetPasswordParams params);
   Future<ResultDart<void, AuthFailure>> signOut();
+
+  Future<ResultDart<CodeDeliveryDetails, AuthFailure>>
+  sendEmailVerificationCode();
+  Future<ResultDart<ConfirmUserAttributeDomainResult, AuthFailure>>
+  confirmEmailVerificationCode(String confirmationCode);
+  Future<ResultDart<UpdateUserAttributeDomainResult, AuthFailure>> updateEmail(
+    String newEmail,
+  );
 }
