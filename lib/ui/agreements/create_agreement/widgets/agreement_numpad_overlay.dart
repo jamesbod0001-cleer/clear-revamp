@@ -31,7 +31,7 @@ class AgreementNumpadOverlay extends HookWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final amountText = useState(initialAmount.isEmpty ? '0' : initialAmount);
-    final double minimumAmount = 1000;
+    final double minimumAmount = 1500;
 
     void handleTap(String char) {
       final currentText = amountText.value;
@@ -114,14 +114,31 @@ class AgreementNumpadOverlay extends HookWidget {
                     mainAxisSize: .min,
                     crossAxisAlignment: .center,
                     children: [
-                      Gap(Dimens.spacing.sp35),
+                      Gap(Dimens.spacing.sp30),
                       Text(
                         type.isSend ? l10n.sendFunds : l10n.requestFunds,
                         style: context.typo.headlineSmall.copyWith(
                           color: context.color.blue100,
                         ),
                       ),
-                      Gap(Dimens.spacing.sp54),
+                      Gap(Dimens.spacing.sp32),
+                      Material(
+                        color: context.color.blue1100,
+                        borderRadius: .circular(Dimens.radius.r8),
+                        child: Padding(
+                          padding: .symmetric(
+                            vertical: Dimens.padding.p8,
+                            horizontal: Dimens.padding.p12,
+                          ),
+                          child: Text(
+                            l10n.enterAmountToSecure,
+                            style: context.typo.bodyMedium.copyWith(
+                              color: context.color.outline,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp35),
                       Expanded(
                         child: Column(
                           children: [
@@ -160,20 +177,32 @@ class AgreementNumpadOverlay extends HookWidget {
                                 ),
                               ),
                             ),
-                            Gap(Dimens.spacing.sp8),
+                            Gap(Dimens.spacing.sp4),
                             Material(
-                              color: context.color.blue1100,
+                              color: context.color.blue900,
                               borderRadius: .circular(Dimens.radius.r8),
                               child: Padding(
                                 padding: .symmetric(
-                                  vertical: Dimens.padding.p8,
-                                  horizontal: Dimens.padding.p12,
+                                  vertical: Dimens.padding.p4,
+                                  horizontal: Dimens.padding.p6,
                                 ),
-                                child: Text(
-                                  l10n.enterAmountToSecure,
-                                  style: context.typo.bodyMedium.copyWith(
-                                    color: context.color.outline,
-                                  ),
+                                child: Row(
+                                  mainAxisSize: .min,
+                                  children: [
+                                    Text(
+                                      "${l10n.minAmount}:",
+                                      style: context.typo.bodySmall.copyWith(
+                                        color: context.color.blue400,
+                                      ),
+                                    ),
+                                    Gap(Dimens.spacing.sp4),
+                                    Text(
+                                      "${l10n.nairaSign}${NumberFormat('#,###.##').format(minimumAmount)}:",
+                                      style: context.typo.bodySmall.copyWith(
+                                        color: context.color.blue400,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -192,7 +221,7 @@ class AgreementNumpadOverlay extends HookWidget {
                         onPressed:
                             (amountText.value.isNotEmpty
                                     ? double.parse(amountText.value)
-                                    : 0.0) >
+                                    : 0.0) >=
                                 minimumAmount
                             ? () {
                                 onSubmitted.call(amountText.value);

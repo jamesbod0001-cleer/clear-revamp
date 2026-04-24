@@ -532,5 +532,6 @@
   "close": "Close",
   "verifyEmailAddress": "Verify Email Address",
   "changeEmailAddress": "Change Email Address",
-  "enterNewEmailAddress": "Enter New Email Address"
+  "enterNewEmailAddress": "Enter New Email Address",
+  "minAmount": "Min. Amount"
 }
