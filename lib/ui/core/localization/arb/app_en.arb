@@ -164,6 +164,7 @@
   "agreements": "Agreements",
   "ongoing": "Ongoing",
   "completed": "Completed",
+  "noOngoingAgreementsYet": "No ongoing agreement yet.",
   "totalFundsSecured": "Total Funds Secured",
   "help": "Help",
   "logs": "Logs",
