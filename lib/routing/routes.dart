@@ -169,6 +169,12 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
           routes: [
             TypedGoRoute<PayoutDestinationRoute>(path: 'payout_destination'),
             TypedGoRoute<AccountSecurityRoute>(path: 'account_security'),
+            TypedGoRoute<ManageNotificationsRoute>(
+              path: 'manage_notifications',
+            ),
+            TypedGoRoute<TermsAndPoliciesRoute>(path: 'terms_and_policies'),
+            TypedGoRoute<DataPrivacyRoute>(path: 'data_privacy'),
+            TypedGoRoute<HelpSupportRoute>(path: 'help_support'),
           ],
         ),
       ],
@@ -256,4 +262,29 @@ class AccountSecurityRoute extends GoRouteData with $AccountSecurityRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       AccountSecurityScreen();
+}
+
+class ManageNotificationsRoute extends GoRouteData
+    with $ManageNotificationsRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) => Placeholder();
+}
+
+class TermsAndPoliciesRoute extends GoRouteData with $TermsAndPoliciesRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) => Placeholder();
+}
+
+class DataPrivacyRoute extends GoRouteData with $DataPrivacyRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) => Placeholder();
+}
+
+class HelpSupportRoute extends GoRouteData with $HelpSupportRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) => Placeholder();
 }

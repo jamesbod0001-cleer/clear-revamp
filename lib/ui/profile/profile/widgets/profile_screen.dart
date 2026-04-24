@@ -171,10 +171,6 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp40),
 
-                    // PayoutDestinationCard(),
-                    // Gap(Dimens.spacing.sp16),
-                    // AddBankAccountButton(),
-                    // Gap(Dimens.spacing.sp40),
                     ProfileSectionHeader(title: l10n.settings),
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),
@@ -188,7 +184,7 @@ class ProfileScreen extends ConsumerWidget {
                       title: l10n.manageNotifications,
                       content: l10n
                           .chooseHowYouReceiveAlertsForReleasesNewDealsAndStatusChanges,
-                      onTap: () {},
+                      onTap: () => ManageNotificationsRoute().go(context),
                       showBottomPadding: false,
                     ),
                     Gap(Dimens.spacing.sp40),
@@ -199,14 +195,14 @@ class ProfileScreen extends ConsumerWidget {
                       title: l10n.termsAndPolicies,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
-                      onTap: () {},
+                      onTap: () => TermsAndPoliciesRoute().go(context),
                     ),
                     ProfileMenuTile(
                       icon: PhosphorIcons.fileLock(.duotone),
                       title: l10n.dataUsageAndPrivacy,
                       content: l10n
                           .seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals,
-                      onTap: () {},
+                      onTap: () => DataPrivacyRoute().go(context),
                       showBottomPadding: false,
                     ),
                     Gap(Dimens.spacing.sp40),
@@ -217,7 +213,7 @@ class ProfileScreen extends ConsumerWidget {
                       title: l10n.helpAndSupport,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
-                      onTap: () {},
+                      onTap: () => HelpSupportRoute().go(context),
                     ),
                     ProfileMenuTile(
                       icon: PhosphorIcons.star(.duotone),
