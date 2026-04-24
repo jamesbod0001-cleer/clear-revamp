@@ -1,9 +1,11 @@
+import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/domain/providers/payout_destination/payout_destination_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/app_empty_state.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/profile/payout_destination/view_model/payout_destination_view_model.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account_trigger.dart';
@@ -72,7 +74,22 @@ class PayoutDestinationScreen extends ConsumerWidget {
                           userPayoutDestinationsState.value;
                       if (payoutDestinations == null ||
                           payoutDestinations.isEmpty) {
-                        return AddBankAccountTrigger.card();
+                        return Center(
+                          heightFactor: 2,
+                          child: AppEmptyState(
+                            icon: Assets.icons.bankOff.svg(
+                              width: Dimens.size.s80,
+                              height: Dimens.size.s80,
+                              colorFilter: ColorFilter.mode(
+                                context.color.blue1000,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            title: l10n.noPayoutDestinationYet,
+                            iconBottomSpacing: Dimens.spacing.sp32,
+                            subtitle: AddBankAccountTrigger.button(),
+                          ),
+                        );
                       }
 
                       List<PayoutDestination> sortedList = List.from(

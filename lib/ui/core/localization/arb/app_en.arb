@@ -140,6 +140,7 @@
   },
   "clickToViewAndResolve": "Click to view and resolve",
   "payoutAccounts": "Payout Accounts",
+  "noPayoutDestinationYet": "No payout destination yet.",
   "manageTheBankAccountThatReceivesReleasedFunds": "Manage the bank account that receives released funds.",
   "whereReleasedFundsWillBeSentAfterASuccessfulAgreement": "Where released funds will be sent after a successful agreement.",
   "fundsAreOnlyPaidOutToVerifiedBankAccountsInYourName": "Funds are only paid out to verified bank accounts in your name.",
