@@ -7,6 +7,7 @@ export const User = a.model({
     firstName: a.string().required(),
     lastName: a.string().required(),
     email: a.string(),
+    isEmailVerified: a.boolean(),
     profilePicture: a.ref('Photo'),
 
     // Flutterwave

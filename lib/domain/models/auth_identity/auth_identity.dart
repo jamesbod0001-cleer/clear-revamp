@@ -11,5 +11,6 @@ abstract class AuthIdentity with _$AuthIdentity {
     required String lastName,
     required String phoneNumber,
     String? email,
+    bool? isEmailVerified,
   }) = _AuthIdentity;
 }

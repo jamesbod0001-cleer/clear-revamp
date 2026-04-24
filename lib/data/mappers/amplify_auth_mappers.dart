@@ -1,10 +1,12 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/domain/models/auth_identity/auth_identity.dart';
 import 'package:cleer/domain/models/code_delivery_details/code_delivery_details.dart';
+import 'package:cleer/domain/models/confirm_user_attribute_result/confirm_user_attribute_result.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
 import 'package:cleer/domain/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
 import 'package:cleer/domain/models/update_password_result/update_password_result.dart';
+import 'package:cleer/domain/models/update_user_attribute_result/update_user_attribute_result.dart';
 import 'package:cleer/utils/constants.dart';
 import 'package:collection/collection.dart';
 
@@ -102,6 +104,27 @@ extension UpdatePasswordMapper on UpdatePasswordResult {
   }
 }
 
+extension ConfirmUserAttributeMapper on ConfirmUserAttributeResult {
+  ConfirmUserAttributeDomainResult toDomain() {
+    return ConfirmUserAttributeDomainResult.success();
+  }
+}
+
+extension UpdateUserAttributeMapper on UpdateUserAttributeResult {
+  UpdateUserAttributeDomainResult toDomain() {
+    switch (nextStep.updateAttributeStep) {
+      case AuthUpdateAttributeStep.confirmAttributeWithCode:
+        final deliveryDetails = nextStep.codeDeliveryDetails!;
+        return UpdateUserAttributeDomainResult.confirmationRequired(
+          destination: deliveryDetails.destination ?? 'Unknown destination',
+          deliveryMedium: deliveryDetails.deliveryMedium.name,
+        );
+      case AuthUpdateAttributeStep.done:
+        return const UpdateUserAttributeDomainResult.success();
+    }
+  }
+}
+
 extension UserAttributeExtractor on List<AuthUserAttribute> {
   AuthIdentity toDomain(String identityId) {
     String sub = firstWhere(
@@ -128,6 +151,10 @@ extension UserAttributeExtractor on List<AuthUserAttribute> {
       (attr) => attr.userAttributeKey == AuthUserAttributeKey.email,
     )?.value;
 
+    String? isEmailVerified = firstWhereOrNull(
+      (attr) => attr.userAttributeKey == AuthUserAttributeKey.emailVerified,
+    )?.value;
+
     return AuthIdentity(
       userId: sub,
       identityId: identityId,
@@ -135,6 +162,9 @@ extension UserAttributeExtractor on List<AuthUserAttribute> {
       lastName: lastName,
       phoneNumber: phoneNumber,
       email: email,
+      isEmailVerified: isEmailVerified == null
+          ? null
+          : isEmailVerified == 'true',
     );
   }
 }

@@ -14,6 +14,7 @@ abstract class User with _$User {
     required String firstName,
     required String lastName,
     String? email,
+    bool? isEmailVerified,
     Photo? profilePicture,
     required String flutterwaveCustomerId,
     @Default([]) List<String> flutterwavePaymentMethodIds,
