@@ -50,10 +50,10 @@ class AgreementSplitMilestonesOverlay extends HookConsumerWidget {
     final remainingAmount = totalAmount - allocatedAmount;
 
     bool isFormValid() {
-      // 1. Check Amount Overflow
+      // Check Amount Overflow
       if (allocatedAmount > totalAmount) return false;
 
-      // 2. Exact Match Check (Usually required for Escrow)
+      // Exact Match Check (Usually required for Escrow)
       if (allocatedAmount != totalAmount) return false;
 
       for (int i = 0; i < milestones.value.length; i++) {
@@ -230,7 +230,7 @@ class AgreementSplitMilestonesOverlay extends HookConsumerWidget {
                 mainAxisAlignment: .end,
                 children: [
                   Visibility(
-                    visible: allocatedAmount > totalAmount,
+                    visible: allocatedAmount != totalAmount,
                     child: Container(
                       margin: .only(top: Dimens.padding.p24),
                       padding: .all(Dimens.padding.p8),
@@ -246,10 +246,12 @@ class AgreementSplitMilestonesOverlay extends HookConsumerWidget {
                             size: Dimens.size.s16,
                           ),
                           Gap(Dimens.spacing.sp12),
-                          Text(
-                            l10n.milestonesTotalExceeded(amount),
-                            style: context.typo.bodyMedium.copyWith(
-                              color: context.color.error,
+                          Expanded(
+                            child: Text(
+                              l10n.milestonesTotalMismatch(amount),
+                              style: context.typo.bodyMedium.copyWith(
+                                color: context.color.error,
+                              ),
                             ),
                           ),
                         ],
@@ -342,8 +344,11 @@ class MilestoneItemCard extends HookWidget {
           CustomTextFormField(
             controller: nameController,
             labelText: l10n.milestoneName,
-            validator: (name) =>
-                commonValidator(value: name, fieldName: 'Milestone Name', l10n: l10n),
+            validator: (name) => commonValidator(
+              value: name,
+              fieldName: 'Milestone Name',
+              l10n: l10n,
+            ),
           ),
           Gap(Dimens.spacing.sp16),
           Row(

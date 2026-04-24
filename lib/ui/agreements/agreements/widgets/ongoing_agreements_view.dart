@@ -1,3 +1,5 @@
+import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
@@ -5,6 +7,8 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/ui/app_empty_state.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -13,23 +17,68 @@ class OngoingAgreementsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final filteredState = ref.watch(agreementsScreenListProvider);
+
+    if (filteredState.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    final ongoingAgreements = filteredState.value;
+
     return Column(
       children: [
-        const _OngoingFiltersRow(),
+        if (!(ongoingAgreements == null || ongoingAgreements.isEmpty))
+          const _OngoingFiltersRow(),
         Expanded(
           child: Builder(
             builder: (BuildContext context) {
-              final filteredState = ref.watch(agreementsScreenListProvider);
-
-              if (filteredState.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final ongoingAgreements = filteredState.value;
-
               if (ongoingAgreements == null || ongoingAgreements.isEmpty) {
-                /// TODO: Add empty state
-                return SizedBox.shrink();
+                return AppEmptyState(
+                  icon: Assets.icons.handshakeOff.svg(
+                    width: Dimens.size.s80,
+                    height: Dimens.size.s80,
+                    colorFilter: ColorFilter.mode(
+                      context.color.blue1000,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  title: l10n.noOngoingAgreementsYet,
+                  iconBottomSpacing: Dimens.spacing.sp32,
+                  subtitle: RichText(
+                    text: TextSpan(
+                      style: context.typo.bodyMedium.copyWith(
+                        color: context.color.grey800,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: l10n.sendFunds,
+                          style: context.typo.bodyLink.copyWith(
+                            color: context.color.blue700,
+                            decorationColor: context.color.blue700,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () =>
+                                CreateAgreementRoute(type: .send).go(context),
+                        ),
+                        const TextSpan(text: ' '),
+                        TextSpan(text: l10n.or),
+                        const TextSpan(text: ' '),
+                        TextSpan(
+                          text: l10n.requestPayment,
+                          style: context.typo.bodyLink.copyWith(
+                            color: context.color.blue700,
+                            decorationColor: context.color.blue700,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () => CreateAgreementRoute(
+                              type: .request,
+                            ).go(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               }
 
               return ListView.separated(
