@@ -54,8 +54,8 @@ class AgreementDetailsStep extends HookConsumerWidget {
         case EligibilityErrorType.nameMismatch:
           return l10n
               .youCanOnlyActionAgreementsWhereTheRecipientBankAccountIsInYourName(
-                action ?? l10n.accept.toLowerCase(),
-              );
+            action ?? l10n.accept.toLowerCase(),
+          );
         case EligibilityErrorType.doesNotBelongToYou:
           return l10n.thisAgreementDoesNotBelongToYou;
         case null:
@@ -69,8 +69,8 @@ class AgreementDetailsStep extends HookConsumerWidget {
       final hasOppositeParty =
           (previewAgreement?.initiatorRole == .sender &&
               previewAgreement?.recipient != null) ||
-          (previewAgreement?.initiatorRole == .recipient &&
-              previewAgreement?.sender != null);
+              (previewAgreement?.initiatorRole == .recipient &&
+                  previewAgreement?.sender != null);
 
       if (hasOppositeParty) {
         LoginRoute(
@@ -154,7 +154,7 @@ class AgreementDetailsStep extends HookConsumerWidget {
               state.error is UnknownDataFailure &&
               (state.error as UnknownDataFailure).code == 'BackendException') {
             String? errorMessage =
-                state.error != null && state.error is UnknownDataFailure
+            state.error != null && state.error is UnknownDataFailure
                 ? (state.error as UnknownDataFailure).message
                 : null;
             return Padding(
@@ -352,9 +352,9 @@ class _AgreementSummaryCard extends StatelessWidget {
                 child: Text(
                   previewAgreement.initiatorRole == .recipient
                       ? previewAgreement
-                                .recipientAccountNumber
-                                ?.maskAccountNumber ??
-                            ''
+                      .recipientAccountNumber
+                      ?.maskAccountNumber ??
+                      ''
                       : previewAgreement.recipientAccountNumber ?? '',
                   style: context.typo.bodyMedium.copyWith(
                     fontWeight: AppFontWeights.regular,
@@ -499,8 +499,8 @@ class _MilestoneBreakdown extends HookWidget {
                   border: Border(
                     top: index == 0
                         ? BorderSide(
-                            color: context.color.black.withValues(alpha: .10),
-                          )
+                      color: context.color.black.withValues(alpha: .10),
+                    )
                         : .none,
                   ),
                 ),
@@ -668,12 +668,12 @@ class _ActionFooter extends StatelessWidget {
               style: TextButton.styleFrom(foregroundColor: context.color.error),
               onPressed: isEligible
                   ? () {
-                      if (user == null) {
-                        handleGuestRouting('decline');
-                      } else {
-                        handleDecline();
-                      }
-                    }
+                if (user == null) {
+                  handleGuestRouting('decline');
+                } else {
+                  handleDecline();
+                }
+              }
                   : null,
               child: Text(l10n.declineAgreement),
             ),
