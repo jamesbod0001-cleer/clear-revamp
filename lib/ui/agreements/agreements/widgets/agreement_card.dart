@@ -1,3 +1,4 @@
+import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
 import 'package:cleer/domain/models/milestone/milestone.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class AgreementCard extends ConsumerWidget {
   const AgreementCard({super.key, required this.agreement});
@@ -62,10 +62,9 @@ class AgreementCard extends ConsumerWidget {
                 ),
                 child: SizedBox.square(
                   dimension: Dimens.size.s48,
-                  child: PhosphorIcon(
-                    PhosphorIcons.handshake(.fill),
-                    color: context.color.secondary,
-                    size: Dimens.size.s24,
+                  child: Assets.images.handshake.image(
+                    height: Dimens.size.s18,
+                    width: Dimens.size.s28,
                   ),
                 ),
               ),

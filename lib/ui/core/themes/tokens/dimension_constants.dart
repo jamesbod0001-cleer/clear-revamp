@@ -13,6 +13,7 @@ class _AppSize {
 
   final double s16 = 16.0;
   final double s17 = 17.0;
+  final double s18 = 18.0;
   final double s19 = 19.0;
   final double s20 = 20.0;
   final double s21 = 21.0;
