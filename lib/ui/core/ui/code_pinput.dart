@@ -1,4 +1,3 @@
-import 'package:cleer/ui/auth/verify_phone_number/view_model/verify_phone_number_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +14,13 @@ class CodePinput extends ConsumerStatefulWidget {
     this.otpLength = 6,
     this.onCompleted,
     this.controller,
+    required this.hasError,
   });
 
   final int otpLength;
   final Function(String?)? onCompleted;
   final TextEditingController? controller;
+  final bool hasError;
 
   @override
   ConsumerState<CodePinput> createState() => _OtpPinputState();
@@ -65,11 +66,12 @@ class _OtpPinputState extends ConsumerState<CodePinput> {
         if (value == null ||
             value.isEmpty ||
             value.length != widget.otpLength) {
-          return 'AppLocalizations.of(context)!.invalidOTPCodePleaseTryAgain';
+          return AppLocalizations.of(context)!.expiredCodeExceptionMessage;
         }
         return null;
       },
-      forceErrorState: ref.watch(verifyPhoneNumberViewModelProvider).hasError,
+      // forceErrorState: ref.watch(verifyPhoneNumberViewModelProvider).hasError,
+      forceErrorState: widget.hasError,
       errorText: AppLocalizations.of(context)!.expiredCodeExceptionMessage,
       errorTextStyle: context.typo.bodySmall.copyWith(
         color: context.color.error,
