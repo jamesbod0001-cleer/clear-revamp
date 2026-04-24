@@ -326,9 +326,9 @@
   "milestoneName": "Milestone Name",
   "milestoneAmount": "Milestone Amount",
   "addMilestone": "Add Milestone",
-  "milestonesTotalExceeded": "Total milestones cannot exceed {amount}",
-  "@milestonesTotalExceeded": {
-    "description": "Error message when the sum of milestones is greater than the agreement total",
+  "milestonesTotalMismatch": "Total milestone amounts must be equal to and cannot exceed {amount}",
+  "@milestonesTotalMismatch": {
+    "description": "Error message when the sum of milestones does not exactly equal the agreement total",
     "placeholders": {
       "amount": {
         "type": "String",
