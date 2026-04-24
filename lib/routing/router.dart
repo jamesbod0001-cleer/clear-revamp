@@ -17,9 +17,7 @@ GoRouter router(Ref ref) {
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
-    observers: [
-      SentryNavigatorObserver(),
-    ],
+    observers: [SentryNavigatorObserver()],
     initialLocation: const SplashRoute().location,
     refreshListenable: authNotifier,
     debugLogDiagnostics: true,
@@ -28,7 +26,9 @@ GoRouter router(Ref ref) {
       final authStateValue = ref.read(authUseCaseProvider);
       final authState = authStateValue.value;
       final currentPath = state.uri.path;
-      final String? intentPath = state.uri.queryParameters['redirect-to'] ?? state.uri.queryParameters['redirectTo'];
+      final String? intentPath =
+          state.uri.queryParameters['redirect-to'] ??
+          state.uri.queryParameters['redirectTo'];
 
       final onboardingPath = const OnboardingRoute().location;
       final createPasswordPath = '/create_password';
@@ -44,14 +44,17 @@ GoRouter router(Ref ref) {
       }
 
       // --- APP INITIALIZING ---
-      if (authStateValue.isLoading || authState == null || authState is Unknown) {
-
+      if (authStateValue.isLoading ||
+          authState == null ||
+          authState is Unknown) {
         // ONLY let deep links bypass the Splash screen during loading!
         // This prevents the "Onboarding Flash" if the app remembers an old route.
         if (currentPath.startsWith('/a/')) return null;
 
         // Force everything else (including onboarding) to wait safely on the Splash screen
-        return currentPath == const SplashRoute().location ? null : const SplashRoute().location;
+        return currentPath == const SplashRoute().location
+            ? null
+            : const SplashRoute().location;
       }
 
       final isAuthenticated = authState.isAuthenticated;
@@ -83,7 +86,8 @@ GoRouter router(Ref ref) {
           return null;
         }
 
-        final isOnGuestPage = currentPath == const SplashRoute().location ||
+        final isOnGuestPage =
+            currentPath == const SplashRoute().location ||
             isPublicPath(currentPath) ||
             currentPath == successPath;
 
@@ -96,5 +100,6 @@ GoRouter router(Ref ref) {
       }
 
       return null;
-    },  );
+    },
+  );
 }

@@ -90,6 +90,33 @@ class AmplifyAuthServiceClient {
     );
   }
 
+  Future<SendUserAttributeVerificationCodeResult>
+  sendUserAttributeVerificationCode(AuthUserAttributeKey key) async {
+    return await _amplifyAuth.sendUserAttributeVerificationCode(
+      userAttributeKey: key,
+    );
+  }
+
+  Future<ConfirmUserAttributeResult> confirmUserAttribute({
+    required AuthUserAttributeKey key,
+    required String confirmationCode,
+  }) async {
+    return await _amplifyAuth.confirmUserAttribute(
+      userAttributeKey: key,
+      confirmationCode: confirmationCode,
+    );
+  }
+
+  Future<UpdateUserAttributeResult> updateUserAttribute({
+    required AuthUserAttributeKey key,
+    required String value,
+  }) async {
+    return await _amplifyAuth.updateUserAttribute(
+      userAttributeKey: key,
+      value: value,
+    );
+  }
+
   Future<SignOutResult> signOutCurrentUser() async {
     final result = await _amplifyAuth.signOut();
     return result;

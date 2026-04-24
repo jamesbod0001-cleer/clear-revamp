@@ -11,6 +11,7 @@ import 'package:cleer/ui/auth/create_password/widgets/create_password_screen.dar
 import 'package:cleer/ui/auth/forgot_password/widgets/forgot_password_screen.dart';
 import 'package:cleer/ui/auth/login/widgets/login_screen.dart';
 import 'package:cleer/ui/auth/registration_success/widgets/registration_success_screen.dart';
+import 'package:cleer/ui/auth/verify_email_address/widgets/verify_email_address_screen.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/auth/verify_phone_number/widgets/verify_phone_number_screen.dart';
 import 'package:cleer/ui/core/navigation/app_navigation_shell.dart';
@@ -57,7 +58,8 @@ class LoginRoute extends GoRouteData with $LoginRoute {
   LoginRoute({this.redirectTo});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => LoginScreen(redirectTo: redirectTo,);
+  Widget build(BuildContext context, GoRouterState state) =>
+      LoginScreen(redirectTo: redirectTo);
 }
 
 class ForgotPasswordRoute extends GoRouteData with $ForgotPasswordRoute {
@@ -76,7 +78,7 @@ class CreateAccountRoute extends GoRouteData with $CreateAccountRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      CreateAccountScreen(redirectTo: redirectTo,);
+      CreateAccountScreen(redirectTo: redirectTo);
 }
 
 @TypedGoRoute<VerifyPhoneRoute>(path: '/verify_phone')
@@ -88,7 +90,7 @@ class VerifyPhoneRoute extends GoRouteData with $VerifyPhoneRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      VerifyPhoneNumberScreen(details: $extra, redirectTo: redirectTo,);
+      VerifyPhoneNumberScreen(details: $extra, redirectTo: redirectTo);
 }
 
 @TypedGoRoute<CreatePasswordRoute>(path: '/create_password')
@@ -122,6 +124,12 @@ class ChangePasswordRoute extends GoRouteData with $ChangePasswordRoute {
       const ChangePasswordScreen();
 }
 
+@TypedGoRoute<VerifyEmailRoute>(path: '/verify_email')
+class VerifyEmailRoute extends GoRouteData with $VerifyEmailRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const VerifyEmailAddressScreen();
+}
 
 @TypedGoRoute<AcceptAgreementRoute>(path: '/a/:shortCode')
 class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
@@ -132,10 +140,9 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return AcceptAgreementScreen(shortCode: shortCode, action: action,);
+    return AcceptAgreementScreen(shortCode: shortCode, action: action);
   }
 }
-
 
 // --- PROTECTED SHELL ROUTES ---
 

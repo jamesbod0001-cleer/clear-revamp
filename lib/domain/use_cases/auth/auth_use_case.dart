@@ -4,11 +4,15 @@ import 'package:cleer/data/repositories/auth/auth_repository.dart';
 import 'package:cleer/data/repositories/flutterwave/flutterwave_repository.dart';
 import 'package:cleer/data/services/local/secure_storage_service.dart';
 import 'package:cleer/domain/failures/auth_failures.dart';
+import 'package:cleer/domain/models/auth_identity/auth_identity.dart';
+import 'package:cleer/domain/models/code_delivery_details/code_delivery_details.dart';
+import 'package:cleer/domain/models/confirm_user_attribute_result/confirm_user_attribute_result.dart';
 import 'package:cleer/domain/models/enums/app_auth_status.dart';
 import 'package:cleer/domain/models/reset_password_result/reset_password_result.dart';
 import 'package:cleer/domain/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer/domain/models/sign_up_result/sign_up_result.dart';
 import 'package:cleer/domain/models/update_password_result/update_password_result.dart';
+import 'package:cleer/domain/models/update_user_attribute_result/update_user_attribute_result.dart';
 import 'package:cleer/domain/models/user/user.dart';
 import 'package:cleer/domain/use_cases/auth/params/confirm_reset_password_params.dart';
 import 'package:cleer/domain/use_cases/auth/params/confirm_sign_up_params.dart';
@@ -51,9 +55,12 @@ class AuthUseCase extends _$AuthUseCase {
     String flutterwaveCustomerId = kEmpty,
   }) async {
     final identityResult = await _authRepository.getAuthIdentity();
+
     return await identityResult.fold(
       (identity) async {
         _log.info('Current user auth identity: $identity');
+
+        // Get (or create) the user from the DB
         final syncResult = await _userRepository.getOrCreateUserProfile(
           User(
             id: identity.userId,
@@ -62,25 +69,48 @@ class AuthUseCase extends _$AuthUseCase {
             lastName: identity.lastName,
             phoneNumber: identity.phoneNumber,
             email: identity.email,
+            isEmailVerified: identity.isEmailVerified, // New field
             flutterwaveCustomerId: flutterwaveCustomerId,
           ),
         );
-        return syncResult.fold(
-          (user) {
-            _log.info('Successfully synced user profile');
-            Sentry.configureScope(
-              (scope) => scope.setUser(
-                SentryUser(
-                  id: identity.userId,
-                  email: identity.email,
-                  username: "${identity.firstName} ${identity.lastName}",
-                  data: {'phone': identity.phoneNumber},
+
+        return await syncResult.fold(
+          (userFromDb) async {
+            // Check if the DB record is out of sync with Cognito
+            if (userFromDb.isEmailVerified != identity.isEmailVerified ||
+                userFromDb.email != identity.email) {
+              _log.info(
+                'DB out of sync with Cognito. Patching user profile...',
+              );
+
+              final updatedUser = userFromDb.copyWith(
+                isEmailVerified: identity.isEmailVerified,
+                email: identity.email,
+              );
+
+              // We fire this and wait for it so the UI state is perfect
+              final updateResult = await _userRepository.updateUserProfile(
+                updatedUser,
+              );
+
+              return updateResult.fold(
+                (patchedUser) => _finalizeSignIn(
+                  identity,
+                  patchedUser,
+                  isCompilingRegistration,
                 ),
-              ),
-            );
-            return AuthState.signedIn(
-              identity: identity,
-              isRegistrationComplete: !isCompilingRegistration,
+                (failure) => _finalizeSignIn(
+                  identity,
+                  userFromDb,
+                  isCompilingRegistration,
+                ), // Fallback to stale if update fails
+              );
+            }
+
+            return _finalizeSignIn(
+              identity,
+              userFromDb,
+              isCompilingRegistration,
             );
           },
           (failure) {
@@ -105,6 +135,28 @@ class AuthUseCase extends _$AuthUseCase {
         }
         return AuthState.unknown();
       },
+    );
+  }
+
+  AuthState _finalizeSignIn(
+    AuthIdentity identity,
+    User user,
+    bool isCompilingRegistration,
+  ) {
+    _log.info('Successfully synced user profile');
+    Sentry.configureScope(
+      (scope) => scope.setUser(
+        SentryUser(
+          id: identity.userId,
+          email: identity.email,
+          username: "${identity.firstName} ${identity.lastName}",
+          data: {'phone': identity.phoneNumber},
+        ),
+      ),
+    );
+    return AuthState.signedIn(
+      identity: identity,
+      isRegistrationComplete: !isCompilingRegistration,
     );
   }
 
@@ -190,7 +242,10 @@ class AuthUseCase extends _$AuthUseCase {
   ) async {
     final tempPassword = PasswordGenerator.generateSecureTempPassword();
     _log.info('Attempting to create account for user: ${params.phoneNumber}');
-    await _secureStorageService.saveTempPassword(params.phoneNumber, tempPassword);
+    await _secureStorageService.saveTempPassword(
+      params.phoneNumber,
+      tempPassword,
+    );
     final paramsWithPass = params.copyWith(password: tempPassword);
     final result = await _authRepository.signUpUser(paramsWithPass);
     result.fold(
@@ -409,5 +464,74 @@ class AuthUseCase extends _$AuthUseCase {
       },
     );
     return result;
+  }
+
+  Future<ResultDart<CodeDeliveryDetails, AuthFailure>>
+  sendEmailVerificationCode() async {
+    _log.info('Attempting to send email verification code');
+
+    final result = await _authRepository.sendEmailVerificationCode();
+
+    result.fold(
+      (success) {
+        _log.info(
+          'Successfully sent email verification code to: ${success.destination}',
+        );
+      },
+      (failure) {
+        _log.error('Error sending email verification code', failure);
+      },
+    );
+
+    return result;
+  }
+
+  Future<ResultDart<ConfirmUserAttributeDomainResult, AuthFailure>>
+  confirmEmailVerificationCode(String confirmationCode) async {
+    _log.info('Attempting to confirm email verification code');
+
+    final result = await _authRepository.confirmEmailVerificationCode(
+      confirmationCode,
+    );
+
+    return await result.fold(
+      (success) async {
+        _log.info(
+          'Successfully confirmed email verification code. Triggering sync...',
+        );
+
+        await _syncUserProfile();
+        return Success(success);
+      },
+      (failure) {
+        _log.error('Error confirming email verification code', failure);
+        return Failure(failure);
+      },
+    );
+  }
+
+  Future<ResultDart<UpdateUserAttributeDomainResult, AuthFailure>> changeEmail(
+    String newEmail,
+  ) async {
+    _log.info('User is requesting an email change to: $newEmail');
+
+    final result = await _authRepository.updateEmail(newEmail);
+
+    return await result.fold(
+      (success) async {
+        // If Cognito says it's done (no verification needed), sync the DB now!
+        if (success is UpdateUserAttributeSuccess) {
+          // Or whatever your success check is
+          _log.info('Email updated immediately. Syncing profile...');
+          await _syncUserProfile();
+        }
+        _log.info('Email change result: $success');
+        return Success(success);
+      },
+      (failure) {
+        _log.error('Failed to initiate email change', failure);
+        return Failure(failure);
+      },
+    );
   }
 }

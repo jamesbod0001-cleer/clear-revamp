@@ -4,8 +4,8 @@ import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/auth/verify_phone_number/view_model/verify_phone_number_view_model.dart';
-import 'package:cleer/ui/auth/verify_phone_number/widgets/code_pinput.dart';
-import 'package:cleer/ui/auth/verify_phone_number/widgets/resend_code_timer.dart';
+import 'package:cleer/ui/core/ui/code_pinput.dart';
+import 'package:cleer/ui/core/ui/resend_code_timer.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
@@ -20,7 +20,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pinput/pinput.dart';
 
 class VerifyPhoneNumberScreen extends HookConsumerWidget {
-  const VerifyPhoneNumberScreen({super.key, required this.details, this.redirectTo});
+  const VerifyPhoneNumberScreen({
+    super.key,
+    required this.details,
+    this.redirectTo,
+  });
   final VerificationDetails details;
   final String? redirectTo;
 
@@ -29,6 +33,7 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final codeController = useTextEditingController();
     useListenable(codeController);
+    final state = ref.watch(verifyPhoneNumberViewModelProvider);
     final viewmodel = ref.read(verifyPhoneNumberViewModelProvider.notifier);
 
     ref.listen(verifyPhoneNumberViewModelProvider, (prev, next) {
@@ -37,10 +42,16 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
 
         signUpDomainResult.when(
           success: () {
-            CreatePasswordRoute(phoneNumber: details.username, redirectTo: redirectTo).push(context);
+            CreatePasswordRoute(
+              phoneNumber: details.username,
+              redirectTo: redirectTo,
+            ).push(context);
           },
           confirmationRequired: (String destination, String deliveryMedium) {
-            VerifyPhoneRoute($extra: details, redirectTo: redirectTo).push(context);
+            VerifyPhoneRoute(
+              $extra: details,
+              redirectTo: redirectTo,
+            ).push(context);
           },
         );
       });
@@ -98,6 +109,7 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
                     Gap(Dimens.spacing.sp80),
                     CodePinput(
                       controller: codeController,
+                      hasError: state.hasError,
                       onCompleted: (code) {
                         if (code != null) {
                           viewmodel.verifyPhoneNumber(details.username, code);

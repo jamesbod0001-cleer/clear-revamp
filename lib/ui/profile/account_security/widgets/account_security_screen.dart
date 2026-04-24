@@ -9,7 +9,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/images/app_image.dart';
 import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
-import 'package:cleer/ui/profile/account_security/view_mdoel/account_security_view_model.dart';
+import 'package:cleer/ui/profile/account_security/view_model/account_security_view_model.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -163,37 +163,50 @@ class AccountSecurityScreen extends HookConsumerWidget {
                       ),
                       Gap(Dimens.spacing.sp24),
                       Expanded(
-                        child: Text(
-                          user?.email?.maskEmail ?? '',
-                          style: context.typo.titleSmall.copyWith(
-                            color: context.color.grey800,
+                        child: GestureDetector(
+                          onTap: () => (user?.isEmailVerified != true)
+                              ? VerifyEmailRoute().push(context)
+                              : null,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  user?.email?.maskEmail ?? '',
+                                  style: context.typo.titleSmall.copyWith(
+                                    color: context.color.grey800,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: .end,
+                                ),
+                              ),
+                              if (user?.isEmailVerified != true) ...[
+                                Gap(Dimens.spacing.sp8),
+                                Material(
+                                  color: context.color.warning,
+                                  borderRadius: .circular(Dimens.radius.r20),
+                                  child: Padding(
+                                    padding: .symmetric(
+                                      horizontal: Dimens.padding.p6,
+                                      vertical: Dimens.padding.p2,
+                                    ),
+                                    child: Text(
+                                      l10n.unverified,
+                                      style: context.typo.bodySmall.copyWith(
+                                        color: context.color.background,
+                                        fontStyle: .italic,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                PhosphorIcon(
+                                  PhosphorIcons.caretRight(),
+                                  size: Dimens.size.s20,
+                                  color: context.color.blue700,
+                                ),
+                              ],
+                            ],
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: .end,
                         ),
-                      ),
-                      Gap(Dimens.spacing.sp8),
-                      Material(
-                        color: context.color.warning,
-                        borderRadius: .circular(Dimens.radius.r20),
-                        child: Padding(
-                          padding: .symmetric(
-                            horizontal: Dimens.padding.p6,
-                            vertical: Dimens.padding.p2,
-                          ),
-                          child: Text(
-                            l10n.unverified,
-                            style: context.typo.bodySmall.copyWith(
-                              color: context.color.background,
-                              fontStyle: .italic,
-                            ),
-                          ),
-                        ),
-                      ),
-                      PhosphorIcon(
-                        PhosphorIcons.caretRight(),
-                        size: Dimens.size.s20,
-                        color: context.color.blue700,
                       ),
                     ],
                   ),
