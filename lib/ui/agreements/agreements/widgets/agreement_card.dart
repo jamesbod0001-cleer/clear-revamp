@@ -62,9 +62,11 @@ class AgreementCard extends ConsumerWidget {
                 ),
                 child: SizedBox.square(
                   dimension: Dimens.size.s48,
-                  child: Assets.images.handshake.image(
-                    height: Dimens.size.s18,
-                    width: Dimens.size.s28,
+                  child: Center(
+                    child: Assets.images.handshake.image(
+                      height: Dimens.size.s18,
+                      width: Dimens.size.s28,
+                    ),
                   ),
                 ),
               ),
