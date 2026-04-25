@@ -12,7 +12,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/images/app_image.dart';
 import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
 import 'package:cleer/ui/core/ui/trust_score_badge.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
+import 'package:cleer/ui/core/ui/tiles/menu_description_tile.dart';
 import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:cleer/ui/profile/profile/widgets/user_performance_stats_card.dart';
 import 'package:flutter/material.dart';
@@ -161,7 +161,7 @@ class ProfileScreen extends ConsumerWidget {
                     Gap(Dimens.spacing.sp28),
 
                     MenuSectionHeader(title: l10n.payoutDestination),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.bank(.duotone),
                       title: l10n.payoutAccounts,
                       content:
@@ -172,14 +172,14 @@ class ProfileScreen extends ConsumerWidget {
                     Gap(Dimens.spacing.sp40),
 
                     MenuSectionHeader(title: l10n.settings),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.key(.duotone),
                       title: l10n.accountAndSecurity,
                       content:
                           l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
                       onTap: () => AccountSecurityRoute().go(context),
                     ),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.bell(.duotone),
                       title: l10n.manageNotifications,
                       content: l10n
@@ -190,14 +190,14 @@ class ProfileScreen extends ConsumerWidget {
                     Gap(Dimens.spacing.sp40),
 
                     MenuSectionHeader(title: l10n.legalAndPolicies),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.scroll(.duotone),
                       title: l10n.termsAndPolicies,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
                       onTap: () => TermsAndPoliciesRoute().go(context),
                     ),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.fileLock(.duotone),
                       title: l10n.dataUsageAndPrivacy,
                       content: l10n
@@ -208,14 +208,14 @@ class ProfileScreen extends ConsumerWidget {
                     Gap(Dimens.spacing.sp40),
 
                     MenuSectionHeader(title: l10n.assistanceAndFeedback),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.question(.duotone),
                       title: l10n.helpAndSupport,
                       content: l10n
                           .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
                       onTap: () => HelpSupportRoute().go(context),
                     ),
-                    ProfileMenuTile(
+                    MenuDescriptionTile(
                       icon: PhosphorIcons.star(.duotone),
                       title: l10n.rateCleerOnPlayStore,
                       content:
