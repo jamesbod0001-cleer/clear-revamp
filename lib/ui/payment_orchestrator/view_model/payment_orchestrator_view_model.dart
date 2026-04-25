@@ -2,6 +2,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/bank/bank.dart';
 import 'package:cleer/domain/models/charge/charge.dart';
+import 'package:cleer/domain/models/enums/payment_method_type.dart';
 import 'package:cleer/domain/models/payment_method/payment_method.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
@@ -12,6 +13,7 @@ import 'package:cleer/domain/use_cases/flutterwave/params/list_charges_params.da
 import 'package:cleer/domain/use_cases/transaction/transaction_use_case.dart';
 import 'package:cleer/domain/use_cases/user/user_use_case.dart';
 import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
+import 'package:collection/collection.dart';
 import 'package:command_it/command_it.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -92,8 +94,18 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     );
     state = await AsyncValue.guard(() async {
       _log.info('Getting Opay payment method');
-      final opayPaymentMethod = ref.read(opayMethodProvider);
-      await _createCharge(opayPaymentMethod!);
+      final savedMethods = await ref.read(
+        flutterwaveSavedPaymentMethodsProvider.future,
+      );
+
+      final opayPaymentMethod = savedMethods.firstWhereOrNull(
+        (m) => m.type == PaymentMethodType.opay,
+      );
+
+      if (opayPaymentMethod == null) {
+        throw Exception("Opay payment method not found after creation.");
+      }
+      await _createCharge(opayPaymentMethod);
       return state.value!;
     });
   }
