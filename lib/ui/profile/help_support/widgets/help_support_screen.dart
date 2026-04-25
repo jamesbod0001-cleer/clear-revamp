@@ -53,125 +53,140 @@ class HelpSupportScreen extends StatelessWidget {
                   spacing: Dimens.spacing.sp8,
                   children: [
                     Expanded(
-                      child: Container(
-                        padding: .all(Dimens.padding.p8),
-                        decoration: BoxDecoration(
-                          color: context.color.grayComponent,
+                      child: Material(
+                        clipBehavior: .antiAlias,
+                        color: context.color.grayComponent,
+                        shape: RoundedRectangleBorder(
                           borderRadius: .circular(Dimens.radius.r8),
-                          border: Border.all(color: context.color.blue200),
+                          side: BorderSide(color: context.color.blue200),
                         ),
-                        child: Column(
-                          mainAxisSize: .min,
-                          crossAxisAlignment: .start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: .spaceBetween,
+                        child: InkWell(
+                          child: Padding(
+                            padding: .all(Dimens.padding.p8),
+                            child: Column(
+                              mainAxisSize: .min,
+                              crossAxisAlignment: .start,
                               children: [
-                                PhosphorIcon(
-                                  PhosphorIcons.chatCenteredDots(.duotone),
-                                  color: context.color.blue700,
-                                  size: Dimens.size.s24,
+                                Row(
+                                  mainAxisAlignment: .spaceBetween,
+                                  children: [
+                                    PhosphorIcon(
+                                      PhosphorIcons.chatCenteredDots(.duotone),
+                                      color: context.color.blue700,
+                                      size: Dimens.size.s24,
+                                    ),
+                                    PhosphorIcon(
+                                      PhosphorIcons.caretRight(
+                                        PhosphorIconsStyle.bold,
+                                      ),
+                                      color: context.color.blue700,
+                                      size: Dimens.size.s20,
+                                    ),
+                                  ],
                                 ),
-                                PhosphorIcon(
-                                  PhosphorIcons.caretRight(
-                                    PhosphorIconsStyle.bold,
+                                Gap(Dimens.spacing.sp12),
+                                Text(
+                                  l10n.chatSupport,
+                                  style: context.typo.bodyMedium.copyWith(
+                                    fontWeight: AppFontWeights.regular,
+                                    color: context.color.grey800,
                                   ),
-                                  color: context.color.blue700,
-                                  size: Dimens.size.s20,
                                 ),
                               ],
                             ),
-                            Gap(Dimens.spacing.sp12),
-                            Text(
-                              l10n.chatSupport,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
-                                color: context.color.grey800,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        padding: .all(Dimens.padding.p8),
-                        decoration: BoxDecoration(
-                          color: context.color.grayComponent,
+                      child: Material(
+                        clipBehavior: .antiAlias,
+                        color: context.color.grayComponent,
+                        shape: RoundedRectangleBorder(
                           borderRadius: .circular(Dimens.radius.r8),
-                          border: Border.all(color: context.color.blue200),
+                          side: BorderSide(color: context.color.blue200),
                         ),
-                        child: Column(
-                          mainAxisSize: .min,
-                          crossAxisAlignment: .start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: .spaceBetween,
+                        child: InkWell(
+                          child: Padding(
+                            padding: .all(Dimens.padding.p8),
+                            child: Column(
+                              mainAxisSize: .min,
+                              crossAxisAlignment: .start,
                               children: [
-                                PhosphorIcon(
-                                  PhosphorIcons.mailbox(.duotone),
-                                  color: context.color.blue700,
-                                  size: Dimens.size.s24,
+                                Row(
+                                  mainAxisAlignment: .spaceBetween,
+                                  children: [
+                                    PhosphorIcon(
+                                      PhosphorIcons.mailbox(.duotone),
+                                      color: context.color.blue700,
+                                      size: Dimens.size.s24,
+                                    ),
+                                    PhosphorIcon(
+                                      PhosphorIcons.caretRight(
+                                        PhosphorIconsStyle.bold,
+                                      ),
+                                      color: context.color.blue700,
+                                      size: Dimens.size.s20,
+                                    ),
+                                  ],
                                 ),
-                                PhosphorIcon(
-                                  PhosphorIcons.caretRight(
-                                    PhosphorIconsStyle.bold,
+                                Gap(Dimens.spacing.sp12),
+                                Text(
+                                  l10n.emailSupport,
+                                  style: context.typo.bodyMedium.copyWith(
+                                    fontWeight: AppFontWeights.regular,
+                                    color: context.color.grey800,
                                   ),
-                                  color: context.color.blue700,
-                                  size: Dimens.size.s20,
                                 ),
                               ],
                             ),
-                            Gap(Dimens.spacing.sp12),
-                            Text(
-                              l10n.emailSupport,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
-                                color: context.color.grey800,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        padding: .all(Dimens.padding.p8),
-                        decoration: BoxDecoration(
-                          color: context.color.grayComponent,
+                      child: Material(
+                        clipBehavior: .antiAlias,
+                        color: context.color.grayComponent,
+                        shape: RoundedRectangleBorder(
                           borderRadius: .circular(Dimens.radius.r8),
-                          border: Border.all(color: context.color.blue200),
+                          side: BorderSide(color: context.color.blue200),
                         ),
-                        child: Column(
-                          mainAxisSize: .min,
-                          crossAxisAlignment: .start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: .spaceBetween,
+                        child: InkWell(
+                          child: Padding(
+                            padding: .all(Dimens.padding.p8),
+                            child: Column(
+                              mainAxisSize: .min,
+                              crossAxisAlignment: .start,
                               children: [
-                                PhosphorIcon(
-                                  PhosphorIcons.phone(.duotone),
-                                  color: context.color.blue700,
-                                  size: Dimens.size.s24,
+                                Row(
+                                  mainAxisAlignment: .spaceBetween,
+                                  children: [
+                                    PhosphorIcon(
+                                      PhosphorIcons.phone(.duotone),
+                                      color: context.color.blue700,
+                                      size: Dimens.size.s24,
+                                    ),
+                                    PhosphorIcon(
+                                      PhosphorIcons.caretRight(
+                                        PhosphorIconsStyle.bold,
+                                      ),
+                                      color: context.color.blue700,
+                                      size: Dimens.size.s20,
+                                    ),
+                                  ],
                                 ),
-                                PhosphorIcon(
-                                  PhosphorIcons.caretRight(
-                                    PhosphorIconsStyle.bold,
+                                Gap(Dimens.spacing.sp12),
+                                Text(
+                                  l10n.callSupport,
+                                  style: context.typo.bodyMedium.copyWith(
+                                    fontWeight: AppFontWeights.regular,
+                                    color: context.color.grey800,
                                   ),
-                                  color: context.color.blue700,
-                                  size: Dimens.size.s20,
                                 ),
                               ],
                             ),
-                            Gap(Dimens.spacing.sp12),
-                            Text(
-                              l10n.callSupport,
-                              style: context.typo.bodyMedium.copyWith(
-                                fontWeight: AppFontWeights.regular,
-                                color: context.color.grey800,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
