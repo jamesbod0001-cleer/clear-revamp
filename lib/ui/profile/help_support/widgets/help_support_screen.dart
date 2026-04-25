@@ -3,8 +3,10 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class HelpSupportScreen extends StatelessWidget {
   const HelpSupportScreen({super.key});
@@ -44,6 +46,129 @@ class HelpSupportScreen extends StatelessWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
+                ProfileSectionHeader(title: l10n.talkToSupport),
+                Row(
+                  spacing: Dimens.spacing.sp8,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: .all(Dimens.padding.p8),
+                        decoration: BoxDecoration(
+                          color: context.color.grayComponent,
+                          borderRadius: .circular(Dimens.radius.r8),
+                          border: Border.all(color: context.color.blue200),
+                        ),
+                        child: Column(
+                          mainAxisSize: .min,
+                          crossAxisAlignment: .start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: .spaceBetween,
+                              children: [
+                                PhosphorIcon(
+                                  PhosphorIcons.chatCenteredDots(.duotone),
+                                  color: context.color.blue700,
+                                  size: Dimens.size.s24,
+                                ),
+                                PhosphorIcon(
+                                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                                  color: context.color.blue700,
+                                  size: Dimens.size.s20,
+                                ),
+                              ],
+                            ),
+                            Gap(Dimens.spacing.sp12),
+                            Text(
+                              l10n.chatSupport,
+                              style: context.typo.bodyMedium.copyWith(
+                                fontWeight: AppFontWeights.regular,
+                                color: context.color.grey800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: .all(Dimens.padding.p8),
+                        decoration: BoxDecoration(
+                          color: context.color.grayComponent,
+                          borderRadius: .circular(Dimens.radius.r8),
+                          border: Border.all(color: context.color.blue200),
+                        ),
+                        child: Column(
+                          mainAxisSize: .min,
+                          crossAxisAlignment: .start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: .spaceBetween,
+                              children: [
+                                PhosphorIcon(
+                                  PhosphorIcons.mailbox(.duotone),
+                                  color: context.color.blue700,
+                                  size: Dimens.size.s24,
+                                ),
+                                PhosphorIcon(
+                                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                                  color: context.color.blue700,
+                                  size: Dimens.size.s20,
+                                ),
+                              ],
+                            ),
+                            Gap(Dimens.spacing.sp12),
+                            Text(
+                              l10n.emailSupport,
+                              style: context.typo.bodyMedium.copyWith(
+                                fontWeight: AppFontWeights.regular,
+                                color: context.color.grey800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: .all(Dimens.padding.p8),
+                        decoration: BoxDecoration(
+                          color: context.color.grayComponent,
+                          borderRadius: .circular(Dimens.radius.r8),
+                          border: Border.all(color: context.color.blue200),
+                        ),
+                        child: Column(
+                          mainAxisSize: .min,
+                          crossAxisAlignment: .start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: .spaceBetween,
+                              children: [
+                                PhosphorIcon(
+                                  PhosphorIcons.phone(.duotone),
+                                  color: context.color.blue700,
+                                  size: Dimens.size.s24,
+                                ),
+                                PhosphorIcon(
+                                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                                  color: context.color.blue700,
+                                  size: Dimens.size.s20,
+                                ),
+                              ],
+                            ),
+                            Gap(Dimens.spacing.sp12),
+                            Text(
+                              l10n.callSupport,
+                              style: context.typo.bodyMedium.copyWith(
+                                fontWeight: AppFontWeights.regular,
+                                color: context.color.grey800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ]),
             ),
           ),

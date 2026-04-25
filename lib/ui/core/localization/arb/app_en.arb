@@ -540,5 +540,13 @@
   "legalAgreementsThatGovernYourUseOfCleer": "Legal agreements that govern your use of Cleer.",
   "understandHowYourDataIsCollectedUsedAndProtected": "Understand how your data is collected, used, and protected.",
   "howCanWeHelpYou": "How can we help you?",
-  "getQuickAnswersOrTalkToOurSupportTeam": "Get quick answers or talk to our support team."
+  "getQuickAnswersOrTalkToOurSupportTeam": "Get quick answers or talk to our support team.",
+  "talkToSupport": "Talk to Support",
+  "chatSupport": "Chat Support",
+  "emailSupport": "Email Support",
+  "callSupport": "Call Support",
+  "quickHelp": "Quick Help",
+  "faqs": "FAQs",
+  "howEscrowWorks": "How escrow works",
+  "reportAnIssue": "Report an Issue"
 }
