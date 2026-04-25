@@ -1,4 +1,5 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
@@ -18,22 +19,19 @@ class OngoingAgreementsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final filteredState = ref.watch(agreementsScreenListProvider);
 
-    if (filteredState.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    final ongoingAgreements = filteredState.value;
+    final ongoingAgreementsState = ref.watch(userOngoingAgreementsProvider);
 
     return Column(
       children: [
-        if (!(ongoingAgreements == null || ongoingAgreements.isEmpty))
+        if (!(ongoingAgreementsState.value == null ||
+            ongoingAgreementsState.value?.isEmpty == true))
           const _OngoingFiltersRow(),
         Expanded(
           child: Builder(
             builder: (BuildContext context) {
-              if (ongoingAgreements == null || ongoingAgreements.isEmpty) {
+              if ((ongoingAgreementsState.value == null ||
+                  ongoingAgreementsState.value?.isEmpty == true)) {
                 return AppEmptyState(
                   icon: Assets.icons.handshakeOff.svg(
                     width: Dimens.size.s80,
@@ -80,17 +78,29 @@ class OngoingAgreementsView extends ConsumerWidget {
                   ),
                 );
               }
+              final filteredState = ref.watch(agreementsScreenListProvider);
+
+              if (filteredState.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final filteredOngoingAgreements = filteredState.value;
+
+              if (filteredOngoingAgreements == null ||
+                  filteredOngoingAgreements.isEmpty) {
+                return SizedBox.shrink();
+              }
 
               return ListView.separated(
                 padding: .only(top: Dimens.padding.p24),
                 itemBuilder: (BuildContext context, int index) {
-                  final agreement = ongoingAgreements[index];
+                  final agreement = filteredOngoingAgreements[index];
                   return AgreementCard(agreement: agreement);
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return SizedBox(height: Dimens.spacing.sp16);
                 },
-                itemCount: ongoingAgreements.length,
+                itemCount: filteredOngoingAgreements.length,
               );
             },
           ),
