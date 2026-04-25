@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class ProfileMenuTile extends StatelessWidget {
-  const ProfileMenuTile({
+class MenuDescriptionTile extends StatelessWidget {
+  const MenuDescriptionTile({
     super.key,
     required this.icon,
     required this.title,

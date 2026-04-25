@@ -9,7 +9,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -114,7 +114,7 @@ class AdditionalDetailsStep extends HookConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   Gap(Dimens.spacing.sp12),
-                  ProfileSectionHeader(title: l10n.additionalDetails),
+                  MenuSectionHeader(title: l10n.additionalDetails),
                   CustomTextFormField(
                     controller: categoryController,
                     labelText: l10n.paymentCategory,

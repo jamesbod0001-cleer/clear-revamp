@@ -15,7 +15,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/status_circle_icon.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
@@ -244,7 +244,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         error: (error, stackTrace) => SizedBox.shrink(),
                       ),
                       Gap(Dimens.spacing.sp40),
-                      ProfileSectionHeader(title: l10n.agreementDetails),
+                      MenuSectionHeader(title: l10n.agreementDetails),
                       Column(
                         crossAxisAlignment: .stretch,
                         spacing: Dimens.spacing.sp24,

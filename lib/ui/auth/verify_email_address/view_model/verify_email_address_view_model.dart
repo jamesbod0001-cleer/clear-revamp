@@ -9,7 +9,7 @@ part 'verify_email_address_view_model.g.dart';
 
 @riverpod
 class VerifyEmailAddressViewModel extends _$VerifyEmailAddressViewModel {
-  final _log = AmplifyLogger('VerifyPhoneNumberViewModel');
+  final _log = AmplifyLogger('VerifyEmailAddressViewModel');
 
   @override
   FutureOr<VerifyEmailAddressState> build() async {

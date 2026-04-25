@@ -19,8 +19,12 @@ import 'package:cleer/ui/core/navigation/navigation_config.dart';
 import 'package:cleer/ui/home/home/widgets/home_screen.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
 import 'package:cleer/ui/profile/account_security/widgets/account_security_screen.dart';
+import 'package:cleer/ui/profile/data_privacy/widgets/data_privacy_screen.dart';
+import 'package:cleer/ui/profile/help_support/widgets/help_support_screen.dart';
+import 'package:cleer/ui/profile/manage_notifications/widgets/manage_notifications_screen.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_screen.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
+import 'package:cleer/ui/profile/terms_and_policies/widgets/terms_and_policies_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -169,6 +173,12 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
           routes: [
             TypedGoRoute<PayoutDestinationRoute>(path: 'payout_destination'),
             TypedGoRoute<AccountSecurityRoute>(path: 'account_security'),
+            TypedGoRoute<ManageNotificationsRoute>(
+              path: 'manage_notifications',
+            ),
+            TypedGoRoute<TermsAndPoliciesRoute>(path: 'terms_and_policies'),
+            TypedGoRoute<DataPrivacyRoute>(path: 'data_privacy'),
+            TypedGoRoute<HelpSupportRoute>(path: 'help_support'),
           ],
         ),
       ],
@@ -256,4 +266,33 @@ class AccountSecurityRoute extends GoRouteData with $AccountSecurityRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       AccountSecurityScreen();
+}
+
+class ManageNotificationsRoute extends GoRouteData
+    with $ManageNotificationsRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ManageNotificationsScreen();
+}
+
+class TermsAndPoliciesRoute extends GoRouteData with $TermsAndPoliciesRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      TermsAndPoliciesScreen();
+}
+
+class DataPrivacyRoute extends GoRouteData with $DataPrivacyRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      DataPrivacyScreen();
+}
+
+class HelpSupportRoute extends GoRouteData with $HelpSupportRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      HelpSupportScreen();
 }
