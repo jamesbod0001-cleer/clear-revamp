@@ -4,7 +4,7 @@ import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/tiles/menu_action_tile.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -48,7 +48,7 @@ class HelpSupportScreen extends StatelessWidget {
                 ),
                 Gap(Dimens.spacing.sp40),
 
-                ProfileSectionHeader(title: l10n.talkToSupport),
+                MenuSectionHeader(title: l10n.talkToSupport),
                 Row(
                   spacing: Dimens.spacing.sp8,
                   children: [
@@ -179,7 +179,7 @@ class HelpSupportScreen extends StatelessWidget {
                 ),
                 Gap(Dimens.spacing.sp40),
 
-                ProfileSectionHeader(title: l10n.quickHelp),
+                MenuSectionHeader(title: l10n.quickHelp),
                 MenuActionTile(
                   title: l10n.faqs,
                   icon: PhosphorIcons.questionMark(.duotone),

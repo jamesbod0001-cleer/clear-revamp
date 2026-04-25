@@ -13,7 +13,7 @@ import 'package:cleer/ui/core/ui/images/app_image.dart';
 import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
 import 'package:cleer/ui/core/ui/trust_score_badge.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_menu_tile.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:cleer/ui/profile/profile/widgets/user_performance_stats_card.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -160,7 +160,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp28),
 
-                    ProfileSectionHeader(title: l10n.payoutDestination),
+                    MenuSectionHeader(title: l10n.payoutDestination),
                     ProfileMenuTile(
                       icon: PhosphorIcons.bank(.duotone),
                       title: l10n.payoutAccounts,
@@ -171,7 +171,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp40),
 
-                    ProfileSectionHeader(title: l10n.settings),
+                    MenuSectionHeader(title: l10n.settings),
                     ProfileMenuTile(
                       icon: PhosphorIcons.key(.duotone),
                       title: l10n.accountAndSecurity,
@@ -189,7 +189,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp40),
 
-                    ProfileSectionHeader(title: l10n.legalAndPolicies),
+                    MenuSectionHeader(title: l10n.legalAndPolicies),
                     ProfileMenuTile(
                       icon: PhosphorIcons.scroll(.duotone),
                       title: l10n.termsAndPolicies,
@@ -207,7 +207,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp40),
 
-                    ProfileSectionHeader(title: l10n.assistanceAndFeedback),
+                    MenuSectionHeader(title: l10n.assistanceAndFeedback),
                     ProfileMenuTile(
                       icon: PhosphorIcons.question(.duotone),
                       title: l10n.helpAndSupport,

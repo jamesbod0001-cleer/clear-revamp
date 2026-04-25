@@ -18,7 +18,7 @@ import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account_trigger.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_card.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -229,7 +229,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                   ),
                   Gap(Dimens.spacing.sp40),
 
-                  ProfileSectionHeader(
+                  MenuSectionHeader(
                     title: type == .send
                         ? l10n.recipientDetails
                         : l10n.payoutDestination,
@@ -365,7 +365,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                   ),
                   Gap(Dimens.spacing.sp40),
 
-                  ProfileSectionHeader(title: l10n.howWillThePaymentBeReleased),
+                  MenuSectionHeader(title: l10n.howWillThePaymentBeReleased),
                   DisbursementTypeSelector(
                     selectedType: selectedDisbursementType.value,
                     onChanged: (value) {

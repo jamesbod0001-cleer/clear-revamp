@@ -3,8 +3,8 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-class ProfileSectionHeader extends StatelessWidget {
-  const ProfileSectionHeader({super.key, required this.title});
+class MenuSectionHeader extends StatelessWidget {
+  const MenuSectionHeader({super.key, required this.title});
 
   final String title;
 

@@ -10,7 +10,7 @@ import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
 import 'package:cleer/ui/core/ui/images/app_image.dart';
 import 'package:cleer/ui/core/ui/images/blur_hash_widget.dart';
 import 'package:cleer/ui/profile/account_security/view_model/account_security_view_model.dart';
-import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -75,7 +75,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
                 Gap(Dimens.spacing.sp40),
                 ProfilePicture(),
                 Gap(Dimens.spacing.sp40),
-                ProfileSectionHeader(title: l10n.personalInformation),
+                MenuSectionHeader(title: l10n.personalInformation),
                 Row(
                   mainAxisAlignment: .spaceBetween,
                   children: [
@@ -124,7 +124,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
                   ],
                 ),
                 Gap(Dimens.spacing.sp40),
-                ProfileSectionHeader(title: l10n.contactDetails),
+                MenuSectionHeader(title: l10n.contactDetails),
                 Row(
                   mainAxisAlignment: .spaceBetween,
                   children: [
@@ -237,7 +237,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
-                ProfileSectionHeader(title: l10n.passwordAndSecurity),
+                MenuSectionHeader(title: l10n.passwordAndSecurity),
                 Material(
                   borderRadius: BorderRadius.circular(Dimens.radius.r4),
                   clipBehavior: Clip.antiAlias,
