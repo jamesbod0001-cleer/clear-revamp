@@ -3,10 +3,13 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/core/ui/custom_switch.dart';
+import 'package:cleer/ui/core/ui/menu_section_header.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 
-class ManageNotificationsScreen extends StatelessWidget {
+class ManageNotificationsScreen extends HookWidget {
   const ManageNotificationsScreen({super.key});
 
   @override
@@ -44,6 +47,48 @@ class ManageNotificationsScreen extends StatelessWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
+                MenuSectionHeader(title: l10n.deliveryChannels),
+                Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      l10n.pushNotifications,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey600,
+                      ),
+                    ),
+                    CustomSwitch(value: true, onChanged: (val) {}),
+                  ],
+                ),
+                Gap(Dimens.spacing.sp24),
+                Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      l10n.emailNotifications,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey600,
+                      ),
+                    ),
+                    CustomSwitch(value: true, onChanged: (val) {}),
+                  ],
+                ),
+                Gap(Dimens.spacing.sp24),
+                Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      l10n.sms,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey600,
+                      ),
+                    ),
+                    CustomSwitch(value: true, onChanged: (val) {}),
+                  ],
+                ),
               ]),
             ),
           ),
