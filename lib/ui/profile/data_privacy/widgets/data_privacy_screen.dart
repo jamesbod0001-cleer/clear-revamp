@@ -3,6 +3,7 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/core/ui/tiles/menu_action_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -44,6 +45,12 @@ class DataPrivacyScreen extends StatelessWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
+                MenuActionTile(title: l10n.dataWeCollect, onTap: () {}),
+                Gap(Dimens.spacing.sp8),
+                MenuActionTile(title: l10n.howWeUseYourData, onTap: () {}),
+
+                Gap(Dimens.spacing.sp8),
+                MenuActionTile(title: l10n.dataProtection, onTap: () {}),
               ]),
             ),
           ),

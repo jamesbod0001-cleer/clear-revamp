@@ -3,6 +3,7 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/core/ui/tiles/menu_action_tile.dart';
 import 'package:cleer/ui/profile/profile/widgets/profile_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -46,6 +47,7 @@ class HelpSupportScreen extends StatelessWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
+
                 ProfileSectionHeader(title: l10n.talkToSupport),
                 Row(
                   spacing: Dimens.spacing.sp8,
@@ -71,7 +73,9 @@ class HelpSupportScreen extends StatelessWidget {
                                   size: Dimens.size.s24,
                                 ),
                                 PhosphorIcon(
-                                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                                  PhosphorIcons.caretRight(
+                                    PhosphorIconsStyle.bold,
+                                  ),
                                   color: context.color.blue700,
                                   size: Dimens.size.s20,
                                 ),
@@ -110,7 +114,9 @@ class HelpSupportScreen extends StatelessWidget {
                                   size: Dimens.size.s24,
                                 ),
                                 PhosphorIcon(
-                                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                                  PhosphorIcons.caretRight(
+                                    PhosphorIconsStyle.bold,
+                                  ),
                                   color: context.color.blue700,
                                   size: Dimens.size.s20,
                                 ),
@@ -149,7 +155,9 @@ class HelpSupportScreen extends StatelessWidget {
                                   size: Dimens.size.s24,
                                 ),
                                 PhosphorIcon(
-                                  PhosphorIcons.caretRight(PhosphorIconsStyle.bold),
+                                  PhosphorIcons.caretRight(
+                                    PhosphorIconsStyle.bold,
+                                  ),
                                   color: context.color.blue700,
                                   size: Dimens.size.s20,
                                 ),
@@ -168,6 +176,27 @@ class HelpSupportScreen extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+                Gap(Dimens.spacing.sp40),
+
+                ProfileSectionHeader(title: l10n.quickHelp),
+                MenuActionTile(
+                  title: l10n.faqs,
+                  icon: PhosphorIcons.questionMark(.duotone),
+                  onTap: () {},
+                ),
+                Gap(Dimens.spacing.sp8),
+                MenuActionTile(
+                  title: l10n.howEscrowWorks,
+                  icon: PhosphorIcons.fileText(.duotone),
+                  onTap: () {},
+                ),
+
+                Gap(Dimens.spacing.sp8),
+                MenuActionTile(
+                  title: l10n.reportAnIssue,
+                  icon: PhosphorIcons.notePencil(.duotone),
+                  onTap: () {},
                 ),
               ]),
             ),

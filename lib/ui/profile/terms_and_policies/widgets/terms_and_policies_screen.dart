@@ -3,8 +3,10 @@ import 'package:cleer/ui/core/themes/dimensions.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/buttons/app_back_button.dart';
+import 'package:cleer/ui/core/ui/tiles/menu_action_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class TermsAndPoliciesScreen extends StatelessWidget {
   const TermsAndPoliciesScreen({super.key});
@@ -44,6 +46,24 @@ class TermsAndPoliciesScreen extends StatelessWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp40),
+                MenuActionTile(
+                  title: l10n.termsOfService,
+                  icon: PhosphorIcons.fileText(.duotone),
+                  onTap: () {},
+                ),
+                Gap(Dimens.spacing.sp8),
+                MenuActionTile(
+                  title: l10n.escrowAgreement,
+                  icon: PhosphorIcons.fileText(.duotone),
+                  onTap: () {},
+                ),
+
+                Gap(Dimens.spacing.sp8),
+                MenuActionTile(
+                  title: l10n.privacyPolicy,
+                  icon: PhosphorIcons.fileText(.duotone),
+                  onTap: () {},
+                ),
               ]),
             ),
           ),
