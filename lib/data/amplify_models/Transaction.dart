@@ -35,7 +35,6 @@ class Transaction extends amplify_core.Model {
   final TransactionStatus? _status;
   final String? _flutterwavePaymentMethodId;
   final Agreement? _agreement;
-  final String? _owner;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -120,10 +119,6 @@ class Transaction extends amplify_core.Model {
     return _agreement;
   }
   
-  String? get owner {
-    return _owner;
-  }
-  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -132,9 +127,9 @@ class Transaction extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Transaction._internal({required this.id, paymentMethodType, required reference, required flutterwaveId, required amount, required currency, status, flutterwavePaymentMethodId, agreement, owner, createdAt, updatedAt}): _paymentMethodType = paymentMethodType, _reference = reference, _flutterwaveId = flutterwaveId, _amount = amount, _currency = currency, _status = status, _flutterwavePaymentMethodId = flutterwavePaymentMethodId, _agreement = agreement, _owner = owner, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Transaction._internal({required this.id, paymentMethodType, required reference, required flutterwaveId, required amount, required currency, status, flutterwavePaymentMethodId, agreement, createdAt, updatedAt}): _paymentMethodType = paymentMethodType, _reference = reference, _flutterwaveId = flutterwaveId, _amount = amount, _currency = currency, _status = status, _flutterwavePaymentMethodId = flutterwavePaymentMethodId, _agreement = agreement, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Transaction({String? id, TransactionPaymentMethodType? paymentMethodType, required String reference, required String flutterwaveId, required double amount, required String currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement, String? owner}) {
+  factory Transaction({String? id, TransactionPaymentMethodType? paymentMethodType, required String reference, required String flutterwaveId, required double amount, required String currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement}) {
     return Transaction._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       paymentMethodType: paymentMethodType,
@@ -144,8 +139,7 @@ class Transaction extends amplify_core.Model {
       currency: currency,
       status: status,
       flutterwavePaymentMethodId: flutterwavePaymentMethodId,
-      agreement: agreement,
-      owner: owner);
+      agreement: agreement);
   }
   
   bool equals(Object other) {
@@ -164,8 +158,7 @@ class Transaction extends amplify_core.Model {
       _currency == other._currency &&
       _status == other._status &&
       _flutterwavePaymentMethodId == other._flutterwavePaymentMethodId &&
-      _agreement == other._agreement &&
-      _owner == other._owner;
+      _agreement == other._agreement;
   }
   
   @override
@@ -185,7 +178,6 @@ class Transaction extends amplify_core.Model {
     buffer.write("status=" + (_status != null ? amplify_core.enumToString(_status)! : "null") + ", ");
     buffer.write("flutterwavePaymentMethodId=" + "$_flutterwavePaymentMethodId" + ", ");
     buffer.write("agreement=" + (_agreement != null ? _agreement!.toString() : "null") + ", ");
-    buffer.write("owner=" + "$_owner" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -193,7 +185,7 @@ class Transaction extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Transaction copyWith({TransactionPaymentMethodType? paymentMethodType, String? reference, String? flutterwaveId, double? amount, String? currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement, String? owner}) {
+  Transaction copyWith({TransactionPaymentMethodType? paymentMethodType, String? reference, String? flutterwaveId, double? amount, String? currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement}) {
     return Transaction._internal(
       id: id,
       paymentMethodType: paymentMethodType ?? this.paymentMethodType,
@@ -203,8 +195,7 @@ class Transaction extends amplify_core.Model {
       currency: currency ?? this.currency,
       status: status ?? this.status,
       flutterwavePaymentMethodId: flutterwavePaymentMethodId ?? this.flutterwavePaymentMethodId,
-      agreement: agreement ?? this.agreement,
-      owner: owner ?? this.owner);
+      agreement: agreement ?? this.agreement);
   }
   
   Transaction copyWithModelFieldValues({
@@ -215,8 +206,7 @@ class Transaction extends amplify_core.Model {
     ModelFieldValue<String>? currency,
     ModelFieldValue<TransactionStatus?>? status,
     ModelFieldValue<String?>? flutterwavePaymentMethodId,
-    ModelFieldValue<Agreement?>? agreement,
-    ModelFieldValue<String?>? owner
+    ModelFieldValue<Agreement?>? agreement
   }) {
     return Transaction._internal(
       id: id,
@@ -227,8 +217,7 @@ class Transaction extends amplify_core.Model {
       currency: currency == null ? this.currency : currency.value,
       status: status == null ? this.status : status.value,
       flutterwavePaymentMethodId: flutterwavePaymentMethodId == null ? this.flutterwavePaymentMethodId : flutterwavePaymentMethodId.value,
-      agreement: agreement == null ? this.agreement : agreement.value,
-      owner: owner == null ? this.owner : owner.value
+      agreement: agreement == null ? this.agreement : agreement.value
     );
   }
   
@@ -246,12 +235,11 @@ class Transaction extends amplify_core.Model {
           ? Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']['serializedData']))
           : Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']))
         : null,
-      _owner = json['owner'],
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'paymentMethodType': amplify_core.enumToString(_paymentMethodType), 'reference': _reference, 'flutterwaveId': _flutterwaveId, 'amount': _amount, 'currency': _currency, 'status': amplify_core.enumToString(_status), 'flutterwavePaymentMethodId': _flutterwavePaymentMethodId, 'agreement': _agreement?.toJson(), 'owner': _owner, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'paymentMethodType': amplify_core.enumToString(_paymentMethodType), 'reference': _reference, 'flutterwaveId': _flutterwaveId, 'amount': _amount, 'currency': _currency, 'status': amplify_core.enumToString(_status), 'flutterwavePaymentMethodId': _flutterwavePaymentMethodId, 'agreement': _agreement?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -264,7 +252,6 @@ class Transaction extends amplify_core.Model {
     'status': _status,
     'flutterwavePaymentMethodId': _flutterwavePaymentMethodId,
     'agreement': _agreement,
-    'owner': _owner,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -281,7 +268,6 @@ class Transaction extends amplify_core.Model {
   static final AGREEMENT = amplify_core.QueryField(
     fieldName: "agreement",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
-  static final OWNER = amplify_core.QueryField(fieldName: "owner");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Transaction";
     modelSchemaDefinition.pluralName = "Transactions";
@@ -355,12 +341,6 @@ class Transaction extends amplify_core.Model {
       isRequired: false,
       targetNames: ['agreementId'],
       ofModelName: 'Agreement'
-    ));
-    
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: Transaction.OWNER,
-      isRequired: false,
-      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
