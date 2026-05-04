@@ -222,62 +222,6 @@ class HomeScreen extends ConsumerWidget {
                 ]),
               ),
             ),
-            // SliverFillRemaining(
-            //   hasScrollBody: false,
-            //   child: Padding(
-            //     padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-            //       top: Dimens.padding.p10,
-            //       bottom: MediaQuery.of(context).padding.bottom,
-            //     ),
-            //     child: Column(
-            //       crossAxisAlignment: .start,
-            //       children: [
-            //         Gap(Dimens.spacing.sp20),
-            //         SecuredFundsOverview(totalFunds: '₦0', trustScore: 100),
-            //         Visibility(
-            //           visible: false,
-            //           child: Padding(
-            //             padding: .only(top: Dimens.spacing.sp28),
-            //             child: Row(),
-            //           ),
-            //         ),
-            //         Gap(Dimens.spacing.sp40),
-            //         if (isLoading) ...[
-            //           const Center(child: CircularProgressIndicator()),
-            //           Gap(Dimens.spacing.sp40),
-            //         ] else if (shouldShowAgreementsSection) ...[
-            //           AgreementsOverviewSection(
-            //             isOngoingEmpty: isOngoingEmpty,
-            //             needsActionCount: needsActionList.length,
-            //             awaitingOtherPartyCount: readyForReleaseList.length,
-            //           ),
-            //           Gap(Dimens.spacing.sp40),
-            //         ],
-            //         QuickActionsSection(),
-            //         Gap(Dimens.spacing.sp40),
-            //         Row(
-            //           mainAxisAlignment: .spaceBetween,
-            //           children: [
-            //             Text(
-            //               l10n.recentActivity,
-            //               style: context.typo.titleSmall.copyWith(
-            //                 color: context.color.grey800,
-            //               ),
-            //             ),
-            //             Text(
-            //               l10n.viewAll,
-            //               style: context.typo.bodyLink.copyWith(
-            //                 color: context.color.blue700,
-            //                 decorationColor: context.color.blue700,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //         Gap(Dimens.spacing.sp16),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
