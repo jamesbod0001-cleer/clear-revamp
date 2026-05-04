@@ -148,25 +148,59 @@ class AccountSecurityScreen extends HookConsumerWidget {
                     ),
                   ],
                 ),
-
-                if (user?.email != null) ...[
-                  Gap(Dimens.spacing.sp24),
-                  Row(
-                    mainAxisAlignment: .spaceBetween,
-                    children: [
-                      Text(
-                        l10n.emailAddress,
-                        style: context.typo.bodyMedium.copyWith(
-                          fontWeight: AppFontWeights.regular,
-                          color: context.color.grey600,
-                        ),
+                Gap(Dimens.spacing.sp24),
+                Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      l10n.emailAddress,
+                      style: context.typo.bodyMedium.copyWith(
+                        fontWeight: AppFontWeights.regular,
+                        color: context.color.grey600,
                       ),
-                      Gap(Dimens.spacing.sp24),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => (user?.isEmailVerified != true)
-                              ? VerifyEmailRoute().push(context)
-                              : null,
+                    ),
+                    Gap(Dimens.spacing.sp24),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap:
+                            (user?.email != null &&
+                                user?.isEmailVerified == true)
+                            ? null
+                            : () {
+                                if (user?.email == null) {
+                                  // TODO: Handle add
+                                } else {
+                                  VerifyEmailRoute().push(context);
+                                }
+                              },
+                        child: Visibility(
+                          visible: user?.email != null,
+                          replacement: Row(
+                            children: [
+                              Material(
+                                color: context.color.error,
+                                borderRadius: .circular(Dimens.radius.r20),
+                                child: Padding(
+                                  padding: .symmetric(
+                                    horizontal: Dimens.padding.p6,
+                                    vertical: Dimens.padding.p2,
+                                  ),
+                                  child: Text(
+                                    l10n.notAddedClickToAdd,
+                                    style: context.typo.bodySmall.copyWith(
+                                      color: context.color.background,
+                                      fontStyle: .italic,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              PhosphorIcon(
+                                PhosphorIcons.caretRight(),
+                                size: Dimens.size.s20,
+                                color: context.color.blue700,
+                              ),
+                            ],
+                          ),
                           child: Row(
                             children: [
                               Expanded(
@@ -208,9 +242,9 @@ class AccountSecurityScreen extends HookConsumerWidget {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
                 Gap(Dimens.spacing.sp40),
                 Container(
                   padding: .all(Dimens.padding.p8),

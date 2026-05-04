@@ -51,7 +51,6 @@ class AmplifyAgreementRepositoryImpl
 
             final serverTime = await _amplifyAgreementServiceClient
                 .getServerTime();
-            log.warn(serverTime.toString());
             // Map and Create
             final response = await _amplifyAgreementServiceClient
                 .createAgreement(
