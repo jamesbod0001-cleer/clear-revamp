@@ -2,6 +2,7 @@ import 'package:cleer/domain/providers/storage/file_url_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/action_alerts/widgets/action_alerts_carousel.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/log_out/view_model/log_out_view_model.dart';
 import 'package:cleer/ui/auth/log_out/widgets/log_out_button.dart';
@@ -61,170 +62,184 @@ class ProfileScreen extends ConsumerWidget {
         bottom: false,
         child: CustomScrollView(
           slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                  top: Dimens.padding.p10,
-                  bottom: MediaQuery.of(context).padding.bottom,
-                ),
-                child: Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: .start,
-                            children: [
-                              Text(
-                                '${user?.firstName} ${user?.lastName}',
-                                style: context.typo.headlineSmall.copyWith(
-                                  fontWeight: AppFontWeights.medium,
-                                  fontSize: AppFontSizes.s28,
-                                  color: context.color.grey600,
-                                ),
-                              ),
-                              TrustScoreBadge(score: 100),
-                              Gap(Dimens.spacing.sp8),
-                              Text(
-                                l10n.memberSince(
-                                  DateFormat(
-                                    'd MMM, y',
-                                  ).format(user!.createdAt!),
-                                ),
-                                style: context.typo.bodySmall.copyWith(
-                                  color: context.color.grey600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Gap(Dimens.spacing.sp20),
-                        Column(
+            SliverPadding(
+              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                top: Dimens.padding.p10,
+              ),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  Row(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: .start,
                           children: [
-                            Container(
-                              width: Dimens.radius.r80, // radius * 2
-                              height: Dimens.radius.r80,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: context.color.grayComponent,
+                            Text(
+                              '${user?.firstName} ${user?.lastName}',
+                              style: context.typo.headlineSmall.copyWith(
+                                fontWeight: AppFontWeights.medium,
+                                fontSize: AppFontSizes.s28,
+                                color: context.color.grey600,
                               ),
-                              child: ClipOval(
-                                child: Builder(
-                                  builder: (BuildContext context) {
-                                    if (user.profilePicture == null) {
-                                      return Center(
-                                        child: PhosphorIcon(
-                                          PhosphorIcons.user(),
-                                          size: Dimens.size.s32,
-                                          color: context.color.grey400,
-                                        ),
-                                      );
-                                    }
-                                    final profileUrlAsync = ref.watch(
-                                      fileUrlProvider(user.profilePicture!.key),
-                                    );
-                                    return profileUrlAsync.when(
-                                      data: (url) => AppImage(
-                                        imageUrl: url,
-                                        blurHash:
-                                            user.profilePicture!.blurHash ?? '',
-                                        fit: BoxFit.cover,
-                                      ),
-                                      loading: () => BlurHashWidget(
-                                        hash:
-                                            user.profilePicture!.blurHash ?? '',
-                                      ),
-                                      error: (_, _) => Center(
-                                        child: PhosphorIcon(
-                                          PhosphorIcons.imageBroken(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
+                            ),
+                            TrustScoreBadge(score: 100),
+                            Gap(Dimens.spacing.sp8),
+                            Text(
+                              l10n.memberSince(
+                                DateFormat('d MMM, y').format(user!.createdAt!),
+                              ),
+                              style: context.typo.bodySmall.copyWith(
+                                color: context.color.grey600,
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    Gap(Dimens.spacing.sp28),
+                      ),
+                      Gap(Dimens.spacing.sp20),
+                      Column(
+                        children: [
+                          Container(
+                            width: Dimens.radius.r80, // radius * 2
+                            height: Dimens.radius.r80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: context.color.grayComponent,
+                            ),
+                            child: ClipOval(
+                              child: Builder(
+                                builder: (BuildContext context) {
+                                  if (user.profilePicture == null) {
+                                    return Center(
+                                      child: PhosphorIcon(
+                                        PhosphorIcons.user(),
+                                        size: Dimens.size.s32,
+                                        color: context.color.grey400,
+                                      ),
+                                    );
+                                  }
+                                  final profileUrlAsync = ref.watch(
+                                    fileUrlProvider(user.profilePicture!.key),
+                                  );
+                                  return profileUrlAsync.when(
+                                    data: (url) => AppImage(
+                                      imageUrl: url,
+                                      blurHash:
+                                          user.profilePicture!.blurHash ?? '',
+                                      fit: BoxFit.cover,
+                                    ),
+                                    loading: () => BlurHashWidget(
+                                      hash: user.profilePicture!.blurHash ?? '',
+                                    ),
+                                    error: (_, _) => Center(
+                                      child: PhosphorIcon(
+                                        PhosphorIcons.imageBroken(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Gap(Dimens.spacing.sp28),
 
-                    UserPerformanceStatsCard(
-                      successfulAgreements: 0,
-                      disputeFreeAgreements: 0,
-                      totalValueTransacted: '₦0',
-                    ),
-                    Gap(Dimens.spacing.sp28),
+                  UserPerformanceStatsCard(
+                    successfulAgreements: 0,
+                    disputeFreeAgreements: 0,
+                    totalValueTransacted: '₦0',
+                  ),
+                ]),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: ActionAlertsCarousel(topSpacing: Dimens.spacing.sp28),
+            ),
+            SliverPadding(
+              padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  Gap(Dimens.spacing.sp28),
 
-                    MenuSectionHeader(title: l10n.payoutDestination),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.bank(.duotone),
-                      title: l10n.payoutAccounts,
-                      content:
-                          l10n.manageTheBankAccountThatReceivesReleasedFunds,
-                      onTap: () => PayoutDestinationRoute().go(context),
-                      showBottomPadding: false,
-                    ),
-                    Gap(Dimens.spacing.sp40),
+                  MenuSectionHeader(title: l10n.payoutDestination),
+                  MenuDescriptionTile(
+                    icon: PhosphorIcons.bank(.duotone),
+                    title: l10n.payoutAccounts,
+                    content: l10n.manageTheBankAccountThatReceivesReleasedFunds,
+                    onTap: () => PayoutDestinationRoute().go(context),
+                    showBottomPadding: false,
+                  ),
+                  Gap(Dimens.spacing.sp40),
 
-                    MenuSectionHeader(title: l10n.settings),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.key(.duotone),
-                      title: l10n.accountAndSecurity,
-                      content:
-                          l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
-                      onTap: () => AccountSecurityRoute().go(context),
-                    ),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.bell(.duotone),
-                      title: l10n.manageNotifications,
-                      content: l10n
-                          .chooseHowYouReceiveAlertsForReleasesNewDealsAndStatusChanges,
-                      onTap: () => ManageNotificationsRoute().go(context),
-                      showBottomPadding: false,
-                    ),
-                    Gap(Dimens.spacing.sp40),
+                  MenuSectionHeader(title: l10n.settings),
+                  MenuDescriptionTile(
+                    icon: PhosphorIcons.key(.duotone),
+                    title: l10n.accountAndSecurity,
+                    content:
+                        l10n.viewYourAccountDetailsAndChangeYourLoginPassword,
+                    onTap: () => AccountSecurityRoute().go(context),
+                    showBottomPadding: false,
+                  ),
+                  // MenuDescriptionTile(
+                  //   icon: PhosphorIcons.bell(.duotone),
+                  //   title: l10n.manageNotifications,
+                  //   content: l10n
+                  //       .chooseHowYouReceiveAlertsForReleasesNewDealsAndStatusChanges,
+                  //   onTap: () => ManageNotificationsRoute().go(context),
+                  //   showBottomPadding: false,
+                  // ),
+                  Gap(Dimens.spacing.sp40),
 
-                    MenuSectionHeader(title: l10n.legalAndPolicies),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.scroll(.duotone),
-                      title: l10n.termsAndPolicies,
-                      content: l10n
-                          .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
-                      onTap: () => TermsAndPoliciesRoute().go(context),
-                    ),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.fileLock(.duotone),
-                      title: l10n.dataUsageAndPrivacy,
-                      content: l10n
-                          .seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals,
-                      onTap: () => DataPrivacyRoute().go(context),
-                      showBottomPadding: false,
-                    ),
-                    Gap(Dimens.spacing.sp40),
+                  MenuSectionHeader(title: l10n.legalAndPolicies),
+                  MenuDescriptionTile(
+                    icon: PhosphorIcons.scroll(.duotone),
+                    title: l10n.termsAndPolicies,
+                    content: l10n
+                        .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
+                    onTap: () => TermsAndPoliciesRoute().go(context),
+                  ),
+                  MenuDescriptionTile(
+                    icon: PhosphorIcons.fileLock(.duotone),
+                    title: l10n.dataUsageAndPrivacy,
+                    content: l10n
+                        .seeHowYourTransactionAndIdentityDataIsUsedToSecureYourDeals,
+                    onTap: () => DataPrivacyRoute().go(context),
+                    showBottomPadding: false,
+                  ),
+                  Gap(Dimens.spacing.sp40),
 
-                    MenuSectionHeader(title: l10n.assistanceAndFeedback),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.question(.duotone),
-                      title: l10n.helpAndSupport,
-                      content: l10n
-                          .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
-                      onTap: () => HelpSupportRoute().go(context),
-                    ),
-                    MenuDescriptionTile(
-                      icon: PhosphorIcons.star(.duotone),
-                      title: l10n.rateCleerOnPlayStore,
-                      content:
-                          l10n.shareYourExperienceAndHelpUsBuildABetterPlatform,
-                      onTap: () {},
-                      showBottomPadding: false,
-                    ),
-
-                    const Spacer(),
+                  MenuSectionHeader(title: l10n.assistanceAndFeedback),
+                  MenuDescriptionTile(
+                    icon: PhosphorIcons.question(.duotone),
+                    title: l10n.helpAndSupport,
+                    content: l10n
+                        .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
+                    onTap: () => HelpSupportRoute().go(context),
+                  ),
+                  MenuDescriptionTile(
+                    icon: PhosphorIcons.star(.duotone),
+                    title: l10n.rateCleerOnPlayStore,
+                    content:
+                        l10n.shareYourExperienceAndHelpUsBuildABetterPlatform,
+                    onTap: () {},
+                    showBottomPadding: false,
+                  ),
+                ]),
+              ),
+            ),
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                  bottom: MediaQuery.of(context).padding.bottom,
+                ),
+                child: Column(
+                  crossAxisAlignment: .start,
+                  mainAxisAlignment: .end,
+                  children: [
                     Gap(Dimens.spacing.sp70),
                     LogOutButton(),
                     Gap(Dimens.spacing.sp24),
