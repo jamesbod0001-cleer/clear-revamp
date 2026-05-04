@@ -1,6 +1,7 @@
 import 'package:cleer/routing/router.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/theme.dart';
+import 'package:cleer/ui/core/utils/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -14,6 +15,7 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       themeMode: ThemeMode.system,

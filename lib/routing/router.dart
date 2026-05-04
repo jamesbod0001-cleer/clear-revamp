@@ -2,21 +2,19 @@ import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/routing/go_router_refresh_notifier.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
-import 'package:flutter/material.dart';
+import 'package:cleer/ui/core/utils/globals.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 part 'router.g.dart';
 
-final rootNavigatorKey = GlobalKey<NavigatorState>();
-
 @riverpod
 GoRouter router(Ref ref) {
   final authNotifier = ref.watch(goRouterRefreshProvider);
 
   return GoRouter(
-    navigatorKey: rootNavigatorKey,
+    navigatorKey: navigatorKey,
     observers: [SentryNavigatorObserver()],
     initialLocation: const SplashRoute().location,
     refreshListenable: authNotifier,
