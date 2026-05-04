@@ -15,6 +15,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class VerifyEmailAddressScreen extends HookConsumerWidget {
   const VerifyEmailAddressScreen({super.key});
@@ -108,6 +109,57 @@ class VerifyEmailAddressScreen extends HookConsumerWidget {
                   child: ResendCodeTimer(
                     Duration(minutes: 1),
                     resendOtp: () => viewModel.resendCode(),
+                  ),
+                ),
+                Gap(Dimens.spacing.sp80),
+                Container(
+                  decoration: BoxDecoration(
+                    color: context.color.grayComponent,
+                    borderRadius: .circular(Dimens.radius.r8),
+                  ),
+                  padding: .all(Dimens.padding.p8),
+                  child: Row(
+                    crossAxisAlignment: .start,
+                    children: [
+                      PhosphorIcon(
+                        PhosphorIcons.info(),
+                        color: context.color.grey800,
+                      ),
+                      Gap(Dimens.spacing.sp12),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            style: context.typo.bodyMedium.copyWith(
+                              color: context.color.grey800,
+                            ),
+                            children: [
+                              TextSpan(text: '${l10n.didntReceiveIt}\n'),
+                              TextSpan(text: '• '),
+                              TextSpan(
+                                text: '${l10n.checkSpamFolder}\n',
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                              ),
+                              TextSpan(text: '• '),
+                              TextSpan(
+                                text: '${l10n.waitUpTo2Minutes}\n',
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                              ),
+                              TextSpan(text: '• '),
+                              TextSpan(
+                                text: l10n.makeSureTheEmailIsCorrect,
+                                style: TextStyle(
+                                  fontWeight: AppFontWeights.regular,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ]),

@@ -564,5 +564,9 @@
   "quickHelp": "Quick Help",
   "faqs": "FAQs",
   "howEscrowWorks": "How escrow works",
-  "reportAnIssue": "Report an Issue"
+  "reportAnIssue": "Report an Issue",
+  "didntReceiveIt": "Didn’t receive it?",
+  "checkSpamFolder": "Check spam folder",
+  "waitUpTo2Minutes": "Wait up to 2 minutes",
+  "makeSureTheEmailIsCorrect": "Make sure the email is correct"
 }
