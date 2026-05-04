@@ -43,8 +43,7 @@ extension ActionAlertUIExtension on ActionAlert {
       ActiveDisputesAlert a => AlertUIProperties(
         title: l10n.activeDisputesCount(a.count),
         subtitle: l10n.tapToViewAndResolve,
-        leading: Assets.images.flag.image(
-          color: context.color.error,
+        leading: Assets.images.errorFlag.image(
           height: Dimens.size.s32,
         ),
         backgroundColor: backgroundColor,
@@ -79,9 +78,7 @@ extension ActionAlertUIExtension on ActionAlert {
         ),
         backgroundColor: backgroundColor,
         contentColor: foregroundColor,
-        onTap: () {
-          // TODO: Route to Add Email
-        },
+        onTap: () => AddEmailRoute().push(context),
       ),
 
       VerifyEmailAlert _ => AlertUIProperties(

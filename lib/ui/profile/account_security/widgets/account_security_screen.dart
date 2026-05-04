@@ -168,7 +168,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
                             ? null
                             : () {
                                 if (user?.email == null) {
-                                  // TODO: Handle add
+                                  AddEmailRoute().push(context);
                                 } else {
                                   VerifyEmailRoute().push(context);
                                 }
@@ -176,7 +176,16 @@ class AccountSecurityScreen extends HookConsumerWidget {
                         child: Visibility(
                           visible: user?.email != null,
                           replacement: Row(
+                            mainAxisAlignment: .end,
                             children: [
+                              Text(
+                                l10n.addEmail,
+                                style: context.typo.bodyLink.copyWith(
+                                  color: context.color.blue700,
+                                  decorationColor: context.color.blue700,
+                                ),
+                              ),
+                              Gap(Dimens.spacing.sp8),
                               Material(
                                 color: context.color.error,
                                 borderRadius: .circular(Dimens.radius.r20),
@@ -186,7 +195,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
                                     vertical: Dimens.padding.p2,
                                   ),
                                   child: Text(
-                                    l10n.notAddedClickToAdd,
+                                    l10n.notAdded,
                                     style: context.typo.bodySmall.copyWith(
                                       color: context.color.background,
                                       fontStyle: .italic,
