@@ -215,8 +215,7 @@ class ProfileScreen extends ConsumerWidget {
                   MenuDescriptionTile(
                     icon: PhosphorIcons.question(.duotone),
                     title: l10n.helpAndSupport,
-                    content: l10n
-                        .viewTheRulesAndAgreementsThatGovernYourUseOfTheCleerPlatform,
+                    content: l10n.findAnswersOrReachOurSupportTeam,
                     onTap: () => HelpSupportRoute().go(context),
                   ),
                   MenuDescriptionTile(
