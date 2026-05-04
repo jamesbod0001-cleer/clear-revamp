@@ -29,7 +29,7 @@ class LoginViewModel extends _$LoginViewModel {
           .read(authUseCaseProvider.notifier)
           .signIn(
             SignInParams(
-              username: isEmailMode ? formData.email : fullE164Number,
+              identifier: isEmailMode ? formData.email : fullE164Number,
               password: formData.password,
             ),
           );

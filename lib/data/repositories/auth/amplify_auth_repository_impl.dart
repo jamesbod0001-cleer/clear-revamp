@@ -75,16 +75,16 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
     SignInParams params,
   ) async {
     try {
-      _log.info('Starting Sign In for user: ${params.username}');
+      _log.info('Starting Sign In for user: ${params.identifier}');
       final request = SignInUserRequest(
-        username: params.username,
+        username: params.identifier,
         password: params.password,
       );
       final amplifyResult = await _amplifyAuthServiceClient.signInUser(request);
 
       if (amplifyResult.nextStep.signInStep == AuthSignInStep.confirmSignUp) {
         _log.info('User is not confirmed. Resending confirmation code.');
-        final resendResult = await resendSignUpCode(params.username);
+        final resendResult = await resendSignUpCode(params.identifier);
         return resendResult.fold(
           (codeDetails) => Success(
             SignInDomainResult.confirmationRequired(
@@ -96,10 +96,10 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
         );
       }
 
-      _log.info('Sign In successful for user: ${params.username}');
+      _log.info('Sign In successful for user: ${params.identifier}');
       return Success(amplifyResult.toDomain());
     } on AuthException catch (e) {
-      _log.error('Error signing in user: ${params.username}', e);
+      _log.error('Error signing in user: ${params.identifier}', e);
       return Failure(AmplifyAuthExceptionHandler.handleException(e));
     }
   }
@@ -111,6 +111,7 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
     try {
       _log.info('Starting Sign Up for user: ${params.phoneNumber}');
       final request = SignUpUserRequest(
+        username: params.username,
         firstName: params.firstName,
         lastName: params.lastName,
         phoneNumber: params.phoneNumber,
@@ -131,18 +132,18 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
     ConfirmSignUpParams params,
   ) async {
     try {
-      _log.info('Starting Sign Up confirmation for user: ${params.username}');
+      _log.info('Starting Sign Up confirmation for user: ${params.identifier}');
       final request = ConfirmSignUpRequest(
-        username: params.username,
+        username: params.identifier,
         confirmationCode: params.confirmationCode,
       );
       final amplifyResult = await _amplifyAuthServiceClient.confirmSignUp(
         request,
       );
-      _log.info('Sign Up confirmation successful for user: ${params.username}');
+      _log.info('Sign Up confirmation successful for user: ${params.identifier}');
       return Success(amplifyResult.toDomain());
     } on AuthException catch (e) {
-      _log.error('Error confirming sign up for user: ${params.username}', e);
+      _log.error('Error confirming sign up for user: ${params.identifier}', e);
       return Failure(AmplifyAuthExceptionHandler.handleException(e));
     }
   }
@@ -183,21 +184,21 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>>
   confirmResetPassword(ConfirmResetPasswordParams params) async {
     try {
-      _log.info('Confirming password reset for user ${params.username}');
+      _log.info('Confirming password reset for user ${params.identifier}');
       final request = ConfirmResetPasswordRequest(
-        username: params.username,
+        username: params.identifier,
         newPassword: params.newPassword,
         confirmationCode: params.confirmationCode,
       );
       final amplifyResult = await _amplifyAuthServiceClient
           .confirmResetPassword(request);
       _log.info(
-        'Password reset confirmed successfully for user ${params.username}',
+        'Password reset confirmed successfully for user ${params.identifier}',
       );
       return Success(amplifyResult.toDomain());
     } on AuthException catch (e) {
       _log.error(
-        'Error confirming password reset for user ${params.username}',
+        'Error confirming password reset for user ${params.identifier}',
         e,
       );
       return Failure(AmplifyAuthExceptionHandler.handleException(e));

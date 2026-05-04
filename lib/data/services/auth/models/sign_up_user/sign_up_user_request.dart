@@ -5,6 +5,9 @@ part 'sign_up_user_request.freezed.dart';
 @freezed
 abstract class SignUpUserRequest with _$SignUpUserRequest {
   const factory SignUpUserRequest({
+    /// Username
+    required String username,
+
     /// First Name
     required String firstName,
 

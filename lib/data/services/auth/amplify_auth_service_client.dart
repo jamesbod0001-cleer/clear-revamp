@@ -49,7 +49,7 @@ class AmplifyAuthServiceClient {
       AuthUserAttributeKey.familyName: request.lastName,
     };
     final result = await _amplifyAuth.signUp(
-      username: request.phoneNumber,
+      username: request.username,
       password: request.password,
       options: SignUpOptions(userAttributes: userAttributes),
     );

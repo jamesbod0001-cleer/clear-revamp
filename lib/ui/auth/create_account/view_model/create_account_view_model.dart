@@ -2,7 +2,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/domain/use_cases/auth/params/sign_up_params.dart';
 import 'package:cleer/ui/auth/create_account/state/create_account_state.dart';
-import 'package:cleer/utils/constants.dart';
 import 'package:cleer/utils/validators/validators.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -35,7 +34,6 @@ class CreateAccountViewModel extends _$CreateAccountViewModel {
               lastName: formData.lastName,
               phoneNumber: fullE164Number,
               email: formData.email,
-              password: kEmpty,
             ),
           );
       return result.fold(

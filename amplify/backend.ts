@@ -36,6 +36,8 @@ cfnUserPool.policies = {
         requireUppercase: true,
     },
 };
+cfnUserPool.usernameAttributes = [];
+cfnUserPool.aliasAttributes = ['phone_number','email'];
 
 // --- Webhook Configuration ---
 // Generate a public, unauthenticated URL for Flutterwave to hit

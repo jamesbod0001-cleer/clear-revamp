@@ -53,7 +53,7 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
     final cleanDigits = formData.phoneNumber.replaceAll(' ', '');
     final fullE164Number = '+234$cleanDigits';
 
-    final String username = isEmailMode ? formData.email : fullE164Number;
+    final String identifier = isEmailMode ? formData.email : fullE164Number;
 
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -61,7 +61,7 @@ class ForgotPasswordViewModel extends _$ForgotPasswordViewModel {
           .read(authUseCaseProvider.notifier)
           .confirmResetPassword(
             ConfirmResetPasswordParams(
-              username: username,
+              identifier: identifier,
               newPassword: state.value!.forgotPasswordFormData.newPassword,
               confirmationCode: state.value!.forgotPasswordFormData.code,
             ),

@@ -28,7 +28,7 @@ class VerifyPhoneNumberViewModel extends _$VerifyPhoneNumberViewModel {
             .read(authUseCaseProvider.notifier)
             .confirmSignUp(
               ConfirmSignUpParams(
-                username: phoneNumber,
+                identifier: phoneNumber,
                 confirmationCode: code,
               ),
             );

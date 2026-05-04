@@ -9,6 +9,7 @@ abstract class SignUpParams with _$SignUpParams {
     required String lastName,
     required String phoneNumber,
     String? email,
-    required String password,
+    @Default('') String username,
+    @Default('') String password,
   }) = _SignUpParams;
 }

@@ -26,6 +26,7 @@ import 'package:cleer/utils/password_generator.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 part 'auth_use_case.g.dart';
 
@@ -224,14 +225,14 @@ class AuthUseCase extends _$AuthUseCase {
   Future<ResultDart<SignInDomainResult, AuthFailure>> signIn(
     SignInParams params,
   ) async {
-    _log.info('Attempting to sign in user: ${params.username}');
+    _log.info('Attempting to sign in user: ${params.identifier}');
     final result = await _authRepository.signInUser(params);
     await result.fold(
       (SignInDomainResult success) async {
-        _log.info('Successfully signed in user: ${params.username}');
+        _log.info('Successfully signed in user: ${params.identifier}');
       },
       (failure) {
-        _log.error('Error signing in user: ${params.username}', failure);
+        _log.error('Error signing in user: ${params.identifier}', failure);
       },
     );
     return result;
@@ -241,13 +242,22 @@ class AuthUseCase extends _$AuthUseCase {
     SignUpParams params,
   ) async {
     final tempPassword = PasswordGenerator.generateSecureTempPassword();
+    final generatedUsername = const Uuid().v4();
+
     _log.info('Attempting to create account for user: ${params.phoneNumber}');
     await _secureStorageService.saveTempPassword(
       params.phoneNumber,
       tempPassword,
     );
-    final paramsWithPass = params.copyWith(password: tempPassword);
-    final result = await _authRepository.signUpUser(paramsWithPass);
+    await _secureStorageService.saveHiddenUsername(
+      params.phoneNumber,
+      generatedUsername,
+    );
+    final paramsWithAuth = params.copyWith(
+      username: generatedUsername,
+      password: tempPassword,
+    );
+    final result = await _authRepository.signUpUser(paramsWithAuth);
     result.fold(
       (success) {
         _log.info(
@@ -267,17 +277,29 @@ class AuthUseCase extends _$AuthUseCase {
   Future<ResultDart<SignUpDomainResult, AuthFailure>> confirmSignUp(
     ConfirmSignUpParams params,
   ) async {
-    _log.info('Attempting to confirm sign up for user: ${params.username}');
-    final result = await _authRepository.confirmSignUp(params);
+    final hiddenUsername = await _secureStorageService.getHiddenUsername(
+      params.identifier,
+    );
+
+    if (hiddenUsername == null) return Failure(AuthFailure.unknown());
+
+    _log.info('Attempting to confirm sign up for UUID: $hiddenUsername');
+
+    // Swap the identifier for the hidden username before sending it to the repo
+    final realParams = params.copyWith(identifier: hiddenUsername);
+
+    final result = await _authRepository.confirmSignUp(realParams);
+
     result.fold(
       (success) {
+        _secureStorageService.deleteHiddenUsername(params.identifier);
         _log.info(
-          'Successfully confirmed sign up for user: ${params.username}',
+          'Successfully confirmed sign up for user: ${params.identifier}',
         );
       },
       (failure) {
         _log.error(
-          'Error confirming sign up for user: ${params.username}',
+          'Error confirming sign up for user: ${params.identifier}',
           failure,
         );
       },
@@ -286,16 +308,21 @@ class AuthUseCase extends _$AuthUseCase {
   }
 
   Future<ResultDart<void, AuthFailure>> resendSignUpCode(
-    String username,
+    String identifier,
   ) async {
-    _log.info('Attempting to resend sign up code to user: $username');
-    final result = await _authRepository.resendSignUpCode(username);
+    final hiddenUsername = await _secureStorageService.getHiddenUsername(
+      identifier,
+    );
+    if (hiddenUsername == null) return Failure(AuthFailure.unknown());
+
+    _log.info('Attempting to resend sign up code to UUID: $hiddenUsername');
+    final result = await _authRepository.resendSignUpCode(hiddenUsername);
     result.fold(
       (success) {
-        _log.info('Successfully resent sign up code to user: $username');
+        _log.info('Successfully resent sign up code to user: $identifier');
       },
       (failure) {
-        _log.error('Error resending sign up code to user: $username', failure);
+        _log.error('Error resending sign up code to user: $identifier', failure);
       },
     );
     return result;
@@ -313,7 +340,7 @@ class AuthUseCase extends _$AuthUseCase {
 
       _log.info('Attempting to confirm sign up for user: $phoneNumber');
       final authResult = await _authRepository
-          .signInUser(SignInParams(username: phoneNumber, password: tempPass))
+          .signInUser(SignInParams(identifier: phoneNumber, password: tempPass))
           .flatMap(
             (_) => _authRepository.updatePassword(
               UpdatePasswordParams(
@@ -327,6 +354,7 @@ class AuthUseCase extends _$AuthUseCase {
       return await authResult.fold(
         (success) async {
           await _secureStorageService.deleteTempPassword(phoneNumber);
+          await _secureStorageService.deleteHiddenUsername(phoneNumber);
 
           final identityResult = await _authRepository.getAuthIdentity();
 
@@ -413,10 +441,10 @@ class AuthUseCase extends _$AuthUseCase {
   }
 
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>> resetPassword(
-    String username,
+    String identifier,
   ) async {
     _log.info('Attempting to reset password for user');
-    final result = await _authRepository.resetPassword(username);
+    final result = await _authRepository.resetPassword(identifier);
     result.fold(
       (success) {
         _log.info('Successfully reset password for user');
@@ -431,18 +459,18 @@ class AuthUseCase extends _$AuthUseCase {
   Future<ResultDart<ResetPasswordDomainResult, AuthFailure>>
   confirmResetPassword(ConfirmResetPasswordParams params) async {
     _log.info(
-      'Attempting to confirm reset password for user: ${params.username}',
+      'Attempting to confirm reset password for user: ${params.identifier}',
     );
     final result = await _authRepository.confirmResetPassword(params);
     result.fold(
       (success) {
         _log.info(
-          'Successfully confirmed reset password for user: ${params.username}',
+          'Successfully confirmed reset password for user: ${params.identifier}',
         );
       },
       (failure) {
         _log.error(
-          'Error confirming reset password for user: ${params.username}',
+          'Error confirming reset password for user: ${params.identifier}',
           failure,
         );
       },
