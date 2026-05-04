@@ -30,6 +30,8 @@ class ChangeEmailAddressBottomSheet extends HookConsumerWidget {
     final newEmailAddressController = useTextEditingController();
 
     return Column(
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
       children: [
         Text(l10n.changeEmailAddress, style: context.typo.headlineSmall),
         Gap(Dimens.spacing.sp24),

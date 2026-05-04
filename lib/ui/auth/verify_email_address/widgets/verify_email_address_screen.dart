@@ -1,5 +1,4 @@
 import 'package:cleer/domain/models/confirm_user_attribute_result/confirm_user_attribute_result.dart';
-import 'package:cleer/domain/models/update_user_attribute_result/update_user_attribute_result.dart';
 import 'package:cleer/ui/auth/verify_email_address/view_model/verify_email_address_view_model.dart';
 import 'package:cleer/ui/auth/verify_email_address/widgets/change_email_address_bottom_sheet.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -37,17 +36,17 @@ class VerifyEmailAddressScreen extends HookConsumerWidget {
           );
         }
 
-        // Handle Email Change
-        final updateResult = state.updateUserAttributeDomainResult;
-        if (updateResult != null) {
-          updateResult.maybeWhen(
-            success: () {
-              // Only pop if Cognito says it's 100% done (rare, but good to handle)
-              if (context.mounted) context.pop();
-            },
-            orElse: () => debugPrint('Update Result: $updateResult'),
-          );
-        }
+        // // Handle Email Change
+        // final updateResult = state.updateUserAttributeDomainResult;
+        // if (updateResult != null) {
+        //   updateResult.maybeWhen(
+        //     success: () {
+        //       // Only pop if Cognito says it's 100% done (rare, but good to handle)
+        //       if (context.mounted) context.pop();
+        //     },
+        //     orElse: () => debugPrint('Update Result: $updateResult'),
+        //   );
+        // }
       });
     });
 
@@ -178,7 +177,7 @@ class VerifyEmailAddressScreen extends HookConsumerWidget {
                   PrimaryButton(
                     onPressed: () =>
                         viewModel.verifyEmailAddress(codeController.text),
-                    child: Text(l10n.verify),
+                    child: Text(l10n.verifyEmail),
                   ),
                   Gap(Dimens.spacing.sp16),
                   TextButton(

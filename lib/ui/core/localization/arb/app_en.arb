@@ -368,7 +368,8 @@
   "passwordAndSecurity": "Password & Security",
   "changePassword": "Change Password",
   "unverified": "Unverified",
-  "notAddedClickToAdd": "Not Added. Click to Add",
+  "addEmail": "Add Email",
+  "notAdded": "Not Added",
   "milestoneCount": "Milestone {count}",
   "@milestoneCount": {
     "description": "Label for a milestone with its sequence number",
@@ -568,5 +569,9 @@
   "didntReceiveIt": "Didn’t receive it?",
   "checkSpamFolder": "Check spam folder",
   "waitUpTo2Minutes": "Wait up to 2 minutes",
-  "makeSureTheEmailIsCorrect": "Make sure the email is correct"
+  "makeSureTheEmailIsCorrect": "Make sure the email is correct",
+  "addEmailAddress": "Add Email Address",
+  "usedToSecureYourAccountAndRecoverAccess": "Used to secure your account and recover access",
+  "continueText": "Continue",
+  "verifyEmail": "Verify Email"
 }

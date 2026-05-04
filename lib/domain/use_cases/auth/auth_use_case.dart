@@ -538,10 +538,10 @@ class AuthUseCase extends _$AuthUseCase {
     );
   }
 
-  Future<ResultDart<UpdateUserAttributeDomainResult, AuthFailure>> changeEmail(
+  Future<ResultDart<UpdateUserAttributeDomainResult, AuthFailure>> updateEmail(
     String newEmail,
   ) async {
-    _log.info('User is requesting an email change to: $newEmail');
+    _log.info('User is requesting an email update to: $newEmail');
 
     final result = await _authRepository.updateEmail(newEmail);
 
@@ -553,11 +553,11 @@ class AuthUseCase extends _$AuthUseCase {
           _log.info('Email updated immediately. Syncing profile...');
           await _syncUserProfile();
         }
-        _log.info('Email change result: $success');
+        _log.info('Email update result: $success');
         return Success(success);
       },
       (failure) {
-        _log.error('Failed to initiate email change', failure);
+        _log.error('Failed to initiate email update', failure);
         return Failure(failure);
       },
     );

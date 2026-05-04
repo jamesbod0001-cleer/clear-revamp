@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
-import 'package:flutter/foundation.dart';
 
 class PaymentSecurityUtils {
   /// Generates a random 12-character alphanumeric nonce
