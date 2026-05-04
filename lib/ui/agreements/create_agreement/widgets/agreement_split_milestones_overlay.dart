@@ -8,7 +8,7 @@ import 'package:cleer/ui/core/themes/theme_utils.dart';
 import 'package:cleer/ui/core/ui/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer/ui/core/ui/buttons/primary_button.dart';
 import 'package:cleer/ui/core/ui/custom_text_form_field.dart';
-import 'package:cleer/utils/text_input_formatters/decimal_thousands_formatter.dart';
+import 'package:cleer/ui/core/utils/formatters/decimal_thousands_formatter.dart';
 import 'package:cleer/utils/validators/common_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

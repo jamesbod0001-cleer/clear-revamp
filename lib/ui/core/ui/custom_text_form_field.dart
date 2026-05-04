@@ -1,7 +1,7 @@
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/themes/theme_utils.dart';
+import 'package:cleer/ui/core/utils/formatters/nigerian_phone_formatter.dart';
 import 'package:cleer/utils/constants.dart';
-import 'package:cleer/utils/text_input_formatters/nigerian_phone_formatter.dart';
 import 'package:cleer/utils/validators/phone_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
