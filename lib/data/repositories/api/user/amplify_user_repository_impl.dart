@@ -76,7 +76,7 @@ class AmplifyUserRepositoryImpl
       targetId: id,
     );
     if (initialResult.isSuccess()) {
-      yield initialResult.getOrThrow();
+      yield initialResult.getOrNull()!;
     }
     yield* _amplifyUserServiceClient
         .observeUserUpdates(id)
