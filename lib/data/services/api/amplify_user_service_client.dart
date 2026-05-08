@@ -48,7 +48,6 @@ class AmplifyUserServiceClient with ApiErrorChecker {
     final subscriptionRequest = ModelSubscriptions.onUpdate(
       User.classType,
       authorizationMode: APIAuthorizationType.userPools,
-      where: User.ID.eq(id),
     );
     return _amplifyAPI.subscribe(subscriptionRequest);
   }

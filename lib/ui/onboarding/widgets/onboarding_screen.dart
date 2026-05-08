@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -18,6 +20,27 @@ class OnboardingScreen extends HookWidget {
 
     final PageController pageController = usePageController();
     final currentPage = useState<int>(0);
+
+    useEffect(() {
+      final timer = Timer.periodic(const Duration(seconds: 4), (timer) {
+        if (pageController.hasClients) {
+          // Check if we are not on the last page (index 2)
+          if (currentPage.value < 2) {
+            pageController.animateToPage(
+              currentPage.value + 1,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+            );
+          } else {
+            // We have reached the last page, so stop the timer
+            timer.cancel();
+          }
+        }
+      });
+
+      // Cleanup the timer when the widget is disposed
+      return timer.cancel;
+    }, []);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -54,12 +77,12 @@ class OnboardingScreen extends HookWidget {
                     List<String> titles = [
                       l10n.dontJustSendSecure,
                       l10n.inspectThenRelease,
-                      l10n.zeroRiskTransactions,
+                      l10n.tradeWithConfidence,
                     ];
                     List<String> descriptions = [
-                      l10n.lockFundsSecurelyTheReceiverSeesTheMoneyButCantTouchItUntilYouSaySo,
-                      l10n.itemDeliveredServiceDoneClickReleaseToPayInstantlyNotSatisfiedGetARefund,
-                      l10n.itemDeliveredServiceDoneClickReleaseToPayInstantlyNotSatisfiedGetARefund,
+                      l10n.lockFundsSecurelyTheReceiverSeeThePaymentButCannotAccessItUntilYouApprove,
+                      l10n.confirmDeliveryOrServiceTapReleaseToPayInstantlyOrRequestARefundIfSomethingIsWrong,
+                      l10n.weHoldTheMoneySafelyAndReleaseItOnlyWhenYouApproveProtectingBothBuyersAndSellersFromScamsDelaysAndBadDeliveries,
                     ];
                     List<AssetGenImage> images = [
                       Assets.images.safeClose,
@@ -103,48 +126,35 @@ class OnboardingScreen extends HookWidget {
               Gap(Dimens.spacing.sp65),
               Padding(
                 padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-                child: Visibility(
-                  visible: currentPage.value == 2,
-                  replacement: PrimaryButton(
-                    onPressed: () {
-                      pageController.animateToPage(
-                        currentPage.value + 1,
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.fastOutSlowIn,
-                      );
-                    },
-                    child: Text(l10n.next),
-                  ),
-                  child: Column(
-                    children: [
-                      PrimaryButton(
-                        onPressed: () => CreateAccountRoute().push(context),
-                        child: Text(l10n.getStarted),
-                      ),
-                      Gap(Dimens.spacing.sp12),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: l10n.alreadyHaveAnAccount,
-                              style: context.typo.bodyMedium.copyWith(
-                                color: context.color.outline,
-                              ),
+                child: Column(
+                  children: [
+                    PrimaryButton(
+                      onPressed: () => CreateAccountRoute().push(context),
+                      child: Text(l10n.getStarted),
+                    ),
+                    Gap(Dimens.spacing.sp12),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: l10n.alreadyHaveAnAccount,
+                            style: context.typo.bodyMedium.copyWith(
+                              color: context.color.outline,
                             ),
-                            TextSpan(text: ' '),
-                            TextSpan(
-                              text: l10n.logIn,
-                              style: context.typo.bodyLink.copyWith(
-                                color: context.color.primaryBlue,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => LoginRoute().push(context),
+                          ),
+                          TextSpan(text: ' '),
+                          TextSpan(
+                            text: l10n.logIn,
+                            style: context.typo.bodyLink.copyWith(
+                              color: context.color.primaryBlue,
                             ),
-                          ],
-                        ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => LoginRoute().push(context),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               Gap(Dimens.spacing.sp20),

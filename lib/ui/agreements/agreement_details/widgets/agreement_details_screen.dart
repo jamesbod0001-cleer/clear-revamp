@@ -42,6 +42,27 @@ class AgreementDetailsScreen extends ConsumerWidget {
 
     final agreement = state.value ?? initialAgreement;
 
+    if (agreement == null && state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (agreement == null && state.hasError) {
+      /// TODO: Show proper error here
+      return SizedBox.shrink();
+    }
+
+    Milestone? currentlyRunning;
+    AsyncValue<List<Milestone>>? milestonesState;
+    if (agreement!.disbursementType == .milestones) {
+      milestonesState = ref.watch(agreementMilestonesProvider(agreement.id!));
+      currentlyRunning = milestonesState!.value?.currentlyRunning;
+    }
+
+    DateTime? dueDate = agreement.dueDate(currentlyRunning: currentlyRunning);
+
+    final agreementStatusHistoryState = ref.watch(
+      agreementStatusHistoryProvider(agreement.id!),
+    );
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
@@ -49,125 +70,87 @@ class AgreementDetailsScreen extends ConsumerWidget {
         automaticallyImplyLeading: false,
         title: Column(
           crossAxisAlignment: .start,
-          children: [Gap(Dimens.spacing.sp15), AppBackButton()],
+          children: [
+            Gap(Dimens.spacing.sp15),
+            AppBackButton(),
+            Gap(Dimens.spacing.sp22),
+            Row(
+              crossAxisAlignment: .start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Gap(Dimens.spacing.sp2),
+                      Text(
+                        '${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)}',
+                        style: context.typo.headlineMedium.copyWith(
+                          color: context.color.grey800,
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp6),
+                      Text(
+                        agreement.getDisplayTitle(context, currentUser: user),
+                        style: context.typo.titleLarge,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Gap(Dimens.spacing.sp12),
+                      Row(
+                        mainAxisSize: .min,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: agreement.getStatusPillColor(context),
+                              borderRadius: BorderRadius.circular(
+                                Dimens.radius.r20,
+                              ),
+                            ),
+                            padding: .symmetric(
+                              horizontal: Dimens.padding.p6,
+                              vertical: Dimens.padding.p3,
+                            ),
+                            child: Text(
+                              agreement.getStatusText(context),
+                              style: context.typo.bodySmall.copyWith(
+                                color: agreement.getStatusTextColor(context),
+                              ),
+                            ),
+                          ),
+                          Gap(Dimens.spacing.sp8),
+                          Text(
+                            l10n.dueDate(
+                              dueDate != null
+                                  ? DateFormat('d MMM').format(dueDate)
+                                  : '',
+                            ),
+                            style: context.typo.bodySmall.copyWith(
+                              color: context.color.grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Gap(Dimens.spacing.sp24),
+                StatusCircleIcon(type: .handshake),
+              ],
+            ),
+          ],
         ),
-        toolbarHeight: 59,
+        toolbarHeight: 216,
       ),
       body: SafeArea(
         child: Builder(
           builder: (context) {
-            if (agreement == null && state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (agreement == null && state.hasError) {
-              /// TODO: Show proper error here
-              return SizedBox.shrink();
-            }
-
-            Milestone? currentlyRunning;
-            AsyncValue<List<Milestone>>? milestonesState;
-            if (agreement!.disbursementType == .milestones) {
-              milestonesState = ref.watch(
-                agreementMilestonesProvider(agreement.id!),
-              );
-              currentlyRunning = milestonesState!.value?.currentlyRunning;
-            }
-
-            DateTime? dueDate = agreement.dueDate(
-              currentlyRunning: currentlyRunning,
-            );
-
-            final agreementStatusHistoryState = ref.watch(
-              agreementStatusHistoryProvider(agreement.id!),
-            );
-
             return CustomScrollView(
               slivers: [
-                PinnedHeaderSliver(
-                  child: Container(
-                    color: context.color.background,
-                    child: Padding(
-                      padding: Dimens.mobile.edgeInsetsScreenHorizontal
-                          .copyWith(bottom: Dimens.padding.p20),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: .start,
-                              children: [
-                                Gap(Dimens.spacing.sp2),
-                                Text(
-                                  '${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)}',
-                                  style: context.typo.headlineMedium.copyWith(
-                                    color: context.color.grey800,
-                                  ),
-                                ),
-                                Gap(Dimens.spacing.sp6),
-                                Text(
-                                  agreement.getDisplayTitle(
-                                    context,
-                                    currentUser: user,
-                                  ),
-                                  style: context.typo.titleLarge,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Gap(Dimens.spacing.sp12),
-                                Row(
-                                  mainAxisSize: .min,
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        color: agreement.getStatusPillColor(
-                                          context,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          Dimens.radius.r20,
-                                        ),
-                                      ),
-                                      padding: .symmetric(
-                                        horizontal: Dimens.padding.p6,
-                                        vertical: Dimens.padding.p3,
-                                      ),
-                                      child: Text(
-                                        agreement.getStatusText(context),
-                                        style: context.typo.bodySmall.copyWith(
-                                          color: agreement.getStatusTextColor(
-                                            context,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Gap(Dimens.spacing.sp8),
-                                    Text(
-                                      l10n.dueDate(
-                                        dueDate != null
-                                            ? DateFormat(
-                                                'd MMM',
-                                              ).format(dueDate)
-                                            : '',
-                                      ),
-                                      style: context.typo.bodySmall.copyWith(
-                                        color: context.color.grey600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Gap(Dimens.spacing.sp24),
-                          StatusCircleIcon(type: .handshake),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
                 SliverPadding(
                   padding: Dimens.mobile.edgeInsetsScreenHorizontal,
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
-                      Gap(Dimens.spacing.sp20),
+                      Gap(Dimens.spacing.sp30),
                       if ([
                         AgreementStatus.awaitingFunding,
                         AgreementStatus.awaitingRecipient,

@@ -19,6 +19,6 @@ export const User = a.model({
     receivedAgreements: a.hasMany('Agreement', 'recipientId'), // Agreements where this user is the one getting paid
     payoutDestinations: a.hasMany('PayoutDestination', 'userId'),
 }).identifier(['id']).authorization(allow => [
-    allow.ownerDefinedIn('id'), allow.authenticated().to(['read']),
+    allow.ownerDefinedIn('id').identityClaim('sub'),
 ])
 

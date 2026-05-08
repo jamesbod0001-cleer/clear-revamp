@@ -40,5 +40,5 @@ export const Agreement = a.model({
     createdAt: a.datetime(),
 }).secondaryIndexes((index) => [index("shortCode"), index("status")
     .sortKeys(["createdAt"]).queryField("agreementsByStatus")]).authorization(allow => [
-    allow.ownersDefinedIn('participants'),
+    allow.ownersDefinedIn('participants').identityClaim('sub'),
 ]);

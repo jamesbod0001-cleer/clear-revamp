@@ -8,7 +8,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'verify_email_address_view_model.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class VerifyEmailAddressViewModel extends _$VerifyEmailAddressViewModel {
   final _log = AmplifyLogger('VerifyEmailAddressViewModel');
 

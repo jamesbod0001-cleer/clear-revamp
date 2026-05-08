@@ -50,7 +50,7 @@ class HelpSupportScreen extends StatelessWidget {
 
                 MenuSectionHeader(title: l10n.talkToSupport),
                 Row(
-                  spacing: Dimens.spacing.sp8,
+                  spacing: Dimens.spacing.sp12,
                   children: [
                     Expanded(
                       child: Material(
@@ -86,7 +86,7 @@ class HelpSupportScreen extends StatelessWidget {
                                 ),
                                 Gap(Dimens.spacing.sp12),
                                 Text(
-                                  l10n.chatSupport,
+                                  l10n.liveChat,
                                   style: context.typo.bodyMedium.copyWith(
                                     fontWeight: AppFontWeights.regular,
                                     color: context.color.grey800,
@@ -132,7 +132,7 @@ class HelpSupportScreen extends StatelessWidget {
                                 ),
                                 Gap(Dimens.spacing.sp12),
                                 Text(
-                                  l10n.emailSupport,
+                                  l10n.sendEmail,
                                   style: context.typo.bodyMedium.copyWith(
                                     fontWeight: AppFontWeights.regular,
                                     color: context.color.grey800,
@@ -178,7 +178,7 @@ class HelpSupportScreen extends StatelessWidget {
                                 ),
                                 Gap(Dimens.spacing.sp12),
                                 Text(
-                                  l10n.callSupport,
+                                  l10n.callUs,
                                   style: context.typo.bodyMedium.copyWith(
                                     fontWeight: AppFontWeights.regular,
                                     color: context.color.grey800,
