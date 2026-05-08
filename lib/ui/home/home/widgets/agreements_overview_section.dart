@@ -28,11 +28,11 @@ class AgreementsOverviewSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    if (!isOngoingEmpty &&
-        needsActionCount == 0 &&
-        awaitingOtherPartyCount == 0) {
-      return const SizedBox.shrink();
-    }
+    // if (!isOngoingEmpty &&
+    //     needsActionCount == 0 &&
+    //     awaitingOtherPartyCount == 0) {
+    //   return const SizedBox.shrink();
+    // }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

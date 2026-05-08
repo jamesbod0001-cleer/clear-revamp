@@ -31,12 +31,6 @@ class HomeScreen extends ConsumerWidget {
     final isLoading = ongoingState.isLoading;
     final isOngoingEmpty = (ongoingState.value ?? []).isEmpty;
 
-    final shouldShowAgreementsSection =
-        !isLoading &&
-        (isOngoingEmpty ||
-            needsActionList.isNotEmpty ||
-            readyForReleaseList.isNotEmpty);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -190,7 +184,7 @@ class HomeScreen extends ConsumerWidget {
                   if (isLoading) ...[
                     const Center(child: CircularProgressIndicator()),
                     Gap(Dimens.spacing.sp40),
-                  ] else if (shouldShowAgreementsSection) ...[
+                  ] else  ...[
                     AgreementsOverviewSection(
                       isOngoingEmpty: isOngoingEmpty,
                       needsActionCount: needsActionList.length,
