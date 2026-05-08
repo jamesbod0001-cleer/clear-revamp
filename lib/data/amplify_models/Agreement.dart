@@ -462,7 +462,7 @@ class Agreement extends amplify_core.Model {
       amplify_core.AuthRule(
         authStrategy: amplify_core.AuthStrategy.OWNER,
         ownerField: "participants",
-        identityClaim: "cognito:username",
+        identityClaim: "sub",
         provider: amplify_core.AuthRuleProvider.USERPOOLS,
         operations: const [
           amplify_core.ModelOperation.CREATE,

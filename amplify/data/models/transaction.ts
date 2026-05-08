@@ -23,6 +23,5 @@ export const Transaction = a.model({
 
     agreement: a.belongsTo('Agreement', 'agreementId'),
 }).authorization(allow => [
-    allow.owner(),
-    allow.authenticated().to(['read', 'update']),
+    allow.owner().identityClaim('sub'),
 ]);
