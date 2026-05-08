@@ -158,7 +158,9 @@ class AgreementDetailsStep extends HookConsumerWidget {
                 ? (state.error as UnknownDataFailure).message
                 : null;
             return Padding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
               child: Column(
                 children: [
                   const Spacer(flex: 196),
