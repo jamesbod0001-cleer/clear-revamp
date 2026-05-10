@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/action_alerts/widgets/action_alerts_carousel.dart';
@@ -27,9 +28,6 @@ class HomeScreen extends ConsumerWidget {
     final ongoingState = ref.watch(userOngoingAgreementsProvider);
     final needsActionList = ref.watch(needsActionAgreementsProvider);
     final readyForReleaseList = ref.watch(awaitingOtherPartyAgreementsProvider);
-
-    final isLoading = ongoingState.isLoading;
-    final isOngoingEmpty = (ongoingState.value ?? []).isEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -181,17 +179,44 @@ class HomeScreen extends ConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   Gap(Dimens.spacing.sp40),
-                  if (isLoading) ...[
-                    const Center(child: CircularProgressIndicator()),
-                    Gap(Dimens.spacing.sp40),
-                  ] else  ...[
-                    AgreementsOverviewSection(
-                      isOngoingEmpty: isOngoingEmpty,
-                      needsActionCount: needsActionList.length,
-                      awaitingOtherPartyCount: readyForReleaseList.length,
+                  ongoingState.when(
+                    skipLoadingOnReload: true,
+                    data: (List<Agreement> ongoingAgreements) {
+                      return Column(
+                        mainAxisSize: .min,
+                        children: [
+                          AgreementsOverviewSection(
+                            isOngoingEmpty: ongoingAgreements.isEmpty,
+                            needsActionCount: needsActionList.length,
+                            awaitingOtherPartyCount: readyForReleaseList.length,
+                          ),
+                          Gap(Dimens.spacing.sp40),
+                        ],
+                      );
+                    },
+
+                    /// TODO: Add error state here
+                    error: (Object error, StackTrace stackTrace) =>
+                        SizedBox.shrink(),
+                    loading: () => Column(
+                      mainAxisSize: .min,
+                      children: [
+                        const Center(child: CircularProgressIndicator()),
+                        Gap(Dimens.spacing.sp40),
+                      ],
                     ),
-                    Gap(Dimens.spacing.sp40),
-                  ],
+                  ),
+                  // if (isLoading) ...[
+                  //   const Center(child: CircularProgressIndicator()),
+                  //   Gap(Dimens.spacing.sp40),
+                  // ] else ...[
+                  //   AgreementsOverviewSection(
+                  //     isOngoingEmpty: isOngoingEmpty,
+                  //     needsActionCount: needsActionList.length,
+                  //     awaitingOtherPartyCount: readyForReleaseList.length,
+                  //   ),
+                  //   Gap(Dimens.spacing.sp40),
+                  // ],
                   QuickActionsSection(),
                   Gap(Dimens.spacing.sp40),
                   Row(
