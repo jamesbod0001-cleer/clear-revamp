@@ -56,7 +56,7 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
   Future<String> _resolveAccountForPayoutDestination(
       ResolveAccountParams params,
       ) async {
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) throw DataFailure.notFound();
 
     // 2. THE SELF-HEALING LOOP
@@ -121,7 +121,7 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
   // Future<String> _resolveAccountForPayoutDestination(
   //   ResolveAccountParams params,
   // ) async {
-  //   final user = ref.read(userProvider).value;
+  //   final user = ref.read(userProfileProvider).value;
   //   if (user == null) throw DataFailure.notFound();
   //   final result = await ref
   //       .read(flutterwaveUseCaseProvider.notifier)
@@ -159,7 +159,7 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
   Future<PayoutDestination?> _createPayoutDestination(
     PayoutDestination payoutDestination,
   ) async {
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) throw DataFailure.notFound();
     _log.info("Creating payout destination");
     final result = await ref

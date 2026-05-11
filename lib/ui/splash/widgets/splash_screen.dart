@@ -13,7 +13,7 @@ class SplashScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ref.watch(userProvider).isLoading) {
+      if (ref.watch(userProfileProvider).isLoading) {
       } else {
         const OnboardingRoute().go(context);
       }

@@ -40,7 +40,7 @@ class UserUseCase extends _$UserUseCase {
   }
 
   Future<ResultDart<void, Object>> pickAndUploadProfilePicture() async {
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state not found');
       return Failure(DataFailure.notFound());

@@ -25,7 +25,7 @@ class StorageUseCase extends _$StorageUseCase {
 
   @override
   void build() {
-    ref.watch(userProvider.select((user) => user.value?.id));
+    ref.watch(userProfileProvider.select((user) => user.value?.id));
 
     _storageRepository = ref.watch(storageRepositoryProvider);
     _mediaRepository = ref.watch(mediaRepositoryProvider);

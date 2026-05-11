@@ -23,7 +23,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final user = ref.watch(userProvider).value;
+    final user = ref.watch(userProfileProvider).value;
 
     ref.watch(accountSecurityViewModelProvider);
     final viewModel = ref.read(accountSecurityViewModelProvider.notifier);
@@ -330,7 +330,7 @@ class ProfilePicture extends ConsumerWidget {
     final uploadCommand = ref
         .watch(accountSecurityViewModelProvider.notifier)
         .uploadProfilePicture;
-    final user = ref.watch(userProvider).value;
+    final user = ref.watch(userProfileProvider).value;
 
     return Column(
       mainAxisSize: MainAxisSize.min,

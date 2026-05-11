@@ -46,7 +46,7 @@ class AgreementUseCase extends _$AgreementUseCase {
     Agreement agreement,
   ) async {
     _log.info('Attempting to get user');
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing');
       return Failure(DataFailure.notFound());
@@ -74,7 +74,7 @@ class AgreementUseCase extends _$AgreementUseCase {
     required String bankCode,
   }) async {
     _log.info('Attempting to get user');
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing');
       return Failure(DataFailure.notFound());
@@ -181,7 +181,7 @@ class AgreementUseCase extends _$AgreementUseCase {
     _log.info('Initiating agreement...');
 
     _log.info('Attempting to get user/initiator');
-    final initiator = ref.read(userProvider).value;
+    final initiator = ref.read(userProfileProvider).value;
     if (initiator == null) {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());
@@ -328,7 +328,7 @@ class AgreementUseCase extends _$AgreementUseCase {
     String id,
   ) async {
     _log.info('Attempting to get user');
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing');
       return Failure(DataFailure.notFound());

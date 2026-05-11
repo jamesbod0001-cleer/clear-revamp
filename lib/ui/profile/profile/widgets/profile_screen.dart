@@ -28,7 +28,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final user = ref.watch(userProvider).value;
+    final user = ref.watch(userProfileProvider).value;
 
     final bool viewModelsLoading = ref.watch(logOutViewModelProvider).isLoading;
 
@@ -43,7 +43,7 @@ class ProfileScreen extends ConsumerWidget {
     bool isLoading =
         viewModelsLoading ||
         isRedirectingOrSyncing ||
-        ref.watch(userProvider).isLoading;
+        ref.watch(userProfileProvider).isLoading;
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }

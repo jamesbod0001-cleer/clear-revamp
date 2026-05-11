@@ -16,7 +16,7 @@ class AgreementsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    ref.watch(userProvider);
+    ref.watch(userProfileProvider);
 
     final initialTabIndex = ref
         .read(agreementsViewModelProvider)

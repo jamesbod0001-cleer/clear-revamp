@@ -42,7 +42,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     CreatePaymentMethodParams params, {
     bool save = true,
   }) async {
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());
@@ -123,7 +123,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   Future<ResultDart<VirtualAccount, Object>> initiatePayWithBankTransfer(
     Agreement agreement,
   ) async {
-    final User? user = ref.read(userProvider).value;
+    final User? user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());
@@ -175,7 +175,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     required Agreement agreement,
     required PaymentMethod paymentMethod,
   }) async {
-    final User? user = ref.read(userProvider).value;
+    final User? user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());

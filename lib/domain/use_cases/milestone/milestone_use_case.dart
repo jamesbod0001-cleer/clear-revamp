@@ -24,7 +24,7 @@ class MilestoneUseCase extends _$MilestoneUseCase {
     Milestone milestone,
   ) async {
     _log.info('Attempting to get user');
-    final user = ref.read(userProvider).value;
+    final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing');
       return Failure(DataFailure.notFound());

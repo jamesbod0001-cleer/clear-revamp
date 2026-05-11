@@ -15,5 +15,6 @@ UserRepository userRepository(Ref ref) => AmplifyUserRepositoryImpl(
 abstract class UserRepository {
   Future<ResultDart<User, DataFailure>> getOrCreateUserProfile(User user);
   Future<ResultDart<User, DataFailure>> updateUserProfile(User user);
-  Stream<User> watchUser(String id);
+  Future<ResultDart<User, DataFailure>> getUser(String id);
+  Stream<User> observeUserUpdates(String id);
 }

@@ -20,7 +20,7 @@ Future<List<Bank>> getBanks(Ref ref, CountryCode countryCode) async {
 @Riverpod(keepAlive: true)
 Future<List<PaymentMethod>> flutterwaveSavedPaymentMethods(Ref ref) async {
   final repository = ref.watch(flutterwaveRepositoryProvider);
-  final user = ref.watch(userProvider).value;
+  final user = ref.watch(userProfileProvider).value;
   if (user == null) return [];
 
   final ids = user.flutterwavePaymentMethodIds;

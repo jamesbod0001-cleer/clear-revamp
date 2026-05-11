@@ -33,7 +33,7 @@ class AgreementDetailsStep extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final User? user = ref.watch(userProvider).value;
+    final User? user = ref.watch(userProfileProvider).value;
     final state = ref.watch(acceptAgreementViewModelProvider((shortCode)));
     final viewModel = ref.read(
       acceptAgreementViewModelProvider(shortCode).notifier,

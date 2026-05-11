@@ -6,7 +6,7 @@ part 'action_alerts_view_model.g.dart';
 
 @riverpod
 List<ActionAlert> actionAlerts(Ref ref) {
-  final user = ref.watch(userProvider).value;
+  final user = ref.watch(userProfileProvider).value;
   final alerts = <ActionAlert>[];
 
   // 1. DISPUTES

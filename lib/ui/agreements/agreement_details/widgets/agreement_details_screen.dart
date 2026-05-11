@@ -36,7 +36,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final user = ref.watch(userProvider).value;
+    final user = ref.watch(userProfileProvider).value;
 
     final state = ref.watch(agreementDetailsViewModelProvider(agreementId));
 

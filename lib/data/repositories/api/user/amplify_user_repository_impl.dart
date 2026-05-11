@@ -65,24 +65,23 @@ class AmplifyUserRepositoryImpl
   }
 
   @override
-  Stream<User> watchUser(String id) async* {
-    log.info('Starting watch for user: $id');
-    final initialResult = await performDataOperation(
+  Future<ResultDart<User, DataFailure>> getUser(String id) async {
+    return await performDataOperation<User>(
       operation: () async {
         final response = await _amplifyUserServiceClient.queryUser(id);
         return response.toDomain();
       },
-      operationName: 'InitialWatchFetch',
+      operationName: 'GetUser',
       targetId: id,
     );
-    if (initialResult.isSuccess()) {
-      yield initialResult.getOrNull()!;
-    }
-    yield* _amplifyUserServiceClient
+  }
+
+  @override
+  Stream<User> observeUserUpdates(String id) {
+    return _amplifyUserServiceClient
         .observeUserUpdates(id)
         .handleError((error) => log.error('Stream error for user $id', error))
         .where((event) => event.data != null)
-        .map((event) => event.data!.toDomain())
-        .distinct();
+        .map((event) => event.data!.toDomain());
   }
 }

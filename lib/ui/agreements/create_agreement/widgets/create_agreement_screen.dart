@@ -29,7 +29,7 @@ class CreateAgreementScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    ref.watch(userProvider);
+    ref.watch(userProfileProvider);
     ref.watch(getBanksProvider(.NG));
     ref.watch(userPayoutDestinationsProvider);
     final state = ref.watch(createAgreementViewModelProvider(type));

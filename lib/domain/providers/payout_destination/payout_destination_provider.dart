@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/repositories/api/payout_destination/payout_destination_repository.dart';
 import 'package:cleer/domain/models/payout_destination/payout_destination.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -8,46 +12,64 @@ part 'payout_destination_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class UserPayoutDestinations extends _$UserPayoutDestinations {
+  StreamSubscription? _createSub;
+  StreamSubscription? _deleteSub;
+
+  final _log = AmplifyLogger('UserPayoutDestinations');
+
   @override
   FutureOr<List<PayoutDestination>> build() async {
-    // Watch the user. If the user logs out, this provider will react.
-    final userId = ref.watch(userProvider.select((user) => user.value?.id));
+    final userId = ref.watch(
+      userProfileProvider.select((user) => user.value?.id),
+    );
     if (userId == null) {
       return [];
     }
 
     final repository = ref.watch(payoutDestinationRepositoryProvider);
 
-    // Set up the real-time listeners
-    final createSub = repository
-        .observeUserPayoutDestinationsCreates(userId)
-        .listen((newItem) {
-          final currentList = state.value ?? [];
-          // Updating 'state' here is what actually triggers the UI to rebuild
-          state = AsyncData([...currentList, newItem]);
-        });
+    _setupSubscriptions(userId);
 
-    final deleteSub = repository
-        .observeUserPayoutDestinationsDeletes(userId)
-        .listen((deletedItem) {
-          final currentList = state.value ?? [];
-          state = AsyncData(
-            currentList
-                .where(
-                  (item) => item.accountNumber != deletedItem.accountNumber,
-                )
-                .toList(),
-          );
-        });
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        _log.info('🔄 Payout Sync: Fetching latest destinations');
+        final result = await repository.getPayoutDestinationsByUser(userId);
+        state = AsyncData(result.getOrThrow());
+      },
+      onReconnectRequired: () => _setupSubscriptions(userId),
+    );
 
-    // Clean up when the provider is disposed (or when the user changes)
     ref.onDispose(() {
-      createSub.cancel();
-      deleteSub.cancel();
+      _createSub?.cancel();
+      _deleteSub?.cancel();
     });
 
-    // Return the initial fetch
     final result = await repository.getPayoutDestinationsByUser(userId);
     return result.getOrThrow();
+  }
+
+  void _setupSubscriptions(String userId) {
+    final repo = ref.read(payoutDestinationRepositoryProvider);
+
+    _createSub?.cancel();
+    _deleteSub?.cancel();
+
+    _createSub = repo.observeUserPayoutDestinationsCreates(userId).listen((
+      newItem,
+    ) {
+      final current = state.value ?? [];
+      state = AsyncData([...current, newItem]);
+    });
+
+    _deleteSub = repo.observeUserPayoutDestinationsDeletes(userId).listen((
+      deletedItem,
+    ) {
+      final current = state.value ?? [];
+      state = AsyncData(
+        current
+            .where((item) => item.accountNumber != deletedItem.accountNumber)
+            .toList(),
+      );
+    });
   }
 }

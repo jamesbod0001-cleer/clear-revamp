@@ -212,7 +212,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   Future<void> _removeCard(String paymentMethodId) async {
     state = await AsyncValue.guard(() async {
       _log.info('Removing payment method');
-      final user = ref.read(userProvider);
+      final user = ref.read(userProfileProvider);
       final result = await ref
           .read(userUseCaseProvider.notifier)
           .updateUserProfile(

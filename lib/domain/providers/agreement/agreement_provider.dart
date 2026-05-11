@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/data/repositories/api/agreement/agreement_repository.dart';
 import 'package:cleer/domain/models/agreement/agreement.dart';
 import 'package:cleer/domain/models/agreement/agreement_enums.dart';
@@ -12,127 +15,155 @@ part 'agreement_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 class UserOngoingAgreements extends _$UserOngoingAgreements {
+  StreamSubscription? _updateSub;
+
+  final _log = AmplifyLogger('UserOngoingAgreements');
+
   @override
   FutureOr<List<Agreement>> build() async {
-    final user = await ref.watch(userProvider.future);
+    final user = await ref.watch(userProfileProvider.future);
+    if (user == null) return [];
 
-    if (user == null) {
-      return [];
-    }
     final repository = ref.watch(agreementRepositoryProvider);
 
-    final updateSub = repository.observeUserAgreementsUpdates().listen((
-      incompleteUpdatedItem,
-    ) async {
-      final agreementResult = await repository.getAgreement(
-        incompleteUpdatedItem.id!,
-      );
-      if (agreementResult.isError()) {
-        return;
-      }
+    // Initial setup
+    _setupSubscription();
 
-      final updatedItem = agreementResult.getOrNull()!;
-      final currentList = state.value ?? [];
-      final oldItem = currentList.singleWhereOrNull(
-        (item) => item.id == updatedItem.id,
-      );
+    // The "Self-Healing" Listener
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        _log.info('🔄 Agreements Sync: Fetching latest list');
+        final result = await repository.getUserOngoingAgreements();
+        state = AsyncData(_sort(result.getOrThrow()));
+      },
+      onReconnectRequired: () {
+        _log.info('📡 Agreements Recovery: Restarting Stream');
+        _setupSubscription();
+      },
+    );
 
-      // Define what makes an agreement "Ongoing"
-      final isOngoingStatus = [
-        AgreementStatus.awaitingFunding,
-        AgreementStatus.awaitingRecipient,
-        AgreementStatus.funded,
-        AgreementStatus.inProgress,
-        AgreementStatus.readyForRelease,
-      ].contains(updatedItem.status);
+    ref.onDispose(() => _updateSub?.cancel());
 
-      // Define what makes an agreement "Dead"
-      final isTerminalStatus = [
-        AgreementStatus.released,
-        AgreementStatus.rejected,
-        AgreementStatus.cancelled,
-      ].contains(updatedItem.status);
-
-      if (oldItem == null) {
-        // It's new to the list. If it's an ongoing state, add it!
-        if (isOngoingStatus) {
-          state = AsyncData(
-            [updatedItem, ...currentList]
-              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
-          );
-        }
-      } else {
-        // It's already in the list.
-        if (isOngoingStatus) {
-          // It's still ongoing, so just update the data
-          state = AsyncData(
-            currentList
-                .map((item) => item.id == updatedItem.id ? updatedItem : item)
-                .toList()
-              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
-          );
-        } else if (isTerminalStatus) {
-          // It reached a final state, remove it from the ongoing list!
-          state = AsyncData(
-            currentList.where((item) => item.id != updatedItem.id).toList()
-              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
-          );
-        }
-      }
-    });
-
-    // Clean up when the provider is disposed (or when the user changes)
-    ref.onDispose(() {
-      updateSub.cancel();
-    });
-
-    // Return the initial fetch
     final result = await repository.getUserOngoingAgreements();
-    return result.getOrThrow()
-      ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    return _sort(result.getOrThrow());
   }
+
+  void _setupSubscription() {
+    _updateSub?.cancel();
+    _updateSub = ref
+        .read(agreementRepositoryProvider)
+        .observeUserAgreementsUpdates()
+        .listen(_handleUpdate);
+  }
+
+  Future<void> _handleUpdate(Agreement incompleteItem) async {
+    final repository = ref.read(agreementRepositoryProvider);
+    final agreementResult = await repository.getAgreement(incompleteItem.id!);
+
+    if (agreementResult.isError()) return;
+    final updatedItem = agreementResult.getOrNull()!;
+
+    final currentList = state.value ?? [];
+    final oldItem = currentList.singleWhereOrNull(
+      (i) => i.id == updatedItem.id,
+    );
+
+    final isOngoing = _isOngoing(updatedItem.status);
+    final isTerminal = _isTerminal(updatedItem.status);
+
+    List<Agreement> newList;
+
+    if (oldItem == null) {
+      if (!isOngoing) return;
+      newList = [updatedItem, ...currentList];
+    } else {
+      if (isOngoing) {
+        newList = currentList
+            .map((i) => i.id == updatedItem.id ? updatedItem : i)
+            .toList();
+      } else if (isTerminal) {
+        newList = currentList.where((i) => i.id != updatedItem.id).toList();
+      } else {
+        newList = currentList;
+      }
+    }
+    state = AsyncData(_sort(newList));
+  }
+
+  // Helpers to keep build() clean
+  List<Agreement> _sort(List<Agreement> list) =>
+      list..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+
+  bool _isOngoing(AgreementStatus? s) => const [
+    AgreementStatus.awaitingFunding,
+    AgreementStatus.awaitingRecipient,
+    AgreementStatus.funded,
+    AgreementStatus.inProgress,
+    AgreementStatus.readyForRelease,
+  ].contains(s);
+
+  bool _isTerminal(AgreementStatus? s) => const [
+    AgreementStatus.released,
+    AgreementStatus.rejected,
+    AgreementStatus.cancelled,
+  ].contains(s);
 }
 
 @riverpod
 class AgreementStatusHistory extends _$AgreementStatusHistory {
+  StreamSubscription? _createSub;
+
   @override
   FutureOr<List<StatusHistory>> build(String agreementId) async {
+    // Keep in memory for 5 mins of inactivity
     ref.cacheFor(const Duration(minutes: 5));
 
-    final userId = ref.watch(userProvider.select((user) => user.value?.id));
+    final userId = ref.watch(
+      userProfileProvider.select((user) => user.value?.id),
+    );
     if (userId == null) {
       return [];
     }
 
-    final repository = ref.watch(agreementRepositoryProvider);
+    _setupSubscription(agreementId);
 
-    final createSub = repository
-        .observeAgreementStatusHistoryCreates(agreementId)
-        .listen((createdItem) {
-          final currentList = state.value ?? [];
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        final result = await ref
+            .read(agreementRepositoryProvider)
+            .getAgreementStatusHistory(agreementId);
+        state = AsyncData(_sort(result.getOrThrow()));
+      },
+      onReconnectRequired: () => _setupSubscription(agreementId),
+    );
 
-          state = AsyncData(
-            [...currentList, createdItem]
-              ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!)),
-          );
-        });
+    ref.onDispose(() => _createSub?.cancel());
 
-    // Clean up when the provider is disposed (or when the user changes)
-    ref.onDispose(() {
-      createSub.cancel();
-    });
-
-    // Return the initial fetch
-    final result = await repository.getAgreementStatusHistory(agreementId);
-    return result.getOrThrow()
-      ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+    final result = await ref
+        .read(agreementRepositoryProvider)
+        .getAgreementStatusHistory(agreementId);
+    return _sort(result.getOrThrow());
   }
+
+  void _setupSubscription(String agreementId) {
+    _createSub?.cancel();
+    _createSub = ref
+        .read(agreementRepositoryProvider)
+        .observeAgreementStatusHistoryCreates(agreementId)
+        .listen((newItem) {
+          final current = state.value ?? [];
+          state = AsyncData(_sort([...current, newItem]));
+        });
+  }
+
+  List<StatusHistory> _sort(List<StatusHistory> list) =>
+      list..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 }
 
 @riverpod
 List<Agreement> needsActionAgreements(Ref ref) {
   final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
-  final currentUser = ref.watch(userProvider).value;
+  final currentUser = ref.watch(userProfileProvider).value;
 
   return agreements.where((agreement) {
     final isPending =
@@ -149,7 +180,7 @@ List<Agreement> needsActionAgreements(Ref ref) {
 @riverpod
 List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
   final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
-  final currentUser = ref.watch(userProvider).value;
+  final currentUser = ref.watch(userProfileProvider).value;
 
   return agreements.where((agreement) {
     final isPending =

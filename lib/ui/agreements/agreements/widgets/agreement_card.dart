@@ -23,7 +23,7 @@ class AgreementCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
 
-    final user = ref.watch(userProvider).value;
+    final user = ref.watch(userProfileProvider).value;
     Milestone? currentlyRunning;
     if (agreement.disbursementType == .milestones) {
       final milestonesState = ref.watch(
