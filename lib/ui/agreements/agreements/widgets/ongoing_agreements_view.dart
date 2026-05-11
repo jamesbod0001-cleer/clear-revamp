@@ -80,7 +80,7 @@ class OngoingAgreementsView extends ConsumerWidget {
               }
               final filteredState = ref.watch(agreementsScreenListProvider);
 
-              if (filteredState.isLoading) {
+              if (filteredState.isLoading && !filteredState.isReloading) {
                 return const Center(child: CircularProgressIndicator());
               }
 
