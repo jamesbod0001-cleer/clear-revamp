@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <!-- Your Hostinger Domain -->
-                <data android:scheme="http" android:host="staging.cleerpayments.com" />
+                <data android:scheme="http" android:host="cleerpayments.com" />
                 <data android:scheme="https" />
             </intent-filter>
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
