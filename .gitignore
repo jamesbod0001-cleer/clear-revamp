@@ -1,65 +1,74 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+# ----------------------------------------------------------------------------
+# OS & Miscellaneous
+# ----------------------------------------------------------------------------
 .DS_Store
-.atom/
-.build/
-.buildlog/
 .history
 .svn/
-.swiftpm/
+*.log
+*.swp
+*.class
+.buildlog/
 migrate_working_dir/
 
-# IntelliJ related
+# ----------------------------------------------------------------------------
+# IDE Related (IntelliJ, VS Code, Android Studio)
+# ----------------------------------------------------------------------------
+.idea/
+.vscode/
 *.iml
 *.ipr
 *.iws
-.idea/
+.project
+.settings/
+.classpath
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
+# ----------------------------------------------------------------------------
+# Flutter & Dart (Recursive for all apps/packages)
+# ----------------------------------------------------------------------------
+**/.dart_tool/
+**/.pub-cache/
+**/.pub/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+#**/packages/
+**/build/
+**/coverage/
 **/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-/coverage/
 
-# Symbolication related
+# ----------------------------------------------------------------------------
+# Platform Specific Build Artifacts
+# ----------------------------------------------------------------------------
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/ios/Flutter/.last_build_id
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# ----------------------------------------------------------------------------
+# Code Generation (Riverpod, Freezed, FlutterGen, etc.)
+# ----------------------------------------------------------------------------
+**/*.g.dart
+**/*.freezed.dart
+**/*.gen.dart
+**/generated/
 
-# Code Generation
-*.g.dart
-*.freezed.dart
-
-# Localization
-/lib/ui/core/localization/generated/
-
-# amplify
-node_modules
-.amplify
+# ----------------------------------------------------------------------------
+# Amplify & Backend
+# ----------------------------------------------------------------------------
+**/node_modules/
+**/.amplify/
 amplify_outputs*
 amplifyconfiguration*
+# If you want to keep the root amplify_outputs.json out of Git:
+amplify_outputs.json
 
-# Envied
+# ----------------------------------------------------------------------------
+# Secrets & Configuration (CRITICAL)
+# ----------------------------------------------------------------------------
 .env
+*.env
+.env.*
 sentry.properties
-
-
-/lib/config/assets.gen.dart

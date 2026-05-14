@@ -1,0 +1,5 @@
+arb-dir: lib/l10n/arb
+template-arb-file: ui_en.arb
+output-localization-file: ui_localizations.dart
+output-class: UiLocalizations
+output-dir: lib/l10n/generated

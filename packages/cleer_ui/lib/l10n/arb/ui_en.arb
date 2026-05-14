@@ -1,0 +1,70 @@
+{
+  "@@locale": "en",
+  "trustScore": "Trust Score",
+  "selectBank": "Select Bank",
+  "search": "Search",
+  "searchNotFound": "Search not found",
+  "expiredCodeExceptionMessage": "Invalid OTP code.",
+  "phoneNumber": "Phone Number",
+  "youAreOfflineCheckYourInternetConnection": "You're offline. Check your internet connection",
+  "didntGetTheCode": "Didn’t get the code?",
+  "resend": "Resend",
+  "resendIn": "Resend in",
+  "fieldRequired": "Please enter your {fieldName}",
+  "@fieldRequired": {
+    "placeholders": {
+      "fieldName": { "type": "String" }
+    }
+  },
+  "fieldTooShort": "{fieldName} must be at least {count} characters long",
+  "@fieldTooShort": {
+    "placeholders": {
+      "fieldName": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "fieldTooLong": "{fieldName} cannot exceed {count} characters",
+  "@fieldTooLong": {
+    "placeholders": {
+      "fieldName": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "invalidCharacters": "{fieldName} contains invalid characters",
+  "@invalidCharacters": {
+    "placeholders": {
+      "fieldName": { "type": "String" }
+    }
+  },
+  "invalidEmailAddress": "Please enter a valid email address",
+  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)",
+  "cardNumber": "Card Number",
+  "cardExpiry": "Card Expiry",
+  "cvv": "CVV",
+  "rememberThisCardForNextTime": "Remember this card for next time",
+  "invalidCardNumber": "Invalid card number",
+  "expiryDate": "Expiry date",
+  "invalidExpiryDate": "Invalid expiry date",
+  "invalidMonth": "Invalid month",
+  "invalidYear": "Invalid year",
+  "cardHasExpired": "Card has expired",
+  "invalidCvv": "Invalid CVV",
+  "invalidCvvLength": "CVV must be {expectedLength} digits",
+  "@invalidCvvLength": {
+    "description": "Error message for invalid CVV length",
+    "placeholders": {
+      "expectedLength": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "pleaseEnterYourPassword": "Please enter your password",
+  "passwordMustBeAtLeast8CharactersLong": "Password must be at least 8 characters long.",
+  "passwordMustContainAtLeastOneUppercaseLetter": "Password must contain at least one uppercase letter.",
+  "passwordMustContainAtLeastOneLowercaseLetter": "Password must contain at least one lowercase letter.",
+  "passwordMustContainAtLeastOneDigit": "Password must contain at least one digit.",
+  "passwordCannotContainSpaces": "Password cannot contain spaces.",
+  "passwordMustContainAtLeastOneSpecialCharacter": "Password must contain at least one special character.",
+  "passwordDoesNotMatch": "Password does not match."
+}

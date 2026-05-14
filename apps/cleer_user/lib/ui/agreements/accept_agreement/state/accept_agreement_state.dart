@@ -1,0 +1,28 @@
+import 'package:cleer_core/models/agreement/agreement.dart';
+import 'package:cleer_core/models/agreement/agreement_preview.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'accept_agreement_state.freezed.dart';
+
+enum AcceptAgreementStep {
+  agreementDetails, // Maps to AgreementDetailsStep
+  payment, // Maps to PaymentOrchestratorView
+  success, // Maps to SuccessStep
+}
+
+enum EligibilityErrorType {
+  cannotAcceptOwn,
+  notTheRecipient,
+  nameMismatch,
+  doesNotBelongToYou,
+}
+
+@freezed
+abstract class AcceptAgreementState with _$AcceptAgreementState {
+  const factory AcceptAgreementState({
+    @Default(AcceptAgreementStep.agreementDetails)
+    AcceptAgreementStep currentStep,
+    required AgreementPreview agreementPreview,
+    Agreement? agreement,
+  }) = _AcceptAgreementState;
+}
