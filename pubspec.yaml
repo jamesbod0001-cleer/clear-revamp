@@ -16,45 +16,67 @@ dev_dependencies:
 melos:
   command:
     bootstrap:
-      # This ensures your MacBook Pro / IntelliJ setup stays synced
+      # Keeps your MacBook Pro M2 Pro and IntelliJ/VS Code in sync
       useIntellij: true
 
   scripts:
     # --- Code Generation ---
     generate:
-      # Added --depends-on to skip packages that don't use build_runner (faster!)
       run: melos exec --depends-on="build_runner" -- "dart run build_runner build -d"
-      description: Build code generation for all applicable packages.
+      description: Build code generation for all applicable packages (Freezed, JSON Serializer, etc.).
 
     generate:watch:
-      # Use this when you're actively coding in one package
       run: melos exec --depends-on="build_runner" -- "dart run build_runner watch -d"
-      description: Watch and build code generation.
+      description: 'Active development mode: watches for changes and rebuilds.'
 
-    # --- Amplify Gen 2 (Cleer API & App) ---
+    # --- Amplify Gen 2: Configuration & Pulling ---
     amplify:sandbox:
       run: npx ampx sandbox --outputs-format dart --outputs-out-dir apps/cleer_user/lib --profile cleer
-      description: Start sandbox and output config to the user app.
+      description: Start local sandbox and output config directly to the user app.
+
+    amplify:pull:develop:
+      run: npx ampx generate outputs --app-id d13yzvq5dhw2v2 --branch develop --format dart --out-dir apps/cleer_user/lib --profile cleer
+      description: Pull the latest Develop (Staging) config from AWS.
+
+    amplify:pull:main:
+      run: npx ampx generate outputs --app-id d13yzvq5dhw2v2 --branch main --format dart --out-dir apps/cleer_user/lib --profile cleer
+      description: Pull the latest Main (Production) config from AWS.
 
     amplify:models:
       run: npx ampx generate graphql-client-code --format modelgen --model-target dart --out packages/cleer_api/lib/src/models --profile cleer
-      description: Generate models specifically into the cleer_api package.
+      description: Generate Dart models from the schema into the API package.
 
-    # --- Build & Deployment ---
-    build:apk:staging:
+    # --- Build & Deployment (Local APKs) ---
+    # These chain the config pull and the build together so you never have a mismatch.
+
+    build:apk:develop:
       run: |
+        melos run amplify:pull:develop && \
         cd apps/cleer_user && \
-        flutter build apk --obfuscate --split-debug-info=build/app/outputs/symbols --dart-define=APP_ENV=staging && \
+        flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols --dart-define=APP_ENV=develop && \
         dart run sentry_dart_plugin
-      description: Build staging APK and upload Sentry symbols.
+      description: Pulls staging config, builds APK, and uploads symbols to Sentry.
+
+    build:apk:main:
+      run: |
+        melos run amplify:pull:main && \
+        cd apps/cleer_user && \
+        flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols --dart-define=APP_ENV=main && \
+        dart run sentry_dart_plugin
+      description: Pulls production config, builds APK, and uploads symbols to Sentry.
 
     # --- Maintenance ---
     clean:
       run: melos exec -- "flutter clean"
       description: Clean all packages.
 
+    deep_clean:
+      run: |
+        melos exec -- "flutter clean" && \
+        melos exec -- "rm -rf pubspec.lock" && \
+        melos bootstrap
+      description: 'The "Nuke" option: cleans everything, deletes locks, and re-bootstraps.'
+
     get:
-      # In Melos 7, a simple 'dart pub get' at root usually suffices,
-      # but this ensures Flutter-specific hooks run in every package.
       run: melos exec -- "flutter pub get"
-      description: Get dependencies for all packages.
+      description: Get dependencies for all packages in the workspace.
