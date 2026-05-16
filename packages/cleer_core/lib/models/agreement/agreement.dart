@@ -29,5 +29,6 @@ abstract class Agreement with _$Agreement {
     DateTime? createdAt,
   }) = _Agreement;
 
-  String get shareLink => 'https://cleerpayments.com/a/$shortCode';
+  /// TODO: Change this to the live link when we are going live
+  String get shareLink => 'https://staging.cleerpayments.com/a/$shortCode';
 }
