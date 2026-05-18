@@ -1,4 +1,4 @@
-import 'package:cleer_api/src/services/flutterwave/models/authorization/authorization_objects.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/authorization/authorization_objects.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'update_charge_request.g.dart';

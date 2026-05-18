@@ -1,6 +1,6 @@
-import 'package:cleer_api/src/services/flutterwave/models/address/address_object.dart';
-import 'package:cleer_api/src/services/flutterwave/models/name/name_object.dart';
-import 'package:cleer_api/src/services/flutterwave/models/phone/phone_object.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/address/address_object.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/name/name_object.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/phone/phone_object.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_customer_request.g.dart';

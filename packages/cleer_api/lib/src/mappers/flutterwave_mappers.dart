@@ -1,8 +1,8 @@
-import 'package:cleer_api/src/services/flutterwave/responses/bank/bank_response.dart';
-import 'package:cleer_api/src/services/flutterwave/responses/charge/charge_response.dart';
-import 'package:cleer_api/src/services/flutterwave/responses/customer/customer_response.dart';
-import 'package:cleer_api/src/services/flutterwave/responses/payment_method/payment_method_response.dart';
-import 'package:cleer_api/src/services/flutterwave/responses/virtual_account/virtual_account_response.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/responses/bank/bank_response.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/responses/charge/charge_response.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/responses/customer/customer_response.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/responses/payment_method/payment_method_response.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/responses/virtual_account/virtual_account_response.dart';
 import 'package:cleer_core/models/customer/customer.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/payment_method/payment_method.dart';
