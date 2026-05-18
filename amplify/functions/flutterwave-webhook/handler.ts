@@ -1,4 +1,3 @@
-// amplify/functions/flutterwave-webhook/handler.ts
 import { Amplify } from 'aws-amplify';
 import { getAmplifyDataClientConfig } from '@aws-amplify/backend/function/runtime';
 import { env } from '$amplify/env/flutterwave-webhook';

@@ -1,0 +1,15 @@
+import { defineFunction, secret } from '@aws-amplify/backend';
+
+export const flutterwaveProxy = defineFunction({
+    name: 'flutterwave-proxy',
+    entry: './handler.ts',
+    runtime: 20,
+    timeoutSeconds: 25,
+    environment: {
+        FLW_PROD_CLIENT_ID: secret('FLW_PROD_CLIENT_ID'),
+        FLW_PROD_CLIENT_SECRET: secret('FLW_PROD_CLIENT_SECRET'),
+        FLW_SANDBOX_CLIENT_ID: secret('FLW_SANDBOX_CLIENT_ID'),
+        FLW_SANDBOX_CLIENT_SECRET: secret('FLW_SANDBOX_CLIENT_SECRET'),
+        AMPLIFY_DATA_BUSINESS_ENV: process.env.AWS_BRANCH === 'main' ? 'prod' : 'sandbox'
+    }
+});
