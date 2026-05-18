@@ -1,6 +1,6 @@
-import 'package:cleer_api/src/services/flutterwave/models/name/name_object.dart';
-import 'package:cleer_api/src/services/flutterwave/models/phone/phone_object.dart';
-import 'package:cleer_api/src/services/flutterwave/responses/payment_method/payment_method_response.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/name/name_object.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/phone/phone_object.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/responses/payment_method/payment_method_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'charge_response.g.dart';

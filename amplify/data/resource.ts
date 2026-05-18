@@ -14,6 +14,7 @@ import {MilestonePreview} from "./custom-types/milestone-preview";
 import {joinAgreement} from "../functions/join-agreement/resource";
 import {logAgreementStatus} from "../functions/log-agreement-status/resource";
 import {logMilestoneStatus} from "../functions/log-milestone-status/resource";
+import {flutterwaveProxy} from "../functions/flutterwave-proxy/resource";
 
 const schema = a.schema({
     User,
@@ -40,7 +41,18 @@ const schema = a.schema({
         .arguments({ shortCode: a.string().required() })
         .returns(a.string()) // Returns the Agreement ID
         .authorization(allow => [allow.authenticated()]) // Only logged-in users!
-        .handler(a.handler.function(joinAgreement))
+        .handler(a.handler.function(joinAgreement)),
+    flutterwaveProxy: a
+        .mutation()
+        .arguments({
+            method: a.string().required(),
+            endpoint: a.string().required(),
+            payload: a.string(),
+            headers: a.string(),
+        })
+        .returns(a.string())
+        .authorization(allow => [allow.authenticated()])
+        .handler(a.handler.function(flutterwaveProxy)),
 }).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement)]);
 
 export type Schema = ClientSchema<typeof schema>;

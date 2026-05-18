@@ -26,7 +26,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     return;
   }
 
-  Future<ResultDart<PaymentMethod, Object>> createPaymentMethod(
+  Future<ResultDart<PaymentMethod, DataFailure>> createPaymentMethod(
     CreatePaymentMethodParams params, {
     bool save = true,
   }) async {
@@ -87,7 +87,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
   }
 
-  Future<ResultDart<VirtualAccount, PaymentFailure>> createVirtualAccount(
+  Future<ResultDart<VirtualAccount, DataFailure>> createVirtualAccount(
     CreateVirtualAccountParams params,
   ) async {
     _log.info('Attempting to create virtual account with params: $params');
@@ -108,7 +108,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     return result;
   }
 
-  Future<ResultDart<VirtualAccount, Object>> initiatePayWithBankTransfer(
+  Future<ResultDart<VirtualAccount, DataFailure>> initiatePayWithBankTransfer(
     Agreement agreement,
   ) async {
     final User? user = ref.read(userProfileProvider).value;
@@ -159,7 +159,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
   }
 
-  Future<ResultDart<Charge, Object>> createCharge({
+  Future<ResultDart<Charge, DataFailure>> createCharge({
     required Agreement agreement,
     required PaymentMethod paymentMethod,
   }) async {
@@ -212,7 +212,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
   }
 
-  Future<ResultDart<Charge, PaymentFailure>> getCharge(String id) async {
+  Future<ResultDart<Charge, DataFailure>> getCharge(String id) async {
     _log.info('Attempting to retrieve charge with id: $id');
     final result = await _flutterwaveRepository.getCharge(id);
     result.fold(
@@ -226,7 +226,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     return result;
   }
 
-  Future<ResultDart<List<Charge>, PaymentFailure>> listCharges(
+  Future<ResultDart<List<Charge>, DataFailure>> listCharges(
     ListChargesParams params,
   ) async {
     _log.info('Attempting to list charges with params: $params');
@@ -242,7 +242,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     return result;
   }
 
-  Future<ResultDart<String, PaymentFailure>> resolveAccount(
+  Future<ResultDart<String, DataFailure>> resolveAccount(
     ResolveAccountParams params,
   ) async {
     _log.info('Attempting to resolve account with params: $params');
