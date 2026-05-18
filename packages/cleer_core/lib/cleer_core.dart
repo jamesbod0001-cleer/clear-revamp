@@ -38,17 +38,16 @@ export 'models/user/user_preview.dart';
 export 'src/failures/auth_failures.dart';
 export 'src/failures/data_failures.dart';
 export 'src/failures/storage_failures.dart';
-export 'src/failures/payment_failures.dart';
 
 // --- REPOSITORIES (INTERFACES) ---
 export 'src/repositories/api/agreement/agreement_repository.dart';
+export 'src/repositories/api/flutterwave/flutterwave_repository.dart';
 export 'src/repositories/api/milestone/milestone_repository.dart';
 export 'src/repositories/api/payout_destination/payout_destination_repository.dart';
 export 'src/repositories/api/subscription/subscription_repository.dart';
 export 'src/repositories/api/transaction/transaction_repository.dart';
 export 'src/repositories/api/user/user_repository.dart';
 export 'src/repositories/auth/auth_repository.dart';
-export 'src/repositories/flutterwave/flutterwave_repository.dart';
 export 'src/repositories/media/media_repository.dart';
 export 'src/repositories/network/network_repository.dart';
 export 'src/repositories/storage/storage_repository.dart';
