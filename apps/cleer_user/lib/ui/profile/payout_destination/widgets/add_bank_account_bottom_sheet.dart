@@ -17,6 +17,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class AddBankAccountBottomSheet extends HookConsumerWidget {
   const AddBankAccountBottomSheet({super.key});
@@ -31,6 +32,7 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    ProviderListenable;
     ref.watch(getBanksProvider(CountryCode.NG));
 
     ref.watch(payoutDestinationViewModelProvider);
@@ -147,14 +149,12 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
                 onTap: () => _showBankPickerBottomSheet(
                   context,
                   selectedBank,
-                  ref.watch(getBanksProvider(.NG)),
                   bankController,
                 ),
                 suffixIcon: IconButton(
                   onPressed: () => _showBankPickerBottomSheet(
                     context,
                     selectedBank,
-                    ref.watch(getBanksProvider(.NG)),
                     bankController,
                   ),
                   icon: PhosphorIcon(
@@ -336,12 +336,28 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
   void _showBankPickerBottomSheet(
     BuildContext context,
     ValueNotifier<Bank?> selectedBank,
-    AsyncValue<List<Bank>> bankAsync,
     TextEditingController bankController,
-  ) => BankPickerBottomSheet.show(context, banksAsync: bankAsync).then((bank) {
-    if (bank != null) {
-      selectedBank.value = bank;
-      bankController.text = bank.name;
-    }
-  });
+  ) =>
+      BankPickerBottomSheet.show(
+        context,
+        child: Consumer(
+          builder: (context, ref, _) {
+            // Watch your app's specific feature provider here
+            final banksAsync = ref.watch(getBanksProvider(.NG));
+
+            return BankPickerBottomSheet(
+              banks: banksAsync.value ?? [],
+              isLoading: banksAsync.isLoading,
+              errorMessage: banksAsync.hasError
+                  ? banksAsync.error.toString()
+                  : null,
+            );
+          },
+        ),
+      ).then((bank) {
+        if (bank != null) {
+          selectedBank.value = bank;
+          bankController.text = bank.name;
+        }
+      });
 }

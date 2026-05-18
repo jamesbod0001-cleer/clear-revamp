@@ -331,13 +331,11 @@ class AgreementSetupStep extends HookConsumerWidget {
                           onTap: () => _showBankPickerBottomSheet(
                             context,
                             selectedBank,
-                            ref.watch(getBanksProvider(.NG)),
                           ),
                           suffixIcon: IconButton(
                             onPressed: () => _showBankPickerBottomSheet(
                               context,
                               selectedBank,
-                              ref.watch(getBanksProvider(.NG)),
                             ),
                             icon: PhosphorIcon(
                               PhosphorIcons.caretDown(),
@@ -467,12 +465,28 @@ class AgreementSetupStep extends HookConsumerWidget {
   void _showBankPickerBottomSheet(
     BuildContext context,
     ValueNotifier<Bank?> selectedBank,
-    AsyncValue<List<Bank>> bankAsync,
-  ) => BankPickerBottomSheet.show(context, banksAsync: bankAsync).then((bank) {
-    if (bank != null) {
-      selectedBank.value = bank;
-    }
-  });
+  ) =>
+      BankPickerBottomSheet.show(
+        context,
+        child: Consumer(
+          builder: (context, ref, _) {
+            // Watch your app's specific feature provider here
+            final banksAsync = ref.watch(getBanksProvider(.NG));
+
+            return BankPickerBottomSheet(
+              banks: banksAsync.value ?? [],
+              isLoading: banksAsync.isLoading,
+              errorMessage: banksAsync.hasError
+                  ? banksAsync.error.toString()
+                  : null,
+            );
+          },
+        ),
+      ).then((bank) {
+        if (bank != null) {
+          selectedBank.value = bank;
+        }
+      });
 
   void _showLinkedBankAccountsBottomSheet(
     BuildContext context,
