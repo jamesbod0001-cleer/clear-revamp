@@ -1,13 +1,12 @@
-import 'dart:io';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'upload_file_request.freezed.dart';
 
 @freezed
 abstract class UploadFileRequest with _$UploadFileRequest {
   const factory UploadFileRequest({
-    required File file,
+    required XFile file,
     required String path,
     Function(double)? onProgress,
   }) = _UploadFileRequest;

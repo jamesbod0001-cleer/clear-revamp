@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
 import 'package:cleer/domain/use_cases/storage/storage_use_case.dart';
 import 'package:cleer_api/cleer_api.dart';
@@ -68,7 +66,7 @@ class UserUseCase extends _$UserUseCase {
         .read(storageUseCaseProvider.notifier)
         .processImage(
           ProcessImageParams(
-            originalFile: File(imageXFile.path),
+            originalFile: imageXFile,
             width: 400,
             height: 400,
           ),
@@ -82,9 +80,9 @@ class UserUseCase extends _$UserUseCase {
     }
     final processedImage = processImageResult.getOrNull()!;
 
-    final String extension = p.extension(processedImage.file.path).isEmpty
+    final String extension = p.extension(processedImage.file.name).isEmpty
         ? '.jpg'
-        : p.extension(processedImage.file.path);
+        : p.extension(processedImage.file.name);
     final String fullPath =
         'public/users/${user.identityId}/profile_picture_${DateTime.now().millisecondsSinceEpoch}$extension';
 
