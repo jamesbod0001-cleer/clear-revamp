@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cleer_api/src/services/media/models/process_image/process_image_request.dart';
 import 'package:cleer_api/src/services/media/models/process_image/process_image_result.dart';
 import 'package:flutter/foundation.dart';
@@ -24,29 +23,52 @@ class MediaServiceClient {
 
   /// Step 2: The "Heavy Lifting"
   Future<ProcessImageResult> processImage(ProcessImageRequest request) async {
-    // 1. Extract metadata and BlurHash in a single isolate pass
-    // We read bytes here ONLY for the isolate.
-    final bytes = await request.originalFile.readAsBytes();
-    final imageData = await compute(_blurHashAndMetadataWorker, bytes);
+    XFile resultFile;
+    Uint8List compressedBytesForWorker;
 
-    // 2. Setup the target path in the temp directory
-    final tempDir = await getTemporaryDirectory();
-    final targetPath =
-        "${tempDir.path}/comp_${DateTime.now().microsecondsSinceEpoch}.jpg";
+    if (kIsWeb) {
+      // 1. Web Compression (Compress First!)
+      final originalBytes = await request.originalFile.readAsBytes();
+      compressedBytesForWorker = await FlutterImageCompress.compressWithList(
+        originalBytes,
+        minWidth: request.width,
+        minHeight: request.height,
+        quality: request.quality,
+        format: CompressFormat.jpeg,
+      );
 
-    // 3. Native Compression (Uses the file path directly to save memory)
-    final compressedXFile = await FlutterImageCompress.compressAndGetFile(
-      request.originalFile.path,
-      targetPath,
-      minWidth: request.width,
-      minHeight: request.height,
-      quality: request.quality,
-      format: CompressFormat.jpeg,
+      resultFile = XFile.fromData(
+        compressedBytesForWorker,
+        mimeType: 'image/jpeg',
+        name: request.originalFile.name,
+      );
+    } else {
+      // 1. Mobile Native Compression (Compress First!)
+      final tempDir = await getTemporaryDirectory();
+      final targetPath =
+          "${tempDir.path}/comp_${DateTime.now().microsecondsSinceEpoch}.jpg";
+
+      final compressedXFile = await FlutterImageCompress.compressAndGetFile(
+        request.originalFile.path,
+        targetPath,
+        minWidth: request.width,
+        minHeight: request.height,
+        quality: request.quality,
+        format: CompressFormat.jpeg,
+      );
+
+      if (compressedXFile == null) throw Exception("Compression failed");
+      resultFile = compressedXFile;
+
+      // Read the newly tiny, compressed file into bytes for the worker
+      compressedBytesForWorker = await resultFile.readAsBytes();
+    }
+
+    // 2. Extract metadata and BlurHash from the TINY compressed bytes
+    final imageData = await compute(
+      _blurHashAndMetadataWorker,
+      compressedBytesForWorker,
     );
-
-    if (compressedXFile == null) throw Exception("Compression failed");
-
-    final resultFile = File(compressedXFile.path);
 
     return ProcessImageResult(
       file: resultFile,

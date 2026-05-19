@@ -311,6 +311,7 @@ class AccountSecurityScreen extends HookConsumerWidget {
                     ),
                   ),
                 ),
+                Gap(Dimens.spacing.sp20),
               ]),
             ),
           ),
