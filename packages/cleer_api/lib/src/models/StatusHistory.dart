@@ -22,6 +22,7 @@
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 
+
 /** This is an auto generated class representing the StatusHistory type in your schema. */
 class StatusHistory extends amplify_core.Model {
   static const classType = const _StatusHistoryModelType();
@@ -36,139 +37,107 @@ class StatusHistory extends amplify_core.Model {
 
   @override
   getInstanceType() => classType;
-
-  @Deprecated(
-    '[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.',
-  )
+  
+  @Deprecated('[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
   @override
   String getId() => id;
-
+  
   StatusHistoryModelIdentifier get modelIdentifier {
-    return StatusHistoryModelIdentifier(id: id);
+      return StatusHistoryModelIdentifier(
+        id: id
+      );
   }
-
+  
   String get entityId {
     try {
       return _entityId!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get entityType {
     try {
       return _entityType!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get oldStatus {
     return _oldStatus;
   }
-
+  
   String get newStatus {
     try {
       return _newStatus!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get changedBy {
     return _changedBy;
   }
-
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
-
+  
   amplify_core.TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-
-  const StatusHistory._internal({
-    required this.id,
-    required entityId,
-    required entityType,
-    oldStatus,
-    required newStatus,
-    changedBy,
-    createdAt,
-    updatedAt,
-  }) : _entityId = entityId,
-       _entityType = entityType,
-       _oldStatus = oldStatus,
-       _newStatus = newStatus,
-       _changedBy = changedBy,
-       _createdAt = createdAt,
-       _updatedAt = updatedAt;
-
-  factory StatusHistory({
-    String? id,
-    required String entityId,
-    required String entityType,
-    String? oldStatus,
-    required String newStatus,
-    String? changedBy,
-  }) {
+  
+  const StatusHistory._internal({required this.id, required entityId, required entityType, oldStatus, required newStatus, changedBy, createdAt, updatedAt}): _entityId = entityId, _entityType = entityType, _oldStatus = oldStatus, _newStatus = newStatus, _changedBy = changedBy, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory StatusHistory({String? id, required String entityId, required String entityType, String? oldStatus, required String newStatus, String? changedBy}) {
     return StatusHistory._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       entityId: entityId,
       entityType: entityType,
       oldStatus: oldStatus,
       newStatus: newStatus,
-      changedBy: changedBy,
-    );
+      changedBy: changedBy);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is StatusHistory &&
-        id == other.id &&
-        _entityId == other._entityId &&
-        _entityType == other._entityType &&
-        _oldStatus == other._oldStatus &&
-        _newStatus == other._newStatus &&
-        _changedBy == other._changedBy;
+      id == other.id &&
+      _entityId == other._entityId &&
+      _entityType == other._entityType &&
+      _oldStatus == other._oldStatus &&
+      _newStatus == other._newStatus &&
+      _changedBy == other._changedBy;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("StatusHistory {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("entityId=" + "$_entityId" + ", ");
@@ -176,40 +145,29 @@ class StatusHistory extends amplify_core.Model {
     buffer.write("oldStatus=" + "$_oldStatus" + ", ");
     buffer.write("newStatus=" + "$_newStatus" + ", ");
     buffer.write("changedBy=" + "$_changedBy" + ", ");
-    buffer.write(
-      "createdAt=" + (_createdAt != null ? _createdAt.format() : "null") + ", ",
-    );
-    buffer.write(
-      "updatedAt=" + (_updatedAt != null ? _updatedAt.format() : "null"),
-    );
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  StatusHistory copyWith({
-    String? entityId,
-    String? entityType,
-    String? oldStatus,
-    String? newStatus,
-    String? changedBy,
-  }) {
+  
+  StatusHistory copyWith({String? entityId, String? entityType, String? oldStatus, String? newStatus, String? changedBy}) {
     return StatusHistory._internal(
       id: id,
       entityId: entityId ?? this.entityId,
       entityType: entityType ?? this.entityType,
       oldStatus: oldStatus ?? this.oldStatus,
       newStatus: newStatus ?? this.newStatus,
-      changedBy: changedBy ?? this.changedBy,
-    );
+      changedBy: changedBy ?? this.changedBy);
   }
-
+  
   StatusHistory copyWithModelFieldValues({
     ModelFieldValue<String>? entityId,
     ModelFieldValue<String>? entityType,
     ModelFieldValue<String?>? oldStatus,
     ModelFieldValue<String>? newStatus,
-    ModelFieldValue<String?>? changedBy,
+    ModelFieldValue<String?>? changedBy
   }) {
     return StatusHistory._internal(
       id: id,
@@ -217,35 +175,24 @@ class StatusHistory extends amplify_core.Model {
       entityType: entityType == null ? this.entityType : entityType.value,
       oldStatus: oldStatus == null ? this.oldStatus : oldStatus.value,
       newStatus: newStatus == null ? this.newStatus : newStatus.value,
-      changedBy: changedBy == null ? this.changedBy : changedBy.value,
+      changedBy: changedBy == null ? this.changedBy : changedBy.value
     );
   }
-
-  StatusHistory.fromJson(Map<String, dynamic> json)
+  
+  StatusHistory.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _entityId = json['entityId'],
       _entityType = json['entityType'],
       _oldStatus = json['oldStatus'],
       _newStatus = json['newStatus'],
       _changedBy = json['changedBy'],
-      _createdAt = json['createdAt'] != null
-          ? amplify_core.TemporalDateTime.fromString(json['createdAt'])
-          : null,
-      _updatedAt = json['updatedAt'] != null
-          ? amplify_core.TemporalDateTime.fromString(json['updatedAt'])
-          : null;
-
+      _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'entityId': _entityId,
-    'entityType': _entityType,
-    'oldStatus': _oldStatus,
-    'newStatus': _newStatus,
-    'changedBy': _changedBy,
-    'createdAt': _createdAt?.format(),
-    'updatedAt': _updatedAt?.format(),
+    'id': id, 'entityId': _entityId, 'entityType': _entityType, 'oldStatus': _oldStatus, 'newStatus': _newStatus, 'changedBy': _changedBy, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
-
+  
   Map<String, Object?> toMap() => {
     'id': id,
     'entityId': _entityId,
@@ -254,125 +201,89 @@ class StatusHistory extends amplify_core.Model {
     'newStatus': _newStatus,
     'changedBy': _changedBy,
     'createdAt': _createdAt,
-    'updatedAt': _updatedAt,
+    'updatedAt': _updatedAt
   };
 
-  static final amplify_core.QueryModelIdentifier<StatusHistoryModelIdentifier>
-  MODEL_IDENTIFIER =
-      amplify_core.QueryModelIdentifier<StatusHistoryModelIdentifier>();
+  static final amplify_core.QueryModelIdentifier<StatusHistoryModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<StatusHistoryModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
   static final ENTITYID = amplify_core.QueryField(fieldName: "entityId");
   static final ENTITYTYPE = amplify_core.QueryField(fieldName: "entityType");
   static final OLDSTATUS = amplify_core.QueryField(fieldName: "oldStatus");
   static final NEWSTATUS = amplify_core.QueryField(fieldName: "newStatus");
   static final CHANGEDBY = amplify_core.QueryField(fieldName: "changedBy");
-  static var schema = amplify_core.Model.defineSchema(
-    define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-      modelSchemaDefinition.name = "StatusHistory";
-      modelSchemaDefinition.pluralName = "StatusHistories";
-
-      modelSchemaDefinition.authRules = [
-        amplify_core.AuthRule(
-          authStrategy: amplify_core.AuthStrategy.PRIVATE,
-          operations: const [
-            amplify_core.ModelOperation.READ,
-            amplify_core.ModelOperation.CREATE,
-          ],
-        ),
-      ];
-
-      modelSchemaDefinition.indexes = [
-        amplify_core.ModelIndex(
-          fields: const ["entityId"],
-          name: "statusHistoriesByEntityId",
-        ),
-      ];
-
-      modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: StatusHistory.ENTITYID,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: StatusHistory.ENTITYTYPE,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: StatusHistory.OLDSTATUS,
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: StatusHistory.NEWSTATUS,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: StatusHistory.CHANGEDBY,
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-          fieldName: 'createdAt',
-          isRequired: false,
-          isReadOnly: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.dateTime,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-          fieldName: 'updatedAt',
-          isRequired: false,
-          isReadOnly: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.dateTime,
-          ),
-        ),
-      );
-    },
-  );
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    modelSchemaDefinition.name = "StatusHistory";
+    modelSchemaDefinition.pluralName = "StatusHistories";
+    
+    modelSchemaDefinition.authRules = [
+      amplify_core.AuthRule(
+        authStrategy: amplify_core.AuthStrategy.PRIVATE,
+        operations: const [
+          amplify_core.ModelOperation.READ,
+          amplify_core.ModelOperation.CREATE
+        ])
+    ];
+    
+    modelSchemaDefinition.indexes = [
+      amplify_core.ModelIndex(fields: const ["entityId"], name: "statusHistoriesByEntityId")
+    ];
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.ENTITYID,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.ENTITYTYPE,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.OLDSTATUS,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.NEWSTATUS,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.CHANGEDBY,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+  });
 }
 
 class _StatusHistoryModelType extends amplify_core.ModelType<StatusHistory> {
   const _StatusHistoryModelType();
-
+  
   @override
   StatusHistory fromJson(Map<String, dynamic> jsonData) {
     return StatusHistory.fromJson(jsonData);
   }
-
+  
   @override
   String modelName() {
     return 'StatusHistory';
@@ -383,36 +294,41 @@ class _StatusHistoryModelType extends amplify_core.ModelType<StatusHistory> {
  * This is an auto generated class representing the model identifier
  * of [StatusHistory] in your schema.
  */
-class StatusHistoryModelIdentifier
-    implements amplify_core.ModelIdentifier<StatusHistory> {
+class StatusHistoryModelIdentifier implements amplify_core.ModelIdentifier<StatusHistory> {
   final String id;
 
   /** Create an instance of StatusHistoryModelIdentifier using [id] the primary key. */
-  const StatusHistoryModelIdentifier({required this.id});
-
+  const StatusHistoryModelIdentifier({
+    required this.id});
+  
   @override
-  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{'id': id});
-
+  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{
+    'id': id
+  });
+  
   @override
-  List<Map<String, dynamic>> serializeAsList() => serializeAsMap().entries
-      .map((entry) => (<String, dynamic>{entry.key: entry.value}))
-      .toList();
-
+  List<Map<String, dynamic>> serializeAsList() => serializeAsMap()
+    .entries
+    .map((entry) => (<String, dynamic>{ entry.key: entry.value }))
+    .toList();
+  
   @override
   String serializeAsString() => serializeAsMap().values.join('#');
-
+  
   @override
   String toString() => 'StatusHistoryModelIdentifier(id: $id)';
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-
-    return other is StatusHistoryModelIdentifier && id == other.id;
+    
+    return other is StatusHistoryModelIdentifier &&
+      id == other.id;
   }
-
+  
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode =>
+    id.hashCode;
 }

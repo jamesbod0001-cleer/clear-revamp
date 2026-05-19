@@ -52,27 +52,15 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
   String version = "a1dc5b5de2b2392349612e4e18b53498";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [
-    Agreement.schema,
-    Milestone.schema,
-    PayoutDestination.schema,
-    StatusHistory.schema,
-    Transaction.schema,
-    User.schema,
-  ];
+  List<amplify_core.ModelSchema> modelSchemas = [Agreement.schema, Milestone.schema, PayoutDestination.schema, StatusHistory.schema, Transaction.schema, User.schema];
   @override
-  List<amplify_core.ModelSchema> customTypeSchemas = [
-    AgreementPreview.schema,
-    MilestonePreview.schema,
-    Photo.schema,
-    UserPreview.schema,
-  ];
+  List<amplify_core.ModelSchema> customTypeSchemas = [AgreementPreview.schema, MilestonePreview.schema, Photo.schema, UserPreview.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
-
+  
   amplify_core.ModelType getModelTypeByModelName(String modelName) {
-    switch (modelName) {
+    switch(modelName) {
       case "Agreement":
         return Agreement.classType;
       case "Milestone":
@@ -86,12 +74,11 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
       case "User":
         return User.classType;
       default:
-        throw Exception(
-          "Failed to find model in model provider for model name: " + modelName,
-        );
+        throw Exception("Failed to find model in model provider for model name: " + modelName);
     }
   }
 }
+
 
 class ModelFieldValue<T> {
   const ModelFieldValue.value(this.value);

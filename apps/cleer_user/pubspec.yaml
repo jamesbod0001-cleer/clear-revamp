@@ -62,7 +62,7 @@ dependencies:
   pinput: ^6.0.1
   flutter_secure_storage: ^10.0.0
   collection: ^1.19.1
-  internet_connection_checker_plus: ^2.9.1+2
+  internet_connection_checker_plus: ^3.0.0
   liquid_glass_renderer: ^0.2.0-dev.4
   flutter_svg: ^2.2.3
   dio: ^5.9.0

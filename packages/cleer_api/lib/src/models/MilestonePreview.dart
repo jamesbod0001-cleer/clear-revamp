@@ -22,6 +22,7 @@
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 
+
 /** This is an auto generated class representing the MilestonePreview type in your schema. */
 class MilestonePreview {
   final String id;
@@ -33,249 +34,175 @@ class MilestonePreview {
   String get name {
     try {
       return _name!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   double get amount {
     try {
       return _amount!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   int get order {
     try {
       return _order!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   amplify_core.TemporalDate get expectedReleaseDate {
     try {
       return _expectedReleaseDate!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
-  const MilestonePreview._internal({
-    required this.id,
-    required name,
-    required amount,
-    required order,
-    required expectedReleaseDate,
-  }) : _name = name,
-       _amount = amount,
-       _order = order,
-       _expectedReleaseDate = expectedReleaseDate;
-
-  factory MilestonePreview({
-    String? id,
-    required String name,
-    required double amount,
-    required int order,
-    required amplify_core.TemporalDate expectedReleaseDate,
-  }) {
+  
+  const MilestonePreview._internal({required this.id, required name, required amount, required order, required expectedReleaseDate}): _name = name, _amount = amount, _order = order, _expectedReleaseDate = expectedReleaseDate;
+  
+  factory MilestonePreview({String? id, required String name, required double amount, required int order, required amplify_core.TemporalDate expectedReleaseDate}) {
     return MilestonePreview._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       name: name,
       amount: amount,
       order: order,
-      expectedReleaseDate: expectedReleaseDate,
-    );
+      expectedReleaseDate: expectedReleaseDate);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is MilestonePreview &&
-        id == other.id &&
-        _name == other._name &&
-        _amount == other._amount &&
-        _order == other._order &&
-        _expectedReleaseDate == other._expectedReleaseDate;
+      id == other.id &&
+      _name == other._name &&
+      _amount == other._amount &&
+      _order == other._order &&
+      _expectedReleaseDate == other._expectedReleaseDate;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("MilestonePreview {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write(
-      "amount=" + (_amount != null ? _amount.toString() : "null") + ", ",
-    );
-    buffer.write(
-      "order=" + (_order != null ? _order.toString() : "null") + ", ",
-    );
-    buffer.write(
-      "expectedReleaseDate=" +
-          (_expectedReleaseDate != null
-              ? _expectedReleaseDate.format()
-              : "null"),
-    );
+    buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
+    buffer.write("order=" + (_order != null ? _order!.toString() : "null") + ", ");
+    buffer.write("expectedReleaseDate=" + (_expectedReleaseDate != null ? _expectedReleaseDate!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  MilestonePreview copyWith({
-    String? id,
-    String? name,
-    double? amount,
-    int? order,
-    amplify_core.TemporalDate? expectedReleaseDate,
-  }) {
+  
+  MilestonePreview copyWith({String? id, String? name, double? amount, int? order, amplify_core.TemporalDate? expectedReleaseDate}) {
     return MilestonePreview._internal(
       id: id ?? this.id,
       name: name ?? this.name,
       amount: amount ?? this.amount,
       order: order ?? this.order,
-      expectedReleaseDate: expectedReleaseDate ?? this.expectedReleaseDate,
-    );
+      expectedReleaseDate: expectedReleaseDate ?? this.expectedReleaseDate);
   }
-
+  
   MilestonePreview copyWithModelFieldValues({
     ModelFieldValue<String>? id,
     ModelFieldValue<String>? name,
     ModelFieldValue<double>? amount,
     ModelFieldValue<int>? order,
-    ModelFieldValue<amplify_core.TemporalDate>? expectedReleaseDate,
+    ModelFieldValue<amplify_core.TemporalDate>? expectedReleaseDate
   }) {
     return MilestonePreview._internal(
       id: id == null ? this.id : id.value,
       name: name == null ? this.name : name.value,
       amount: amount == null ? this.amount : amount.value,
       order: order == null ? this.order : order.value,
-      expectedReleaseDate: expectedReleaseDate == null
-          ? this.expectedReleaseDate
-          : expectedReleaseDate.value,
+      expectedReleaseDate: expectedReleaseDate == null ? this.expectedReleaseDate : expectedReleaseDate.value
     );
   }
-
-  MilestonePreview.fromJson(Map<String, dynamic> json)
+  
+  MilestonePreview.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
       _amount = (json['amount'] as num?)?.toDouble(),
       _order = (json['order'] as num?)?.toInt(),
-      _expectedReleaseDate = json['expectedReleaseDate'] != null
-          ? amplify_core.TemporalDate.fromString(json['expectedReleaseDate'])
-          : null;
-
+      _expectedReleaseDate = json['expectedReleaseDate'] != null ? amplify_core.TemporalDate.fromString(json['expectedReleaseDate']) : null;
+  
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': _name,
-    'amount': _amount,
-    'order': _order,
-    'expectedReleaseDate': _expectedReleaseDate?.format(),
+    'id': id, 'name': _name, 'amount': _amount, 'order': _order, 'expectedReleaseDate': _expectedReleaseDate?.format()
   };
-
+  
   Map<String, Object?> toMap() => {
     'id': id,
     'name': _name,
     'amount': _amount,
     'order': _order,
-    'expectedReleaseDate': _expectedReleaseDate,
+    'expectedReleaseDate': _expectedReleaseDate
   };
 
-  static var schema = amplify_core.Model.defineSchema(
-    define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-      modelSchemaDefinition.name = "MilestonePreview";
-      modelSchemaDefinition.pluralName = "MilestonePreviews";
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'id',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'name',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'amount',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.double,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'order',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.int,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'expectedReleaseDate',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.date,
-          ),
-        ),
-      );
-    },
-  );
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    modelSchemaDefinition.name = "MilestonePreview";
+    modelSchemaDefinition.pluralName = "MilestonePreviews";
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'id',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'name',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'amount',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'order',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'expectedReleaseDate',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.date)
+    ));
+  });
 }

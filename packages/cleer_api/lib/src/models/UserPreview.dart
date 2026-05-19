@@ -22,6 +22,7 @@
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 
+
 /** This is an auto generated class representing the UserPreview type in your schema. */
 class UserPreview {
   final String id;
@@ -31,154 +32,121 @@ class UserPreview {
   String get firstName {
     try {
       return _firstName!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get lastName {
     try {
       return _lastName!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
-  const UserPreview._internal({
-    required this.id,
-    required firstName,
-    required lastName,
-  }) : _firstName = firstName,
-       _lastName = lastName;
-
-  factory UserPreview({
-    String? id,
-    required String firstName,
-    required String lastName,
-  }) {
+  
+  const UserPreview._internal({required this.id, required firstName, required lastName}): _firstName = firstName, _lastName = lastName;
+  
+  factory UserPreview({String? id, required String firstName, required String lastName}) {
     return UserPreview._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       firstName: firstName,
-      lastName: lastName,
-    );
+      lastName: lastName);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is UserPreview &&
-        id == other.id &&
-        _firstName == other._firstName &&
-        _lastName == other._lastName;
+      id == other.id &&
+      _firstName == other._firstName &&
+      _lastName == other._lastName;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("UserPreview {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("firstName=" + "$_firstName" + ", ");
     buffer.write("lastName=" + "$_lastName");
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
+  
   UserPreview copyWith({String? id, String? firstName, String? lastName}) {
     return UserPreview._internal(
       id: id ?? this.id,
       firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-    );
+      lastName: lastName ?? this.lastName);
   }
-
+  
   UserPreview copyWithModelFieldValues({
     ModelFieldValue<String>? id,
     ModelFieldValue<String>? firstName,
-    ModelFieldValue<String>? lastName,
+    ModelFieldValue<String>? lastName
   }) {
     return UserPreview._internal(
       id: id == null ? this.id : id.value,
       firstName: firstName == null ? this.firstName : firstName.value,
-      lastName: lastName == null ? this.lastName : lastName.value,
+      lastName: lastName == null ? this.lastName : lastName.value
     );
   }
-
-  UserPreview.fromJson(Map<String, dynamic> json)
+  
+  UserPreview.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _firstName = json['firstName'],
       _lastName = json['lastName'];
-
+  
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'firstName': _firstName,
-    'lastName': _lastName,
+    'id': id, 'firstName': _firstName, 'lastName': _lastName
   };
-
+  
   Map<String, Object?> toMap() => {
     'id': id,
     'firstName': _firstName,
-    'lastName': _lastName,
+    'lastName': _lastName
   };
 
-  static var schema = amplify_core.Model.defineSchema(
-    define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-      modelSchemaDefinition.name = "UserPreview";
-      modelSchemaDefinition.pluralName = "UserPreviews";
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'id',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'firstName',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'lastName',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-    },
-  );
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    modelSchemaDefinition.name = "UserPreview";
+    modelSchemaDefinition.pluralName = "UserPreviews";
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'id',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'firstName',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'lastName',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+  });
 }

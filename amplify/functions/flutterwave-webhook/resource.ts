@@ -3,7 +3,7 @@ import { defineFunction, secret } from '@aws-amplify/backend';
 export const flutterwaveWebhook = defineFunction({
     name: 'flutterwave-webhook',
     entry: './handler.ts',
-    runtime: 20,
+    runtime: 24,
     resourceGroupName: 'data',
     environment: {
         // This makes the secret available as an environment variable in the handler

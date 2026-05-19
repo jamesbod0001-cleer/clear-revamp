@@ -3,7 +3,7 @@ import { defineFunction, secret } from '@aws-amplify/backend';
 export const flutterwaveProxy = defineFunction({
     name: 'flutterwave-proxy',
     entry: './handler.ts',
-    runtime: 20,
+    runtime: 24,
     timeoutSeconds: 25,
     environment: {
         FLW_PROD_CLIENT_ID: secret('FLW_PROD_CLIENT_ID'),

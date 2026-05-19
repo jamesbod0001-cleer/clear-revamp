@@ -22,6 +22,7 @@
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 
+
 /** This is an auto generated class representing the Photo type in your schema. */
 class Photo {
   final String? _key;
@@ -33,204 +34,152 @@ class Photo {
   String get key {
     try {
       return _key!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get blurHash {
     return _blurHash;
   }
-
+  
   int? get width {
     return _width;
   }
-
+  
   int? get height {
     return _height;
   }
-
+  
   String? get altText {
     return _altText;
   }
-
-  const Photo._internal({required key, blurHash, width, height, altText})
-    : _key = key,
-      _blurHash = blurHash,
-      _width = width,
-      _height = height,
-      _altText = altText;
-
-  factory Photo({
-    required String key,
-    String? blurHash,
-    int? width,
-    int? height,
-    String? altText,
-  }) {
+  
+  const Photo._internal({required key, blurHash, width, height, altText}): _key = key, _blurHash = blurHash, _width = width, _height = height, _altText = altText;
+  
+  factory Photo({required String key, String? blurHash, int? width, int? height, String? altText}) {
     return Photo._internal(
       key: key,
       blurHash: blurHash,
       width: width,
       height: height,
-      altText: altText,
-    );
+      altText: altText);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Photo &&
-        _key == other._key &&
-        _blurHash == other._blurHash &&
-        _width == other._width &&
-        _height == other._height &&
-        _altText == other._altText;
+      _key == other._key &&
+      _blurHash == other._blurHash &&
+      _width == other._width &&
+      _height == other._height &&
+      _altText == other._altText;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("Photo {");
     buffer.write("key=" + "$_key" + ", ");
     buffer.write("blurHash=" + "$_blurHash" + ", ");
-    buffer.write(
-      "width=" + (_width != null ? _width.toString() : "null") + ", ",
-    );
-    buffer.write(
-      "height=" + (_height != null ? _height.toString() : "null") + ", ",
-    );
+    buffer.write("width=" + (_width != null ? _width!.toString() : "null") + ", ");
+    buffer.write("height=" + (_height != null ? _height!.toString() : "null") + ", ");
     buffer.write("altText=" + "$_altText");
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  Photo copyWith({
-    String? key,
-    String? blurHash,
-    int? width,
-    int? height,
-    String? altText,
-  }) {
+  
+  Photo copyWith({String? key, String? blurHash, int? width, int? height, String? altText}) {
     return Photo._internal(
       key: key ?? this.key,
       blurHash: blurHash ?? this.blurHash,
       width: width ?? this.width,
       height: height ?? this.height,
-      altText: altText ?? this.altText,
-    );
+      altText: altText ?? this.altText);
   }
-
+  
   Photo copyWithModelFieldValues({
     ModelFieldValue<String>? key,
     ModelFieldValue<String?>? blurHash,
     ModelFieldValue<int?>? width,
     ModelFieldValue<int?>? height,
-    ModelFieldValue<String?>? altText,
+    ModelFieldValue<String?>? altText
   }) {
     return Photo._internal(
       key: key == null ? this.key : key.value,
       blurHash: blurHash == null ? this.blurHash : blurHash.value,
       width: width == null ? this.width : width.value,
       height: height == null ? this.height : height.value,
-      altText: altText == null ? this.altText : altText.value,
+      altText: altText == null ? this.altText : altText.value
     );
   }
-
-  Photo.fromJson(Map<String, dynamic> json)
+  
+  Photo.fromJson(Map<String, dynamic> json)  
     : _key = json['key'],
       _blurHash = json['blurHash'],
       _width = (json['width'] as num?)?.toInt(),
       _height = (json['height'] as num?)?.toInt(),
       _altText = json['altText'];
-
+  
   Map<String, dynamic> toJson() => {
-    'key': _key,
-    'blurHash': _blurHash,
-    'width': _width,
-    'height': _height,
-    'altText': _altText,
+    'key': _key, 'blurHash': _blurHash, 'width': _width, 'height': _height, 'altText': _altText
   };
-
+  
   Map<String, Object?> toMap() => {
     'key': _key,
     'blurHash': _blurHash,
     'width': _width,
     'height': _height,
-    'altText': _altText,
+    'altText': _altText
   };
 
-  static var schema = amplify_core.Model.defineSchema(
-    define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-      modelSchemaDefinition.name = "Photo";
-      modelSchemaDefinition.pluralName = "Photos";
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'key',
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'blurHash',
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'width',
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.int,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'height',
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.int,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.customTypeField(
-          fieldName: 'altText',
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-    },
-  );
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    modelSchemaDefinition.name = "Photo";
+    modelSchemaDefinition.pluralName = "Photos";
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'key',
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'blurHash',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'width',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'height',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.customTypeField(
+      fieldName: 'altText',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+  });
 }

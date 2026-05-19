@@ -23,6 +23,7 @@ import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'package:collection/collection.dart';
 
+
 /** This is an auto generated class representing the Milestone type in your schema. */
 class Milestone extends amplify_core.Model {
   static const classType = const _MilestoneModelType();
@@ -40,233 +41,152 @@ class Milestone extends amplify_core.Model {
 
   @override
   getInstanceType() => classType;
-
-  @Deprecated(
-    '[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.',
-  )
+  
+  @Deprecated('[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
   @override
   String getId() => id;
-
+  
   MilestoneModelIdentifier get modelIdentifier {
-    return MilestoneModelIdentifier(id: id);
+      return MilestoneModelIdentifier(
+        id: id
+      );
   }
-
+  
   String get name {
     try {
       return _name!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   double get amount {
     try {
       return _amount!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   int get order {
     try {
       return _order!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   amplify_core.TemporalDate get expectedReleaseDate {
     try {
       return _expectedReleaseDate!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   List<String>? get participants {
     return _participants;
   }
-
+  
   String? get lastUpdatedBy {
     return _lastUpdatedBy;
   }
-
+  
   MilestoneStatus? get status {
     return _status;
   }
-
+  
   Agreement? get agreement {
     return _agreement;
   }
-
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
-
+  
   amplify_core.TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-
-  const Milestone._internal({
-    required this.id,
-    required name,
-    required amount,
-    required order,
-    required expectedReleaseDate,
-    participants,
-    lastUpdatedBy,
-    status,
-    agreement,
-    createdAt,
-    updatedAt,
-  }) : _name = name,
-       _amount = amount,
-       _order = order,
-       _expectedReleaseDate = expectedReleaseDate,
-       _participants = participants,
-       _lastUpdatedBy = lastUpdatedBy,
-       _status = status,
-       _agreement = agreement,
-       _createdAt = createdAt,
-       _updatedAt = updatedAt;
-
-  factory Milestone({
-    String? id,
-    required String name,
-    required double amount,
-    required int order,
-    required amplify_core.TemporalDate expectedReleaseDate,
-    List<String>? participants,
-    String? lastUpdatedBy,
-    MilestoneStatus? status,
-    Agreement? agreement,
-  }) {
+  
+  const Milestone._internal({required this.id, required name, required amount, required order, required expectedReleaseDate, participants, lastUpdatedBy, status, agreement, createdAt, updatedAt}): _name = name, _amount = amount, _order = order, _expectedReleaseDate = expectedReleaseDate, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _status = status, _agreement = agreement, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory Milestone({String? id, required String name, required double amount, required int order, required amplify_core.TemporalDate expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, MilestoneStatus? status, Agreement? agreement}) {
     return Milestone._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       name: name,
       amount: amount,
       order: order,
       expectedReleaseDate: expectedReleaseDate,
-      participants: participants != null
-          ? List<String>.unmodifiable(participants)
-          : participants,
+      participants: participants != null ? List<String>.unmodifiable(participants) : participants,
       lastUpdatedBy: lastUpdatedBy,
       status: status,
-      agreement: agreement,
-    );
+      agreement: agreement);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Milestone &&
-        id == other.id &&
-        _name == other._name &&
-        _amount == other._amount &&
-        _order == other._order &&
-        _expectedReleaseDate == other._expectedReleaseDate &&
-        DeepCollectionEquality().equals(_participants, other._participants) &&
-        _lastUpdatedBy == other._lastUpdatedBy &&
-        _status == other._status &&
-        _agreement == other._agreement;
+      id == other.id &&
+      _name == other._name &&
+      _amount == other._amount &&
+      _order == other._order &&
+      _expectedReleaseDate == other._expectedReleaseDate &&
+      DeepCollectionEquality().equals(_participants, other._participants) &&
+      _lastUpdatedBy == other._lastUpdatedBy &&
+      _status == other._status &&
+      _agreement == other._agreement;
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("Milestone {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write(
-      "amount=" + (_amount != null ? _amount.toString() : "null") + ", ",
-    );
-    buffer.write(
-      "order=" + (_order != null ? _order.toString() : "null") + ", ",
-    );
-    buffer.write(
-      "expectedReleaseDate=" +
-          (_expectedReleaseDate != null
-              ? _expectedReleaseDate.format()
-              : "null") +
-          ", ",
-    );
-    buffer.write(
-      "participants=" +
-          (_participants != null ? _participants.toString() : "null") +
-          ", ",
-    );
+    buffer.write("amount=" + (_amount != null ? _amount!.toString() : "null") + ", ");
+    buffer.write("order=" + (_order != null ? _order!.toString() : "null") + ", ");
+    buffer.write("expectedReleaseDate=" + (_expectedReleaseDate != null ? _expectedReleaseDate!.format() : "null") + ", ");
+    buffer.write("participants=" + (_participants != null ? _participants!.toString() : "null") + ", ");
     buffer.write("lastUpdatedBy=" + "$_lastUpdatedBy" + ", ");
-    buffer.write(
-      "status=" +
-          (_status != null ? amplify_core.enumToString(_status)! : "null") +
-          ", ",
-    );
-    buffer.write(
-      "agreement=" +
-          (_agreement != null ? _agreement.toString() : "null") +
-          ", ",
-    );
-    buffer.write(
-      "createdAt=" + (_createdAt != null ? _createdAt.format() : "null") + ", ",
-    );
-    buffer.write(
-      "updatedAt=" + (_updatedAt != null ? _updatedAt.format() : "null"),
-    );
+    buffer.write("status=" + (_status != null ? amplify_core.enumToString(_status)! : "null") + ", ");
+    buffer.write("agreement=" + (_agreement != null ? _agreement!.toString() : "null") + ", ");
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  Milestone copyWith({
-    String? name,
-    double? amount,
-    int? order,
-    amplify_core.TemporalDate? expectedReleaseDate,
-    List<String>? participants,
-    String? lastUpdatedBy,
-    MilestoneStatus? status,
-    Agreement? agreement,
-  }) {
+  
+  Milestone copyWith({String? name, double? amount, int? order, amplify_core.TemporalDate? expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, MilestoneStatus? status, Agreement? agreement}) {
     return Milestone._internal(
       id: id,
       name: name ?? this.name,
@@ -276,10 +196,9 @@ class Milestone extends amplify_core.Model {
       participants: participants ?? this.participants,
       lastUpdatedBy: lastUpdatedBy ?? this.lastUpdatedBy,
       status: status ?? this.status,
-      agreement: agreement ?? this.agreement,
-    );
+      agreement: agreement ?? this.agreement);
   }
-
+  
   Milestone copyWithModelFieldValues({
     ModelFieldValue<String>? name,
     ModelFieldValue<double>? amount,
@@ -288,73 +207,42 @@ class Milestone extends amplify_core.Model {
     ModelFieldValue<List<String>?>? participants,
     ModelFieldValue<String?>? lastUpdatedBy,
     ModelFieldValue<MilestoneStatus?>? status,
-    ModelFieldValue<Agreement?>? agreement,
+    ModelFieldValue<Agreement?>? agreement
   }) {
     return Milestone._internal(
       id: id,
       name: name == null ? this.name : name.value,
       amount: amount == null ? this.amount : amount.value,
       order: order == null ? this.order : order.value,
-      expectedReleaseDate: expectedReleaseDate == null
-          ? this.expectedReleaseDate
-          : expectedReleaseDate.value,
-      participants: participants == null
-          ? this.participants
-          : participants.value,
-      lastUpdatedBy: lastUpdatedBy == null
-          ? this.lastUpdatedBy
-          : lastUpdatedBy.value,
+      expectedReleaseDate: expectedReleaseDate == null ? this.expectedReleaseDate : expectedReleaseDate.value,
+      participants: participants == null ? this.participants : participants.value,
+      lastUpdatedBy: lastUpdatedBy == null ? this.lastUpdatedBy : lastUpdatedBy.value,
       status: status == null ? this.status : status.value,
-      agreement: agreement == null ? this.agreement : agreement.value,
+      agreement: agreement == null ? this.agreement : agreement.value
     );
   }
-
-  Milestone.fromJson(Map<String, dynamic> json)
+  
+  Milestone.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
       _name = json['name'],
       _amount = (json['amount'] as num?)?.toDouble(),
       _order = (json['order'] as num?)?.toInt(),
-      _expectedReleaseDate = json['expectedReleaseDate'] != null
-          ? amplify_core.TemporalDate.fromString(json['expectedReleaseDate'])
-          : null,
+      _expectedReleaseDate = json['expectedReleaseDate'] != null ? amplify_core.TemporalDate.fromString(json['expectedReleaseDate']) : null,
       _participants = json['participants']?.cast<String>(),
       _lastUpdatedBy = json['lastUpdatedBy'],
-      _status = amplify_core.enumFromString<MilestoneStatus>(
-        json['status'],
-        MilestoneStatus.values,
-      ),
+      _status = amplify_core.enumFromString<MilestoneStatus>(json['status'], MilestoneStatus.values),
       _agreement = json['agreement'] != null
-          ? json['agreement']['serializedData'] != null
-                ? Agreement.fromJson(
-                    new Map<String, dynamic>.from(
-                      json['agreement']['serializedData'],
-                    ),
-                  )
-                : Agreement.fromJson(
-                    new Map<String, dynamic>.from(json['agreement']),
-                  )
-          : null,
-      _createdAt = json['createdAt'] != null
-          ? amplify_core.TemporalDateTime.fromString(json['createdAt'])
-          : null,
-      _updatedAt = json['updatedAt'] != null
-          ? amplify_core.TemporalDateTime.fromString(json['updatedAt'])
-          : null;
-
+        ? json['agreement']['serializedData'] != null
+          ? Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']['serializedData']))
+          : Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']))
+        : null,
+      _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': _name,
-    'amount': _amount,
-    'order': _order,
-    'expectedReleaseDate': _expectedReleaseDate?.format(),
-    'participants': _participants,
-    'lastUpdatedBy': _lastUpdatedBy,
-    'status': amplify_core.enumToString(_status),
-    'agreement': _agreement?.toJson(),
-    'createdAt': _createdAt?.format(),
-    'updatedAt': _updatedAt?.format(),
+    'id': id, 'name': _name, 'amount': _amount, 'order': _order, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'status': amplify_core.enumToString(_status), 'agreement': _agreement?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
-
+  
   Map<String, Object?> toMap() => {
     'id': id,
     'name': _name,
@@ -366,169 +254,115 @@ class Milestone extends amplify_core.Model {
     'status': _status,
     'agreement': _agreement,
     'createdAt': _createdAt,
-    'updatedAt': _updatedAt,
+    'updatedAt': _updatedAt
   };
 
-  static final amplify_core.QueryModelIdentifier<MilestoneModelIdentifier>
-  MODEL_IDENTIFIER =
-      amplify_core.QueryModelIdentifier<MilestoneModelIdentifier>();
+  static final amplify_core.QueryModelIdentifier<MilestoneModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<MilestoneModelIdentifier>();
   static final ID = amplify_core.QueryField(fieldName: "id");
   static final NAME = amplify_core.QueryField(fieldName: "name");
   static final AMOUNT = amplify_core.QueryField(fieldName: "amount");
   static final ORDER = amplify_core.QueryField(fieldName: "order");
-  static final EXPECTEDRELEASEDATE = amplify_core.QueryField(
-    fieldName: "expectedReleaseDate",
-  );
-  static final PARTICIPANTS = amplify_core.QueryField(
-    fieldName: "participants",
-  );
-  static final LASTUPDATEDBY = amplify_core.QueryField(
-    fieldName: "lastUpdatedBy",
-  );
+  static final EXPECTEDRELEASEDATE = amplify_core.QueryField(fieldName: "expectedReleaseDate");
+  static final PARTICIPANTS = amplify_core.QueryField(fieldName: "participants");
+  static final LASTUPDATEDBY = amplify_core.QueryField(fieldName: "lastUpdatedBy");
   static final STATUS = amplify_core.QueryField(fieldName: "status");
   static final AGREEMENT = amplify_core.QueryField(
     fieldName: "agreement",
-    fieldType: amplify_core.ModelFieldType(
-      amplify_core.ModelFieldTypeEnum.model,
-      ofModelName: 'Agreement',
-    ),
-  );
-  static var schema = amplify_core.Model.defineSchema(
-    define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-      modelSchemaDefinition.name = "Milestone";
-      modelSchemaDefinition.pluralName = "Milestones";
-
-      modelSchemaDefinition.authRules = [
-        amplify_core.AuthRule(
-          authStrategy: amplify_core.AuthStrategy.OWNER,
-          ownerField: "participants",
-          identityClaim: "sub",
-          provider: amplify_core.AuthRuleProvider.USERPOOLS,
-          operations: const [
-            amplify_core.ModelOperation.CREATE,
-            amplify_core.ModelOperation.UPDATE,
-            amplify_core.ModelOperation.DELETE,
-            amplify_core.ModelOperation.READ,
-          ],
-        ),
-      ];
-
-      modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.NAME,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.AMOUNT,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.double,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.ORDER,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.int,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.EXPECTEDRELEASEDATE,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.date,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.PARTICIPANTS,
-          isRequired: false,
-          isArray: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.collection,
-            ofModelName: amplify_core.ModelFieldTypeEnum.string.name,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.LASTUPDATEDBY,
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: Milestone.STATUS,
-          isRequired: false,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.enumeration,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.belongsTo(
-          key: Milestone.AGREEMENT,
-          isRequired: false,
-          targetNames: ['agreementId'],
-          ofModelName: 'Agreement',
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-          fieldName: 'createdAt',
-          isRequired: false,
-          isReadOnly: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.dateTime,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-          fieldName: 'updatedAt',
-          isRequired: false,
-          isReadOnly: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.dateTime,
-          ),
-        ),
-      );
-    },
-  );
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    modelSchemaDefinition.name = "Milestone";
+    modelSchemaDefinition.pluralName = "Milestones";
+    
+    modelSchemaDefinition.authRules = [
+      amplify_core.AuthRule(
+        authStrategy: amplify_core.AuthStrategy.OWNER,
+        ownerField: "participants",
+        identityClaim: "sub",
+        provider: amplify_core.AuthRuleProvider.USERPOOLS,
+        operations: const [
+          amplify_core.ModelOperation.CREATE,
+          amplify_core.ModelOperation.UPDATE,
+          amplify_core.ModelOperation.DELETE,
+          amplify_core.ModelOperation.READ
+        ])
+    ];
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.NAME,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.AMOUNT,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.ORDER,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.int)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.EXPECTEDRELEASEDATE,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.date)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.PARTICIPANTS,
+      isRequired: false,
+      isArray: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.collection, ofModelName: amplify_core.ModelFieldTypeEnum.string.name)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.LASTUPDATEDBY,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Milestone.STATUS,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.enumeration)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
+      key: Milestone.AGREEMENT,
+      isRequired: false,
+      targetNames: ['agreementId'],
+      ofModelName: 'Agreement'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+  });
 }
 
 class _MilestoneModelType extends amplify_core.ModelType<Milestone> {
   const _MilestoneModelType();
-
+  
   @override
   Milestone fromJson(Map<String, dynamic> jsonData) {
     return Milestone.fromJson(jsonData);
   }
-
+  
   @override
   String modelName() {
     return 'Milestone';
@@ -539,36 +373,41 @@ class _MilestoneModelType extends amplify_core.ModelType<Milestone> {
  * This is an auto generated class representing the model identifier
  * of [Milestone] in your schema.
  */
-class MilestoneModelIdentifier
-    implements amplify_core.ModelIdentifier<Milestone> {
+class MilestoneModelIdentifier implements amplify_core.ModelIdentifier<Milestone> {
   final String id;
 
   /** Create an instance of MilestoneModelIdentifier using [id] the primary key. */
-  const MilestoneModelIdentifier({required this.id});
-
+  const MilestoneModelIdentifier({
+    required this.id});
+  
   @override
-  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{'id': id});
-
+  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{
+    'id': id
+  });
+  
   @override
-  List<Map<String, dynamic>> serializeAsList() => serializeAsMap().entries
-      .map((entry) => (<String, dynamic>{entry.key: entry.value}))
-      .toList();
-
+  List<Map<String, dynamic>> serializeAsList() => serializeAsMap()
+    .entries
+    .map((entry) => (<String, dynamic>{ entry.key: entry.value }))
+    .toList();
+  
   @override
   String serializeAsString() => serializeAsMap().values.join('#');
-
+  
   @override
   String toString() => 'MilestoneModelIdentifier(id: $id)';
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-
-    return other is MilestoneModelIdentifier && id == other.id;
+    
+    return other is MilestoneModelIdentifier &&
+      id == other.id;
   }
-
+  
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode =>
+    id.hashCode;
 }

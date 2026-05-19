@@ -23,6 +23,7 @@ import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'package:collection/collection.dart';
 
+
 /** This is an auto generated class representing the PayoutDestination type in your schema. */
 class PayoutDestination extends amplify_core.Model {
   static const classType = const _PayoutDestinationModelType();
@@ -38,157 +39,111 @@ class PayoutDestination extends amplify_core.Model {
 
   @override
   getInstanceType() => classType;
-
-  @Deprecated(
-    '[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.',
-  )
+  
+  @Deprecated('[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
   @override
   String getId() => modelIdentifier.serializeAsString();
-
+  
   PayoutDestinationModelIdentifier get modelIdentifier {
     try {
       return PayoutDestinationModelIdentifier(
         accountNumber: _accountNumber!,
-        bankCode: _bankCode!,
+        bankCode: _bankCode!
       );
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get accountNumber {
     try {
       return _accountNumber!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get bankCode {
     try {
       return _bankCode!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get currency {
     try {
       return _currency!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get bankName {
     try {
       return _bankName!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get accountName {
     try {
       return _accountName!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-        amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastExceptionMessage,
-        recoverySuggestion: amplify_core
-            .AmplifyExceptionMessages
-            .codeGenRequiredFieldForceCastRecoverySuggestion,
-        underlyingException: e.toString(),
-      );
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   User? get user {
     return _user;
   }
-
+  
   List<Agreement>? get agreements {
     return _agreements;
   }
-
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
-
+  
   amplify_core.TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-
-  const PayoutDestination._internal({
-    required accountNumber,
-    required bankCode,
-    required currency,
-    required bankName,
-    required accountName,
-    user,
-    agreements,
-    createdAt,
-    updatedAt,
-  }) : _accountNumber = accountNumber,
-       _bankCode = bankCode,
-       _currency = currency,
-       _bankName = bankName,
-       _accountName = accountName,
-       _user = user,
-       _agreements = agreements,
-       _createdAt = createdAt,
-       _updatedAt = updatedAt;
-
-  factory PayoutDestination({
-    required String accountNumber,
-    required String bankCode,
-    required String currency,
-    required String bankName,
-    required String accountName,
-    User? user,
-    List<Agreement>? agreements,
-  }) {
+  
+  const PayoutDestination._internal({required accountNumber, required bankCode, required currency, required bankName, required accountName, user, agreements, createdAt, updatedAt}): _accountNumber = accountNumber, _bankCode = bankCode, _currency = currency, _bankName = bankName, _accountName = accountName, _user = user, _agreements = agreements, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory PayoutDestination({required String accountNumber, required String bankCode, required String currency, required String bankName, required String accountName, User? user, List<Agreement>? agreements}) {
     return PayoutDestination._internal(
       accountNumber: accountNumber,
       bankCode: bankCode,
@@ -196,61 +151,48 @@ class PayoutDestination extends amplify_core.Model {
       bankName: bankName,
       accountName: accountName,
       user: user,
-      agreements: agreements != null
-          ? List<Agreement>.unmodifiable(agreements)
-          : agreements,
-    );
+      agreements: agreements != null ? List<Agreement>.unmodifiable(agreements) : agreements);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is PayoutDestination &&
-        _accountNumber == other._accountNumber &&
-        _bankCode == other._bankCode &&
-        _currency == other._currency &&
-        _bankName == other._bankName &&
-        _accountName == other._accountName &&
-        _user == other._user &&
-        DeepCollectionEquality().equals(_agreements, other._agreements);
+      _accountNumber == other._accountNumber &&
+      _bankCode == other._bankCode &&
+      _currency == other._currency &&
+      _bankName == other._bankName &&
+      _accountName == other._accountName &&
+      _user == other._user &&
+      DeepCollectionEquality().equals(_agreements, other._agreements);
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("PayoutDestination {");
     buffer.write("accountNumber=" + "$_accountNumber" + ", ");
     buffer.write("bankCode=" + "$_bankCode" + ", ");
     buffer.write("currency=" + "$_currency" + ", ");
     buffer.write("bankName=" + "$_bankName" + ", ");
     buffer.write("accountName=" + "$_accountName" + ", ");
-    buffer.write("user=" + (_user != null ? _user.toString() : "null") + ", ");
-    buffer.write(
-      "createdAt=" + (_createdAt != null ? _createdAt.format() : "null") + ", ",
-    );
-    buffer.write(
-      "updatedAt=" + (_updatedAt != null ? _updatedAt.format() : "null"),
-    );
+    buffer.write("user=" + (_user != null ? _user!.toString() : "null") + ", ");
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
-  PayoutDestination copyWith({
-    String? currency,
-    String? bankName,
-    String? accountName,
-    User? user,
-    List<Agreement>? agreements,
-  }) {
+  
+  PayoutDestination copyWith({String? currency, String? bankName, String? accountName, User? user, List<Agreement>? agreements}) {
     return PayoutDestination._internal(
       accountNumber: accountNumber,
       bankCode: bankCode,
@@ -258,16 +200,15 @@ class PayoutDestination extends amplify_core.Model {
       bankName: bankName ?? this.bankName,
       accountName: accountName ?? this.accountName,
       user: user ?? this.user,
-      agreements: agreements ?? this.agreements,
-    );
+      agreements: agreements ?? this.agreements);
   }
-
+  
   PayoutDestination copyWithModelFieldValues({
     ModelFieldValue<String>? currency,
     ModelFieldValue<String>? bankName,
     ModelFieldValue<String>? accountName,
     ModelFieldValue<User?>? user,
-    ModelFieldValue<List<Agreement>?>? agreements,
+    ModelFieldValue<List<Agreement>?>? agreements
   }) {
     return PayoutDestination._internal(
       accountNumber: accountNumber,
@@ -276,65 +217,41 @@ class PayoutDestination extends amplify_core.Model {
       bankName: bankName == null ? this.bankName : bankName.value,
       accountName: accountName == null ? this.accountName : accountName.value,
       user: user == null ? this.user : user.value,
-      agreements: agreements == null ? this.agreements : agreements.value,
+      agreements: agreements == null ? this.agreements : agreements.value
     );
   }
-
-  PayoutDestination.fromJson(Map<String, dynamic> json)
+  
+  PayoutDestination.fromJson(Map<String, dynamic> json)  
     : _accountNumber = json['accountNumber'],
       _bankCode = json['bankCode'],
       _currency = json['currency'],
       _bankName = json['bankName'],
       _accountName = json['accountName'],
       _user = json['user'] != null
-          ? json['user']['serializedData'] != null
-                ? User.fromJson(
-                    new Map<String, dynamic>.from(
-                      json['user']['serializedData'],
-                    ),
-                  )
-                : User.fromJson(new Map<String, dynamic>.from(json['user']))
-          : null,
-      _agreements = json['agreements'] is Map
-          ? (json['agreements']['items'] is List
-                ? (json['agreements']['items'] as List)
-                      .where((e) => e != null)
-                      .map(
-                        (e) => Agreement.fromJson(
-                          new Map<String, dynamic>.from(e),
-                        ),
-                      )
-                      .toList()
-                : null)
-          : (json['agreements'] is List
-                ? (json['agreements'] as List)
-                      .where((e) => e?['serializedData'] != null)
-                      .map(
-                        (e) => Agreement.fromJson(
-                          new Map<String, dynamic>.from(e?['serializedData']),
-                        ),
-                      )
-                      .toList()
-                : null),
-      _createdAt = json['createdAt'] != null
-          ? amplify_core.TemporalDateTime.fromString(json['createdAt'])
-          : null,
-      _updatedAt = json['updatedAt'] != null
-          ? amplify_core.TemporalDateTime.fromString(json['updatedAt'])
-          : null;
-
+        ? json['user']['serializedData'] != null
+          ? User.fromJson(new Map<String, dynamic>.from(json['user']['serializedData']))
+          : User.fromJson(new Map<String, dynamic>.from(json['user']))
+        : null,
+      _agreements = json['agreements']  is Map
+        ? (json['agreements']['items'] is List
+          ? (json['agreements']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['agreements'] is List
+          ? (json['agreements'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Agreement.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
+      _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-    'accountNumber': _accountNumber,
-    'bankCode': _bankCode,
-    'currency': _currency,
-    'bankName': _bankName,
-    'accountName': _accountName,
-    'user': _user?.toJson(),
-    'agreements': _agreements?.map((Agreement? e) => e?.toJson()).toList(),
-    'createdAt': _createdAt?.format(),
-    'updatedAt': _updatedAt?.format(),
+    'accountNumber': _accountNumber, 'bankCode': _bankCode, 'currency': _currency, 'bankName': _bankName, 'accountName': _accountName, 'user': _user?.toJson(), 'agreements': _agreements?.map((Agreement? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
-
+  
   Map<String, Object?> toMap() => {
     'accountNumber': _accountNumber,
     'bankCode': _bankCode,
@@ -344,160 +261,107 @@ class PayoutDestination extends amplify_core.Model {
     'user': _user,
     'agreements': _agreements,
     'createdAt': _createdAt,
-    'updatedAt': _updatedAt,
+    'updatedAt': _updatedAt
   };
 
-  static final amplify_core.QueryModelIdentifier<
-    PayoutDestinationModelIdentifier
-  >
-  MODEL_IDENTIFIER =
-      amplify_core.QueryModelIdentifier<PayoutDestinationModelIdentifier>();
-  static final ACCOUNTNUMBER = amplify_core.QueryField(
-    fieldName: "accountNumber",
-  );
+  static final amplify_core.QueryModelIdentifier<PayoutDestinationModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<PayoutDestinationModelIdentifier>();
+  static final ACCOUNTNUMBER = amplify_core.QueryField(fieldName: "accountNumber");
   static final BANKCODE = amplify_core.QueryField(fieldName: "bankCode");
   static final CURRENCY = amplify_core.QueryField(fieldName: "currency");
   static final BANKNAME = amplify_core.QueryField(fieldName: "bankName");
   static final ACCOUNTNAME = amplify_core.QueryField(fieldName: "accountName");
   static final USER = amplify_core.QueryField(
     fieldName: "user",
-    fieldType: amplify_core.ModelFieldType(
-      amplify_core.ModelFieldTypeEnum.model,
-      ofModelName: 'User',
-    ),
-  );
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'User'));
   static final AGREEMENTS = amplify_core.QueryField(
     fieldName: "agreements",
-    fieldType: amplify_core.ModelFieldType(
-      amplify_core.ModelFieldTypeEnum.model,
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    modelSchemaDefinition.name = "PayoutDestination";
+    modelSchemaDefinition.pluralName = "PayoutDestinations";
+    
+    modelSchemaDefinition.authRules = [
+      amplify_core.AuthRule(
+        authStrategy: amplify_core.AuthStrategy.PRIVATE,
+        operations: const [
+          amplify_core.ModelOperation.CREATE,
+          amplify_core.ModelOperation.READ,
+          amplify_core.ModelOperation.DELETE
+        ])
+    ];
+    
+    modelSchemaDefinition.indexes = [
+      amplify_core.ModelIndex(fields: const ["accountNumber", "bankCode"], name: null)
+    ];
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: PayoutDestination.ACCOUNTNUMBER,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: PayoutDestination.BANKCODE,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: PayoutDestination.CURRENCY,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: PayoutDestination.BANKNAME,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: PayoutDestination.ACCOUNTNAME,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.belongsTo(
+      key: PayoutDestination.USER,
+      isRequired: false,
+      targetNames: ['userId'],
+      ofModelName: 'User'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: PayoutDestination.AGREEMENTS,
+      isRequired: false,
       ofModelName: 'Agreement',
-    ),
-  );
-  static var schema = amplify_core.Model.defineSchema(
-    define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
-      modelSchemaDefinition.name = "PayoutDestination";
-      modelSchemaDefinition.pluralName = "PayoutDestinations";
-
-      modelSchemaDefinition.authRules = [
-        amplify_core.AuthRule(
-          authStrategy: amplify_core.AuthStrategy.PRIVATE,
-          operations: const [
-            amplify_core.ModelOperation.CREATE,
-            amplify_core.ModelOperation.READ,
-            amplify_core.ModelOperation.DELETE,
-          ],
-        ),
-      ];
-
-      modelSchemaDefinition.indexes = [
-        amplify_core.ModelIndex(
-          fields: const ["accountNumber", "bankCode"],
-          name: null,
-        ),
-      ];
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: PayoutDestination.ACCOUNTNUMBER,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: PayoutDestination.BANKCODE,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: PayoutDestination.CURRENCY,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: PayoutDestination.BANKNAME,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.field(
-          key: PayoutDestination.ACCOUNTNAME,
-          isRequired: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.belongsTo(
-          key: PayoutDestination.USER,
-          isRequired: false,
-          targetNames: ['userId'],
-          ofModelName: 'User',
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.hasMany(
-          key: PayoutDestination.AGREEMENTS,
-          isRequired: false,
-          ofModelName: 'Agreement',
-          associatedKey: Agreement.PAYOUTDESTINATION,
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-          fieldName: 'createdAt',
-          isRequired: false,
-          isReadOnly: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.dateTime,
-          ),
-        ),
-      );
-
-      modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-          fieldName: 'updatedAt',
-          isRequired: false,
-          isReadOnly: true,
-          ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.dateTime,
-          ),
-        ),
-      );
-    },
-  );
+      associatedKey: Agreement.PAYOUTDESTINATION
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+  });
 }
 
-class _PayoutDestinationModelType
-    extends amplify_core.ModelType<PayoutDestination> {
+class _PayoutDestinationModelType extends amplify_core.ModelType<PayoutDestination> {
   const _PayoutDestinationModelType();
-
+  
   @override
   PayoutDestination fromJson(Map<String, dynamic> jsonData) {
     return PayoutDestination.fromJson(jsonData);
   }
-
+  
   @override
   String modelName() {
     return 'PayoutDestination';
@@ -508,8 +372,7 @@ class _PayoutDestinationModelType
  * This is an auto generated class representing the model identifier
  * of [PayoutDestination] in your schema.
  */
-class PayoutDestinationModelIdentifier
-    implements amplify_core.ModelIdentifier<PayoutDestination> {
+class PayoutDestinationModelIdentifier implements amplify_core.ModelIdentifier<PayoutDestination> {
   final String accountNumber;
   final String bankCode;
 
@@ -519,36 +382,39 @@ class PayoutDestinationModelIdentifier
    */
   const PayoutDestinationModelIdentifier({
     required this.accountNumber,
-    required this.bankCode,
+    required this.bankCode});
+  
+  @override
+  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{
+    'accountNumber': accountNumber,
+    'bankCode': bankCode
   });
-
+  
   @override
-  Map<String, dynamic> serializeAsMap() =>
-      (<String, dynamic>{'accountNumber': accountNumber, 'bankCode': bankCode});
-
-  @override
-  List<Map<String, dynamic>> serializeAsList() => serializeAsMap().entries
-      .map((entry) => (<String, dynamic>{entry.key: entry.value}))
-      .toList();
-
+  List<Map<String, dynamic>> serializeAsList() => serializeAsMap()
+    .entries
+    .map((entry) => (<String, dynamic>{ entry.key: entry.value }))
+    .toList();
+  
   @override
   String serializeAsString() => serializeAsMap().values.join('#');
-
+  
   @override
-  String toString() =>
-      'PayoutDestinationModelIdentifier(accountNumber: $accountNumber, bankCode: $bankCode)';
-
+  String toString() => 'PayoutDestinationModelIdentifier(accountNumber: $accountNumber, bankCode: $bankCode)';
+  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-
+    
     return other is PayoutDestinationModelIdentifier &&
-        accountNumber == other.accountNumber &&
-        bankCode == other.bankCode;
+      accountNumber == other.accountNumber &&
+      bankCode == other.bankCode;
   }
-
+  
   @override
-  int get hashCode => accountNumber.hashCode ^ bankCode.hashCode;
+  int get hashCode =>
+    accountNumber.hashCode ^
+    bankCode.hashCode;
 }
