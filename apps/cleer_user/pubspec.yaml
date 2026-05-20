@@ -51,7 +51,11 @@ dependencies:
   hooks_riverpod: ^3.1.0
   flutter_hooks: ^0.21.3+1
   riverpod_annotation: ^4.0.0
-  phosphor_flutter: ^2.1.0
+#  phosphor_flutter: ^2.1.0
+  phosphor_flutter:
+    git:
+      url: https://github.com/subarnaPdl/phosphor_icons.git
+      ref: main
   amplify_flutter: ^2.8.0
   amplify_auth_cognito: ^2.8.1
   amplify_api: ^2.8.0

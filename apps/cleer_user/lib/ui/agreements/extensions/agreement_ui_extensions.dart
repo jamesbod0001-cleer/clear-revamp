@@ -3,8 +3,11 @@ import 'package:cleer_core/models/agreement/agreement_enums.dart';
 import 'package:cleer_core/models/milestone/milestone.dart';
 import 'package:cleer_core/models/user/user.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart'; // For context.color and context.typo
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 extension AgreementUIExtensions on Agreement {
   Color getStatusPillColor(BuildContext context) {
@@ -114,12 +117,23 @@ extension AgreementUIExtensions on Agreement {
           style: context.typo.labelSmall.copyWith(color: context.color.warning),
         );
       } else {
-        return Text(
-          l10n.actionRequired,
-          style: context.typo.bodyLink.copyWith(
-            color: context.color.blue700,
-            decorationColor: context.color.blue700,
-          ),
+        return Row(
+          mainAxisSize: .min,
+          children: [
+            Text(
+              l10n.actionRequired,
+              style: context.typo.bodyLink.copyWith(
+                color: context.color.blue700,
+                decorationColor: context.color.blue700,
+              ),
+            ),
+            Gap(Dimens.spacing.sp4),
+            PhosphorIcon(
+              PhosphorIcons.arrowRight(.bold),
+              size: Dimens.size.s16,
+              color: context.color.blue700,
+            ),
+          ],
         );
       }
     }
