@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
@@ -15,7 +13,6 @@ import 'package:cleer/ui/home/home/widgets/secured_funds_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -62,90 +59,84 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   GestureDetector(
                     onTap: () => HelpSupportRoute().push(context),
-                    child: LiquidGlass.withOwnLayer(
-                      glassContainsChild: true,
-                      settings: LiquidGlassSettings(
-                        saturation: 1,
-                        blur: 20,
-                        thickness: 12,
-                        lightIntensity: .8,
-                        lightAngle: pi / 4,
-                        refractiveIndex: 1.1,
-                        glassColor: context.color.blue800.withAlpha(30),
-                      ),
-                      shape: LiquidRoundedRectangle(
-                        borderRadius: Dimens.radius.r48,
-                      ),
-                      child: SizedBox(
-                        width: Dimens.size.s70,
-                        height: Dimens.size.s28,
-                        child: Padding(
-                          padding: .symmetric(
-                            horizontal: Dimens.padding.p10,
-                            vertical: Dimens.padding.p6,
-                          ),
-                          child: Row(
-                            children: [
-                              PhosphorIcon(
-                                PhosphorIcons.headset(.duotone),
-                                color: context.color.blue100,
-                                size: Dimens.size.s16,
-                              ),
-                              Gap(Dimens.spacing.sp4),
-                              Text(
-                                l10n.help,
-                                style: context.typo.bodyMedium.copyWith(
-                                  height: 1,
-                                  color: context.color.blue100,
+                    child: Assets.images.helpButton.image(
+                      height: Dimens.size.s28,
+                      frameBuilder:
+                          (context, frameChild, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded || frame != null) {
+                              return frameChild;
+                            }
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: .circular(Dimens.radius.r40),
+                                color: context.color.blue800.withValues(
+                                  alpha: .3,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
+                              padding: .symmetric(
+                                horizontal: Dimens.padding.p10,
+                                vertical: Dimens.padding.p6,
+                              ),
+                              child: Row(
+                                children: [
+                                  PhosphorIcon(
+                                    PhosphorIcons.headset(.duotone),
+                                    color: context.color.blue100,
+                                    size: Dimens.size.s16,
+                                  ),
+                                  Gap(Dimens.spacing.sp4),
+                                  Text(
+                                    l10n.help,
+                                    style: context.typo.bodyMedium.copyWith(
+                                      height: 1,
+                                      color: context.color.blue100,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                     ),
                   ),
                   Gap(Dimens.spacing.sp12),
-                  LiquidGlass.withOwnLayer(
-                    glassContainsChild: true,
-                    settings: LiquidGlassSettings(
-                      saturation: 1,
-                      blur: 20,
-                      thickness: 12,
-                      lightIntensity: .8,
-                      lightAngle: pi / 4,
-                      refractiveIndex: 1.1,
-                      glassColor: context.color.blue800.withAlpha(30),
-                    ),
-                    shape: LiquidRoundedRectangle(
-                      borderRadius: Dimens.radius.r48,
-                    ),
-                    child: SizedBox(
-                      width: Dimens.size.s70,
+                  GestureDetector(
+                    child: Assets.images.activityButton.image(
                       height: Dimens.size.s28,
-                      child: Padding(
-                        padding: .symmetric(
-                          horizontal: Dimens.padding.p10,
-                          vertical: Dimens.padding.p6,
-                        ),
-                        child: Row(
-                          children: [
-                            PhosphorIcon(
-                              PhosphorIcons.lineSegments(.duotone),
-                              color: context.color.blue100,
-                              size: Dimens.size.s16,
-                            ),
-                            Gap(Dimens.spacing.sp4),
-                            Text(
-                              l10n.logs,
-                              style: context.typo.bodyMedium.copyWith(
-                                height: 1,
-                                color: context.color.blue100,
+                      frameBuilder:
+                          (context, frameChild, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded || frame != null) {
+                              return frameChild;
+                            }
+                            return Container(
+                              decoration: BoxDecoration(
+                                borderRadius: .circular(Dimens.radius.r40),
+                                color: context.color.blue800.withValues(
+                                  alpha: .3,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                              padding: .symmetric(
+                                horizontal: Dimens.padding.p10,
+                                vertical: Dimens.padding.p6,
+                              ),
+                              child: Row(
+                                children: [
+                                  PhosphorIcon(
+                                    PhosphorIcons.lineSegments(.duotone),
+                                    color: context.color.blue100,
+                                    size: Dimens.size.s16,
+                                  ),
+                                  Gap(Dimens.spacing.sp4),
+                                  Text(
+                                    l10n.activity,
+                                    style: context.typo.bodyMedium.copyWith(
+                                      height: 1,
+                                      color: context.color.blue100,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                     ),
                   ),
                 ],

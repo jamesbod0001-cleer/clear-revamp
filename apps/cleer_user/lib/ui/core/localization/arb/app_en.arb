@@ -170,7 +170,7 @@
   "noOngoingAgreementsYet": "No ongoing agreement yet.",
   "totalFundsSecured": "Total Funds Secured",
   "help": "Help",
-  "logs": "Logs",
+  "activity": "Activity",
   "activeAgreements": "Active Agreements",
   "needsYourAction": "Needs your Action",
   "startATransaction": "Start a Transaction",

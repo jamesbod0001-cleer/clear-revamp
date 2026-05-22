@@ -40,9 +40,7 @@ class DeclineAgreementBottomSheet extends ConsumerWidget {
           textAlign: .center,
         ),
         Gap(Dimens.spacing.sp24),
-        PrimaryButton(
-          backgroundColor: context.color.error,
-          foregroundColor: context.color.background,
+        PrimaryButton.error(
           onPressed: onConfirm,
           child: Text(l10n.yesDecline),
         ),

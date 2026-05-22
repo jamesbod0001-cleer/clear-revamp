@@ -85,9 +85,7 @@ class RemoveBankAccountBottomSheet extends HookConsumerWidget {
               showRemove: false,
             ),
             Gap(Dimens.spacing.sp24),
-            PrimaryButton(
-              backgroundColor: context.color.error,
-              foregroundColor: context.color.background,
+            PrimaryButton.error(
               onPressed: () =>
                   deletePayoutDestinationCommand.run(payoutDestination),
               child: Text(l10n.removeAccount),

@@ -1,79 +1,82 @@
+import 'package:cleer_ui/generated/assets.gen.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+
+
+/// Defines the visual variant styles for the primary application button.
+enum PrimaryButtonVariant { primary, error }
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({
+  const PrimaryButton({super.key, required this.onPressed, required this.child})
+    : variant = PrimaryButtonVariant.primary;
+
+  /// Named constructor specifically tailored for dangerous or error actions.
+  const PrimaryButton.error({
     super.key,
     required this.onPressed,
     required this.child,
-    this.foregroundColor,
-    this.backgroundColor,
-  });
+  }) : variant = PrimaryButtonVariant.error;
 
   final Widget child;
   final VoidCallback? onPressed;
-
-  final Color? foregroundColor;
-  final Color? backgroundColor;
+  final PrimaryButtonVariant variant;
 
   @override
   Widget build(BuildContext context) {
+    final isError = variant == PrimaryButtonVariant.error;
+
+    final resolvedFallbackBg = isError
+        ? context.color.error
+        : context.color.primary;
+    final resolvedForegroundColor = isError
+        ? context.color.background
+        : context.color.grey1000;
+
+    final resolvedAssetPath = isError
+        ? Assets.images.liquidGlassButtonError
+        : Assets.images.liquidGlassButtonPrimary;
+
     return FilledButton(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
-        foregroundColor: foregroundColor ?? context.color.grey1000,
-        backgroundColor: backgroundColor ?? context.color.primary,
+        foregroundColor: resolvedForegroundColor,
+        backgroundColor: Colors.transparent,
+        disabledForegroundColor: context.color.grey500,
+        disabledBackgroundColor: context.color.grey200,
         backgroundBuilder: (context, states, internalChild) {
           final bool isDisabled = states.contains(WidgetState.disabled);
-          final bool isPressed = states.contains(WidgetState.pressed);
-
           return SizedBox.fromSize(
             size: Dimens.mobile.buttonMinimumSize,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
+            child: Container(
+              clipBehavior: .antiAlias,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Dimens.radius.r8),
-                color: isDisabled
-                    ? context.color.grey200
-                    : backgroundColor ?? context.color.primary,
-                boxShadow: isDisabled || isPressed
-                    ? []
-                    : [
-                        BoxShadow(
-                          offset: Offset(0, 0),
-                          blurRadius: 2,
-                          spreadRadius: 0,
-                          color: context.color.green500.withValues(alpha: .10),
-                        ),
-                        BoxShadow(
-                          offset: Offset(0, 1),
-                          blurRadius: 8,
-                          spreadRadius: 0,
-                          color: context.color.green500.withValues(alpha: .12),
-                        ),
-                      ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(Dimens.radius.r8),
-                child: Stack(
-                  alignment: .center,
-                  children: [
-                    if (!isDisabled)
-                      LiquidGlass.withOwnLayer(
-                        settings: const LiquidGlassSettings(
-                          saturation: 1,
-                          blur: 2,
-                        ),
-                        shape: LiquidRoundedRectangle(
-                          borderRadius: Dimens.radius.r8,
-                        ),
-                        child: const SizedBox.expand(),
-                      ),
-                    ?internalChild,
-                  ],
-                ),
+
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (isDisabled)
+                    Container(color: context.color.grey200)
+                  else
+                    resolvedAssetPath.image(
+                      fit: .none,
+                      width: double.infinity,
+                      height: double.infinity,
+                      frameBuilder:
+                          (context, frameChild, frame, wasSynchronouslyLoaded) {
+                            if (wasSynchronouslyLoaded || frame != null) {
+                              return frameChild;
+                            }
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              color: resolvedFallbackBg,
+                            );
+                          },
+                    ),
+                  ?internalChild,
+                ],
               ),
             ),
           );
@@ -83,3 +86,4 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
+
