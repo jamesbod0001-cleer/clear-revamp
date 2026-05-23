@@ -28,7 +28,6 @@ import 'package:cleer_api/src/repositories/api/mixins/amplify_api_repository_mix
 class AmplifyFlutterwaveRepositoryImpl
     with AmplifyApiRepositoryMixin
     implements FlutterwaveRepository {
-
   final AmplifyFlutterwaveProxyServiceClient _proxyServiceClient;
 
   AmplifyFlutterwaveRepositoryImpl({
@@ -43,11 +42,15 @@ class AmplifyFlutterwaveRepositoryImpl
   // ==========================================
 
   @override
-  Future<ResultDart<List<Bank>, DataFailure>> getBanks(CountryCode countryCode) async {
+  Future<ResultDart<List<Bank>, DataFailure>> getBanks(
+    CountryCode countryCode,
+  ) async {
     return await performDataOperation<List<Bank>>(
       operation: () async {
         log.info('Retrieving banks for country code: ${countryCode.name}');
-        final response = await _proxyServiceClient.retrieveBanks(countryCode.name);
+        final response = await _proxyServiceClient.retrieveBanks(
+          countryCode.name,
+        );
         return response.data.map((dto) => dto.toDomain()).toList();
       },
       operationName: 'GetBanks',
@@ -56,10 +59,14 @@ class AmplifyFlutterwaveRepositoryImpl
   }
 
   @override
-  Future<ResultDart<String, DataFailure>> resolveAccount(ResolveAccountParams params) async {
+  Future<ResultDart<String, DataFailure>> resolveAccount(
+    ResolveAccountParams params,
+  ) async {
     return await performDataOperation<String>(
       operation: () async {
-        log.info('Resolving account for bank code: ${params.bankCode} and account number: ${params.accountNumber}');
+        log.info(
+          'Resolving account for bank code: ${params.bankCode} and account number: ${params.accountNumber}',
+        );
         final response = await _proxyServiceClient.resolveAccount(
           ResolveAccountRequest(
             account: AccountObject(
@@ -121,7 +128,9 @@ class AmplifyFlutterwaveRepositoryImpl
   // ==========================================
 
   @override
-  Future<ResultDart<PaymentMethod, DataFailure>> getPaymentMethod(String id) async {
+  Future<ResultDart<PaymentMethod, DataFailure>> getPaymentMethod(
+    String id,
+  ) async {
     return await performDataOperation<PaymentMethod>(
       operation: () async {
         log.info('Retrieving payment method with id: $id');
@@ -135,32 +144,60 @@ class AmplifyFlutterwaveRepositoryImpl
 
   @override
   Future<ResultDart<PaymentMethod, DataFailure>> createPaymentMethod(
-      CreatePaymentMethodParams params,
-      ) async {
+    CreatePaymentMethodParams params,
+  ) async {
     return await performDataOperation<PaymentMethod>(
       operation: () async {
         log.info('Creating payment method with type: ${params.runtimeType}');
 
         final CreatePaymentMethodRequest request = await params.when(
-          card: (cardNumber, expiryMonth, expiryYear, cvv, cardHolderName, customerId, meta) async {
-            // Local Encryption: Card details never hit our backend in plaintext.
-            final String nonce = PaymentSecurityUtils.generateNonce();
-            final String encryptionKey = Env.flutterwaveEncryptionKey;
+          card:
+              (
+                cardNumber,
+                expiryMonth,
+                expiryYear,
+                cvv,
+                cardHolderName,
+                customerId,
+                meta,
+              ) async {
+                // Local Encryption: Card details never hit our backend in plaintext.
+                final String nonce = PaymentSecurityUtils.generateNonce();
+                final String encryptionKey = Env.flutterwaveEncryptionKey;
 
-            return CreatePaymentMethodRequest(
-              type: PaymentMethodType.card.snakeCase,
-              card: CardRequestObject(
-                encryptedCardNumber: await PaymentSecurityUtils.encryptAESGCM(cardNumber, encryptionKey, nonce),
-                encryptedExpiryMonth: await PaymentSecurityUtils.encryptAESGCM(expiryMonth, encryptionKey, nonce),
-                encryptedExpiryYear: await PaymentSecurityUtils.encryptAESGCM(expiryYear, encryptionKey, nonce),
-                encryptedCvv: await PaymentSecurityUtils.encryptAESGCM(cvv, encryptionKey, nonce),
-                nonce: nonce,
-                cof: COFObject(enabled: true),
-              ),
-              customerId: customerId,
-              meta: meta,
-            );
-          },
+                return CreatePaymentMethodRequest(
+                  type: PaymentMethodType.card.snakeCase,
+                  card: CardRequestObject(
+                    encryptedCardNumber:
+                        await PaymentSecurityUtils.encryptAESGCM(
+                          cardNumber,
+                          encryptionKey,
+                          nonce,
+                        ),
+                    encryptedExpiryMonth:
+                        await PaymentSecurityUtils.encryptAESGCM(
+                          expiryMonth,
+                          encryptionKey,
+                          nonce,
+                        ),
+                    encryptedExpiryYear:
+                        await PaymentSecurityUtils.encryptAESGCM(
+                          expiryYear,
+                          encryptionKey,
+                          nonce,
+                        ),
+                    encryptedCvv: await PaymentSecurityUtils.encryptAESGCM(
+                      cvv,
+                      encryptionKey,
+                      nonce,
+                    ),
+                    nonce: nonce,
+                    cof: COFObject(enabled: true),
+                  ),
+                  customerId: customerId,
+                  meta: meta,
+                );
+              },
           opay: (customerId, meta) async {
             return CreatePaymentMethodRequest(
               type: PaymentMethodType.opay.snakeCase,
@@ -191,41 +228,61 @@ class AmplifyFlutterwaveRepositoryImpl
 
   @override
   Future<ResultDart<VirtualAccount, DataFailure>> createVirtualAccount(
-      CreateVirtualAccountParams params,
-      ) async {
+    CreateVirtualAccountParams params,
+  ) async {
     return await performDataOperation<VirtualAccount>(
       operation: () async {
         log.info('Creating virtual account');
 
         final CreateVirtualAccountRequest request = await params.when(
-          dynamic: (reference, customerId, amount, expiry, narration, merchantVatAmount, meta) async {
-            return CreateVirtualAccountRequest(
-              reference: reference,
-              customerId: customerId,
-              amount: amount,
-              accountType: VirtualAccountType.dynamic.name,
-              expiry: expiry,
-              narration: narration,
-              merchantVatAmount: merchantVatAmount,
-              meta: meta,
-            );
-          },
-          static: (reference, customerId, bvn, nin, narration, merchantVatAmount, meta) {
-            return CreateVirtualAccountRequest(
-              reference: reference,
-              customerId: customerId,
-              amount: 0, // Static accounts don't have a fixed amount
-              accountType: VirtualAccountType.static.name,
-              narration: narration,
-              merchantVatAmount: merchantVatAmount,
-              meta: meta,
-              bvn: bvn,
-              nin: nin,
-            );
-          },
+          dynamic:
+              (
+                reference,
+                customerId,
+                amount,
+                expiry,
+                narration,
+                merchantVatAmount,
+                meta,
+              ) async {
+                return CreateVirtualAccountRequest(
+                  reference: reference,
+                  customerId: customerId,
+                  amount: amount,
+                  accountType: VirtualAccountType.dynamic.name,
+                  expiry: expiry,
+                  narration: narration,
+                  merchantVatAmount: merchantVatAmount,
+                  meta: meta,
+                );
+              },
+          static:
+              (
+                reference,
+                customerId,
+                bvn,
+                nin,
+                narration,
+                merchantVatAmount,
+                meta,
+              ) {
+                return CreateVirtualAccountRequest(
+                  reference: reference,
+                  customerId: customerId,
+                  amount: 0, // Static accounts don't have a fixed amount
+                  accountType: VirtualAccountType.static.name,
+                  narration: narration,
+                  merchantVatAmount: merchantVatAmount,
+                  meta: meta,
+                  bvn: bvn,
+                  nin: nin,
+                );
+              },
         );
 
-        final response = await _proxyServiceClient.createVirtualAccount(request);
+        final response = await _proxyServiceClient.createVirtualAccount(
+          request,
+        );
         return response.data.toDomain();
       },
       operationName: 'CreateVirtualAccount',
@@ -237,16 +294,20 @@ class AmplifyFlutterwaveRepositoryImpl
   // ==========================================
 
   @override
-  Future<ResultDart<Charge, DataFailure>> createCharge(CreateChargeParams params) async {
+  Future<ResultDart<Charge, DataFailure>> createCharge(
+    CreateChargeParams params,
+  ) async {
     return await performDataOperation<Charge>(
       operation: () async {
         log.info('Creating charge for Agreement ID: ${params.agreementId}');
 
+        log.info(params.redirectUrl.toString());
         final request = CreateChargeRequest(
           amount: params.amount,
           reference: ReferenceGenerator.generate(params.agreementId),
           customerId: params.customerId,
           paymentMethodId: params.paymentMethodId,
+          redirectUrl: params.redirectUrl,
           meta: {'agreement_id': params.agreementId, ...params.meta ?? {}},
         );
 
@@ -272,7 +333,9 @@ class AmplifyFlutterwaveRepositoryImpl
   }
 
   @override
-  Future<ResultDart<List<Charge>, DataFailure>> listCharges(ListChargesParams params) async {
+  Future<ResultDart<List<Charge>, DataFailure>> listCharges(
+    ListChargesParams params,
+  ) async {
     return await performDataOperation<List<Charge>>(
       operation: () async {
         log.info('Retrieving charges list');

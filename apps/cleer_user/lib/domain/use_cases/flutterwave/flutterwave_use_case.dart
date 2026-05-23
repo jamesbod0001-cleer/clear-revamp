@@ -5,8 +5,10 @@ import 'package:cleer_core/models/payment_method/payment_method.dart';
 import 'package:cleer_core/models/virtual_account/virtual_account.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer_core/utils/reference_generator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:universal_html/html.dart' as html;
 
 part 'flutterwave_use_case.g.dart';
 
@@ -159,6 +161,15 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
   }
 
+  String _getPaymentRedirectUrl() {
+    if (kIsWeb) {
+      return '${html.window.location.origin}/close_payment.html';
+    }
+
+    // --- FOR MOBILE (iOS/Android) ---
+    return '${AppConfig.baseUrl}/close_payment.html';
+  }
+
   Future<ResultDart<Charge, DataFailure>> createCharge({
     required Agreement agreement,
     required PaymentMethod paymentMethod,
@@ -176,6 +187,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
         amount: agreement.amount,
         customerId: user.flutterwaveCustomerId,
         paymentMethodId: paymentMethod.id,
+        redirectUrl: _getPaymentRedirectUrl(),
       ),
     );
 

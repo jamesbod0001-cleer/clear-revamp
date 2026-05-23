@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Processing Payment...</title>
+    <script type="text/javascript">
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status') || 'cancelled';
+
+        // Method 1: Post Message (For standard desktop browsers)
+        if (window.opener) {
+            window.opener.postMessage({ type: "payment_status", status: status }, "*");
+        }
+
+        // Method 2: Local Storage Fallback (For mobile web / strict browsers)
+        // We add a timestamp so the app knows it's a fresh event
+        const payload = JSON.stringify({ status: status, time: Date.now() });
+        localStorage.setItem("flutterwave_payment_status", payload);
+
+        // Clean up after half a second
+        setTimeout(() => localStorage.removeItem("flutterwave_payment_status"), 500);
+
+        window.close();
+    </script>
+</head>
+<body>
+<p>Processing payment status. Returning to Cleer...</p>
+</body>
+</html>

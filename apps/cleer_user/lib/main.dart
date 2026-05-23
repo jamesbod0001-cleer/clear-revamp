@@ -1,7 +1,7 @@
 import 'package:cleer/app.dart';
 import 'package:cleer/config/amplify_setup.dart';
 import 'package:cleer_api/cleer_api.dart';
-import 'package:flutter/foundation.dart';
+import 'package:cleer_core/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -30,10 +30,7 @@ Future<void> main() async {
     options.replay.sessionSampleRate = 0.1;
     options.replay.onErrorSampleRate = 1.0;
     options.attachScreenshot = true;
-    options.environment = const String.fromEnvironment(
-      'APP_ENV',
-      defaultValue: kDebugMode ? 'development' : 'production',
-    );
+    options.environment = AppConfig.environment;
   });
   runApp(
     SentryWidget(

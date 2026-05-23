@@ -1,11 +1,10 @@
-// amplify/functions/flutterwave-proxy/handler.ts
 import type { Schema } from "../../data/resource";
 import { env } from '$amplify/env/flutterwave-proxy';
 import { Logger } from "@aws-lambda-powertools/logger";
 
 const logger = new Logger({ logLevel: "INFO", serviceName: "flutterwave-proxy" });
 
-// Cold start cache (Replaces your isConfigured pattern for tokens)
+// Cold start cache
 let cachedToken: string | null = null;
 let tokenExpiryTime: number = 0;
 
@@ -15,10 +14,10 @@ export const handler: Schema["flutterwaveProxy"]["functionHandler"] = async (eve
     logger.info("--- PROXY INVOCATION START ---", { method, endpoint });
 
     try {
-        // 1. Get token (using cached if warm)
+        // Get token (using cached if warm)
         const token = await getAccessToken();
 
-        // 2. Fire request
+        // Fire request
         const responseData = await proxyRequest(method, endpoint, token, payload, headers);
 
         logger.info("Proxy request successful");
@@ -44,7 +43,7 @@ async function getAccessToken(): Promise<string> {
     const now = Date.now();
 
     if (cachedToken && now < tokenExpiryTime) {
-        logger.debug("Using cached Flutterwave Token.");
+        logger.info("Using cached Flutterwave Token.");
         return cachedToken;
     }
 
@@ -117,11 +116,10 @@ async function proxyRequest(
 
     const response = await fetch(url, options);
     const data = await response.json();
-
     // ADVANCED ERROR PARSING: Pass the specific error code back to AppSync
-    if (!response.ok || data.status === 'error') {
-        const fwCode = data?.data?.code || data?.code || 'FW_UNKNOWN_ERROR';
-        const fwMessage = data?.message || 'Flutterwave transaction failed';
+    if (!response.ok || data.status === 'failed') {
+        const fwCode = data?.error.code || 'FW_UNKNOWN_ERROR';
+        const fwMessage = data?.error.message || 'Flutterwave transaction failed';
 
         logger.warn("Flutterwave returned an error response", { code: fwCode, message: fwMessage });
 

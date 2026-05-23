@@ -1,6 +1,4 @@
-import 'package:cleer_core/models/agreement/agreement_enums.dart';
-import 'package:cleer_core/models/payout_destination/payout_destination.dart';
-import 'package:cleer_core/models/user/user.dart';
+import 'package:cleer_core/cleer_core.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'agreement.freezed.dart';
@@ -29,6 +27,5 @@ abstract class Agreement with _$Agreement {
     DateTime? createdAt,
   }) = _Agreement;
 
-  /// TODO: Change this to the live link when we are going live
-  String get shareLink => 'https://staging.cleerpayments.com/a/$shortCode';
+  String get shareLink => '${AppConfig.baseUrl}/a/$shortCode';
 }

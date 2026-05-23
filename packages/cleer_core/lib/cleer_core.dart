@@ -2,6 +2,8 @@ library;
 
 export 'src/cleer_core_base.dart';
 
+export 'config/app_config.dart';
+
 // --- UTILS & HELPERS ---
 export 'utils/validators/validators.dart';
 export 'utils/constants.dart';
