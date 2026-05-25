@@ -1,5 +1,5 @@
 import 'package:cleer/config/assets.gen.dart';
-import 'package:cleer_core/models/agreement/agreement.dart';
+import 'package:cleer/ui/home/home/widgets/escrow_summary_card.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/action_alerts/widgets/action_alerts_carousel.dart';
@@ -7,9 +7,7 @@ import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
-import 'package:cleer/ui/home/home/widgets/agreements_overview_section.dart';
 import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
-import 'package:cleer/ui/home/home/widgets/secured_funds_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,7 +22,15 @@ class HomeScreen extends ConsumerWidget {
 
     final ongoingState = ref.watch(userOngoingAgreementsProvider);
     final needsActionList = ref.watch(needsActionAgreementsProvider);
-    final readyForReleaseList = ref.watch(awaitingOtherPartyAgreementsProvider);
+    final awaitingOtherPartyList = ref.watch(
+      awaitingOtherPartyAgreementsProvider,
+    );
+    final protectedAmountState = ref.watch(currentlyProtectedAmountProvider);
+    final protectedAmount = protectedAmountState.value ?? 0.0;
+
+    final isSummaryLoading =
+        (ongoingState.isLoading && !ongoingState.isReloading) ||
+        (protectedAmountState.isLoading && !protectedAmountState.isReloading);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,6 +44,7 @@ class HomeScreen extends ConsumerWidget {
             vertical: Dimens.padding.p22,
           ),
           decoration: BoxDecoration(
+            color: context.color.secondary,
             image: DecorationImage(
               image: Assets.images.appBarBackground.provider(),
               fit: BoxFit.cover,
@@ -156,7 +163,13 @@ class HomeScreen extends ConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   Gap(Dimens.spacing.sp20),
-                  SecuredFundsOverview(totalFunds: '₦0', trustScore: 100),
+                  EscrowSummaryCard(
+                    currentlyProtectedAmount: protectedAmount,
+                    trustScore: 100,
+                    needsActionCount: needsActionList.length,
+                    awaitingOtherPartyCount: awaitingOtherPartyList.length,
+                    isLoading: isSummaryLoading,
+                  ),
                 ]),
               ),
             ),
@@ -170,44 +183,6 @@ class HomeScreen extends ConsumerWidget {
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   Gap(Dimens.spacing.sp40),
-                  ongoingState.when(
-                    skipLoadingOnReload: true,
-                    data: (List<Agreement> ongoingAgreements) {
-                      return Column(
-                        mainAxisSize: .min,
-                        children: [
-                          AgreementsOverviewSection(
-                            isOngoingEmpty: ongoingAgreements.isEmpty,
-                            needsActionCount: needsActionList.length,
-                            awaitingOtherPartyCount: readyForReleaseList.length,
-                          ),
-                          Gap(Dimens.spacing.sp40),
-                        ],
-                      );
-                    },
-
-                    /// TODO: Add error state here
-                    error: (Object error, StackTrace stackTrace) =>
-                        SizedBox.shrink(),
-                    loading: () => Column(
-                      mainAxisSize: .min,
-                      children: [
-                        const Center(child: CircularProgressIndicator()),
-                        Gap(Dimens.spacing.sp40),
-                      ],
-                    ),
-                  ),
-                  // if (isLoading) ...[
-                  //   const Center(child: CircularProgressIndicator()),
-                  //   Gap(Dimens.spacing.sp40),
-                  // ] else ...[
-                  //   AgreementsOverviewSection(
-                  //     isOngoingEmpty: isOngoingEmpty,
-                  //     needsActionCount: needsActionList.length,
-                  //     awaitingOtherPartyCount: readyForReleaseList.length,
-                  //   ),
-                  //   Gap(Dimens.spacing.sp40),
-                  // ],
                   QuickActionsSection(),
                   Gap(Dimens.spacing.sp40),
                   Row(

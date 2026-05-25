@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
@@ -194,4 +195,33 @@ List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
     return (isPending && amIInitiator) ||
         (agreement.status == .readyForRelease && isRecipient);
   }).toList();
+}
+
+@riverpod
+Future<double> currentlyProtectedAmount(Ref ref) async {
+  final agreements = await ref.watch(userOngoingAgreementsProvider.future);
+
+  double totalProtected = 0.0;
+
+  for (final agreement in agreements) {
+    if (agreement.status == AgreementStatus.awaitingFunding) {
+      continue;
+    }
+
+    if (agreement.disbursementType == .milestones) {
+      final milestones = await ref.watch(
+        agreementMilestonesProvider(agreement.id!).future,
+      );
+
+      for (final milestone in milestones) {
+        if (milestone.status != .released) {
+          totalProtected += milestone.amount;
+        }
+      }
+    } else {
+      totalProtected += agreement.amount;
+    }
+  }
+
+  return totalProtected;
 }
