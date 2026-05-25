@@ -2,6 +2,7 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer_core/models/update_password_result/update_password_result.dart';
 import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer_ui/utils/snack_bar_helper.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'change_password_view_model.g.dart';
@@ -33,6 +34,7 @@ class ChangePasswordViewModel extends _$ChangePasswordViewModel {
       return await result.fold(
         (result) {
           _log.info('Password changed successfully for user');
+          SnackBarHelper.showSuccess('Password updated successfully');
           return result;
         },
         (onFailure) {
