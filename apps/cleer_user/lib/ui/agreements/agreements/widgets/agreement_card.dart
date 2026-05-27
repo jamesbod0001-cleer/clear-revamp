@@ -58,7 +58,7 @@ class AgreementCard extends ConsumerWidget {
               Ink(
                 decoration: BoxDecoration(
                   shape: .circle,
-                  color: context.color.grayComponent,
+                  color: context.color.infoLight,
                 ),
                 child: SizedBox.square(
                   dimension: Dimens.size.s48,

@@ -575,5 +575,7 @@
   "addEmailAddress": "Add Email Address",
   "usedToSecureYourAccountAndRecoverAccess": "Used to secure your account and recover access",
   "continueText": "Continue",
-  "verifyEmail": "Verify Email"
+  "verifyEmail": "Verify Email",
+  "activityTimeline": "Activity Timeline",
+  "noRecentActivityYet": "No recent activity yet"
 }

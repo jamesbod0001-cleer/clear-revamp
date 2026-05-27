@@ -14,6 +14,7 @@ import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
 import {previewAgreement} from "./functions/preview-agreement/resource";
 import {logAgreementStatus} from "./functions/log-agreement-status/resource";
 import {logMilestoneStatus} from "./functions/log-milestone-status/resource";
+import {generateAgreementActivity} from "./functions/generate-agreement-activity/resource";
 
 const backend = defineBackend({
     auth,
@@ -23,6 +24,7 @@ const backend = defineBackend({
     logMilestoneStatus,
     flutterwaveWebhook,
     previewAgreement,
+    generateAgreementActivity,
 });
 
 // --- Auth Overrides ---
@@ -85,5 +87,17 @@ backend.logMilestoneStatus.resources.lambda.addEventSource(
     new DynamoEventSource(milestoneTable, {
         startingPosition: StartingPosition.LATEST,
         filters: [statusChangeFilter],
+    })
+);
+
+
+const activityTriggerFilter = FilterCriteria.filter({
+    eventName: FilterRule.or('INSERT', 'MODIFY'),
+});
+
+backend.generateAgreementActivity.resources.lambda.addEventSource(
+    new DynamoEventSource(agreementTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [activityTriggerFilter], // Wakes up for Inserts/Modifies
     })
 );
