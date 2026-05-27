@@ -31,7 +31,7 @@ melos:
 
     # --- Amplify Gen 2: Configuration & Pulling ---
     amplify:sandbox:
-      run: npx ampx sandbox --outputs-format dart --outputs-out-dir apps/cleer_user/lib --profile cleer
+      run: npx ampx sandbox --outputs-format dart --outputs-out-dir apps/cleer_user/lib --profile cleer --stream-function-logs
       description: Start local sandbox and output config directly to the user app.
 
     amplify:pull:develop:

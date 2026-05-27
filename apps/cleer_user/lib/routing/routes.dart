@@ -1,3 +1,4 @@
+import 'package:cleer/ui/home/activity_timeline/widgets/activity_timeline_screen.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/accept_agreement_screen.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/agreement_details_screen.dart';
@@ -161,7 +162,14 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
 @TypedStatefulShellRoute<ShellRouteData>(
   branches: [
     TypedStatefulShellBranch<HomeBranch>(
-      routes: [TypedGoRoute<HomeRoute>(path: '/home')],
+      routes: [
+        TypedGoRoute<HomeRoute>(
+          path: '/home',
+          routes: [
+            TypedGoRoute<ActivityTimelineRoute>(path: 'activity_timeline'),
+          ],
+        ),
+      ],
     ),
     TypedStatefulShellBranch<AgreementsBranch>(
       routes: [
@@ -216,6 +224,17 @@ class HomeBranch extends StatefulShellBranchData {
 class HomeRoute extends GoRouteData with $HomeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) => HomeScreen();
+}
+
+class ActivityTimelineRoute extends GoRouteData with $ActivityTimelineRoute {
+  static final GlobalKey<NavigatorState> $parentNavigatorKey =
+      cleerNavigatorKey;
+
+  const ActivityTimelineRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ActivityTimelineScreen();
 }
 
 class AgreementsBranch extends StatefulShellBranchData {

@@ -1,12 +1,11 @@
 import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/domain/providers/activity/activity_provider.dart';
 import 'package:cleer/ui/home/home/widgets/escrow_summary_card.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/action_alerts/widgets/action_alerts_carousel.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -31,6 +30,10 @@ class HomeScreen extends ConsumerWidget {
     final isSummaryLoading =
         (ongoingState.isLoading && !ongoingState.isReloading) ||
         (protectedAmountState.isLoading && !protectedAmountState.isReloading);
+
+    final activitiesState = ref.watch(userActivitiesProvider);
+    final recentActivities =
+        activitiesState.value?.items.take(3).toList() ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -194,16 +197,45 @@ class HomeScreen extends ConsumerWidget {
                           color: context.color.grey800,
                         ),
                       ),
-                      Text(
-                        l10n.viewAll,
-                        style: context.typo.bodyLink.copyWith(
-                          color: context.color.blue700,
-                          decorationColor: context.color.blue700,
+                      GestureDetector(
+                        onTap: () => ActivityTimelineRoute().go(context),
+                        child: Text(
+                          l10n.viewAll,
+                          style: context.typo.bodyLink.copyWith(
+                            color: context.color.blue700,
+                            decorationColor: context.color.blue700,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   Gap(Dimens.spacing.sp16),
+                  if (activitiesState.isLoading && recentActivities.isEmpty)
+                    ActivityCardSkeletonList(itemCount: 3)
+                  else if (recentActivities.isEmpty)
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: Dimens.spacing.sp32,
+                      ),
+                      child: Center(
+                        child: Text(
+                          l10n.noRecentActivityYet,
+                          style: context.typo.bodyMedium.copyWith(
+                            color: context.color.grey600,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    ...recentActivities.map(
+                      (activity) => Padding(
+                        padding: EdgeInsets.only(bottom: Dimens.padding.p28),
+                        child: ActivityCard(
+                          activity: activity,
+                          showDayContext: true,
+                        ),
+                      ),
+                    ),
                 ]),
               ),
             ),
