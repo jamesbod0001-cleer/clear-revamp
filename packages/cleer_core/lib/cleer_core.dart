@@ -22,6 +22,8 @@ export 'enums/virtual_account_type.dart';
 
 // --- MODELS ---
 // (CRITICAL: Export your data entities here so the App UI can read them)
+export 'models/activity/activity.dart';
+export 'models/activity/activity_enums.dart';
 export 'models/agreement/agreement.dart';
 export 'models/agreement/agreement_preview.dart';
 export 'models/agreement/agreement_enums.dart';
@@ -42,6 +44,7 @@ export 'src/failures/data_failures.dart';
 export 'src/failures/storage_failures.dart';
 
 // --- REPOSITORIES (INTERFACES) ---
+export 'src/repositories/api/activity/activity_repository.dart';
 export 'src/repositories/api/agreement/agreement_repository.dart';
 export 'src/repositories/api/flutterwave/flutterwave_repository.dart';
 export 'src/repositories/api/milestone/milestone_repository.dart';
