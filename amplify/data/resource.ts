@@ -15,6 +15,8 @@ import {joinAgreement} from "../functions/join-agreement/resource";
 import {logAgreementStatus} from "../functions/log-agreement-status/resource";
 import {logMilestoneStatus} from "../functions/log-milestone-status/resource";
 import {flutterwaveProxy} from "../functions/flutterwave-proxy/resource";
+import {Activity} from "./models/activity";
+import {generateAgreementActivity} from "../functions/generate-agreement-activity/resource";
 
 const schema = a.schema({
     User,
@@ -24,6 +26,7 @@ const schema = a.schema({
     Transaction,
     Photo,
     StatusHistory,
+    Activity,
     UserPreview,
     AgreementPreview,
     MilestonePreview,
@@ -53,7 +56,7 @@ const schema = a.schema({
         .returns(a.string())
         .authorization(allow => [allow.authenticated()])
         .handler(a.handler.function(flutterwaveProxy)),
-}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement)]);
+}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity)]);
 
 export type Schema = ClientSchema<typeof schema>;
 
