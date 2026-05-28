@@ -1,7 +1,7 @@
 class AppConfig {
   static const String environment = String.fromEnvironment(
     'APP_ENV',
-    defaultValue: bool.fromEnvironment('dart.vm.product') ? 'local' : 'main',
+    defaultValue: bool.fromEnvironment('dart.vm.product') ? 'main' : 'local',
   );
 
   static String get baseUrl {
