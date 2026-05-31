@@ -331,7 +331,9 @@ class HomeScreen extends ConsumerWidget {
                                       .copyWith(color: context.color.grey800),
                             ),
                             GestureDetector(
-                              onTap: () => ActivityTimelineRoute().go(context),
+                              onTap: () => context.isMobile
+                                  ? ActivityTimelineRoute().go(context)
+                                  : ActivityTabRoute().go(context),
                               child: Text(
                                 l10n.viewAll,
                                 style: context.typo.bodyLink.copyWith(
@@ -446,8 +448,8 @@ class HomeScreen extends ConsumerWidget {
                                                 ),
                                           ),
                                           GestureDetector(
-                                            onTap: () => ActivityTimelineRoute()
-                                                .go(context),
+                                            onTap: () =>
+                                                ActivityTabRoute().go(context),
                                             child: Text(
                                               l10n.viewAll,
                                               style: context.typo.bodyLink
