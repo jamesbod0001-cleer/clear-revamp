@@ -9,9 +9,9 @@ class NavigationConfig {
       label: 'Home',
     ),
     NavigationDestination(
-      icon: PhosphorIcon(PhosphorIcons.arrowsLeftRight()),
+      icon: PhosphorIcon(PhosphorIcons.handshake()),
       selectedIcon: PhosphorIcon(
-        PhosphorIcons.arrowsLeftRight(PhosphorIconsStyle.fill),
+        PhosphorIcons.handshake(PhosphorIconsStyle.fill),
       ),
       label: 'Agreements',
     ),
