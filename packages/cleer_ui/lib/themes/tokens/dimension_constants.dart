@@ -45,6 +45,8 @@ class _AppSize {
   final double s100 = 100.0;
   final double s101 = 101.0;
   final double s126 = 126.0;
+  final double s166 = 166.0;
+  final double s248 = 248.0;
 }
 
 class _AppSpacing {
@@ -71,6 +73,7 @@ class _AppSpacing {
   final double sp38 = 38.0;
 
   final double sp40 = 40.0;
+  final double sp44 = 44.0;
   final double sp46 = 46.0;
   final double sp48 = 48.0;
   final double sp54 = 54.0;
@@ -125,4 +128,14 @@ class _AppRadius {
   final double r50 = 50.0;
   final double r80 = 80.0;
   final double r100 = 100.0;
+}
+
+abstract final class Breakpoints {
+  const Breakpoints();
+
+  /// Minimum width for tablet view
+  static const double tablet = 860.0;
+
+  /// Minimum width for desktop view
+  static const double desktop = 1240.0;
 }
