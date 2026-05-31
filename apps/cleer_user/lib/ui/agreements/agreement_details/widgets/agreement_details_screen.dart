@@ -22,6 +22,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AgreementDetailsScreen extends ConsumerWidget {
   const AgreementDetailsScreen({
@@ -206,25 +207,26 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         ),
                         Gap(Dimens.spacing.sp16),
                       ],
-                      agreementStatusHistoryState.when(
-                        data: (history) => AgreementTimeline(
-                          agreement: agreement,
-                          statusHistory: history,
-                          milestones:
-                              agreement.disbursementType ==
-                                  DisbursementType.milestones
-                              ? milestonesState!.value
-                              : null,
-                        ),
-                        loading: () => Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: Dimens.padding.p40,
-                          ),
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-
+                      agreementStatusHistoryState.maybeWhen(
                         /// TODO: Show proper error here
                         error: (error, stackTrace) => SizedBox.shrink(),
+                        orElse: () {
+                          bool isLoading =
+                              agreementStatusHistoryState.isLoading;
+                          return Skeletonizer(
+                            enabled: isLoading,
+                            child: AgreementTimeline(
+                              agreement: agreement,
+                              statusHistory:
+                                  agreementStatusHistoryState.value ?? [],
+                              milestones:
+                                  agreement.disbursementType ==
+                                      DisbursementType.milestones
+                                  ? milestonesState!.value
+                                  : null,
+                            ),
+                          );
+                        },
                       ),
                       Gap(Dimens.spacing.sp40),
                       MenuSectionHeader(title: l10n.agreementDetails),

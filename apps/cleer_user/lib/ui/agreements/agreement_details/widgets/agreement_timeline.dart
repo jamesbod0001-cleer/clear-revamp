@@ -16,6 +16,7 @@ import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 enum StepState {
   completed,
@@ -304,9 +305,17 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
           ],
         ),
         children: [
-          historyState.when(
-            data: (List<StatusHistory> history) {
+          historyState.maybeWhen(
+            /// TODO: Show proper error here
+            error: (Object error, StackTrace stackTrace) =>
+                const SizedBox.shrink(),
+            orElse: () {
+              bool isLoading = historyState.isLoading;
+
+              List<StatusHistory> history = historyState.value ?? [];
+
               final statusDates = <MilestoneStatus, DateTime>{};
+
               for (final h in history) {
                 final status = h.parsedMilestoneStatus;
                 if (status != null && h.createdAt != null) {
@@ -332,27 +341,72 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
                 ),
               ];
 
-              return Column(
-                children: List.generate(steps.length, (mIndex) {
-                  return _StepperItem(
-                    step: steps[mIndex],
-                    isLastStep: mIndex == steps.length - 1,
-                    nextLineIsCompleted:
-                        mIndex < steps.length - 1 &&
-                        steps[mIndex + 1].state.isCompleted,
-                  );
-                }),
+              return Skeletonizer(
+                enabled: isLoading,
+                child: Column(
+                  children: List.generate(steps.length, (mIndex) {
+                    return _StepperItem(
+                      step: steps[mIndex],
+                      isLastStep: mIndex == steps.length - 1,
+                      nextLineIsCompleted:
+                          mIndex < steps.length - 1 &&
+                          steps[mIndex + 1].state.isCompleted,
+                    );
+                  }),
+                ),
               );
             },
-
-            /// TODO: Show proper error here
-            error: (Object error, StackTrace stackTrace) =>
-                const SizedBox.shrink(),
-            loading: () => Padding(
-              padding: .symmetric(vertical: Dimens.padding.p16),
-              child: Center(child: CircularProgressIndicator()),
-            ),
           ),
+
+          // historyState.when(
+          //   data: (List<StatusHistory> history) {
+          //     final statusDates = <MilestoneStatus, DateTime>{};
+          //     for (final h in history) {
+          //       final status = h.parsedMilestoneStatus;
+          //       if (status != null && h.createdAt != null) {
+          //         statusDates.putIfAbsent(status, () => h.createdAt!);
+          //       }
+          //     }
+          //     final List<Step> steps = [
+          //       Step(
+          //         title: l10n.fundsReleased,
+          //         subtitle: l10n.releaseInitiatedCompletingIn2Hours,
+          //         state: statusDates[MilestoneStatus.processingRelease] != null
+          //             ? StepState.completed
+          //             : StepState.pending,
+          //         date: null,
+          //       ),
+          //       Step(
+          //         title: l10n.completed,
+          //         subtitle: l10n.milestoneHasBeenCompleted,
+          //         state: statusDates[MilestoneStatus.released] != null
+          //             ? StepState.completed
+          //             : StepState.pending,
+          //         date: null,
+          //       ),
+          //     ];
+          //
+          //     return Column(
+          //       children: List.generate(steps.length, (mIndex) {
+          //         return _StepperItem(
+          //           step: steps[mIndex],
+          //           isLastStep: mIndex == steps.length - 1,
+          //           nextLineIsCompleted:
+          //               mIndex < steps.length - 1 &&
+          //               steps[mIndex + 1].state.isCompleted,
+          //         );
+          //       }),
+          //     );
+          //   },
+          //
+          //   /// TODO: Show proper error here
+          //   error: (Object error, StackTrace stackTrace) =>
+          //       const SizedBox.shrink(),
+          //   loading: () => Padding(
+          //     padding: .symmetric(vertical: Dimens.padding.p16),
+          //     // child: Center(child: CircularProgressIndicator()),
+          //   ),
+          // ),
         ],
       ),
     );
