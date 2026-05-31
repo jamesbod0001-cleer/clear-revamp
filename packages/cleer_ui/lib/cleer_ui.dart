@@ -2,6 +2,7 @@ library;
 
 // 1. Export the Extension (This fixes the context.validator errors)
 export 'utils/validation_extension.dart';
+export 'utils/responsive_extension.dart';
 
 // 2. Export the Themes & Utils
 export 'themes/theme_utils.dart';

@@ -22,10 +22,7 @@ class AppNavigationShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final isMobile = width < Breakpoints.tablet;
-
-    if (isMobile) {
+    if (context.isMobile) {
       return Scaffold(
         extendBody: true,
         body: navigationShell,
@@ -48,26 +45,24 @@ class AppNavigationShell extends StatelessWidget {
       );
     }
 
+    final isDesktop = context.isDesktop;
+
     return Scaffold(
       body: Row(
         children: [
           // 1. The Sidebar Container
           Container(
-            width: width >= Breakpoints.desktop
-                ? Dimens.size.s248
-                : Dimens.size.s166,
+            width: isDesktop ? Dimens.size.s248 : Dimens.size.s166,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: width >= Breakpoints.desktop
+                image: isDesktop
                     ? Assets.images.navigationRailDesktopBackground.provider()
                     : Assets.images.navigationRailTabletBackground.provider(),
                 fit: BoxFit.cover,
               ),
             ),
             padding: .symmetric(
-              horizontal: width >= Breakpoints.desktop
-                  ? Dimens.padding.p16
-                  : Dimens.padding.p12,
+              horizontal: isDesktop ? Dimens.padding.p16 : Dimens.padding.p12,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,16 +120,12 @@ class AppNavigationShell extends StatelessWidget {
                                 ),
                                 child: destination.icon,
                               ),
-                              Gap(
-                                width >= Breakpoints.desktop
-                                    ? Dimens.spacing.sp12
-                                    : Dimens.spacing.sp8,
-                              ),
+                              Gap(isDesktop ? Dimens.spacing.sp12 : Dimens.spacing.sp8),
                               Expanded(
                                 child: Text(
                                   destination.label,
                                   style:
-                                      (width >= Breakpoints.desktop
+                                      (isDesktop
                                               ? context.typo.bodyMedium
                                               : context.typo.bodySmall)
                                           .copyWith(
@@ -173,16 +164,12 @@ class AppNavigationShell extends StatelessWidget {
                                 color: context.color.background,
                                 size: Dimens.size.s20,
                               ),
-                              Gap(
-                                width >= Breakpoints.desktop
-                                    ? Dimens.spacing.sp12
-                                    : Dimens.spacing.sp8,
-                              ),
+                              Gap(isDesktop ? Dimens.spacing.sp12 : Dimens.spacing.sp8),
                               Expanded(
                                 child: Text(
                                   AppLocalizations.of(context)!.helpAndSupport,
                                   style:
-                                      (width >= Breakpoints.desktop
+                                      (isDesktop
                                               ? context.typo.bodyMedium
                                               : context.typo.bodySmall)
                                           .copyWith(
@@ -198,11 +185,7 @@ class AppNavigationShell extends StatelessWidget {
                     LogOutButton(),
                   ],
                 ),
-                Gap(
-                  width >= Breakpoints.desktop
-                      ? Dimens.spacing.sp40
-                      : Dimens.spacing.sp20,
-                ),
+                Gap(isDesktop ? Dimens.spacing.sp40 : Dimens.spacing.sp20),
               ],
             ),
           ),
