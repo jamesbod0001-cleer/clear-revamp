@@ -39,14 +39,20 @@ abstract final class Dimens {
   );
 
   static const Dimens desktop = _DimensDesktop();
+  static const Dimens tablet = _DimensTablet();
   static const Dimens mobile = _DimensMobile();
 
   /// Get dimensions definition based on screen size
-  factory Dimens.of(BuildContext context) =>
-      switch (MediaQuery.sizeOf(context).width) {
-        > 600 && < 840 => desktop,
-        _ => mobile,
-      };
+  factory Dimens.of(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width >= Breakpoints.desktop) {
+      return desktop;
+    } else if (width >= Breakpoints.tablet) {
+      return tablet;
+    } else {
+      return mobile;
+    }
+  }
 }
 
 /// Mobile dimensions
@@ -63,10 +69,24 @@ final class _DimensMobile extends Dimens {
   const _DimensMobile();
 }
 
+/// Tablet dimensions
+final class _DimensTablet extends Dimens {
+  @override
+  final double paddingScreenHorizontal = 20.0;
+
+  @override
+  final double paddingScreenVertical = 32.0;
+
+  @override
+  final double profilePictureSize = 80.0;
+
+  const _DimensTablet();
+}
+
 /// Desktop/Web dimensions
 final class _DimensDesktop extends Dimens {
   @override
-  final double paddingScreenHorizontal = 100.0;
+  final double paddingScreenHorizontal = 40.0;
 
   @override
   final double paddingScreenVertical = 64.0;

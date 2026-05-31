@@ -95,7 +95,10 @@ class OngoingAgreementsView extends ConsumerWidget {
                 padding: .only(top: Dimens.padding.p24),
                 itemBuilder: (BuildContext context, int index) {
                   final agreement = filteredOngoingAgreements[index];
-                  return AgreementCard(agreement: agreement);
+                  return AgreementCard(
+                    isLast: index == (filteredOngoingAgreements.length - 1),
+                    agreement: agreement,
+                  );
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return SizedBox(height: Dimens.spacing.sp16);

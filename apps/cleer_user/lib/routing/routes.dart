@@ -199,6 +199,9 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
         ),
       ],
     ),
+    TypedStatefulShellBranch<ActivityBranch>(
+      routes: [TypedGoRoute<ActivityTabRoute>(path: '/activity')],
+    ),
   ],
 )
 class ShellRouteData extends StatefulShellRouteData {
@@ -212,7 +215,7 @@ class ShellRouteData extends StatefulShellRouteData {
   ) {
     return AppNavigationShell(
       navigationShell: navigationShell,
-      destinations: NavigationConfig.destinations,
+      destinations: NavigationConfig.getDestinations(context),
     );
   }
 }
@@ -281,6 +284,16 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const ProfileScreen();
+}
+
+class ActivityBranch extends StatefulShellBranchData {
+  const ActivityBranch();
+}
+
+class ActivityTabRoute extends GoRouteData with $ActivityTabRoute {
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const ActivityTimelineScreen();
 }
 
 class PayoutDestinationRoute extends GoRouteData with $PayoutDestinationRoute {

@@ -20,26 +20,25 @@ class ActivityCardSkeletonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Skeletonizer(
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: .zero,
-        itemCount: itemCount,
-        itemBuilder: (context, index) {
-          return ActivityCard(
-            showDayContext: showDayContext,
-            activity: Activity(
-              userId: '',
-              type: ActivityType.agreement,
-              heading: BoneMock.title,
-              supportingText: BoneMock.subtitle,
-              formattedAmount: BoneMock.words(1),
-              description: BoneMock.words(4),
-              createdAt: DateTime.now(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (int i = 0; i < itemCount; i++) ...[
+            ActivityCard(
+              showDayContext: showDayContext,
+              activity: Activity(
+                userId: '',
+                type: ActivityType.agreement,
+                heading: BoneMock.title,
+                supportingText: BoneMock.subtitle,
+                formattedAmount: BoneMock.words(1),
+                description: BoneMock.words(4),
+                createdAt: DateTime.now(),
+              ),
             ),
-          );
-        },
-        separatorBuilder: (context, index) => Gap(Dimens.spacing.sp28),
+            if (i < itemCount - 1) Gap(Dimens.spacing.sp28),
+          ],
+        ],
       ),
     );
   }

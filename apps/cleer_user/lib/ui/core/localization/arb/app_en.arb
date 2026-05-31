@@ -113,6 +113,7 @@
       }
     }
   },
+  "home": "Home",
   "logout": "Logout",
   "enterYourEmailOrPhoneNumberToReceiveA6DigitsRecoveryCode": "Enter your email or phone number to receive a secure 6-digits recovery code.",
   "requestCode": "Request Code",
@@ -166,6 +167,7 @@
   "shareYourExperienceAndHelpUsBuildABetterPlatform": "Share your experience and help us build a better platform.",
   "agreements": "Agreements",
   "ongoing": "Ongoing",
+  "ongoingAgreements": "Ongoing Agreements",
   "completed": "Completed",
   "noOngoingAgreementsYet": "No ongoing agreement yet.",
   "currentlyProtected": "Currently Protected",

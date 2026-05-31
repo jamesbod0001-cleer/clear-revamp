@@ -1,4 +1,5 @@
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:cleer_ui/widgets/trust_score_badge.dart';
@@ -37,7 +38,12 @@ class EscrowSummaryCard extends StatelessWidget {
           ),
           borderRadius: .circular(Dimens.radius.r8),
         ),
-        padding: .all(Dimens.padding.p12),
+        padding: context.isMobile
+            ? .all(Dimens.padding.p12)
+            : .symmetric(
+                horizontal: Dimens.padding.p16,
+                vertical: Dimens.padding.p12,
+              ),
         child: Column(
           mainAxisSize: .min,
           children: [
@@ -57,7 +63,7 @@ class EscrowSummaryCard extends StatelessWidget {
                     ),
                     Text(
                       '${l10n.nairaSign}${NumberFormat('#,###.##').format(currentlyProtectedAmount)}',
-                      style: context.typo.headlineSmall.copyWith(
+                      style: (context.isMobile ? context.typo.headlineSmall : context.typo.headlineMedium).copyWith(
                         color: context.color.grey800,
                       ),
                     ),
@@ -66,7 +72,7 @@ class EscrowSummaryCard extends StatelessWidget {
                 TrustScoreBadge(score: trustScore),
               ],
             ),
-            Gap(Dimens.spacing.sp20),
+            Gap(context.isMobile ? Dimens.spacing.sp12 : Dimens.spacing.sp32),
             Row(
               children: [
                 Container(
@@ -100,7 +106,7 @@ class EscrowSummaryCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Gap(Dimens.spacing.sp12),
+                Gap(Dimens.spacing.sp4),
                 Container(
                   decoration: BoxDecoration(
                     color: context.color.background,

@@ -1,4 +1,5 @@
 import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/generated/assets.gen.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
@@ -10,7 +11,11 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class ActivityCard extends StatelessWidget {
-  const ActivityCard({super.key, required this.activity, this.showDayContext = false,});
+  const ActivityCard({
+    super.key,
+    required this.activity,
+    this.showDayContext = false,
+  });
   final Activity activity;
   final bool showDayContext;
 
@@ -19,9 +24,7 @@ class ActivityCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Skeleton.leaf(
-          child: _buildAvatar(context),
-        ),
+        Skeleton.leaf(child: _buildAvatar(context)),
         Gap(Dimens.spacing.sp10),
         Expanded(
           child: Column(
@@ -45,15 +48,25 @@ class ActivityCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               _buildFooter(context),
-              Text(
-                formatTime(activity.createdAt),
-                style: context.typo.bodySmall.copyWith(
-                  color: context.color.grey600,
+              if (context.isMobile)
+                Text(
+                  formatTime(activity.createdAt),
+                  style: context.typo.bodySmall.copyWith(
+                    color: context.color.grey600,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
+        if (context.isAtLeastTablet) ...[
+          Gap(Dimens.spacing.sp24),
+          Text(
+            formatTime(activity.createdAt),
+            style: context.typo.bodySmall.copyWith(
+              color: context.color.grey600,
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -23,13 +23,13 @@ class ActionAlertsCarousel extends ConsumerWidget {
         Gap(topSpacing),
         if (alerts.length == 1)
           Padding(
-            padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+            padding: Dimens.of(context).edgeInsetsScreenHorizontal,
             child: _ActionAlertCard(alert: alerts.first, isSingleItem: true),
           )
         else
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+            padding: Dimens.of(context).edgeInsetsScreenHorizontal,
             child: Row(
               children: [
                 for (var i = 0; i < alerts.length; i++)

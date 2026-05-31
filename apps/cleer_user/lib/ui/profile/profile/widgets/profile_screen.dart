@@ -63,9 +63,9 @@ class ProfileScreen extends ConsumerWidget {
         child: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                top: Dimens.padding.p10,
-              ),
+              padding: Dimens.of(
+                context,
+              ).edgeInsetsScreenHorizontal.copyWith(top: Dimens.padding.p10),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
                   Row(
