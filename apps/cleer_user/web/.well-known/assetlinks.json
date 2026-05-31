@@ -3,6 +3,9 @@
   "target": {
     "namespace": "android_app",
     "package_name": "com.cleerpayments.cleer",
-    "sha256_cert_fingerprints": ["C4:E6:96:2E:09:3E:49:FF:54:17:11:37:18:1B:4A:C1:AD:6D:E3:B6:97:CD:A4:24:0D:76:02:DA:7C:0F:BE:47"]
+    "sha256_cert_fingerprints": [
+      "C4:E6:96:2E:09:3E:49:FF:54:17:11:37:18:1B:4A:C1:AD:6D:E3:B6:97:CD:A4:24:0D:76:02:DA:7C:0F:BE:47",
+      "3C:3F:DF:F5:C2:2F:91:D7:DF:1C:3B:E5:1B:06:83:94:5B:7C:16:8B:0F:DB:92:99:6B:04:00:9D:1A:F5:83:5F"
+    ]
   }
 }]
