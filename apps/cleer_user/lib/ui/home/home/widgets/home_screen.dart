@@ -164,7 +164,7 @@ class HomeScreen extends ConsumerWidget {
         child: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+              padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
                 top: Dimens.padding.p10,
               ),
               sliver: SliverList(
@@ -184,7 +184,7 @@ class HomeScreen extends ConsumerWidget {
               child: ActionAlertsCarousel(topSpacing: Dimens.spacing.sp28),
             ),
             SliverPadding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+              padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
                 bottom: MediaQuery.of(context).padding.bottom,
               ),
               sliver: SliverList(
