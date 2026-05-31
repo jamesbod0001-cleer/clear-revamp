@@ -1,7 +1,10 @@
+import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/activity/activity_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_core/models/activity/activity.dart';
+import 'package:cleer_core/models/paginated_list/paginated_list.dart';
 import 'package:cleer_ui/cleer_ui.dart';
+import 'package:cleer_ui/widgets/app_empty_state.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -16,9 +19,6 @@ class ActivityTimelineScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final activitiesState = ref.watch(userActivitiesProvider);
-    final activities = activitiesState.value?.items ?? [];
-
-    final groupedActivities = _groupActivitiesByDate(activities);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,42 +36,85 @@ class ActivityTimelineScreen extends ConsumerWidget {
         ),
         toolbarHeight: 102,
       ),
-      body: activitiesState.isLoading && activities.isEmpty
-          ? Padding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                top: Dimens.padding.p36,
-              ),
-              child: ActivityCardSkeletonList(),
-            )
-          : NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollInfo) {
-                if (scrollInfo.metrics.pixels >=
-                    scrollInfo.metrics.maxScrollExtent - 200) {
-                  ref.read(userActivitiesProvider.notifier).loadMore();
-                }
-                return false;
-              },
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                      top: Dimens.padding.p36,
-                      bottom: Dimens.padding.p20,
+      body: activitiesState.when(
+        skipLoadingOnReload: true,
+        data: (PaginatedList<Activity> activities) {
+          if (activities.items.isEmpty) {
+            return Column(
+              children: [
+                const Spacer(flex: 221),
+                Padding(
+                  padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                  child: AppEmptyState(
+                    icon: Assets.icons.rewindTimeOff.svg(
+                      width: Dimens.size.s80,
+                      height: Dimens.size.s80,
+                      colorFilter: ColorFilter.mode(
+                        context.color.blue1000,
+                        BlendMode.srcIn,
+                      ),
                     ),
-                    sliver: MultiSliver(
-                      children: [
-                        ..._buildGroupedSlivers(context, groupedActivities),
-
-                        if (activitiesState.value?.hasNextPage == true)
-                          SliverToBoxAdapter(
-                            child: ActivityCardSkeletonList(itemCount: 2),
-                          ),
-                      ],
+                    title: l10n.noActivityYet,
+                    subtitle: Padding(
+                      padding: .symmetric(horizontal: Dimens.padding.p40),
+                      child: Text(
+                        l10n.whenYouCreateAgreementsOrSecurePaymentsYourActivityHistoryWillAppearHere,
+                        textAlign: .center,
+                        style: context.typo.bodySmall.copyWith(
+                          color: context.color.grey800,
+                        ),
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                const Spacer(flex: 279),
+              ],
+            );
+          }
+
+          final groupedActivities = _groupActivitiesByDate(activities.items);
+
+          return NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo.metrics.pixels >=
+                  scrollInfo.metrics.maxScrollExtent - 200) {
+                ref.read(userActivitiesProvider.notifier).loadMore();
+              }
+              return false;
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                    top: Dimens.padding.p36,
+                    bottom: Dimens.padding.p20,
+                  ),
+                  sliver: MultiSliver(
+                    children: [
+                      ..._buildGroupedSlivers(context, groupedActivities),
+
+                      if (activitiesState.value?.hasNextPage == true)
+                        SliverToBoxAdapter(
+                          child: ActivityCardSkeletonList(itemCount: 2),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+          );
+        },
+        error: (Object error, StackTrace stackTrace) {
+          /// TODO: Add proper error state here
+          return SizedBox.shrink();
+        },
+        loading: () => Padding(
+          padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+            top: Dimens.padding.p36,
+          ),
+          child: ActivityCardSkeletonList(),
+        ),
+      ),
     );
   }
 

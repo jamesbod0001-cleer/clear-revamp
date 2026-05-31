@@ -23,6 +23,7 @@ class ActivityCardSkeletonList extends StatelessWidget {
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
+        padding: .zero,
         itemCount: itemCount,
         itemBuilder: (context, index) {
           return ActivityCard(

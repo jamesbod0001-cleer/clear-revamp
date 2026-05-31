@@ -5,6 +5,8 @@ import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/action_alerts/widgets/action_alerts_carousel.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer_core/models/paginated_list/paginated_list.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +34,6 @@ class HomeScreen extends ConsumerWidget {
         (protectedAmountState.isLoading && !protectedAmountState.isReloading);
 
     final activitiesState = ref.watch(userActivitiesProvider);
-    final recentActivities =
-        activitiesState.value?.items.take(3).toList() ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -110,6 +110,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   Gap(Dimens.spacing.sp12),
                   GestureDetector(
+                    onTap: () => ActivityTimelineRoute().go(context),
                     child: Assets.images.activityButton.image(
                       height: Dimens.size.s28,
                       frameBuilder:
@@ -130,10 +131,13 @@ class HomeScreen extends ConsumerWidget {
                               ),
                               child: Row(
                                 children: [
-                                  PhosphorIcon(
-                                    PhosphorIcons.lineSegments(.duotone),
-                                    color: context.color.blue100,
-                                    size: Dimens.size.s16,
+                                  Assets.icons.rewindTime.svg(
+                                    width: Dimens.size.s16,
+                                    height: Dimens.size.s16,
+                                    colorFilter: ColorFilter.mode(
+                                      context.color.blue100,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
                                   Gap(Dimens.spacing.sp4),
                                   Text(
@@ -210,32 +214,51 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                   Gap(Dimens.spacing.sp16),
-                  if (activitiesState.isLoading && recentActivities.isEmpty)
-                    ActivityCardSkeletonList(itemCount: 3)
-                  else if (recentActivities.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: Dimens.spacing.sp32,
-                      ),
-                      child: Center(
-                        child: Text(
-                          l10n.noRecentActivityYet,
-                          style: context.typo.bodyMedium.copyWith(
-                            color: context.color.grey600,
+
+                  activitiesState.when(
+                    skipLoadingOnReload: true,
+                    data: (PaginatedList<Activity> activities) {
+                      if (activities.items.isEmpty) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: Dimens.spacing.sp32,
                           ),
-                        ),
-                      ),
-                    )
-                  else
-                    ...recentActivities.map(
-                      (activity) => Padding(
-                        padding: EdgeInsets.only(bottom: Dimens.padding.p28),
-                        child: ActivityCard(
-                          activity: activity,
-                          showDayContext: true,
-                        ),
-                      ),
-                    ),
+                          child: Center(
+                            child: Text(
+                              l10n.noRecentActivityYet,
+                              style: context.typo.bodyMedium.copyWith(
+                                color: context.color.grey600,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      final recentActivities = activities.items
+                          .take(3)
+                          .toList();
+
+                      return ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        itemCount: recentActivities.length,
+                        itemBuilder: (BuildContext context, int index) =>
+                            ActivityCard(
+                              activity: recentActivities[index],
+                              showDayContext: true,
+                            ),
+                        separatorBuilder: (BuildContext context, int index) =>
+                            Gap(Dimens.spacing.sp28),
+                      );
+                    },
+                    error: (Object error, StackTrace stackTrace) {
+                      /// TODO: Add proper error state here
+                      return SizedBox.shrink();
+                    },
+                    loading: () => ActivityCardSkeletonList(itemCount: 3),
+                  ),
+                  Gap(Dimens.spacing.sp20),
                 ]),
               ),
             ),

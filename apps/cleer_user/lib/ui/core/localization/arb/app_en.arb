@@ -577,5 +577,7 @@
   "continueText": "Continue",
   "verifyEmail": "Verify Email",
   "activityTimeline": "Activity Timeline",
-  "noRecentActivityYet": "No recent activity yet"
+  "noRecentActivityYet": "No recent activity yet",
+  "noActivityYet": "No activity yet",
+  "whenYouCreateAgreementsOrSecurePaymentsYourActivityHistoryWillAppearHere": "When you create agreements or secure payments, your activity history will appear here."
 }
