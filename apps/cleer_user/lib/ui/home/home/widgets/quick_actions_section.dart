@@ -1,5 +1,6 @@
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -19,9 +20,13 @@ class QuickActionsSection extends StatelessWidget {
       children: [
         Text(
           l10n.startATransaction,
-          style: context.typo.titleSmall.copyWith(color: context.color.grey800),
+          style:
+              (context.isMobile
+                      ? context.typo.titleSmall
+                      : context.typo.titleMedium)
+                  .copyWith(color: context.color.grey800),
         ),
-        Gap(Dimens.spacing.sp12),
+        Gap(context.isMobile ? Dimens.spacing.sp12 : Dimens.spacing.sp8),
         Row(
           children: [
             Expanded(
@@ -35,7 +40,7 @@ class QuickActionsSection extends StatelessWidget {
                 onTap: () => _handleSendFunds(context),
               ),
             ),
-            Gap(Dimens.spacing.sp8),
+            Gap(context.isMobile ? Dimens.spacing.sp8 : Dimens.spacing.sp20),
             Expanded(
               child: _QuickActionCard(
                 title: l10n.requestPayment,
@@ -85,22 +90,28 @@ class _QuickActionCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(Dimens.radius.r8),
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: Dimens.padding.p8,
-          vertical: Dimens.padding.p12,
+          horizontal: context.isMobile ? Dimens.padding.p8 : Dimens.padding.p16,
+          vertical: context.isMobile ? Dimens.padding.p12 : Dimens.padding.p16,
         ),
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(Dimens.radius.r8),
+          borderRadius: BorderRadius.circular(
+            context.isMobile ? Dimens.radius.r8 : Dimens.radius.r12,
+          ),
         ),
         child: Stack(
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Gap(Dimens.spacing.sp40), // Space for the floating icon
+                Gap(context.isMobile ? Dimens.spacing.sp44 : Dimens.spacing.sp45), // Space for the floating icon
                 Text(
-                  title.replaceAll(' ', '\n'),
-                  style: context.typo.titleLarge.copyWith(color: contentColor),
+                  context.isMobile ? title.replaceAll(' ', '\n') : title,
+                  style:
+                      (context.isMobile
+                              ? context.typo.titleLarge
+                              : context.typo.headlineSmall)
+                          .copyWith(color: contentColor),
                 ),
                 Gap(Dimens.spacing.sp8),
                 Text(
@@ -113,8 +124,8 @@ class _QuickActionCard extends StatelessWidget {
               ],
             ),
             Positioned(
-              top: 0,
-              right: 0,
+              top: context.isMobile ? 0 : -4,
+              right: context.isMobile ? 4 : -4,
               child: PhosphorIcon(
                 icon,
                 color: context.color.secondary,
