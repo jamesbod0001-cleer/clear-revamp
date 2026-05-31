@@ -13,11 +13,17 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class AgreementCard extends ConsumerWidget {
-  const AgreementCard({super.key, required this.agreement});
+  const AgreementCard({
+    super.key,
+    required this.agreement,
+    this.isLast = false,
+  });
 
   final Agreement agreement;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,17 +61,20 @@ class AgreementCard extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: .start,
             children: [
-              Ink(
-                decoration: BoxDecoration(
-                  shape: .circle,
-                  color: context.color.infoLight,
-                ),
-                child: SizedBox.square(
-                  dimension: Dimens.size.s48,
-                  child: Center(
-                    child: Assets.images.handshake.image(
-                      height: Dimens.size.s18,
-                      width: Dimens.size.s28,
+              Skeleton.replace(
+                replacement: Bone.circle(size: Dimens.size.s48),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    shape: .circle,
+                    color: context.color.infoLight,
+                  ),
+                  child: SizedBox.square(
+                    dimension: Dimens.size.s48,
+                    child: Center(
+                      child: Assets.images.handshake.image(
+                        height: Dimens.size.s18,
+                        width: Dimens.size.s28,
+                      ),
                     ),
                   ),
                 ),
@@ -119,21 +128,28 @@ class AgreementCard extends ConsumerWidget {
                             '${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)}',
                             style: context.typo.titleMedium,
                           ),
-                          Ink(
-                            decoration: BoxDecoration(
-                              color: agreement.getStatusPillColor(context),
-                              borderRadius: BorderRadius.circular(
-                                Dimens.radius.r20,
+                          Skeleton.replace(
+                            replacement: Bone(
+                              width: Dimens.size.s56,
+                              height: Dimens.size.s22,
+                              borderRadius: .circular(Dimens.radius.r20),
+                            ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                color: agreement.getStatusPillColor(context),
+                                borderRadius: BorderRadius.circular(
+                                  Dimens.radius.r20,
+                                ),
                               ),
-                            ),
-                            padding: .symmetric(
-                              horizontal: Dimens.padding.p6,
-                              vertical: Dimens.padding.p3,
-                            ),
-                            child: Text(
-                              agreement.getStatusText(context),
-                              style: context.typo.bodySmall.copyWith(
-                                color: agreement.getStatusTextColor(context),
+                              padding: .symmetric(
+                                horizontal: Dimens.padding.p6,
+                                vertical: Dimens.padding.p3,
+                              ),
+                              child: Text(
+                                agreement.getStatusText(context),
+                                style: context.typo.bodySmall.copyWith(
+                                  color: agreement.getStatusTextColor(context),
+                                ),
                               ),
                             ),
                           ),
@@ -146,19 +162,21 @@ class AgreementCard extends ConsumerWidget {
             ],
           ),
         ),
-        Gap(Dimens.spacing.sp16),
-        Row(
-          children: [
-            Gap(Dimens.spacing.sp58),
-            Expanded(
-              child: Divider(
-                color: context.color.outline,
-                thickness: Dimens.size.s1,
-                height: Dimens.size.s1,
+        if (!isLast) ...[
+          Gap(Dimens.spacing.sp16),
+          Row(
+            children: [
+              Gap(Dimens.spacing.sp58),
+              Expanded(
+                child: Divider(
+                  color: context.color.outline,
+                  thickness: Dimens.size.s1,
+                  height: Dimens.size.s1,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ],
     );
   }
