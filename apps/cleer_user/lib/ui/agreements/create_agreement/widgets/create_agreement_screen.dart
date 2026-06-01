@@ -10,8 +10,8 @@ import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_rev
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_setup_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/funds_secured_step.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
 import 'package:cleer_ui/widgets/step_progress_indicator.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/payment_orchestrator_view.dart';
@@ -29,7 +29,7 @@ class CreateAgreementScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    ref.watch(userProfileProvider);
+    final user = ref.watch(userProfileProvider).value;
     ref.watch(getBanksProvider(.NG));
     ref.watch(userPayoutDestinationsProvider);
     final state = ref.watch(createAgreementViewModelProvider(type));
@@ -87,34 +87,56 @@ class CreateAgreementScreen extends ConsumerWidget {
               currentStep == .agreementCreated
           ? null
           : AppBar(
-              titleSpacing: Dimens.padding.p18,
+              titleSpacing: context.isMobile
+                  ? Dimens.of(context).paddingScreenHorizontal
+                  : Dimens.size.s0,
               titleTextStyle: context.typo.headlineSmall,
               automaticallyImplyLeading: false,
-              title: Column(
-                crossAxisAlignment: .start,
-                children: [
-                  Gap(Dimens.spacing.sp4),
-                  Row(
-                    mainAxisAlignment: .spaceBetween,
-                    children: [
-                      AppBackButton(onPressed: () => handleBack()),
-                      StepProgressIndicator(
-                        currentStep: state.value!.currentStep.index + 1,
+              title: context.isMobile
+                  ? Column(
+                      crossAxisAlignment: .start,
+                      children: [
+                        Gap(Dimens.spacing.sp4),
+                        Row(
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            AppBackButton(onPressed: () => handleBack()),
+                            StepProgressIndicator(
+                              currentStep: state.value!.currentStep.index + 1,
+                            ),
+                          ],
+                        ),
+                        Gap(Dimens.spacing.sp24),
+                        Text(
+                          type.isSend
+                              ? (currentStep == .review
+                                    ? l10n.reviewDetails
+                                    : l10n.sendFunds)
+                              : l10n.requestFunds,
+                          style: context.typo.headlineSmall,
+                        ),
+                      ],
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: Dimens.size.s72,
+                      padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                      alignment: .centerLeft,
+                      decoration: BoxDecoration(
+                        border: .all(color: context.color.outline),
                       ),
-                    ],
-                  ),
-                  Gap(Dimens.spacing.sp24),
-                  Text(
-                    type.isSend
-                        ? (currentStep == .review
-                              ? l10n.reviewDetails
-                              : l10n.sendFunds)
-                        : l10n.requestFunds,
-                    style: context.typo.headlineSmall,
-                  ),
-                ],
-              ),
-              toolbarHeight: 110,
+                      child: Row(
+                        mainAxisAlignment: .spaceBetween,
+                        children: [
+                          Text(l10n.agreements),
+                          UserProfilePill(
+                            profile: user,
+                            // onTap: () => ProfileRoute().go(context),
+                          ),
+                        ],
+                      ),
+                    ),
+              toolbarHeight: context.isMobile ? 110 : Dimens.size.s72,
             ),
       body: SafeArea(
         bottom: false,

@@ -1,5 +1,6 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
+import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
 import 'package:cleer_core/models/bank/bank.dart';
 import 'package:cleer_core/models/payout_destination/payout_destination.dart';
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -188,235 +190,242 @@ class AgreementSetupStep extends HookConsumerWidget {
             ),
           );
         },
-        child: CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  Gap(Dimens.spacing.sp12),
-                  CustomTextFormField(
-                    controller: amountController,
-                    labelText: l10n.amount,
-                    readOnly: true,
-                    onTap: () => _showAgreementNumpadOverlay(
-                      context,
-                      amountController,
-                      ref: ref,
-                    ),
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.only(right: Dimens.padding.p8),
-                      child: Text(
-                        l10n.nairaSign,
-                        style: context.typo.bodyLarge.copyWith(
-                          color: context.color.grey600,
-                        ),
-                      ),
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () => _showAgreementNumpadOverlay(
+        child: ResponsiveLayout(
+          mobile: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Gap(Dimens.spacing.sp12),
+                    CustomTextFormField(
+                      controller: amountController,
+                      labelText: l10n.amount,
+                      readOnly: true,
+                      onTap: () => _showAgreementNumpadOverlay(
                         context,
                         amountController,
                         ref: ref,
                       ),
-                      icon: PhosphorIcon(
-                        PhosphorIcons.numpad(),
-                        color: context.color.blue700,
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(right: Dimens.padding.p8),
+                        child: Text(
+                          l10n.nairaSign,
+                          style: context.typo.bodyLarge.copyWith(
+                            color: context.color.grey600,
+                          ),
+                        ),
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () => _showAgreementNumpadOverlay(
+                          context,
+                          amountController,
+                          ref: ref,
+                        ),
+                        icon: PhosphorIcon(
+                          PhosphorIcons.numpad(),
+                          color: context.color.blue700,
+                        ),
                       ),
                     ),
-                  ),
-                  Gap(Dimens.spacing.sp40),
+                    Gap(Dimens.spacing.sp40),
 
-                  MenuSectionHeader(
-                    title: type == .send
-                        ? l10n.recipientDetails
-                        : l10n.payoutDestination,
-                  ),
-                  Visibility(
-                    visible: type == .send,
-                    replacement: Builder(
-                      builder: (context) {
-                        final userPayoutDestinationsState = ref.watch(
-                          userPayoutDestinationsProvider,
-                        );
+                    _PaymentDestinationSection(
+                      type: type,
+                      formData: formData,
+                      bankController: bankController,
+                      accountNumberController: accountNumberController,
+                      selectedBank: selectedBank,
+                      selectedPayoutDestination: selectedPayoutDestination,
+                    ),
+                    Gap(Dimens.spacing.sp40),
 
-                        return userPayoutDestinationsState.when(
-                          data: (List<PayoutDestination> payoutDestinations) {
-                            if (payoutDestinations.isEmpty) {
-                              return AddBankAccountTrigger.card(
-                                onResult: (payoutDestination) {
-                                  selectedPayoutDestination.value =
-                                      payoutDestination;
-                                },
-                              );
-                            } else {
-                              if (formData?.payoutDestination != null) {
-                                final payoutDestination =
-                                    formData!.payoutDestination!;
-                                return PayoutDestinationCard(
-                                  payoutDestination: payoutDestination,
-                                  action: GestureDetector(
-                                    onTap: () =>
-                                        _showLinkedBankAccountsBottomSheet(
-                                          context,
-                                          selectedPayoutDestination,
-                                        ),
-                                    child: Text(
-                                      AppLocalizations.of(context)!.change,
-                                      style: context.typo.bodyLink.copyWith(
-                                        color: context.color.blue700,
-                                        decorationColor: context.color.blue700,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              return Align(
-                                alignment: .centerLeft,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: context.color.transparent,
-                                    foregroundColor: context.color.blue700,
-                                    minimumSize: Size(0, 0),
-                                    padding: EdgeInsets.zero,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  onPressed: () =>
-                                      _showLinkedBankAccountsBottomSheet(
-                                        context,
-                                        selectedPayoutDestination,
-                                      ),
-                                  child: Row(
-                                    mainAxisSize: .min,
-                                    children: [
-                                      Assets.images.bank.image(
-                                        width: Dimens.size.s23,
-                                        height: Dimens.size.s23,
-                                      ),
-                                      Gap(Dimens.spacing.sp5),
-                                      Text(
-                                        l10n.selectPayoutDestination,
-                                        style: context.typo.bodyLink.copyWith(
-                                          color: context.color.blue700,
-                                          decorationColor:
-                                              context.color.blue700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          error: (Object error, StackTrace stackTrace) {
-                            // Will rarely occur
-                            return SizedBox.shrink();
-                          },
-                          loading: () =>
-                              Center(child: CircularProgressIndicator()),
+                    _DisbursementTypeSection(
+                      selectedType: selectedDisbursementType.value,
+                      onChanged: (value) {
+                        selectedDisbursementType.value = value;
+                        viewModel.onFormChanged(
+                          state.value!.formData.copyWith(
+                            disbursementType: value,
+                          ),
                         );
                       },
                     ),
-                    child: Column(
-                      mainAxisSize: .min,
-                      children: [
-                        CustomTextFormField(
-                          controller: bankController,
-                          labelText: l10n.selectBank,
-                          readOnly: true,
-                          onTap: () =>
-                              _showBankPickerBottomSheet(context, selectedBank),
-                          suffixIcon: IconButton(
-                            onPressed: () => _showBankPickerBottomSheet(
-                              context,
-                              selectedBank,
-                            ),
-                            icon: PhosphorIcon(
-                              PhosphorIcons.caretDown(),
+                  ]),
+                ),
+              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: .end,
+                    children: [
+                      Gap(Dimens.spacing.sp30),
+                      PrimaryButton(
+                        onPressed: isFormComplete()
+                            ? () =>
+                                  _handleNextStep(context, viewModel, formData)
+                            : null,
+                        child: Text(l10n.next),
+                      ),
+                      Gap(Dimens.spacing.sp20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          desktop: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
+                  top: context.isTablet
+                      ? Dimens.spacing.sp20
+                      : Dimens.spacing.sp28,
+                  bottom: Dimens.spacing.sp20,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: Align(
+                    alignment: .centerLeft,
+                    child: InkWell(
+                      onTap: () => context.pop(),
+                      borderRadius: .circular(Dimens.radius.r4),
+                      child: Row(
+                        mainAxisSize: .min,
+                        children: [
+                          PhosphorIcon(
+                            PhosphorIcons.arrowLeft(),
+                            color: context.color.blue700,
+                            size: Dimens.size.s20,
+                          ),
+                          Gap(Dimens.spacing.sp8),
+                          Text(
+                            l10n.back,
+                            style: context.typo.bodyMedium.copyWith(
                               color: context.color.blue700,
                             ),
                           ),
-                        ),
-                        Gap(Dimens.spacing.sp20),
-                        CustomTextFormField(
-                          controller: accountNumberController,
-                          labelText: l10n.accountNumber,
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(10),
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          textInputType: .number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return l10n.fieldRequired('account number');
-                            }
-                            if (value.length != 10) {
-                              return l10n.enterAValid10DigitsAccountNumber;
-                            }
-                            return null;
-                          },
-                        ),
-                        RecipientIdentityTile(type: type),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  Gap(Dimens.spacing.sp40),
-
-                  MenuSectionHeader(title: l10n.howWillThePaymentBeReleased),
-                  DisbursementTypeSelector(
-                    selectedType: selectedDisbursementType.value,
-                    onChanged: (value) {
-                      selectedDisbursementType.value = value;
-                      viewModel.onFormChanged(
-                        state.value!.formData.copyWith(disbursementType: value),
-                      );
-                    },
-                  ),
-                ]),
-              ),
-            ),
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                  bottom: MediaQuery.of(context).padding.bottom,
                 ),
-                child: Column(
-                  mainAxisAlignment: .end,
-                  children: [
-                    Gap(Dimens.spacing.sp30),
-                    PrimaryButton(
-                      onPressed: isFormComplete()
-                          ? () {
-                              if (formData?.disbursementType == .milestones) {
-                                showDialog(
-                                  context: context,
-                                  useRootNavigator: true,
-                                  fullscreenDialog: true,
-                                  useSafeArea: false,
-                                  animationStyle: .new(
-                                    curve: Curves.easeInOut,
-                                    duration: const Duration(milliseconds: 200),
+              ),
+              SliverPadding(
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                sliver: SliverToBoxAdapter(
+                  child: Row(
+                    crossAxisAlignment: .start,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: context.color.white,
+                            borderRadius: .circular(Dimens.radius.r12),
+                          ),
+                          padding: .all(Dimens.padding.p12),
+                          child: Column(
+                            mainAxisSize: .min,
+                            children: [
+                              Gap(Dimens.spacing.sp12),
+                              InkWell(
+                                onTap: () => _showAgreementNumpadOverlay(
+                                  context,
+                                  amountController,
+                                  ref: ref,
+                                ),
+                                child: Material(
+                                  borderRadius: .circular(Dimens.radius.r8),
+                                  color: context.color.green150,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: Dimens.padding.p8,
+                                      vertical: Dimens.padding.p4,
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: .min,
+                                      children: [
+                                        PhosphorIcon(
+                                          PhosphorIcons.numpad(.duotone),
+                                          color: context.color.green900,
+                                          size: Dimens.size.s16,
+                                        ),
+                                        Gap(Dimens.spacing.sp6),
+                                        Text(
+                                          l10n.showNumpad,
+                                          style: context.typo.bodyMedium
+                                              .copyWith(
+                                                fontWeight:
+                                                    AppFontWeights.regular,
+                                                color: context.color.green900,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  builder: (context) =>
-                                      AgreementSplitMilestonesOverlay(
-                                        type: type,
-                                      ),
+                                ),
+                              ),
+                              Gap(Dimens.spacing.sp20),
+                              _PaymentDestinationSection(
+                                type: type,
+                                formData: formData,
+                                bankController: bankController,
+                                accountNumberController:
+                                    accountNumberController,
+                                selectedBank: selectedBank,
+                                selectedPayoutDestination:
+                                    selectedPayoutDestination,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Gap(
+                        context.isTablet
+                            ? Dimens.spacing.sp40
+                            : Dimens.spacing.sp55,
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            _DisbursementTypeSection(
+                              selectedType: selectedDisbursementType.value,
+                              onChanged: (value) {
+                                selectedDisbursementType.value = value;
+                                viewModel.onFormChanged(
+                                  state.value!.formData.copyWith(
+                                    disbursementType: value,
+                                  ),
                                 );
-                              } else {
-                                viewModel.moveToNextStep();
-                              }
-                            }
-                          : null,
-                      child: Text(l10n.next),
-                    ),
-                    Gap(Dimens.spacing.sp20),
-                  ],
+                              },
+                            ),
+                            Gap(
+                              context.isTablet
+                                  ? Dimens.spacing.sp32
+                                  : Dimens.spacing.sp54,
+                            ),
+                            PrimaryButton(
+                              onPressed: isFormComplete()
+                                  ? () => _handleNextStep(
+                                      context,
+                                      viewModel,
+                                      formData,
+                                    )
+                                  : null,
+                              child: Text(l10n.next),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -457,6 +466,179 @@ class AgreementSetupStep extends HookConsumerWidget {
     ),
   );
 
+  void _handleNextStep(
+    BuildContext context,
+    CreateAgreementViewModel viewModel,
+    CreateAgreementFormData? formData,
+  ) {
+    if (formData?.disbursementType == DisbursementType.milestones) {
+      showDialog(
+        context: context,
+        useRootNavigator: context.isMobile,
+        fullscreenDialog: true,
+        useSafeArea: false,
+        animationStyle: AnimationStyle(
+          curve: Curves.easeInOut,
+          duration: const Duration(milliseconds: 200),
+        ),
+        builder: (context) => AgreementSplitMilestonesOverlay(type: type),
+      );
+    } else {
+      viewModel.moveToNextStep();
+    }
+  }
+}
+
+class _PaymentDestinationSection extends ConsumerWidget {
+  const _PaymentDestinationSection({
+    required this.type,
+    required this.formData,
+    required this.bankController,
+    required this.accountNumberController,
+    required this.selectedBank,
+    required this.selectedPayoutDestination,
+  });
+
+  final AgreementType type;
+  final CreateAgreementFormData? formData;
+  final TextEditingController bankController;
+  final TextEditingController accountNumberController;
+  final ValueNotifier<Bank?> selectedBank;
+  final ValueNotifier<PayoutDestination?> selectedPayoutDestination;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      children: [
+        MenuSectionHeader(
+          title: type == AgreementType.send
+              ? l10n.recipientDetails
+              : l10n.payoutDestination,
+        ),
+        Visibility(
+          visible: type == AgreementType.send,
+          replacement: Builder(
+            builder: (context) {
+              final userPayoutDestinationsState = ref.watch(
+                userPayoutDestinationsProvider,
+              );
+
+              return userPayoutDestinationsState.when(
+                data: (List<PayoutDestination> payoutDestinations) {
+                  if (payoutDestinations.isEmpty) {
+                    return AddBankAccountTrigger.card(
+                      onResult: (payoutDestination) {
+                        selectedPayoutDestination.value = payoutDestination;
+                      },
+                    );
+                  } else {
+                    if (formData?.payoutDestination != null) {
+                      final payoutDestination = formData!.payoutDestination!;
+                      return PayoutDestinationCard(
+                        payoutDestination: payoutDestination,
+                        action: GestureDetector(
+                          onTap: () => _showLinkedBankAccountsBottomSheet(
+                            context,
+                            selectedPayoutDestination,
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.change,
+                            style: context.typo.bodyLink.copyWith(
+                              color: context.color.blue700,
+                              decorationColor: context.color.blue700,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return Align(
+                      alignment: .centerLeft,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: context.color.transparent,
+                          foregroundColor: context.color.blue700,
+                          minimumSize: const Size(0, 0),
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        onPressed: () => _showLinkedBankAccountsBottomSheet(
+                          context,
+                          selectedPayoutDestination,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Assets.images.bank.image(
+                              width: Dimens.size.s23,
+                              height: Dimens.size.s23,
+                            ),
+                            Gap(Dimens.spacing.sp5),
+                            Text(
+                              l10n.selectPayoutDestination,
+                              style: context.typo.bodyLink.copyWith(
+                                color: context.color.blue700,
+                                decorationColor: context.color.blue700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                },
+                error: (Object error, StackTrace stackTrace) {
+                  return const SizedBox.shrink();
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+              );
+            },
+          ),
+          child: Column(
+            mainAxisSize: .min,
+            children: [
+              CustomTextFormField(
+                controller: bankController,
+                labelText: l10n.selectBank,
+                readOnly: true,
+                onTap: () => _showBankPickerBottomSheet(context, selectedBank),
+                suffixIcon: IconButton(
+                  onPressed: () =>
+                      _showBankPickerBottomSheet(context, selectedBank),
+                  icon: PhosphorIcon(
+                    PhosphorIcons.caretDown(),
+                    color: context.color.blue700,
+                  ),
+                ),
+              ),
+              Gap(Dimens.spacing.sp20),
+              CustomTextFormField(
+                controller: accountNumberController,
+                labelText: l10n.accountNumber,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(10),
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                textInputType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return l10n.fieldRequired('account number');
+                  }
+                  if (value.length != 10) {
+                    return l10n.enterAValid10DigitsAccountNumber;
+                  }
+                  return null;
+                },
+              ),
+              RecipientIdentityTile(type: type),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showBankPickerBottomSheet(
     BuildContext context,
     ValueNotifier<Bank?> selectedBank,
@@ -465,7 +647,6 @@ class AgreementSetupStep extends HookConsumerWidget {
         context,
         child: Consumer(
           builder: (context, ref, _) {
-            // Watch your app's specific feature provider here
             final banksAsync = ref.watch(getBanksProvider(.NG));
 
             return BankPickerBottomSheet(
@@ -491,4 +672,29 @@ class AgreementSetupStep extends HookConsumerWidget {
       selectedPayoutDestination.value = payoutDestination;
     }
   });
+}
+
+class _DisbursementTypeSection extends StatelessWidget {
+  const _DisbursementTypeSection({
+    required this.selectedType,
+    required this.onChanged,
+  });
+
+  final DisbursementType? selectedType;
+  final ValueChanged<DisbursementType?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      children: [
+        MenuSectionHeader(title: l10n.howWillThePaymentBeReleased),
+        DisbursementTypeSelector(
+          selectedType: selectedType,
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
 }
