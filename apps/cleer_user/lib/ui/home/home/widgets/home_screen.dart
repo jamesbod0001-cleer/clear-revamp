@@ -1,10 +1,10 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/activity/activity_provider.dart';
-import 'package:cleer/domain/providers/storage/file_url_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card_skeleton_list.dart';
+import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
 import 'package:cleer/ui/home/home/widgets/escrow_summary_card.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/routing/routes.dart';
@@ -15,8 +15,6 @@ import 'package:cleer_core/models/paginated_list/paginated_list.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
 import 'package:cleer_ui/widgets/app_empty_state.dart';
-import 'package:cleer_ui/widgets/images/app_image.dart';
-import 'package:cleer_ui/widgets/images/blur_hash_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -202,71 +200,9 @@ class HomeScreen extends ConsumerWidget {
               mainAxisAlignment: .spaceBetween,
               children: [
                 Text(l10n.home, style: context.typo.headlineSmall),
-                Container(
-                  decoration: ShapeDecoration(
-                    shape: StadiumBorder(
-                      side: BorderSide(color: context.color.outline),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: .min,
-                    children: [
-                      Container(
-                        width: Dimens.size.s40,
-                        height: Dimens.size.s40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: context.color.grayComponent,
-                        ),
-                        child: ClipOval(
-                          child: Builder(
-                            builder: (BuildContext context) {
-                              final profile = user;
-                              if (profile == null) {
-                                return const SizedBox.shrink();
-                              }
-                              if (profile.profilePicture == null) {
-                                return CircleAvatar(
-                                  radius: Dimens.radius.r20,
-                                  backgroundColor: const Color(0xFFD6F4E0),
-                                  foregroundColor: context.color.success,
-                                  child: Text(
-                                    "${profile.firstName[0]}${profile.lastName[0]}",
-                                  ),
-                                );
-                              }
-                              final profileUrlAsync = ref.watch(
-                                fileUrlProvider(profile.profilePicture!.key),
-                              );
-                              return profileUrlAsync.when(
-                                data: (url) => AppImage(
-                                  imageUrl: url,
-                                  blurHash:
-                                      profile.profilePicture!.blurHash ?? '',
-                                  fit: BoxFit.cover,
-                                ),
-                                loading: () => BlurHashWidget(
-                                  hash: profile.profilePicture!.blurHash ?? '',
-                                ),
-                                error: (_, _) => Center(
-                                  child: PhosphorIcon(
-                                    PhosphorIcons.imageBroken(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: .symmetric(horizontal: Dimens.padding.p8),
-                        child: Text(
-                          user?.firstName ?? '',
-                          style: context.typo.titleSmall,
-                        ),
-                      ),
-                    ],
-                  ),
+                UserProfilePill(
+                  profile: user,
+                  // onTap: () => ProfileRoute().go(context),
                 ),
               ],
             ),
