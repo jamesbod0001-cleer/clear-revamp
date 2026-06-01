@@ -321,6 +321,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                     crossAxisAlignment: .start,
                     children: [
                       Expanded(
+                        flex: context.isTablet ? 421 : 572,
                         child: Container(
                           decoration: BoxDecoration(
                             color: context.color.white,
@@ -389,6 +390,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                             : Dimens.spacing.sp55,
                       ),
                       Expanded(
+                        flex: context.isTablet ? 357 : 485,
                         child: Column(
                           children: [
                             _DisbursementTypeSection(
