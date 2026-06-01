@@ -3,8 +3,8 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/ongoing_agreements_view.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -16,7 +16,7 @@ class AgreementsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    ref.watch(userProfileProvider);
+    final user = ref.watch(userProfileProvider).value;
 
     final initialTabIndex = ref
         .read(agreementsViewModelProvider)
@@ -55,14 +55,36 @@ class AgreementsScreen extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: Dimens.padding.p18,
+        titleSpacing: context.isMobile
+            ? Dimens.of(context).paddingScreenHorizontal
+            : Dimens.size.s0,
         titleTextStyle: context.typo.headlineSmall,
-        title: Container(
-          height: Dimens.size.s54,
-          alignment: .bottomLeft,
-          child: Text(l10n.agreements),
-        ),
-        toolbarHeight: Dimens.size.s70,
+        title: context.isMobile
+            ? Container(
+                height: Dimens.size.s54,
+                alignment: .bottomLeft,
+                child: Text(l10n.agreements),
+              )
+            : Container(
+                width: double.infinity,
+                height: Dimens.size.s72,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                alignment: .centerLeft,
+                decoration: BoxDecoration(
+                  border: .all(color: context.color.outline),
+                ),
+                child: Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(l10n.agreements),
+                    UserProfilePill(
+                      profile: user,
+                      // onTap: () => ProfileRoute().go(context),
+                    ),
+                  ],
+                ),
+              ),
+        toolbarHeight: context.isMobile ? Dimens.size.s70 : Dimens.size.s72,
       ),
       body: SafeArea(
         bottom: false,
@@ -71,8 +93,11 @@ class AgreementsScreen extends HookConsumerWidget {
             PinnedHeaderSliver(
               child: Container(
                 color: context.color.background,
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                  top: Dimens.padding.p4,
+                alignment: Alignment.centerLeft,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
+                  top: context.isMobile
+                      ? Dimens.padding.p4
+                      : Dimens.padding.p32,
                   bottom: Dimens.padding.p4,
                 ),
                 child: _TabBar(controller: tabController, l10n: l10n),
@@ -80,7 +105,7 @@ class AgreementsScreen extends HookConsumerWidget {
             ),
             SliverFillRemaining(
               child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
                   bottom: MediaQuery.of(context).padding.bottom,
                 ),
                 child: TabBarView(
@@ -110,6 +135,7 @@ class _TabBar extends ConsumerWidget {
 
     return Container(
       height: Dimens.size.s44,
+      width: context.isDesktop ? 357 : double.infinity,
       decoration: BoxDecoration(
         color: context.color.outline,
         borderRadius: BorderRadius.circular(Dimens.radius.r80),

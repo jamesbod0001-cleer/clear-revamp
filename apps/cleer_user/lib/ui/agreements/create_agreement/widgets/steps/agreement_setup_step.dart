@@ -12,11 +12,8 @@ import 'package:cleer/ui/agreements/create_agreement/widgets/disbursement_type_s
 import 'package:cleer/ui/agreements/create_agreement/widgets/linked_bank_accounts_bottom_sheet.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/recipient_identity_tile.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
-import 'package:cleer_ui/widgets/bottom_sheets/bank_picker_bottom_sheet.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
-import 'package:cleer_ui/widgets/custom_text_form_field.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account_trigger.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_card.dart';
 import 'package:cleer_ui/widgets/menu_section_header.dart';
@@ -328,10 +325,8 @@ class AgreementSetupStep extends HookConsumerWidget {
                           controller: bankController,
                           labelText: l10n.selectBank,
                           readOnly: true,
-                          onTap: () => _showBankPickerBottomSheet(
-                            context,
-                            selectedBank,
-                          ),
+                          onTap: () =>
+                              _showBankPickerBottomSheet(context, selectedBank),
                           suffixIcon: IconButton(
                             onPressed: () => _showBankPickerBottomSheet(
                               context,
@@ -434,7 +429,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     required WidgetRef ref,
   }) => showDialog(
     context: context,
-    useRootNavigator: true,
+    useRootNavigator: context.isMobile,
     fullscreenDialog: true,
     useSafeArea: false,
     animationStyle: .new(

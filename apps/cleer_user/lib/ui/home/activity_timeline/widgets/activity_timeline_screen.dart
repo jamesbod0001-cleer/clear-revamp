@@ -1,6 +1,8 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/activity/activity_provider.dart';
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
 import 'package:cleer_core/models/activity/activity.dart';
 import 'package:cleer_core/models/paginated_list/paginated_list.dart';
 import 'package:cleer_ui/cleer_ui.dart';
@@ -18,23 +20,48 @@ class ActivityTimelineScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
+    final user = ref.watch(userProfileProvider).value;
     final activitiesState = ref.watch(userActivitiesProvider);
 
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: Dimens.padding.p18,
+        titleSpacing: context.isMobile
+            ? Dimens.of(context).paddingScreenHorizontal
+            : Dimens.size.s0,
         titleTextStyle: context.typo.headlineSmall,
         automaticallyImplyLeading: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Gap(Dimens.spacing.sp12),
-            const AppBackButton(),
-            Gap(Dimens.spacing.sp24),
-            Text(l10n.activityTimeline),
-          ],
-        ),
-        toolbarHeight: 102,
+        title: context.isMobile
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Gap(Dimens.spacing.sp12),
+                  const AppBackButton(),
+                  Gap(Dimens.spacing.sp24),
+                  Text(l10n.activityTimeline),
+                ],
+              )
+            : Container(
+                width: double.infinity,
+                height: Dimens.size.s72,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                alignment: .centerLeft,
+                decoration: BoxDecoration(
+                  border: .all(color: context.color.outline),
+                ),
+                child: Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      context.isMobile ? l10n.activityTimeline : l10n.activity,
+                    ),
+                    UserProfilePill(
+                      profile: user,
+                      // onTap: () => ProfileRoute().go(context),
+                    ),
+                  ],
+                ),
+              ),
+        toolbarHeight: context.isMobile ? 102 : Dimens.size.s72,
       ),
       body: activitiesState.when(
         skipLoadingOnReload: true,
@@ -44,7 +71,7 @@ class ActivityTimelineScreen extends ConsumerWidget {
               children: [
                 const Spacer(flex: 221),
                 Padding(
-                  padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                  padding: Dimens.of(context).edgeInsetsScreenHorizontal,
                   child: AppEmptyState(
                     icon: Assets.icons.rewindTimeOff.svg(
                       width: Dimens.size.s80,
@@ -85,10 +112,13 @@ class ActivityTimelineScreen extends ConsumerWidget {
             child: CustomScrollView(
               slivers: [
                 SliverPadding(
-                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                    top: Dimens.padding.p36,
-                    bottom: Dimens.padding.p20,
-                  ),
+                  padding: Dimens.of(context).edgeInsetsScreenHorizontal
+                      .copyWith(
+                        top: context.isMobile
+                            ? Dimens.padding.p36
+                            : Dimens.padding.p32,
+                        bottom: Dimens.padding.p20,
+                      ),
                   sliver: MultiSliver(
                     children: [
                       ..._buildGroupedSlivers(context, groupedActivities),
