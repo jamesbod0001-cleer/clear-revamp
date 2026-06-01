@@ -1,7 +1,5 @@
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/cleer_ui.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:cleer_ui/widgets/trust_score_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';

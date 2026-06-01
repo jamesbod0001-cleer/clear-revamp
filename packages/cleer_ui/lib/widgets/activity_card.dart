@@ -1,9 +1,6 @@
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/generated/assets.gen.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
