@@ -280,7 +280,16 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
                         color: context.color.grey800,
                       ),
                     ),
-                    ?statusPill(),
+                    statusPill() != null
+                        ? Skeleton.replace(
+                            replacement: Bone(
+                              width: Dimens.size.s56,
+                              height: Dimens.size.s22,
+                              borderRadius: .circular(Dimens.radius.r20),
+                            ),
+                            child: statusPill()!,
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
                 Gap(Dimens.spacing.sp4),
