@@ -24,7 +24,12 @@ class AppNavigationShell extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = context.isMobile;
-    final currentPath = GoRouterState.of(context).uri.path;
+    final uri = GoRouterState.of(context).uri;
+    final currentPath = uri.path;
+
+    // Check if we are on a root tab. Update this list if I have more root tabs.
+    final isRootMobileTab =
+        ['/home', '/agreements', '/profile', '/activity'].contains(currentPath);
 
     // --- SMART RESYNC LOGIC ---
     // This logic ensures that when the user resizes between Mobile and Desktop,
@@ -73,16 +78,33 @@ class AppNavigationShell extends HookWidget {
       return Scaffold(
         extendBody: true,
         body: navigationShell,
-        bottomNavigationBar: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
-            child: NavigationBar(
-              backgroundColor: context.color.navbarBg.withValues(alpha: 0.92),
-              selectedIndex: uiSelectedIndex != -1 ? uiSelectedIndex : 0,
-              onDestinationSelected: onTabTapped,
-              destinations: destinations,
-            ),
-          ),
+        bottomNavigationBar: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return SizeTransition(
+              sizeFactor: animation,
+              alignment: Alignment.topCenter,
+              child: child,
+            );
+          },
+          child:
+              isRootMobileTab
+                  ? ClipRect(
+                    key: const ValueKey('bottomNav'),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                      child: NavigationBar(
+                        backgroundColor: context.color.navbarBg.withValues(
+                          alpha: 0.92,
+                        ),
+                        selectedIndex:
+                            uiSelectedIndex != -1 ? uiSelectedIndex : 0,
+                        onDestinationSelected: onTabTapped,
+                        destinations: destinations,
+                      ),
+                    ),
+                  )
+                  : const SizedBox.shrink(key: ValueKey('emptyNav')),
         ),
       );
     }

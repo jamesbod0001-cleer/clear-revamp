@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:cleer/ui/home/activity_timeline/widgets/activity_timeline_screen.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/accept_agreement_screen.dart';
@@ -29,41 +27,10 @@ import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_s
 import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
 import 'package:cleer/ui/profile/terms_and_policies/widgets/terms_and_policies_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
-import 'package:cleer_ui/cleer_ui.dart';
-import 'package:cleer_ui/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 part 'routes.g.dart';
-
-// --- HELPERS ---
-
-/// Extension to provide a context-aware navigator key for adaptive routing.
-extension AdaptiveGoRouteData on GoRouteData {
-  /// Returns the root navigator key if on mobile (to cover the shell),
-  /// otherwise returns null to stay within the shell on desktop.
-  GlobalKey<NavigatorState>? get dynamicParentNavigatorKey {
-    // Try to get context from the navigator key (Standard way)
-    final context = cleerNavigatorKey.currentContext;
-    if (context != null) {
-      return context.isMobile ? cleerNavigatorKey : null;
-    }
-
-    // Fallback for initial route tree construction (when context is not yet available)
-    // This handles cold starts and deep links by checking the physical screen size.
-    try {
-      final view = PlatformDispatcher.instance.views.first;
-      final width = view.physicalSize.width / view.devicePixelRatio;
-      if (width < Breakpoints.tablet) {
-        return cleerNavigatorKey;
-      }
-    } catch (_) {
-      // If we can't determine the size, we default to null (desktop-friendly)
-    }
-
-    return null;
-  }
-}
 
 // --- PUBLIC ROUTES ---
 
@@ -262,9 +229,6 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 }
 
 class ActivityTimelineRoute extends GoRouteData with $ActivityTimelineRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   const ActivityTimelineRoute();
 
   @override
@@ -283,9 +247,6 @@ class AgreementsRoute extends GoRouteData with $AgreementsRoute {
 }
 
 class CreateAgreementRoute extends GoRouteData with $CreateAgreementRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   final AgreementType type;
 
   CreateAgreementRoute({required this.type});
@@ -296,9 +257,6 @@ class CreateAgreementRoute extends GoRouteData with $CreateAgreementRoute {
 }
 
 class AgreementDetailsRoute extends GoRouteData with $AgreementDetailsRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   final String id;
   final Agreement? $extra;
 
@@ -330,18 +288,12 @@ class ActivityTabRoute extends GoRouteData with $ActivityTabRoute {
 }
 
 class PayoutDestinationRoute extends GoRouteData with $PayoutDestinationRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       PayoutDestinationScreen();
 }
 
 class AccountSecurityRoute extends GoRouteData with $AccountSecurityRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       AccountSecurityScreen();
@@ -349,36 +301,24 @@ class AccountSecurityRoute extends GoRouteData with $AccountSecurityRoute {
 
 class ManageNotificationsRoute extends GoRouteData
     with $ManageNotificationsRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       ManageNotificationsScreen();
 }
 
 class TermsAndPoliciesRoute extends GoRouteData with $TermsAndPoliciesRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       TermsAndPoliciesScreen();
 }
 
 class DataPrivacyRoute extends GoRouteData with $DataPrivacyRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       DataPrivacyScreen();
 }
 
 class HelpSupportRoute extends GoRouteData with $HelpSupportRoute {
-  GlobalKey<NavigatorState>? get parentNavigatorKey =>
-      dynamicParentNavigatorKey;
-
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       HelpSupportScreen();
