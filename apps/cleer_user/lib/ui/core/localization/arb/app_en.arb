@@ -583,5 +583,6 @@
   "noActivityYet": "No activity yet",
   "whenYouCreateAgreementsOrSecurePaymentsYourActivityHistoryWillAppearHere": "When you create agreements or secure payments, your activity history will appear here.",
   "back": "Back",
-  "showNumpad": "Show Numpad"
+  "showNumpad": "Show Numpad",
+  "amountLabel": "AMOUNT (₦)"
 }
