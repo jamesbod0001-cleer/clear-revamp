@@ -23,7 +23,7 @@ class AppImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return OctoImage.fromSet(
       image: CachedNetworkImageProvider(imageUrl),
-      octoSet: AppOctoSets.blurHash(blurHash),
+      octoSet: AppOctoSets.blurHash(blurHash, fit: fit),
       width: width,
       height: height,
       fit: fit,
