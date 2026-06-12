@@ -7,13 +7,11 @@ import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/login/view_model/login_view_model.dart';
 import 'package:cleer/ui/auth/login/widgets/login_form.dart';
+import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
-import 'package:cleer_ui/widgets/offline_warning_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -106,8 +104,8 @@ class LoginScreen extends ConsumerWidget {
       return Material(child: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      body: SafeArea(
+    return AuthResponsiveLayout(
+      child: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
@@ -117,9 +115,23 @@ class LoginScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    Gap(Dimens.spacing.sp16),
-                    AppBackButton(),
-                    Gap(Dimens.spacing.sp24),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp16
+                          : Dimens.spacing.sp56,
+                    ),
+                    AppBackButton(
+                      onPressed: context.isAtLeastTablet
+                          ? () => CreateAccountRoute(
+                              redirectTo: redirectTo,
+                            ).pushReplacement(context)
+                          : null,
+                    ),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp24
+                          : Dimens.spacing.sp52,
+                    ),
                     OfflineWarningBanner(isDisconnected: isDisconnected),
                     Text(title, style: context.typo.headlineSmall),
                     if (subtitle != null) ...[

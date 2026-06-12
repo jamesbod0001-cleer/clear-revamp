@@ -3,7 +3,9 @@ import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/create_password/view_model/create_password_view_model.dart';
 import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
+import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -60,17 +62,21 @@ class CreatePasswordScreen extends HookConsumerWidget {
       return Material(child: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      body: SafeArea(
+    return AuthResponsiveLayout(
+      child: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
               child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    Gap(Dimens.spacing.sp16),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp16
+                          : Dimens.spacing.sp56,
+                    ),
                     Row(
                       mainAxisAlignment: .spaceBetween,
                       children: [
@@ -78,7 +84,11 @@ class CreatePasswordScreen extends HookConsumerWidget {
                         StepProgressIndicator(currentStep: 3),
                       ],
                     ),
-                    Gap(Dimens.spacing.sp24),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp24
+                          : Dimens.spacing.sp52,
+                    ),
                     OfflineWarningBanner(isDisconnected: isDisconnected),
                     Text(
                       l10n.createYourPassword,
@@ -136,7 +146,7 @@ class CreatePasswordScreen extends HookConsumerWidget {
                           : null,
                       child: Text(l10n.createPassword),
                     ),
-                    Gap(Dimens.spacing.sp20),
+                    Gap(context.isMobile ? Dimens.spacing.sp20 : Dimens.spacing.sp32),
                   ],
                 ),
               ),

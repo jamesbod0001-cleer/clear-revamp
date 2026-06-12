@@ -90,7 +90,7 @@ class _RequestCodeStep extends HookConsumerWidget {
             onPressed: isFormValid ? () => viewModel.requestCode() : null,
             child: Text(l10n.requestCode),
           ),
-          Gap(Dimens.spacing.sp20),
+          Gap(context.isMobile ? Dimens.spacing.sp20 : Dimens.spacing.sp32),
         ],
       ),
     );

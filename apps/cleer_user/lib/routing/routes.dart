@@ -27,6 +27,7 @@ import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_s
 import 'package:cleer/ui/profile/profile/widgets/profile_screen.dart';
 import 'package:cleer/ui/profile/terms_and_policies/widgets/terms_and_policies_screen.dart';
 import 'package:cleer/ui/splash/widgets/splash_screen.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -48,6 +49,16 @@ class SplashRoute extends GoRouteData with $SplashRoute {
 @TypedGoRoute<OnboardingRoute>(path: '/onboarding')
 class OnboardingRoute extends GoRouteData with $OnboardingRoute {
   const OnboardingRoute();
+
+  @override
+  String? redirect(BuildContext context, GoRouterState state) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width >= Breakpoints.tablet) {
+      return CreateAccountRoute().location;
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const OnboardingScreen();

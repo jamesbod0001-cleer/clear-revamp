@@ -5,14 +5,12 @@ import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/auth/verify_phone_number/view_model/verify_phone_number_view_model.dart';
+import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/code_pinput.dart';
 import 'package:cleer_ui/widgets/resend_code_timer.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
-import 'package:cleer_ui/widgets/offline_warning_banner.dart';
 import 'package:cleer_ui/widgets/step_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -82,17 +80,21 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
       return Material(child: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      body: SafeArea(
+    return AuthResponsiveLayout(
+      child: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
               child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    Gap(Dimens.spacing.sp16),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp16
+                          : Dimens.spacing.sp56,
+                    ),
                     Row(
                       mainAxisAlignment: .spaceBetween,
                       children: [
@@ -100,7 +102,11 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
                         StepProgressIndicator(currentStep: 2),
                       ],
                     ),
-                    Gap(Dimens.spacing.sp24),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp24
+                          : Dimens.spacing.sp52,
+                    ),
                     OfflineWarningBanner(isDisconnected: isDisconnected),
                     Text(
                       l10n.verifyPhoneNumber,
@@ -142,7 +148,7 @@ class VerifyPhoneNumberScreen extends HookConsumerWidget {
                           : null,
                       child: Text(l10n.verify),
                     ),
-                    Gap(Dimens.spacing.sp20),
+                    Gap(context.isMobile ? Dimens.spacing.sp20 : Dimens.spacing.sp32),
                   ],
                 ),
               ),

@@ -7,13 +7,11 @@ import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/create_account/view_model/create_account_view_model.dart';
 import 'package:cleer/ui/auth/create_account/widgets/create_account_form.dart';
+import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
 import 'package:cleer/ui/auth/verify_phone_number/models/verification_details.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
-import 'package:cleer_ui/widgets/offline_warning_banner.dart';
 import 'package:cleer_ui/widgets/step_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -105,25 +103,34 @@ class CreateAccountScreen extends ConsumerWidget {
     if (isLoading) {
       return Material(child: Center(child: CircularProgressIndicator()));
     }
-    return Scaffold(
-      body: SafeArea(
+    return AuthResponsiveLayout(
+      child: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
                 child: Column(
                   crossAxisAlignment: .start,
                   children: [
-                    Gap(Dimens.spacing.sp16),
+                    if (context.isMobile) ...[
+                      Gap(Dimens.spacing.sp16),
+                      Row(
+                        mainAxisAlignment: .spaceBetween,
+                        children: [AppBackButton(), StepProgressIndicator()],
+                      ),
+                      Gap(Dimens.spacing.sp24),
+                    ] else
+                      Gap(Dimens.spacing.sp56),
+                    OfflineWarningBanner(isDisconnected: isDisconnected),
                     Row(
                       mainAxisAlignment: .spaceBetween,
-                      children: [AppBackButton(), StepProgressIndicator()],
+                      children: [
+                        Text(title, style: context.typo.headlineSmall),
+                        if (context.isAtLeastTablet) StepProgressIndicator(),
+                      ],
                     ),
-                    Gap(Dimens.spacing.sp24),
-                    OfflineWarningBanner(isDisconnected: isDisconnected),
-                    Text(title, style: context.typo.headlineSmall),
                     if (subtitle != null) ...[
                       Gap(Dimens.spacing.sp8),
                       Text(

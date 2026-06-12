@@ -4,6 +4,7 @@ import 'package:cleer_core/models/reset_password_result/reset_password_result.da
 import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
 import 'package:cleer/ui/auth/forgot_password/state/forgot_password_state.dart';
 import 'package:cleer/ui/auth/forgot_password/view_model/forgot_password_view_model.dart';
+import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
 import 'package:cleer/ui/core/localization/error_messages.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/cleer_ui.dart';
@@ -88,8 +89,8 @@ class ForgotPasswordScreen extends HookConsumerWidget {
         // Just move the internal state back.
         viewModel.moveStepBack();
       },
-      child: Scaffold(
-        body: SafeArea(
+      child: AuthResponsiveLayout(
+        child: SafeArea(
           child: Stack(
             children: [
               CustomScrollView(
@@ -97,13 +98,21 @@ class ForgotPasswordScreen extends HookConsumerWidget {
                   SliverFillRemaining(
                     hasScrollBody: false,
                     child: Padding(
-                      padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                      padding: Dimens.of(context).edgeInsetsScreenHorizontal,
                       child: Column(
                         crossAxisAlignment: .start,
                         children: [
-                          Gap(Dimens.spacing.sp24),
+                          Gap(
+                            context.isMobile
+                                ? Dimens.spacing.sp16
+                                : Dimens.spacing.sp56,
+                          ),
                           AppBackButton(onPressed: () => handleBack()),
-                          Gap(Dimens.spacing.sp24),
+                          Gap(
+                            context.isMobile
+                                ? Dimens.spacing.sp24
+                                : Dimens.spacing.sp52,
+                          ),
                           OfflineWarningBanner(isDisconnected: isDisconnected),
                           Text(
                             l10n.forgotPassword,

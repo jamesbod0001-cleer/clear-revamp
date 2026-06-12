@@ -1,8 +1,8 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/auth/registration_success/view_model/registration_success_view_model.dart';
+import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,8 +14,8 @@ class RegistrationSuccessScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: SafeArea(
+    return AuthResponsiveLayout(
+      child: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
@@ -64,7 +64,11 @@ class RegistrationSuccessScreen extends ConsumerWidget {
                           .finish(),
                       child: Text(l10n.finish),
                     ),
-                    Gap(Dimens.spacing.sp20),
+                    Gap(
+                      context.isMobile
+                          ? Dimens.spacing.sp20
+                          : Dimens.spacing.sp32,
+                    ),
                   ],
                 ),
               ),

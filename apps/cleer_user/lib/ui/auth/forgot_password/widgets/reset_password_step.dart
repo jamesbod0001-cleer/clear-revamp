@@ -112,7 +112,7 @@ class _ResetPasswordStep extends HookConsumerWidget {
                 : null,
             child: Text(l10n.resetPassword),
           ),
-          Gap(Dimens.spacing.sp20),
+          Gap(context.isMobile ? Dimens.spacing.sp20 : Dimens.spacing.sp32),
         ],
       ),
     );

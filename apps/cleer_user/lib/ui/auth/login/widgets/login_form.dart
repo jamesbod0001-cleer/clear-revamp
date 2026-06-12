@@ -135,7 +135,7 @@ class LoginForm extends HookConsumerWidget {
               ],
             ),
           ),
-          Gap(Dimens.spacing.sp20),
+          Gap(context.isMobile ? Dimens.spacing.sp20 : Dimens.spacing.sp32),
         ],
       ),
     );

@@ -13,9 +13,13 @@ class SplashScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ref.watch(userProfileProvider).isLoading) {
-      } else {
-        const OnboardingRoute().go(context);
+      if (!ref.read(userProfileProvider).isLoading) {
+        final width = MediaQuery.sizeOf(context).width;
+        if (width >= Breakpoints.tablet) {
+          CreateAccountRoute().go(context);
+        } else {
+          const OnboardingRoute().go(context);
+        }
       }
     });
     return DecoratedBox(
