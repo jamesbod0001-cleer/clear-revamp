@@ -20,7 +20,7 @@ class RegistrationSuccessScreen extends ConsumerWidget {
           slivers: [
             SliverFillRemaining(
               child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
                 child: Column(
                   children: [
                     Expanded(

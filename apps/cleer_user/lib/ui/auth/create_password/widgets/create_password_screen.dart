@@ -6,12 +6,7 @@ import 'package:cleer/ui/auth/create_password/widgets/password_validation_checkl
 import 'package:cleer/ui/auth/widgets/auth_responsive_layout.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/cleer_ui.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
-import 'package:cleer_ui/widgets/custom_text_form_field.dart';
-import 'package:cleer_ui/widgets/offline_warning_banner.dart';
 import 'package:cleer_ui/widgets/step_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
