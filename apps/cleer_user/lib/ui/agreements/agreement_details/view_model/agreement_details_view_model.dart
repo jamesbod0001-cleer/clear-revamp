@@ -10,9 +10,9 @@ class AgreementDetailsViewModel extends _$AgreementDetailsViewModel {
 
   @override
   FutureOr<Agreement> build(String agreementId) async {
-    final agreementPreviewResult = await ref
+    final agreementResult = await ref
         .read(agreementUseCaseProvider.notifier)
         .getAgreement(agreementId);
-    return agreementPreviewResult.getOrThrow();
+    return agreementResult.getOrThrow();
   }
 }
