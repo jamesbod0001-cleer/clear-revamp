@@ -509,6 +509,7 @@ class _PaymentDestinationSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
+      crossAxisAlignment: .stretch,
       children: [
         MenuSectionHeader(
           title: type == AgreementType.send
