@@ -5,9 +5,7 @@ import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/app_empty_state.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -88,22 +86,64 @@ class OngoingAgreementsView extends ConsumerWidget {
 
               if (filteredOngoingAgreements == null ||
                   filteredOngoingAgreements.isEmpty) {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
 
-              return ListView.separated(
-                padding: .only(top: Dimens.padding.p24),
-                itemBuilder: (BuildContext context, int index) {
-                  final agreement = filteredOngoingAgreements[index];
-                  return AgreementCard(
-                    isLast: index == (filteredOngoingAgreements.length - 1),
-                    agreement: agreement,
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(height: Dimens.spacing.sp16);
-                },
-                itemCount: filteredOngoingAgreements.length,
+              return ResponsiveLayout(
+                mobile: ListView.separated(
+                  padding: EdgeInsets.only(top: Dimens.padding.p24),
+                  itemBuilder: (BuildContext context, int index) {
+                    final agreement = filteredOngoingAgreements[index];
+                    return AgreementCard(
+                      isLast: index == (filteredOngoingAgreements.length - 1),
+                      agreement: agreement,
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return SizedBox(height: Dimens.spacing.sp16);
+                  },
+                  itemCount: filteredOngoingAgreements.length,
+                ),
+                desktop: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final spacing = Dimens.spacing.sp20;
+                    const maxExtent = 450.0;
+
+                    // Use floor to ensure we don't overflow the container
+                    int crossAxisCount =
+                        (constraints.maxWidth / (maxExtent + spacing)).floor();
+                    if (crossAxisCount < 2) crossAxisCount = 2;
+
+                    // Calculate exact width for each item to fill the row
+                    final itemWidth =
+                        (constraints.maxWidth -
+                            (spacing * (crossAxisCount - 1))) /
+                        crossAxisCount;
+
+                    return SingleChildScrollView(
+                      padding: EdgeInsets.only(top: Dimens.padding.p24),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          spacing: spacing,
+                          runSpacing: spacing,
+                          children: filteredOngoingAgreements.map((agreement) {
+                            return SizedBox(
+                              width: itemWidth,
+                              child: AgreementCard(
+                                agreement: agreement,
+                                isLast: true,
+                                useCardStyle: true,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               );
             },
           ),
