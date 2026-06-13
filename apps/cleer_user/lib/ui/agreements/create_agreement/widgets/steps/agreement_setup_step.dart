@@ -73,7 +73,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     }, [selectedBank.value]);
 
     useEffect(() {
-      if (amountController.text == '') {
+      if (amountController.text == '' && context.isMobile) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _showAgreementNumpadOverlay(
             context,
@@ -158,13 +158,15 @@ class AgreementSetupStep extends HookConsumerWidget {
     bool isFormComplete() {
       return switch (type) {
         AgreementType.send =>
-          (formData?.amount.isNotEmpty ?? false) &&
+          ((formData?.amount.isNotEmpty ?? false) &&
+                  double.parse(formData?.amount ?? '0') >= 1500) &&
               (formData?.recipientAccountNumber.length == 10) &&
               (formData?.recipientBank != null) &&
               (formData?.disbursementType != null) &&
               (resolution != null),
         AgreementType.request =>
-          (formData?.amount.isNotEmpty ?? false) &&
+          ((formData?.amount.isNotEmpty ?? false) &&
+                  double.parse(formData?.amount ?? '0') >= 1500) &&
               (formData?.payoutDestination != null) &&
               (formData?.disbursementType != null),
       };
@@ -283,9 +285,9 @@ class AgreementSetupStep extends HookConsumerWidget {
               SliverPadding(
                 padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
                   top: context.isTablet
-                      ? Dimens.spacing.sp20
-                      : Dimens.spacing.sp28,
-                  bottom: Dimens.spacing.sp20,
+                      ? Dimens.padding.p20
+                      : Dimens.padding.p28,
+                  bottom: Dimens.padding.p20,
                 ),
                 sliver: SliverToBoxAdapter(
                   child: Align(
@@ -315,7 +317,9 @@ class AgreementSetupStep extends HookConsumerWidget {
                 ),
               ),
               SliverPadding(
-                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
+                  bottom: Dimens.padding.p32,
+                ),
                 sliver: SliverToBoxAdapter(
                   child: Row(
                     crossAxisAlignment: .start,
@@ -331,43 +335,37 @@ class AgreementSetupStep extends HookConsumerWidget {
                           child: Column(
                             mainAxisSize: .min,
                             children: [
-                              Gap(Dimens.spacing.sp12),
-                              InkWell(
-                                onTap: () => _showAgreementNumpadOverlay(
-                                  context,
-                                  amountController,
-                                  ref: ref,
+                              AgreementNumpad(
+                                initialAmount: amountController.text.replaceAll(
+                                  ',',
+                                  '',
                                 ),
-                                child: Material(
-                                  borderRadius: .circular(Dimens.radius.r8),
-                                  color: context.color.green150,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: Dimens.padding.p8,
-                                      vertical: Dimens.padding.p4,
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: .min,
-                                      children: [
-                                        PhosphorIcon(
-                                          PhosphorIcons.numpad(.duotone),
-                                          color: context.color.green900,
-                                          size: Dimens.size.s16,
-                                        ),
-                                        Gap(Dimens.spacing.sp6),
-                                        Text(
-                                          l10n.showNumpad,
-                                          style: context.typo.bodyMedium
-                                              .copyWith(
-                                                fontWeight:
-                                                    AppFontWeights.regular,
-                                                color: context.color.green900,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                type: type,
+                                onChanged: (value) {
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    amountController.text =
+                                        NumpadLogic.formatAmount(value);
+                                    ref
+                                        .read(
+                                          createAgreementViewModelProvider(
+                                            type,
+                                          ).notifier,
+                                        )
+                                        .onFormChanged(
+                                          ref
+                                              .watch(
+                                                createAgreementViewModelProvider(
+                                                  type,
+                                                ),
+                                              )
+                                              .value!
+                                              .formData
+                                              .copyWith(amount: value),
+                                        );
+                                  });
+                                },
                               ),
                               Gap(Dimens.spacing.sp20),
                               _PaymentDestinationSection(
@@ -451,9 +449,7 @@ class AgreementSetupStep extends HookConsumerWidget {
       initialAmount: amountController.text.replaceAll(',', ''),
       type: type,
       onSubmitted: (value) {
-        amountController.text = NumberFormat(
-          '#,###.##',
-        ).format(double.parse(value));
+        amountController.text = NumpadLogic.formatAmount(value);
         ref
             .read(createAgreementViewModelProvider(type).notifier)
             .onFormChanged(
