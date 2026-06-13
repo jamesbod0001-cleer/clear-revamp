@@ -24,32 +24,34 @@ class QuickActionsSection extends StatelessWidget {
                   .copyWith(color: context.color.grey800),
         ),
         Gap(context.isMobile ? Dimens.spacing.sp12 : Dimens.spacing.sp8),
-        Row(
-          children: [
-            Expanded(
-              child: _QuickActionCard(
-                title: l10n.sendFunds,
-                subtitle: l10n.yourMoneyIsHeldSafelyUntilYouConfirm,
-                backgroundColor: context.color.green400,
-                contentColor: context.color.green1000,
-                subtitleColor: context.color.green900,
-                icon: PhosphorIcons.arrowUpRight(),
-                onTap: () => _handleSendFunds(context),
+        IntrinsicHeight(
+          child: Row(
+            children: [
+              Expanded(
+                child: _QuickActionCard(
+                  title: l10n.sendFunds,
+                  subtitle: l10n.yourMoneyIsHeldSafelyUntilYouConfirm,
+                  backgroundColor: context.color.green400,
+                  contentColor: context.color.green1000,
+                  subtitleColor: context.color.green900,
+                  icon: PhosphorIcons.arrowUpRight(),
+                  onTap: () => _handleSendFunds(context),
+                ),
               ),
-            ),
-            Gap(context.isMobile ? Dimens.spacing.sp8 : Dimens.spacing.sp20),
-            Expanded(
-              child: _QuickActionCard(
-                title: l10n.requestPayment,
-                subtitle: l10n.fundsAreSecuredUntilTheDealIsComplete,
-                backgroundColor: context.color.primaryBlueLight,
-                contentColor: context.color.secondary,
-                subtitleColor: context.color.secondary,
-                icon: PhosphorIcons.arrowDownLeft(),
-                onTap: () => _handleRequestPayment(context),
+              Gap(context.isMobile ? Dimens.spacing.sp8 : Dimens.spacing.sp20),
+              Expanded(
+                child: _QuickActionCard(
+                  title: l10n.requestPayment,
+                  subtitle: l10n.fundsAreSecuredUntilTheDealIsComplete,
+                  backgroundColor: context.color.primaryBlueLight,
+                  contentColor: context.color.secondary,
+                  subtitleColor: context.color.secondary,
+                  icon: PhosphorIcons.arrowDownLeft(),
+                  onTap: () => _handleRequestPayment(context),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
