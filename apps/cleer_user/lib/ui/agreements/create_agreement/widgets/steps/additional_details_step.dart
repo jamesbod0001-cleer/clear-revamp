@@ -2,13 +2,10 @@ import 'package:cleer_core/models/agreement/agreement_enums.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/generated/assets.gen.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:cleer_ui/widgets/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
-import 'package:cleer_ui/widgets/custom_text_form_field.dart';
 import 'package:cleer_ui/widgets/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -107,167 +104,364 @@ class AdditionalDetailsStep extends HookConsumerWidget {
             ),
           );
         },
-        child: CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  Gap(Dimens.spacing.sp12),
-                  MenuSectionHeader(title: l10n.additionalDetails),
-                  CustomTextFormField(
-                    controller: categoryController,
-                    labelText: l10n.paymentCategory,
-                    readOnly: true,
-                    onTap: () => _showCategoryPickerBottomSheet(
-                      context,
-                      selectedCategory,
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () => _showCategoryPickerBottomSheet(
+        child: ResponsiveLayout(
+          mobile: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Gap(Dimens.spacing.sp12),
+                    MenuSectionHeader(title: l10n.additionalDetails),
+                    CustomTextFormField(
+                      controller: categoryController,
+                      labelText: l10n.paymentCategory,
+                      readOnly: true,
+                      onTap: () => _showCategoryPickerBottomSheet(
                         context,
                         selectedCategory,
                       ),
-                      icon: PhosphorIcon(
-                        PhosphorIcons.caretDown(),
-                        color: context.color.blue700,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return l10n.fieldRequired('payment category');
-                      }
-                      return null;
-                    },
-                  ),
-                  if (formData?.disbursementType == .oneTime) ...[
-                    Gap(Dimens.spacing.sp20),
-                    CustomTextFormField(
-                      controller: releaseDateController,
-                      labelText: l10n.releaseDate,
-                      readOnly: true,
                       suffixIcon: IconButton(
-                        onPressed: () => _showDatePickerBottomSheet(
+                        onPressed: () => _showCategoryPickerBottomSheet(
                           context,
-                          selectedReleaseDate,
+                          selectedCategory,
                         ),
                         icon: PhosphorIcon(
-                          PhosphorIcons.calendarDot(.duotone),
+                          PhosphorIcons.caretDown(),
                           color: context.color.blue700,
                         ),
                       ),
-                      onTap: () => _showDatePickerBottomSheet(
-                        context,
-                        selectedReleaseDate,
-                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return l10n.fieldRequired('release date');
+                          return l10n.fieldRequired('payment category');
                         }
                         return null;
                       },
                     ),
-                    Gap(Dimens.spacing.sp4),
-                    Text(
-                      l10n.expectedFundsReleaseDeadline,
-                      style: context.typo.bodyMedium.copyWith(
-                        fontWeight: AppFontWeights.regular,
-                        color: context.color.grey600,
+                    if (formData?.disbursementType == .oneTime) ...[
+                      Gap(Dimens.spacing.sp20),
+                      CustomTextFormField(
+                        controller: releaseDateController,
+                        labelText: l10n.releaseDate,
+                        readOnly: true,
+                        suffixIcon: IconButton(
+                          onPressed: () => _showDatePickerBottomSheet(
+                            context,
+                            selectedReleaseDate,
+                          ),
+                          icon: PhosphorIcon(
+                            PhosphorIcons.calendarDot(.duotone),
+                            color: context.color.blue700,
+                          ),
+                        ),
+                        onTap: () => _showDatePickerBottomSheet(
+                          context,
+                          selectedReleaseDate,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return l10n.fieldRequired('release date');
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                  ],
-                  Gap(Dimens.spacing.sp20),
-                  CustomTextFormField(
-                    controller: descriptionController,
-                    label: Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Text(
-                          l10n.description,
-                          style: context.typo.bodyMedium.copyWith(
-                            color: context.color.grey600,
-                          ),
+                      Gap(Dimens.spacing.sp4),
+                      Text(
+                        l10n.expectedFundsReleaseDeadline,
+                        style: context.typo.bodyMedium.copyWith(
+                          fontWeight: AppFontWeights.regular,
+                          color: context.color.grey600,
                         ),
-                        Gap(Dimens.spacing.sp4),
-                        Text(
-                          type == .send
-                              ? l10n.whatExactlyAreYouPayingFor
-                              : l10n.whatExactlyAreYouReceivingFundsFor,
-                          style: context.typo.bodyMedium.copyWith(
-                            fontWeight: AppFontWeights.regular,
-                            color: context.color.grey600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    maxLines: 6,
-                    minLines: 6,
-                    maxLength: 500,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return l10n.fieldRequired('description');
-                      }
-                      if (value.length <= 2) {
-                        return l10n.fieldTooShort('Description', 3);
-                      }
-                      return null;
-                    },
-                  ),
-                ]),
-              ),
-            ),
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                  bottom: MediaQuery.of(context).padding.bottom,
-                ),
-                child: Column(
-                  mainAxisAlignment: .end,
-                  children: [
-                    Gap(Dimens.spacing.sp40),
-                    Material(
-                      borderRadius: .circular(Dimens.radius.r8),
-                      color: context.color.infoLight,
-                      child: Padding(
-                        padding: .fromLTRB(
-                          Dimens.padding.p12,
-                          Dimens.padding.p8,
-                          Dimens.padding.p8,
-                          Dimens.padding.p8,
-                        ),
-                        child: Row(
-                          children: [
-                            Assets.images.shield.image(
-                              width: Dimens.size.s23,
-                              height: Dimens.size.s32,
+                      ),
+                    ],
+                    Gap(Dimens.spacing.sp20),
+                    CustomTextFormField(
+                      controller: descriptionController,
+                      label: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            l10n.description,
+                            style: context.typo.bodyMedium.copyWith(
+                              color: context.color.grey600,
                             ),
-                            Gap(Dimens.spacing.sp16),
-                            Expanded(
-                              child: Text(
-                                l10n.fundsWillBeHeldSafelyAndOnlyReleasedWhenYouConfirmDelivery,
-                                style: context.typo.bodyMedium.copyWith(
-                                  color: context.color.blue800,
+                          ),
+                          Gap(Dimens.spacing.sp4),
+                          Text(
+                            type == .send
+                                ? l10n.whatExactlyAreYouPayingFor
+                                : l10n.whatExactlyAreYouReceivingFundsFor,
+                            style: context.typo.bodyMedium.copyWith(
+                              fontWeight: AppFontWeights.regular,
+                              color: context.color.grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      maxLines: 6,
+                      minLines: 6,
+                      maxLength: 500,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired('description');
+                        }
+                        if (value.length <= 2) {
+                          return l10n.fieldTooShort('Description', 3);
+                        }
+                        return null;
+                      },
+                    ),
+                  ]),
+                ),
+              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: .end,
+                    children: [
+                      Gap(Dimens.spacing.sp40),
+                      Material(
+                        borderRadius: .circular(Dimens.radius.r8),
+                        color: context.color.infoLight,
+                        child: Padding(
+                          padding: .fromLTRB(
+                            Dimens.padding.p12,
+                            Dimens.padding.p8,
+                            Dimens.padding.p8,
+                            Dimens.padding.p8,
+                          ),
+                          child: Row(
+                            children: [
+                              Assets.images.shield.image(
+                                width: Dimens.size.s23,
+                                height: Dimens.size.s32,
+                              ),
+                              Gap(Dimens.spacing.sp16),
+                              Expanded(
+                                child: Text(
+                                  l10n.fundsWillBeHeldSafelyAndOnlyReleasedWhenYouConfirmDelivery,
+                                  style: context.typo.bodyMedium.copyWith(
+                                    color: context.color.blue800,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Gap(Dimens.spacing.sp20),
-                    PrimaryButton(
-                      onPressed: isFormComplete
-                          ? () => viewModel.moveToNextStep()
-                          : null,
-                      child: Text(l10n.reviewDetails),
-                    ),
-                    Gap(Dimens.spacing.sp20),
-                  ],
+                      Gap(Dimens.spacing.sp20),
+                      PrimaryButton(
+                        onPressed: isFormComplete
+                            ? () => viewModel.moveToNextStep()
+                            : null,
+                        child: Text(l10n.reviewDetails),
+                      ),
+                      Gap(Dimens.spacing.sp20),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+          desktop: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal.copyWith(
+                  top: context.isTablet
+                      ? Dimens.padding.p20
+                      : Dimens.padding.p28,
+                  bottom: Dimens.padding.p20,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: Align(
+                    alignment: .centerLeft,
+                    child: InkWell(
+                      onTap: () => viewModel.moveStepBack(),
+                      borderRadius: .circular(Dimens.radius.r4),
+                      child: Row(
+                        mainAxisSize: .min,
+                        children: [
+                          PhosphorIcon(
+                            PhosphorIcons.arrowLeft(),
+                            color: context.color.blue700,
+                            size: Dimens.size.s20,
+                          ),
+                          Gap(Dimens.spacing.sp8),
+                          Text(
+                            l10n.back,
+                            style: context.typo.bodyMedium.copyWith(
+                              color: context.color.blue700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SliverPadding(
+                padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Gap(Dimens.spacing.sp12),
+                    MenuSectionHeader(title: l10n.additionalDetails),
+                    CustomTextFormField(
+                      controller: categoryController,
+                      labelText: l10n.paymentCategory,
+                      readOnly: true,
+                      onTap: () => _showCategoryPickerBottomSheet(
+                        context,
+                        selectedCategory,
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () => _showCategoryPickerBottomSheet(
+                          context,
+                          selectedCategory,
+                        ),
+                        icon: PhosphorIcon(
+                          PhosphorIcons.caretDown(),
+                          color: context.color.blue700,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired('payment category');
+                        }
+                        return null;
+                      },
+                    ),
+                    if (formData?.disbursementType == .oneTime) ...[
+                      Gap(Dimens.spacing.sp20),
+                      CustomTextFormField(
+                        controller: releaseDateController,
+                        labelText: l10n.releaseDate,
+                        readOnly: true,
+                        suffixIcon: IconButton(
+                          onPressed: () => _showDatePickerBottomSheet(
+                            context,
+                            selectedReleaseDate,
+                          ),
+                          icon: PhosphorIcon(
+                            PhosphorIcons.calendarDot(.duotone),
+                            color: context.color.blue700,
+                          ),
+                        ),
+                        onTap: () => _showDatePickerBottomSheet(
+                          context,
+                          selectedReleaseDate,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return l10n.fieldRequired('release date');
+                          }
+                          return null;
+                        },
+                      ),
+                      Gap(Dimens.spacing.sp4),
+                      Text(
+                        l10n.expectedFundsReleaseDeadline,
+                        style: context.typo.bodyMedium.copyWith(
+                          fontWeight: AppFontWeights.regular,
+                          color: context.color.grey600,
+                        ),
+                      ),
+                    ],
+                    Gap(Dimens.spacing.sp20),
+                    CustomTextFormField(
+                      controller: descriptionController,
+                      label: Column(
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            l10n.description,
+                            style: context.typo.bodyMedium.copyWith(
+                              color: context.color.grey600,
+                            ),
+                          ),
+                          Gap(Dimens.spacing.sp4),
+                          Text(
+                            type == .send
+                                ? l10n.whatExactlyAreYouPayingFor
+                                : l10n.whatExactlyAreYouReceivingFundsFor,
+                            style: context.typo.bodyMedium.copyWith(
+                              fontWeight: AppFontWeights.regular,
+                              color: context.color.grey600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      maxLines: 6,
+                      minLines: 6,
+                      maxLength: 500,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired('description');
+                        }
+                        if (value.length <= 2) {
+                          return l10n.fieldTooShort('Description', 3);
+                        }
+                        return null;
+                      },
+                    ),
+                  ]),
+                ),
+              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: Dimens.of(context).edgeInsetsScreenHorizontal
+                      .copyWith(bottom: MediaQuery.of(context).padding.bottom),
+                  child: Column(
+                    mainAxisAlignment: .end,
+                    children: [
+                      Gap(Dimens.spacing.sp40),
+                      Material(
+                        borderRadius: .circular(Dimens.radius.r8),
+                        color: context.color.infoLight,
+                        child: Padding(
+                          padding: .fromLTRB(
+                            Dimens.padding.p12,
+                            Dimens.padding.p8,
+                            Dimens.padding.p8,
+                            Dimens.padding.p8,
+                          ),
+                          child: Row(
+                            children: [
+                              Assets.images.shield.image(
+                                width: Dimens.size.s23,
+                                height: Dimens.size.s32,
+                              ),
+                              Gap(Dimens.spacing.sp16),
+                              Expanded(
+                                child: Text(
+                                  l10n.fundsWillBeHeldSafelyAndOnlyReleasedWhenYouConfirmDelivery,
+                                  style: context.typo.bodyMedium.copyWith(
+                                    color: context.color.blue800,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Gap(Dimens.spacing.sp20),
+                      PrimaryButton(
+                        onPressed: isFormComplete
+                            ? () => viewModel.moveToNextStep()
+                            : null,
+                        child: Text(l10n.reviewDetails),
+                      ),
+                      Gap(Dimens.spacing.sp20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
