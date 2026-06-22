@@ -14,6 +14,8 @@ export const User = a.model({
     flutterwaveCustomerId: a.string().required(),
     flutterwavePaymentMethodIds: a.string().array(),
 
+    deviceToken: a.string(),
+
     initiatedAgreements: a.hasMany('Agreement', 'initiatorId'), // Agreements this user physically created
     sentAgreements: a.hasMany('Agreement', 'senderId'), // Agreements where this user is the one paying
     receivedAgreements: a.hasMany('Agreement', 'recipientId'), // Agreements where this user is the one getting paid

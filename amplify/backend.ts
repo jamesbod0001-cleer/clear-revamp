@@ -10,11 +10,14 @@ import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { StartingPosition, FilterCriteria, FilterRule } from 'aws-cdk-lib/aws-lambda';
 import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 
+import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+
 import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
-import {previewAgreement} from "./functions/preview-agreement/resource";
-import {logAgreementStatus} from "./functions/log-agreement-status/resource";
-import {logMilestoneStatus} from "./functions/log-milestone-status/resource";
-import {generateAgreementActivity} from "./functions/generate-agreement-activity/resource";
+import { previewAgreement } from "./functions/preview-agreement/resource";
+import { logAgreementStatus } from "./functions/log-agreement-status/resource";
+import { logMilestoneStatus } from "./functions/log-milestone-status/resource";
+import { generateAgreementActivity } from "./functions/generate-agreement-activity/resource";
+import { dispatchActivityNotification } from "./functions/dispatch-activity-notification/resource";
 
 const backend = defineBackend({
     auth,
@@ -25,6 +28,7 @@ const backend = defineBackend({
     flutterwaveWebhook,
     previewAgreement,
     generateAgreementActivity,
+    dispatchActivityNotification, // Fully active!
 });
 
 // --- Auth Overrides ---
@@ -42,7 +46,6 @@ cfnUserPool.usernameAttributes = [];
 cfnUserPool.aliasAttributes = ['phone_number','email'];
 
 // --- Webhook Configuration ---
-// Generate a public, unauthenticated URL for Flutterwave to hit
 const webhookLambda = backend.flutterwaveWebhook.resources.lambda;
 webhookLambda.addFunctionUrl({
     authType: FunctionUrlAuthType.NONE,
@@ -69,12 +72,11 @@ const statusChangeFilter = FilterCriteria.filter({
     eventName: FilterRule.or('INSERT', 'MODIFY'),
     dynamodb: {
         NewImage: {
-            status: { S: FilterRule.exists() } // Only matches if the status field is present in the update
+            status: { S: FilterRule.exists() }
         }
     }
 });
 
-// Sniper 1 (Agreement) with the filter
 backend.logAgreementStatus.resources.lambda.addEventSource(
     new DynamoEventSource(agreementTable, {
         startingPosition: StartingPosition.LATEST,
@@ -82,14 +84,12 @@ backend.logAgreementStatus.resources.lambda.addEventSource(
     })
 );
 
-// Sniper 2 (Milestone) with the filter
 backend.logMilestoneStatus.resources.lambda.addEventSource(
     new DynamoEventSource(milestoneTable, {
         startingPosition: StartingPosition.LATEST,
         filters: [statusChangeFilter],
     })
 );
-
 
 const activityTriggerFilter = FilterCriteria.filter({
     eventName: FilterRule.or('INSERT', 'MODIFY'),
@@ -98,6 +98,62 @@ const activityTriggerFilter = FilterCriteria.filter({
 backend.generateAgreementActivity.resources.lambda.addEventSource(
     new DynamoEventSource(agreementTable, {
         startingPosition: StartingPosition.LATEST,
-        filters: [activityTriggerFilter], // Wakes up for Inserts/Modifies
+        filters: [activityTriggerFilter],
     })
 );
+
+
+// --- Activity Notification Dispatcher ---
+const activityTable = backend.data.resources.tables['Activity'];
+const userTable = backend.data.resources.tables['User'];
+
+// 1. Maintain stream configuration active
+cfnResources.amplifyDynamoDbTables['Activity'].streamSpecification = {
+    streamViewType: StreamViewType.NEW_IMAGE,
+};
+
+// 2. Grant permissions and inject table name safely
+userTable.grantReadData(backend.dispatchActivityNotification.resources.lambda);
+(backend.dispatchActivityNotification.resources.lambda as any).addEnvironment('USER_TABLE_NAME', userTable.tableName);
+
+backend.dispatchActivityNotification.resources.lambda.addToRolePolicy(new PolicyStatement({
+    actions: ['mobiletargeting:SendMessages'],
+    resources: [`arn:aws:mobiletargeting:eu-west-1:682718097244:apps/eb6ecf886702464f8200538bee04719b/*`]
+}));
+
+// 3. Connect standard event trigger mapping onto the live stream
+backend.dispatchActivityNotification.resources.lambda.addEventSource(
+    new DynamoEventSource(activityTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [
+            FilterCriteria.filter({
+                eventName: ['INSERT']
+            })
+        ],
+    })
+);
+
+
+// --- Push Notifications Output Mapping ---
+backend.addOutput({
+    notifications: {
+        amazon_pinpoint_app_id: "eb6ecf886702464f8200538bee04719b",
+        aws_region: "eu-west-1",
+        channels: ["FCM", "APNS"],
+    },
+});
+
+// --- Push Notification IAM Permissions ---
+const pinpointStatement = new PolicyStatement({
+    actions: [
+        "mobiletargeting:UpdateEndpoint",
+        "mobiletargeting:PutEvents"
+    ],
+    resources: [
+        "arn:aws:mobiletargeting:eu-west-1:682718097244:apps/eb6ecf886702464f8200538bee04719b",
+        "arn:aws:mobiletargeting:eu-west-1:682718097244:apps/eb6ecf886702464f8200538bee04719b/*"
+    ]
+});
+
+backend.auth.resources.authenticatedUserIamRole.addToPrincipalPolicy(pinpointStatement);
+backend.auth.resources.unauthenticatedUserIamRole.addToPrincipalPolicy(pinpointStatement);
