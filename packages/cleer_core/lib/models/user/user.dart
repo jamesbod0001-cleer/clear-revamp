@@ -18,6 +18,7 @@ abstract class User with _$User {
     Photo? profilePicture,
     required String flutterwaveCustomerId,
     @Default([]) List<String> flutterwavePaymentMethodIds,
+    String? deviceToken,
     DateTime? createdAt,
   }) = _User;
 

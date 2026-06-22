@@ -32,6 +32,8 @@ export 'models/bank/bank.dart';
 export 'models/charge/charge.dart';
 export 'models/milestone/milestone.dart';
 export 'models/payout_destination/payout_destination.dart';
+export 'models/push/push_notification_message.dart';
+export 'models/push/push_notification_enums.dart';
 export 'models/status_history/status_history.dart';
 export 'models/transaction/transaction.dart';
 export 'models/user/user.dart';
@@ -56,6 +58,7 @@ export 'src/repositories/auth/auth_repository.dart';
 export 'src/repositories/media/media_repository.dart';
 export 'src/repositories/network/network_repository.dart';
 export 'src/repositories/storage/storage_repository.dart';
+export 'src/repositories/push/push_notification_repository.dart';
 
 // --- PARAMS ---
 
