@@ -14,6 +14,7 @@ export 'src/repositories/auth/auth_repository_provider.dart';
 export 'src/repositories/media/media_repository_provider.dart';
 export 'src/repositories/network/network_repository_provider.dart';
 export 'src/repositories/storage/storage_repository_provider.dart';
+export 'src/repositories/push/push_notification_repository_provider.dart';
 
 // Export the Service Clients / Providers
 export 'src/services/amplify_providers.dart';

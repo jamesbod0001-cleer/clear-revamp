@@ -63,6 +63,23 @@ class AmplifyUserRepositoryImpl
   }
 
   @override
+  Future<ResultDart<User, DataFailure>> updateDeviceToken(
+    String userId,
+    String token,
+  ) async {
+    return performDataOperation<User>(
+      operation: () async {
+        final currentUser = await _amplifyUserServiceClient.queryUser(userId);
+        final updatedUser = currentUser.copyWith(deviceToken: token);
+        final response = await _amplifyUserServiceClient.updateUser(updatedUser);
+        return response.toDomain();
+      },
+      operationName: 'UpdateDeviceToken',
+      targetId: userId,
+    );
+  }
+
+  @override
   Future<ResultDart<User, DataFailure>> getUser(String id) async {
     return await performDataOperation<User>(
       operation: () async {

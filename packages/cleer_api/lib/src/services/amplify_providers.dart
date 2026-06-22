@@ -14,3 +14,7 @@ APICategory amplifyAPI(Ref ref) => Amplify.API;
 
 @riverpod
 StorageCategory amplifyStorage(Ref ref) => Amplify.Storage;
+
+@riverpod
+PushNotificationsCategory amplifyPushNotifications(Ref ref) =>
+    Amplify.Notifications.Push;

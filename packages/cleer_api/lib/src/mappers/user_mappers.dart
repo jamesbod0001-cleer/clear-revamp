@@ -16,6 +16,7 @@ extension UserToDomainMapper on amplify_model.User {
       profilePicture: profilePicture?.toDomain(),
       flutterwaveCustomerId: flutterwaveCustomerId,
       flutterwavePaymentMethodIds: flutterwavePaymentMethodIds ?? [],
+      deviceToken: deviceToken,
       createdAt: createdAt?.getDateTimeInUtc(),
     );
   }
@@ -35,6 +36,7 @@ extension UserToAmplifyMapper on domain.User {
       profilePicture: profilePicture?.toAmplify(),
       flutterwaveCustomerId: flutterwaveCustomerId,
       flutterwavePaymentMethodIds: flutterwavePaymentMethodIds,
+      deviceToken: deviceToken,
     );
   }
 }
