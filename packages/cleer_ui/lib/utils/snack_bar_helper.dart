@@ -8,6 +8,17 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 class SnackBarHelper {
   static OverlayEntry? _previousEntry;
 
+  static void showNotification(String message) {
+    final context = cleerNavigatorKey.currentContext;
+    if (context == null) return;
+    _showTop(
+      message,
+      backgroundColor: context.color.info,
+      foregroundColor: context.color.infoLight,
+      icon: PhosphorIcons.bellRinging(.duotone),
+    );
+  }
+
   static void showSuccess(String message) {
     final context = cleerNavigatorKey.currentContext;
     if (context == null) return;

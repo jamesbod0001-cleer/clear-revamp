@@ -1,3 +1,4 @@
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
 import 'package:cleer_core/models/milestone/milestone.dart';
@@ -51,9 +52,18 @@ class AgreementDetailsScreen extends ConsumerWidget {
       return SizedBox.shrink();
     }
 
+    if ((agreement!.status == AgreementStatus.awaitingRecipient ||
+            agreement.status == AgreementStatus.awaitingFunding) &&
+        agreement.initiator?.id != user?.id) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AcceptAgreementRoute(shortCode: agreement.shortCode).go(context);
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
     Milestone? currentlyRunning;
     AsyncValue<List<Milestone>>? milestonesState;
-    if (agreement!.disbursementType == .milestones) {
+    if (agreement.disbursementType == .milestones) {
       milestonesState = ref.watch(agreementMilestonesProvider(agreement.id!));
       currentlyRunning = milestonesState!.value?.currentlyRunning;
     }

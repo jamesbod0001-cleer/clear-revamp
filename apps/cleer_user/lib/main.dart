@@ -1,5 +1,6 @@
 import 'package:cleer/app.dart';
 import 'package:cleer/config/amplify_setup.dart';
+import 'package:cleer/config/push_notifications_config.dart';
 import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer_core/config/app_config.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ Future<void> main() async {
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
   await configureAmplify();
+  registerBackgroundNotificationHandler();
   await SentryFlutter.init((options) {
     options.dsn =
         'https://7a63c35003e90d5bc01370b5cb432677@o4510894890090496.ingest.de.sentry.io/4510894892122192';

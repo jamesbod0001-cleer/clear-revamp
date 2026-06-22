@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer_api/cleer_api.dart';
@@ -26,14 +28,22 @@ class AuthUseCase extends _$AuthUseCase {
 
   final _log = AmplifyLogger("AuthUseCase");
 
+  StreamSubscription<AppAuthStatus>? _authStatusSub;
+
   @override
   FutureOr<AuthState> build() {
     _authRepository = ref.watch(authRepositoryProvider);
     _userRepository = ref.watch(userRepositoryProvider);
     _flutterwaveRepository = ref.watch(flutterwaveRepositoryProvider);
     _secureStorageService = ref.watch(secureStorageServiceProvider);
+
     _initialiseAuthStatus();
     _listenToAuthStateChanges();
+
+    ref.onDispose(() {
+      _authStatusSub?.cancel();
+    });
+
     return AuthState.unknown();
   }
 
@@ -170,7 +180,8 @@ class AuthUseCase extends _$AuthUseCase {
   }
 
   void _listenToAuthStateChanges() {
-    _authRepository.authStatus.listen(
+    _authStatusSub?.cancel();
+    _authStatusSub = _authRepository.authStatus.listen(
       (AppAuthStatus status) async {
         _log.info('Auth status changed: $status');
         switch (status) {

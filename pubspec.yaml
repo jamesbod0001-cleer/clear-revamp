@@ -78,5 +78,5 @@ melos:
       description: 'The "Nuke" option: cleans everything, deletes locks, and re-bootstraps.'
 
     get:
-      run: melos exec -- "flutter pub get"
-      description: Get dependencies for all packages in the workspace.
+      run: melos exec -c 1 -- "flutter pub get"
+      description: Get dependencies for all packages sequentially to avoid race conditions.

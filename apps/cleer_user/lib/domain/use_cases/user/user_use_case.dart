@@ -35,6 +35,30 @@ class UserUseCase extends _$UserUseCase {
     return result;
   }
 
+  Future<ResultDart<User, DataFailure>> updateDeviceToken(String token) async {
+    final user = ref.read(userProfileProvider).value;
+    if (user == null) {
+      _log.error('User state not found for token update');
+      return Failure(DataFailure.notFound());
+    }
+
+    if (user.deviceToken == token) {
+      _log.info('Device token already up to date');
+      return Success(user);
+    }
+
+    final result = await _userRepository.updateDeviceToken(user.id, token);
+    result.fold(
+      (updatedUser) {
+        _log.info("Device token updated successfully");
+      },
+      (failure) {
+        _log.error("Device token update failed");
+      },
+    );
+    return result;
+  }
+
   Future<ResultDart<void, Object>> pickAndUploadProfilePicture() async {
     final user = ref.read(userProfileProvider).value;
     if (user == null) {

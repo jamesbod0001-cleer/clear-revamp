@@ -1,5 +1,6 @@
 import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/routing/go_router_refresh_notifier.dart';
+import 'package:cleer/routing/pending_route_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer_ui/utils/keys.dart';
@@ -27,6 +28,8 @@ GoRouter router(Ref ref) {
       final String? intentPath =
           state.uri.queryParameters['redirect-to'] ??
           state.uri.queryParameters['redirectTo'];
+
+      final pendingRoute = ref.read(pendingRouteProvider);
 
       final onboardingPath = const OnboardingRoute().location;
       final createPasswordPath = '/create_password';
@@ -80,6 +83,13 @@ GoRouter router(Ref ref) {
 
       // --- LOGIC FOR FULLY AUTHENTICATED USERS ---
       if (isReadyForHome) {
+        if (pendingRoute != null) {
+          Future.microtask(
+            () => ref.read(pendingRouteProvider.notifier).consume(),
+          );
+          return pendingRoute;
+        }
+
         if (currentPath.startsWith('/a/')) {
           return null;
         }
