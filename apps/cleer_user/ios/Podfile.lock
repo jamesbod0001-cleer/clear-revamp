@@ -2,8 +2,12 @@ PODS:
   - amplify_auth_cognito (0.0.1):
     - Flutter
     - FlutterMacOS
+  - amplify_push_notifications (0.0.1):
+    - AmplifyUtilsNotifications
+    - Flutter
   - amplify_secure_storage (0.0.1):
     - Flutter
+  - AmplifyUtilsNotifications (1.1.1)
   - Flutter (1.0.0)
   - flutter_image_compress_common (1.0.0):
     - Flutter
@@ -34,12 +38,14 @@ PODS:
 
 DEPENDENCIES:
   - amplify_auth_cognito (from `.symlinks/plugins/amplify_auth_cognito/darwin`)
+  - amplify_push_notifications (from `.symlinks/plugins/amplify_push_notifications/ios`)
   - amplify_secure_storage (from `.symlinks/plugins/amplify_secure_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
 
 SPEC REPOS:
   trunk:
+    - AmplifyUtilsNotifications
     - libwebp
     - Mantle
     - SDWebImage
@@ -48,6 +54,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   amplify_auth_cognito:
     :path: ".symlinks/plugins/amplify_auth_cognito/darwin"
+  amplify_push_notifications:
+    :path: ".symlinks/plugins/amplify_push_notifications/ios"
   amplify_secure_storage:
     :path: ".symlinks/plugins/amplify_secure_storage/ios"
   Flutter:
@@ -57,7 +65,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   amplify_auth_cognito: b76a0e367489da2b9a3c6e5a8ec74a72a0a7cc2f
+  amplify_push_notifications: b19bee44391442803c5cd091dd9174431b4bddb1
   amplify_secure_storage: ede2a5027299bab196b8baa030ed3f4cf50ce9a9
+  AmplifyUtilsNotifications: b30b9e3172ae6c2c7344a64b22de649d4fcf6659
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8

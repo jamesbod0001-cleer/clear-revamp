@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "173396822730",
+    "project_id": "cleer-9af46",
+    "storage_bucket": "cleer-9af46.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173396822730:android:a06df618bd935b45aec233",
+        "android_client_info": {
+          "package_name": "com.cleerpayments.cleer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCUlSQc2kURcUJQCZlZcM0eRIdlmWrNWA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
