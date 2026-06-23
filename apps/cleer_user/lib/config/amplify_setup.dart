@@ -6,6 +6,7 @@ import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:cleer/amplify_outputs.dart';
 // ignore: implementation_imports
 import 'package:cleer_api/src/models/ModelProvider.dart';
+import 'package:flutter/foundation.dart';
 
 Future<void> configureAmplify() async {
   try {
@@ -14,8 +15,12 @@ Future<void> configureAmplify() async {
       options: APIPluginOptions(modelProvider: ModelProvider.instance),
     );
     final storage = AmplifyStorageS3();
-    final notifications = AmplifyPushNotificationsPinpoint();
-    await Amplify.addPlugins([auth, api, storage, notifications]);
+    if (!kIsWeb) {
+      final notifications = AmplifyPushNotificationsPinpoint();
+      await Amplify.addPlugins([auth, api, storage, notifications]);
+    } else {
+      await Amplify.addPlugins([auth, api, storage]);
+    }
     await Amplify.configure(amplifyConfig);
     safePrint('Successfully configured');
   } on Exception catch (e) {

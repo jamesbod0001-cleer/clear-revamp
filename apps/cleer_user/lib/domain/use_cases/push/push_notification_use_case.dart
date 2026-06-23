@@ -8,6 +8,7 @@ import 'package:cleer/domain/use_cases/user/user_use_case.dart';
 import 'package:cleer/routing/pending_route_provider.dart';
 import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer_core/cleer_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'push_notification_use_case.g.dart';
@@ -26,6 +27,12 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
   @override
   void build() {
     _repository = ref.watch(pushNotificationRepositoryProvider);
+
+    // 🛑 WEB GUARD: Skip all native listener setups if on Chrome
+    if (kIsWeb) {
+      _log.info('Running on Web. Skipping Push Notification setup.');
+      return;
+    }
 
     _setupListeners();
     _checkLaunchNotification();
@@ -54,8 +61,8 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
     });
 
     _foregroundSub = _repository.onNotificationReceivedInForeground.listen((
-      notification,
-    ) {
+        notification,
+        ) {
       _log.info('Foreground notification received: ${notification.title}');
       ref.read(foregroundMessageProvider.notifier).notify(notification);
     });
@@ -77,8 +84,8 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
         .read(userUseCaseProvider.notifier)
         .updateDeviceToken(token);
     result.fold(
-      (_) => _log.info('Successfully synced device token'),
-      (failure) => _log.error('Failed to sync device token: $failure'),
+          (_) => _log.info('Successfully synced device token'),
+          (failure) => _log.error('Failed to sync device token: $failure'),
     );
   }
 
@@ -105,11 +112,22 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
   }
 
   Future<void> requestPermissions() async {
+    // 🛑 Guard against UI calls on Web
+    if (kIsWeb) {
+      _log.info('Web detected: skipping permission request.');
+      return;
+    }
+
     final success = await _repository.requestPermissions();
     _log.info('Push permission request success: $success');
   }
 
-  Future<PushNotificationPermissionStatus> getPermissionStatus() {
+  Future<PushNotificationPermissionStatus> getPermissionStatus() async {
+    // 🛑 Return a safe default for Web to avoid triggering the native repository
+    if (kIsWeb) {
+      return PushNotificationPermissionStatus.denied;
+    }
+
     return _repository.getPermissionStatus();
   }
 }
