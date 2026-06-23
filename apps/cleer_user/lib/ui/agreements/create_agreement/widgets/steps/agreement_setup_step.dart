@@ -438,7 +438,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     required WidgetRef ref,
   }) => showDialog(
     context: context,
-    useRootNavigator: context.isMobile,
+    useRootNavigator: false,
     fullscreenDialog: true,
     useSafeArea: false,
     animationStyle: .new(
@@ -472,7 +472,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     if (formData?.disbursementType == DisbursementType.milestones) {
       showDialog(
         context: context,
-        useRootNavigator: context.isMobile,
+        useRootNavigator: false,
         fullscreenDialog: true,
         useSafeArea: false,
         animationStyle: AnimationStyle(
