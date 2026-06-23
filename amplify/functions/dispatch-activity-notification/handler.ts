@@ -67,7 +67,9 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                             Data: {
                                 route: `/agreements/details/${entityId}`,
                                 activityType: type,
-                                activityId: id
+                                activityId: id,
+                                formattedAmount: activity.formattedAmount || "",
+                                description: activity.description || ""
                             },
                         },
                         // Configuration for Apple iOS devices
@@ -78,7 +80,9 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                             Data: {
                                 route: `/agreements/details/${entityId}`,
                                 activityType: type,
-                                activityId: id
+                                activityId: id,
+                                formattedAmount: activity.formattedAmount || "",
+                                description: activity.description || ""
                             },
                         }
                     }

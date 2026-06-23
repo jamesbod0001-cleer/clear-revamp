@@ -15,9 +15,18 @@ class GlobalNotificationListener extends ConsumerWidget {
       if (next != null) {
         final title = next.title ?? 'New Notification';
 
-        SnackBarHelper.showNotification(title);
+        // Extract the exact variables from the payload Data map
+        final type = next.data['activityType'] as String?;
+        final amount = next.data['formattedAmount'] as String?;
+        final description = next.data['description'] as String?;
 
-        // Clear the state
+        SnackBarHelper.showNotification(
+          title: title,
+          activityType: type,
+          formattedAmount: amount,
+          description: description,
+        );
+
         ref.read(foregroundMessageProvider.notifier).consume();
       }
     });
