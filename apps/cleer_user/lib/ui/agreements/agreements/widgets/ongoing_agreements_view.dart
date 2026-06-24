@@ -121,7 +121,7 @@ class OngoingAgreementsView extends ConsumerWidget {
                         crossAxisCount;
 
                     return SingleChildScrollView(
-                      padding: EdgeInsets.only(top: Dimens.padding.p24),
+                      padding: EdgeInsets.only(top: Dimens.padding.p24, bottom: Dimens.padding.p32),
                       child: SizedBox(
                         width: double.infinity,
                         child: Wrap(
