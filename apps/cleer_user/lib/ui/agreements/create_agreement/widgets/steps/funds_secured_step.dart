@@ -1,4 +1,3 @@
-import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -10,6 +9,7 @@ import 'package:cleer_ui/widgets/status_circle_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -28,157 +28,149 @@ class FundsSecuredStep extends ConsumerWidget {
 
     final agreement = state.value!.agreement!;
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        // If didPop is true, the screen is already closing.
-        if (didPop) return;
-        AgreementsRoute().go(context);
-      },
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: Dimens.mobile.edgeInsetsScreenHorizontal,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                Gap(Dimens.spacing.sp35),
-                Align(
-                  alignment: .centerRight,
-                  child: IconButton(
-                    style: IconButton.styleFrom(
-                      padding: .zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      minimumSize: Size.zero,
-                    ),
-                    onPressed: () {
-                      AgreementsRoute().go(context);
-                    },
-                    icon: PhosphorIcon(
-                      PhosphorIcons.x(.bold),
-                      color: context.color.grey800,
-                    ),
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: Dimens.mobile.edgeInsetsScreenHorizontal,
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              Gap(Dimens.spacing.sp35),
+              Align(
+                alignment: .centerRight,
+                child: IconButton(
+                  style: IconButton.styleFrom(
+                    padding: .zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minimumSize: Size.zero,
+                  ),
+                  onPressed: () {
+                    context.pop();
+                  },
+                  icon: PhosphorIcon(
+                    PhosphorIcons.x(.bold),
+                    color: context.color.grey800,
                   ),
                 ),
-                Gap(Dimens.spacing.sp84),
-                StatusCircleIcon(type: .secured),
-                Gap(Dimens.spacing.sp48),
-                Text(
-                  l10n.fundsSecured,
-                  style: context.typo.headlineSmall,
-                  textAlign: .center,
+              ),
+              Gap(Dimens.spacing.sp84),
+              StatusCircleIcon(type: .secured),
+              Gap(Dimens.spacing.sp48),
+              Text(
+                l10n.fundsSecured,
+                style: context.typo.headlineSmall,
+                textAlign: .center,
+              ),
+              Gap(Dimens.spacing.sp12),
+              Text(
+                l10n.shareThisLinkWithTheRecipientToAcceptTheAgreementFundsWillBeReleasedOnlyWhenYouConfirm,
+                style: context.typo.bodyMedium.copyWith(
+                  color: context.color.grey600,
                 ),
-                Gap(Dimens.spacing.sp12),
-                Text(
-                  l10n.shareThisLinkWithTheRecipientToAcceptTheAgreementFundsWillBeReleasedOnlyWhenYouConfirm,
-                  style: context.typo.bodyMedium.copyWith(
-                    color: context.color.grey600,
-                  ),
-                  textAlign: .center,
+                textAlign: .center,
+              ),
+              Gap(Dimens.spacing.sp80),
+              Text(
+                l10n.copy,
+                style: context.typo.bodyMedium.copyWith(
+                  fontWeight: AppFontWeights.regular,
+                  color: context.color.grey600,
                 ),
-                Gap(Dimens.spacing.sp80),
-                Text(
-                  l10n.copy,
-                  style: context.typo.bodyMedium.copyWith(
-                    fontWeight: AppFontWeights.regular,
-                    color: context.color.grey600,
-                  ),
+              ),
+              Gap(Dimens.spacing.sp4),
+              Container(
+                padding: .fromLTRB(
+                  Dimens.padding.p12,
+                  Dimens.padding.p8,
+                  Dimens.padding.p8,
+                  Dimens.padding.p7,
                 ),
-                Gap(Dimens.spacing.sp4),
-                Container(
-                  padding: .fromLTRB(
-                    Dimens.padding.p12,
-                    Dimens.padding.p8,
-                    Dimens.padding.p8,
-                    Dimens.padding.p7,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.color.grayComponent,
-                    borderRadius: BorderRadius.circular(Dimens.radius.r12),
-                    border: .all(color: context.color.outline),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          state.value!.agreement!.shareLink,
-                          style: context.typo.labelMedium.copyWith(
-                            color: context.color.grey800,
-                          ),
-                          overflow: .ellipsis,
+                decoration: BoxDecoration(
+                  color: context.color.grayComponent,
+                  borderRadius: BorderRadius.circular(Dimens.radius.r12),
+                  border: .all(color: context.color.outline),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        state.value!.agreement!.shareLink,
+                        style: context.typo.labelMedium.copyWith(
+                          color: context.color.grey800,
                         ),
+                        overflow: .ellipsis,
                       ),
-                      Gap(Dimens.spacing.sp2),
-                      FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Color(
-                            0xFF99D2AE,
-                          ).withValues(alpha: .20),
-                          padding: .symmetric(
-                            horizontal: Dimens.padding.p10,
-                            vertical: Dimens.padding.p6,
-                          ),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: .zero,
+                    ),
+                    Gap(Dimens.spacing.sp2),
+                    FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: Color(
+                          0xFF99D2AE,
+                        ).withValues(alpha: .20),
+                        padding: .symmetric(
+                          horizontal: Dimens.padding.p10,
+                          vertical: Dimens.padding.p6,
                         ),
-                        onPressed: () async {
-                          await Clipboard.setData(
-                            ClipboardData(
-                              text: state.value!.agreement!.shareLink,
-                            ),
-                          );
-                        },
-                        child: Row(
-                          mainAxisSize: .min,
-                          children: [
-                            PhosphorIcon(
-                              PhosphorIcons.copySimple(.fill),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        minimumSize: .zero,
+                      ),
+                      onPressed: () async {
+                        await Clipboard.setData(
+                          ClipboardData(
+                            text: state.value!.agreement!.shareLink,
+                          ),
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: .min,
+                        children: [
+                          PhosphorIcon(
+                            PhosphorIcons.copySimple(.fill),
+                            color: context.color.green900,
+                            size: Dimens.size.s16,
+                          ),
+                          Gap(Dimens.spacing.sp4),
+                          Text(
+                            l10n.copy,
+                            style: context.typo.bodyMedium.copyWith(
                               color: context.color.green900,
-                              size: Dimens.size.s16,
                             ),
-                            Gap(Dimens.spacing.sp4),
-                            Text(
-                              l10n.copy,
-                              style: context.typo.bodyMedium.copyWith(
-                                color: context.color.green900,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ]),
+              ),
+            ]),
+          ),
+        ),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+            child: Column(
+              mainAxisAlignment: .end,
+              children: [
+                Gap(Dimens.spacing.sp30),
+                PrimaryButton(
+                  onPressed: () async {
+                    await SharePlus.instance.share(
+                      ShareParams(
+                        text:
+                            "Hey! I've secured our ${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)} agreement on Cleer. Click the link to view the terms and accept: ${state.value!.agreement!.shareLink}",
+                      ),
+                    );
+                  },
+                  child: Text(l10n.shareLink),
+                ),
+                Gap(Dimens.spacing.sp20),
+              ],
             ),
           ),
-          SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
-                bottom: MediaQuery.of(context).padding.bottom,
-              ),
-              child: Column(
-                mainAxisAlignment: .end,
-                children: [
-                  Gap(Dimens.spacing.sp30),
-                  PrimaryButton(
-                    onPressed: () async {
-                      await SharePlus.instance.share(
-                        ShareParams(
-                          text:
-                              "Hey! I've secured our ${l10n.nairaSign}${NumberFormat('#,###.##').format(agreement.amount)} agreement on Cleer. Click the link to view the terms and accept: ${state.value!.agreement!.shareLink}",
-                        ),
-                      );
-                    },
-                    child: Text(l10n.shareLink),
-                  ),
-                  Gap(Dimens.spacing.sp20),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
