@@ -29,6 +29,7 @@ class StatusHistory extends amplify_core.Model {
   final String id;
   final String? _entityId;
   final String? _entityType;
+  final String? _context;
   final String? _oldStatus;
   final String? _newStatus;
   final String? _changedBy;
@@ -74,6 +75,19 @@ class StatusHistory extends amplify_core.Model {
     }
   }
   
+  String get context {
+    try {
+      return _context!;
+    } catch(e) {
+      throw amplify_core.AmplifyCodeGenModelException(
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
+  }
+  
   String? get oldStatus {
     return _oldStatus;
   }
@@ -103,13 +117,14 @@ class StatusHistory extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const StatusHistory._internal({required this.id, required entityId, required entityType, oldStatus, required newStatus, changedBy, createdAt, updatedAt}): _entityId = entityId, _entityType = entityType, _oldStatus = oldStatus, _newStatus = newStatus, _changedBy = changedBy, _createdAt = createdAt, _updatedAt = updatedAt;
+  const StatusHistory._internal({required this.id, required entityId, required entityType, required context, oldStatus, required newStatus, changedBy, createdAt, updatedAt}): _entityId = entityId, _entityType = entityType, _context = context, _oldStatus = oldStatus, _newStatus = newStatus, _changedBy = changedBy, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory StatusHistory({String? id, required String entityId, required String entityType, String? oldStatus, required String newStatus, String? changedBy}) {
+  factory StatusHistory({String? id, required String entityId, required String entityType, required String context, String? oldStatus, required String newStatus, String? changedBy}) {
     return StatusHistory._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       entityId: entityId,
       entityType: entityType,
+      context: context,
       oldStatus: oldStatus,
       newStatus: newStatus,
       changedBy: changedBy);
@@ -126,6 +141,7 @@ class StatusHistory extends amplify_core.Model {
       id == other.id &&
       _entityId == other._entityId &&
       _entityType == other._entityType &&
+      _context == other._context &&
       _oldStatus == other._oldStatus &&
       _newStatus == other._newStatus &&
       _changedBy == other._changedBy;
@@ -142,6 +158,7 @@ class StatusHistory extends amplify_core.Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("entityId=" + "$_entityId" + ", ");
     buffer.write("entityType=" + "$_entityType" + ", ");
+    buffer.write("context=" + "$_context" + ", ");
     buffer.write("oldStatus=" + "$_oldStatus" + ", ");
     buffer.write("newStatus=" + "$_newStatus" + ", ");
     buffer.write("changedBy=" + "$_changedBy" + ", ");
@@ -152,11 +169,12 @@ class StatusHistory extends amplify_core.Model {
     return buffer.toString();
   }
   
-  StatusHistory copyWith({String? entityId, String? entityType, String? oldStatus, String? newStatus, String? changedBy}) {
+  StatusHistory copyWith({String? entityId, String? entityType, String? context, String? oldStatus, String? newStatus, String? changedBy}) {
     return StatusHistory._internal(
       id: id,
       entityId: entityId ?? this.entityId,
       entityType: entityType ?? this.entityType,
+      context: context ?? this.context,
       oldStatus: oldStatus ?? this.oldStatus,
       newStatus: newStatus ?? this.newStatus,
       changedBy: changedBy ?? this.changedBy);
@@ -165,6 +183,7 @@ class StatusHistory extends amplify_core.Model {
   StatusHistory copyWithModelFieldValues({
     ModelFieldValue<String>? entityId,
     ModelFieldValue<String>? entityType,
+    ModelFieldValue<String>? context,
     ModelFieldValue<String?>? oldStatus,
     ModelFieldValue<String>? newStatus,
     ModelFieldValue<String?>? changedBy
@@ -173,6 +192,7 @@ class StatusHistory extends amplify_core.Model {
       id: id,
       entityId: entityId == null ? this.entityId : entityId.value,
       entityType: entityType == null ? this.entityType : entityType.value,
+      context: context == null ? this.context : context.value,
       oldStatus: oldStatus == null ? this.oldStatus : oldStatus.value,
       newStatus: newStatus == null ? this.newStatus : newStatus.value,
       changedBy: changedBy == null ? this.changedBy : changedBy.value
@@ -183,6 +203,7 @@ class StatusHistory extends amplify_core.Model {
     : id = json['id'],
       _entityId = json['entityId'],
       _entityType = json['entityType'],
+      _context = json['context'],
       _oldStatus = json['oldStatus'],
       _newStatus = json['newStatus'],
       _changedBy = json['changedBy'],
@@ -190,13 +211,14 @@ class StatusHistory extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'entityId': _entityId, 'entityType': _entityType, 'oldStatus': _oldStatus, 'newStatus': _newStatus, 'changedBy': _changedBy, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'entityId': _entityId, 'entityType': _entityType, 'context': _context, 'oldStatus': _oldStatus, 'newStatus': _newStatus, 'changedBy': _changedBy, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
     'id': id,
     'entityId': _entityId,
     'entityType': _entityType,
+    'context': _context,
     'oldStatus': _oldStatus,
     'newStatus': _newStatus,
     'changedBy': _changedBy,
@@ -208,6 +230,7 @@ class StatusHistory extends amplify_core.Model {
   static final ID = amplify_core.QueryField(fieldName: "id");
   static final ENTITYID = amplify_core.QueryField(fieldName: "entityId");
   static final ENTITYTYPE = amplify_core.QueryField(fieldName: "entityType");
+  static final CONTEXT = amplify_core.QueryField(fieldName: "context");
   static final OLDSTATUS = amplify_core.QueryField(fieldName: "oldStatus");
   static final NEWSTATUS = amplify_core.QueryField(fieldName: "newStatus");
   static final CHANGEDBY = amplify_core.QueryField(fieldName: "changedBy");
@@ -238,6 +261,12 @@ class StatusHistory extends amplify_core.Model {
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: StatusHistory.ENTITYTYPE,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: StatusHistory.CONTEXT,
       isRequired: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));

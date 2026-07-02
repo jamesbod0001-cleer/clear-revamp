@@ -7,6 +7,7 @@ extension StatusHistoryToDomainMapper on amplify_model.StatusHistory {
     return domain.StatusHistory(
       entityId: entityId,
       entityType: entityType,
+      context: context,
       oldStatus: oldStatus,
       newStatus: newStatus,
       changedBy: changedBy,
@@ -21,6 +22,7 @@ extension StatusHistoryToAmplifyMapper on domain.StatusHistory {
     return amplify_model.StatusHistory(
       entityId: entityId,
       entityType: entityType,
+      context: context,
       oldStatus: oldStatus,
       newStatus: newStatus,
       changedBy: changedBy,

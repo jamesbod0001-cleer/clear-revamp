@@ -55,22 +55,22 @@ class MediaRepositoryImpl extends MediaRepository {
     }
   }
 
-  // @override
-  // Future<ResultDart<List<XFile>, StorageFailure>> pickMultipleImages() async {
-  //   try {
-  //     final imageFiles = await _mediaServiceClient.pickMultipleImages();
-  //     if (imageFiles.isEmpty) {
-  //       _log.error('No image picked from gallery');
-  //       return Failure(StorageFailure.canceled());
-  //     } else {
-  //       _log.info(
-  //         'Successfully picked ${imageFiles.length} images from gallery',
-  //       );
-  //       return Success(imageFiles);
-  //     }
-  //   } catch (e) {
-  //     _log.error('Error picking images from gallery: $e');
-  //     return Failure(AmplifyStorageExceptionHandler.handleGenericException(e));
-  //   }
-  // }
+  @override
+  Future<ResultDart<List<XFile>, StorageFailure>> pickMultipleImages(int? limit) async {
+    try {
+      final imageFiles = await _mediaServiceClient.pickMultipleImages(limit);
+      if (imageFiles.isEmpty) {
+        _log.error('No image picked from gallery');
+        return Failure(StorageFailure.canceled());
+      } else {
+        _log.info(
+          'Successfully picked ${imageFiles.length} images from gallery',
+        );
+        return Success(imageFiles);
+      }
+    } catch (e) {
+      _log.error('Error picking images from gallery: $e');
+      return Failure(AmplifyStorageExceptionHandler.handleGenericException(e));
+    }
+  }
 }

@@ -39,6 +39,7 @@ class Agreement extends amplify_core.Model {
   final String? _lastUpdatedBy;
   final AgreementInitiatorRole? _initiatorRole;
   final AgreementStatus? _status;
+  final PhysicalDeliveryContext? _physicalDeliveryContext;
   final List<Milestone>? _milestones;
   final User? _initiator;
   final User? _sender;
@@ -150,6 +151,10 @@ class Agreement extends amplify_core.Model {
     return _status;
   }
   
+  PhysicalDeliveryContext? get physicalDeliveryContext {
+    return _physicalDeliveryContext;
+  }
+  
   List<Milestone>? get milestones {
     return _milestones;
   }
@@ -182,9 +187,9 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, milestones, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, physicalDeliveryContext, milestones, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _physicalDeliveryContext = physicalDeliveryContext, _milestones = milestones, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
+  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       shortCode: shortCode,
@@ -198,6 +203,7 @@ class Agreement extends amplify_core.Model {
       lastUpdatedBy: lastUpdatedBy,
       initiatorRole: initiatorRole,
       status: status,
+      physicalDeliveryContext: physicalDeliveryContext,
       milestones: milestones != null ? List<Milestone>.unmodifiable(milestones) : milestones,
       initiator: initiator,
       sender: sender,
@@ -227,6 +233,7 @@ class Agreement extends amplify_core.Model {
       _lastUpdatedBy == other._lastUpdatedBy &&
       _initiatorRole == other._initiatorRole &&
       _status == other._status &&
+      _physicalDeliveryContext == other._physicalDeliveryContext &&
       DeepCollectionEquality().equals(_milestones, other._milestones) &&
       _initiator == other._initiator &&
       _sender == other._sender &&
@@ -256,6 +263,7 @@ class Agreement extends amplify_core.Model {
     buffer.write("lastUpdatedBy=" + "$_lastUpdatedBy" + ", ");
     buffer.write("initiatorRole=" + (_initiatorRole != null ? amplify_core.enumToString(_initiatorRole)! : "null") + ", ");
     buffer.write("status=" + (_status != null ? amplify_core.enumToString(_status)! : "null") + ", ");
+    buffer.write("physicalDeliveryContext=" + (_physicalDeliveryContext != null ? _physicalDeliveryContext!.toString() : "null") + ", ");
     buffer.write("initiator=" + (_initiator != null ? _initiator!.toString() : "null") + ", ");
     buffer.write("sender=" + (_sender != null ? _sender!.toString() : "null") + ", ");
     buffer.write("recipient=" + (_recipient != null ? _recipient!.toString() : "null") + ", ");
@@ -267,7 +275,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
+  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, List<Milestone>? milestones, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id,
       shortCode: shortCode ?? this.shortCode,
@@ -281,6 +289,7 @@ class Agreement extends amplify_core.Model {
       lastUpdatedBy: lastUpdatedBy ?? this.lastUpdatedBy,
       initiatorRole: initiatorRole ?? this.initiatorRole,
       status: status ?? this.status,
+      physicalDeliveryContext: physicalDeliveryContext ?? this.physicalDeliveryContext,
       milestones: milestones ?? this.milestones,
       initiator: initiator ?? this.initiator,
       sender: sender ?? this.sender,
@@ -302,6 +311,7 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<String?>? lastUpdatedBy,
     ModelFieldValue<AgreementInitiatorRole?>? initiatorRole,
     ModelFieldValue<AgreementStatus?>? status,
+    ModelFieldValue<PhysicalDeliveryContext?>? physicalDeliveryContext,
     ModelFieldValue<List<Milestone>?>? milestones,
     ModelFieldValue<User?>? initiator,
     ModelFieldValue<User?>? sender,
@@ -323,6 +333,7 @@ class Agreement extends amplify_core.Model {
       lastUpdatedBy: lastUpdatedBy == null ? this.lastUpdatedBy : lastUpdatedBy.value,
       initiatorRole: initiatorRole == null ? this.initiatorRole : initiatorRole.value,
       status: status == null ? this.status : status.value,
+      physicalDeliveryContext: physicalDeliveryContext == null ? this.physicalDeliveryContext : physicalDeliveryContext.value,
       milestones: milestones == null ? this.milestones : milestones.value,
       initiator: initiator == null ? this.initiator : initiator.value,
       sender: sender == null ? this.sender : sender.value,
@@ -346,6 +357,11 @@ class Agreement extends amplify_core.Model {
       _lastUpdatedBy = json['lastUpdatedBy'],
       _initiatorRole = amplify_core.enumFromString<AgreementInitiatorRole>(json['initiatorRole'], AgreementInitiatorRole.values),
       _status = amplify_core.enumFromString<AgreementStatus>(json['status'], AgreementStatus.values),
+      _physicalDeliveryContext = json['physicalDeliveryContext'] != null
+          ? json['physicalDeliveryContext']['serializedData'] != null
+              ? PhysicalDeliveryContext.fromJson(new Map<String, dynamic>.from(json['physicalDeliveryContext']['serializedData']))
+              : PhysicalDeliveryContext.fromJson(new Map<String, dynamic>.from(json['physicalDeliveryContext']))
+        : null,
       _milestones = json['milestones']  is Map
         ? (json['milestones']['items'] is List
           ? (json['milestones']['items'] as List)
@@ -396,7 +412,7 @@ class Agreement extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'physicalDeliveryContext': _physicalDeliveryContext?.toJson(), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -412,6 +428,7 @@ class Agreement extends amplify_core.Model {
     'lastUpdatedBy': _lastUpdatedBy,
     'initiatorRole': _initiatorRole,
     'status': _status,
+    'physicalDeliveryContext': _physicalDeliveryContext,
     'milestones': _milestones,
     'initiator': _initiator,
     'sender': _sender,
@@ -435,6 +452,7 @@ class Agreement extends amplify_core.Model {
   static final LASTUPDATEDBY = amplify_core.QueryField(fieldName: "lastUpdatedBy");
   static final INITIATORROLE = amplify_core.QueryField(fieldName: "initiatorRole");
   static final STATUS = amplify_core.QueryField(fieldName: "status");
+  static final PHYSICALDELIVERYCONTEXT = amplify_core.QueryField(fieldName: "physicalDeliveryContext");
   static final MILESTONES = amplify_core.QueryField(
     fieldName: "milestones",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Milestone'));
@@ -544,6 +562,12 @@ class Agreement extends amplify_core.Model {
       key: Agreement.STATUS,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.enumeration)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.embedded(
+      fieldName: 'physicalDeliveryContext',
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.embedded, ofCustomTypeName: 'PhysicalDeliveryContext')
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
