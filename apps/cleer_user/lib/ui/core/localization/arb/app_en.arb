@@ -523,7 +523,7 @@
     "placeholders": {
       "name": {
         "type": "String",
-        "example": "Eziamachukwu"
+        "example": "John"
       }
     }
   },
@@ -584,5 +584,70 @@
   "whenYouCreateAgreementsOrSecurePaymentsYourActivityHistoryWillAppearHere": "When you create agreements or secure payments, your activity history will appear here.",
   "back": "Back",
   "showNumpad": "Show Numpad",
-  "amountLabel": "AMOUNT (₦)"
+  "amountLabel": "AMOUNT (₦)",
+  "waitingOnUser": "Waiting on {userName}",
+  "@waitingOnUser": {
+    "description": "Message shown when waiting for a specific user to take action.",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+
+  "noActionNeededFromYouRightNow": "No action needed from you right now",
+  "@noActionNeededFromYouRightNow": {
+    "description": "Message telling the user that no further action is required from their end at the moment."
+  },
+
+  "notifyWhenUserAccepts": "We'll notify you the moment {userName} accepts the agreement",
+  "@notifyWhenUserAccepts": {
+    "description": "Message indicating the user will be notified when the specified party accepts the agreement.",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+
+  "waitingForAcceptance": "Waiting for acceptance",
+  "@waitingForAcceptance": {
+    "description": "General status message indicating that the system is waiting for the agreement to be accepted."
+  },
+  "waitingForPayment": "Waiting for payment",
+  "wellNotifyYouTheMomentTheAgreementHasBeenAccepted": "We'll notify you the moment the agreement has been accepted",
+  "@wellNotifyYouTheMomentTheAgreementHasBeenAccepted": {
+    "description": "Message indicating the user will be notified generally when the agreement is accepted."
+  },
+  "notifyWhenUserDepositsFunds": "We'll notify you the moment {userName} deposits the funds",
+  "@notifyWhenUserDepositsFunds": {
+    "description": "Message indicating the user will be notified when a specific party deposits funds.",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+
+  "wellNotifyYouTheMomentTheFundsHaveBeenDeposited": "We'll notify you the moment the funds have been deposited",
+  "@wellNotifyYouTheMomentTheFundsHaveBeenDeposited": {
+    "description": "General message indicating the user will be notified when funds are deposited."
+  },
+  "waitingForPackageImages": "Waiting for package images",
+  "theVendorIsPreparingYourItemAndUploadingPackagePhotosBeforeShipment": "The vendor is preparing your item and uploading package photos before shipment.",
+  "uploadPackagePhotos": "Upload package photos",
+  "takeClearPhotosBeforeHandingThePackageToTheDeliveryServiceThesePhotosMayBeUsedIfThereIsEverADispute": "Take clear photos before handing the package to the delivery service. These photos may be used if there's ever a dispute.",
+  "addPhoto": "Add Photo",
+  "saveAndContinue": "Save & Continue",
+  "avoidBlurryOrDarkPhotos": "Avoid blurry or dark photos.",
+  "skip": "Skip",
+  "waitingForDeliveryInformation": "Waiting for delivery information",
+  "theVendorIsSharingDeliveryDetailsSoYouKnowWhoWillBeDeliveringYourItem": "The vendor is sharing delivery details so you know who will be delivering your item.",
+  "packagePhotosReady": "Package photos ready",
+  "theVendorHasUploadedPhotosShowingTheItemBeforeShipmentReviewThemSoYouKnowExactlyWhatWasSent": "The vendor has uploaded photos showing the item before shipment. Review them so you know exactly what was sent.",
+  "shareDeliveryInformation": "Share delivery information",
+  "shareHowTheItemIsBeingDeliveredSoTheBuyerKnowsWhoToExpect": "Share how the item is being delivered so the buyer knows who to expect."
 }

@@ -163,6 +163,48 @@ class AgreementStatusHistory extends _$AgreementStatusHistory {
 }
 
 @riverpod
+class AgreementDetails extends _$AgreementDetails {
+  StreamSubscription? _updateSub;
+
+  @override
+  FutureOr<Agreement> build(String agreementId) async {
+    final repository = ref.watch(agreementRepositoryProvider);
+
+    _setupSubscription(agreementId);
+
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        final result = await repository.getAgreement(agreementId);
+        state = AsyncData(result.getOrThrow());
+      },
+      onReconnectRequired: () => _setupSubscription(agreementId),
+    );
+
+    ref.onDispose(() => _updateSub?.cancel());
+
+    final result = await repository.getAgreement(agreementId);
+    return result.getOrThrow();
+  }
+
+  void _setupSubscription(String agreementId) {
+    _updateSub?.cancel();
+    _updateSub = ref
+        .read(agreementRepositoryProvider)
+        .observeUserAgreementsUpdates()
+        .where((a) => a.id == agreementId)
+        .listen((_) async {
+          // When an update is detected, re-fetch to get the full object
+          final result = await ref
+              .read(agreementRepositoryProvider)
+              .getAgreement(agreementId);
+          if (result.isSuccess()) {
+            state = AsyncData(result.getOrThrow());
+          }
+        });
+  }
+}
+
+@riverpod
 List<Agreement> needsActionAgreements(Ref ref) {
   final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
   final currentUser = ref.watch(userProfileProvider).value;
@@ -200,11 +242,14 @@ List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
 @riverpod
 Future<double> currentlyProtectedAmount(Ref ref) async {
   final agreements = await ref.watch(userOngoingAgreementsProvider.future);
+  final currentUser = ref.watch(userProfileProvider).value;
 
   double totalProtected = 0.0;
 
   for (final agreement in agreements) {
-    if (agreement.status == AgreementStatus.awaitingFunding) {
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
+    if (agreement.status == AgreementStatus.awaitingFunding ||
+        (isRecipient && agreement.status == .awaitingRecipient)) {
       continue;
     }
 

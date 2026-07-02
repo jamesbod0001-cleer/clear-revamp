@@ -1,7 +1,6 @@
 import 'package:cleer/routing/routes.dart';
-import 'package:cleer_core/models/agreement/agreement.dart';
-import 'package:cleer_core/models/agreement/agreement_enums.dart';
-import 'package:cleer_core/models/milestone/milestone.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/dynamic_agreement_header.dart';
+import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
@@ -162,10 +161,16 @@ class AgreementDetailsScreen extends ConsumerWidget {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       Gap(Dimens.spacing.sp30),
+                      DynamicAgreementHeader(
+                        agreement: agreement,
+                        currentUser: user,
+                      ),
                       if ([
                         AgreementStatus.awaitingFunding,
                         AgreementStatus.awaitingRecipient,
                       ].contains(agreement.status)) ...[
+                        if (agreement.category == .physicalGoods)
+                          Gap(Dimens.spacing.sp24),
                         Row(
                           children: [
                             Expanded(
@@ -215,8 +220,13 @@ class AgreementDetailsScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Gap(Dimens.spacing.sp16),
-                      ],
+                        Gap(
+                          agreement.category == .physicalGoods
+                              ? Dimens.spacing.sp24
+                              : Dimens.spacing.sp16,
+                        ),
+                      ] else if (agreement.category == .physicalGoods)
+                        Gap(Dimens.spacing.sp48),
                       agreementStatusHistoryState.maybeWhen(
                         /// TODO: Show proper error here
                         error: (error, stackTrace) => SizedBox.shrink(),
