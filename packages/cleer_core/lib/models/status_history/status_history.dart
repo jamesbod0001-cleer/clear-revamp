@@ -10,6 +10,7 @@ abstract class StatusHistory with _$StatusHistory {
   const factory StatusHistory({
     required String entityId,
     required String entityType,
+    required String context,
     String? oldStatus,
     required String newStatus,
     String? changedBy,
