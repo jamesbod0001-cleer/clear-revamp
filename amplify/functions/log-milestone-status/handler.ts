@@ -22,14 +22,18 @@ export const handler: DynamoDBStreamHandler = async (event) => {
             const oldImage = record.dynamodb?.OldImage;
             const oldItem = oldImage ? unmarshall(oldImage as any) : null;
 
-            await logStatusChange(
-                client,
-                newItem.id,
-                'MILESTONE',
-                oldItem ? oldItem.status : null,
-                newItem.status,
-                newItem.lastUpdatedBy || 'SYSTEM'
-            );
+            // Log CORE status for milestones
+            if (!oldItem || oldItem.status !== newItem.status) {
+                await logStatusChange(
+                    client,
+                    newItem.id,
+                    'MILESTONE',
+                    'CORE_STATUS',
+                    oldItem ? oldItem.status : null,
+                    newItem.status,
+                    newItem.lastUpdatedBy || 'SYSTEM'
+                );
+            }
 
         } catch (error) {
             logger.error('Error processing record', { error, recordId: record.eventID });

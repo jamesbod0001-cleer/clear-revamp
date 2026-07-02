@@ -4,6 +4,8 @@ export const StatusHistory = a.model({
     entityId: a.id().required(),
     entityType: a.string().required(), // 'AGREEMENT' or 'MILESTONE'
 
+    context: a.string().required(), // 'CORE_STATUS' or 'DELIVERY_STATUS'
+
     oldStatus: a.string(),
     newStatus: a.string().required(),
     changedBy: a.string(),
