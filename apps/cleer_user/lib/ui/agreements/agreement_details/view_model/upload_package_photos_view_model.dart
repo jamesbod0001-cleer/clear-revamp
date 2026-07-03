@@ -60,8 +60,8 @@ class UploadPackagePhotosViewModel extends _$UploadPackagePhotosViewModel {
           .processImage(
             ProcessImageParams(
               originalFile: imageXFile,
-              width: 400,
-              height: 400,
+              width: 1200,
+              height: 1200,
             ),
           );
       if (processImageResult.isError()) {

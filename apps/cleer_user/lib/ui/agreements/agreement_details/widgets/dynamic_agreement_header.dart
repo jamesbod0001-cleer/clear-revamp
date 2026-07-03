@@ -1,3 +1,5 @@
+import 'package:cleer/ui/agreements/agreement_details/widgets/confirm_item_received_card.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/review_delivery_information_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_package_photos_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/share_delivery_information_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/upload_package_photos_card.dart';
@@ -43,6 +45,12 @@ class DynamicAgreementHeader extends StatelessWidget {
               agreement.physicalDeliveryContext!.packagingPhotos != null) {
             // Meaning the Vendor uploaded packaging photos
             return ReviewPackagePhotosCard(agreement: agreement);
+          } else if (agreement.physicalDeliveryContext!.status ==
+                  .awaitingBuyerAcknowledgment &&
+              agreement.physicalDeliveryContext!.deliveryDetails != null) {
+            return ReviewDeliveryInformationCard(agreement: agreement);
+          } else if (agreement.physicalDeliveryContext!.status == .inTransit) {
+            return ConfirmItemReceivedCard(agreement: agreement);
           }
         } else if (isRecipient) {
           final needsToUploadPackagingPhotos =
@@ -52,7 +60,7 @@ class DynamicAgreementHeader extends StatelessWidget {
           if (needsToUploadPackagingPhotos) {
             return UploadPackagePhotosCard(agreement: agreement);
           } else if (needsToShareDelivery) {
-            return ShareDeliveryInformationCard();
+            return ShareDeliveryInformationCard(agreement: agreement);
           }
         }
 
@@ -63,7 +71,7 @@ class DynamicAgreementHeader extends StatelessWidget {
         );
 
       default:
-      // Returns an empty widget for states that don't need a header
+        // Returns an empty widget for states that don't need a header
         return const SizedBox.shrink();
     }
   }
@@ -84,6 +92,7 @@ class AgreementActionBanner extends StatelessWidget {
 
     final amIInitiator = agreement.initiator?.id == currentUser?.id;
     final isSender = agreement.sender?.id == currentUser?.id;
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
 
     IconData? icon;
     String statusLabel = kEmpty;
@@ -113,9 +122,10 @@ class AgreementActionBanner extends StatelessWidget {
               ? l10n.notifyWhenUserDepositsFunds(agreement.sender!.firstName)
               : l10n.wellNotifyYouTheMomentTheFundsHaveBeenDeposited;
         }
+
       case AgreementStatus.inProgress:
 
-      /// TODO: I still need to come back here later...
+        /// TODO: I still need to come back here later...
         if (isSender) {
           if (agreement.physicalDeliveryContext!.status == .awaitingPackaging) {
             icon = PhosphorIcons.images(.duotone);
@@ -124,7 +134,7 @@ class AgreementActionBanner extends StatelessWidget {
             description = l10n
                 .theVendorIsPreparingYourItemAndUploadingPackagePhotosBeforeShipment;
           } else if (agreement.physicalDeliveryContext!.status ==
-                  .awaitingDispatch) {
+              .awaitingDispatch) {
             if (agreement.physicalDeliveryContext!.packagingPhotos == null) {
               // Meaning the Vendor skipped uploading packaging photos
               icon = PhosphorIcons.truck(.duotone);
@@ -134,32 +144,45 @@ class AgreementActionBanner extends StatelessWidget {
                   .theVendorIsSharingDeliveryDetailsSoYouKnowWhoWillBeDeliveringYourItem;
             }
           }
+        } else if (isRecipient) {
+          if (agreement.physicalDeliveryContext!.status ==
+              .awaitingBuyerAcknowledgment) {
+            icon = PhosphorIcons.truck(.duotone);
+            statusLabel = l10n.waitingForBuyerConfirmation;
+            title = l10n.noActionNeededFromYouRightNow;
+            description = l10n.theBuyerIsReviewingTheDeliveryDetailsYouShared;
+          } else if (agreement.physicalDeliveryContext!.status == .inTransit) {
+            icon = PhosphorIcons.truck(.duotone);
+            statusLabel = l10n.waitingForBuyerVerification;
+            title = l10n.noActionNeededFromYouRightNow;
+            description = l10n.theBuyerHasNotYetVerifiedPickup;
+          }
         }
       default:
         statusLabel = kEmpty;
         title = kEmpty;
         description = kEmpty;
-    // case AgreementStatus.draft:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
-    // case AgreementStatus.funded:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
-    // case AgreementStatus.readyForRelease:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
-    // case AgreementStatus.processingRelease:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
-    // case AgreementStatus.cancelled:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
-    // case AgreementStatus.rejected:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
-    // case AgreementStatus.released:
-    //   // TODO: Handle this case.
-    //   throw UnimplementedError();
+      // case AgreementStatus.draft:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
+      // case AgreementStatus.funded:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
+      // case AgreementStatus.readyForRelease:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
+      // case AgreementStatus.processingRelease:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
+      // case AgreementStatus.cancelled:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
+      // case AgreementStatus.rejected:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
+      // case AgreementStatus.released:
+      //   // TODO: Handle this case.
+      //   throw UnimplementedError();
     }
 
     return Container(
