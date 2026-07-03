@@ -13,6 +13,7 @@ export 'themes/dimensions.dart';
 export 'widgets/activity_card.dart';
 export 'widgets/activity_card_skeleton_list.dart';
 export 'widgets/custom_text_form_field.dart';
+export 'widgets/custom_text_area_form_field.dart';
 export 'widgets/offline_warning_banner.dart';
 export 'widgets/status_circle_icon.dart';
 export 'widgets/responsive_layout.dart';
