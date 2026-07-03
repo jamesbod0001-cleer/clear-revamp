@@ -337,7 +337,7 @@ class ShareDeliveryInformationCard extends HookConsumerWidget {
                           ),
                           Gap(Dimens.spacing.sp4),
                           Text(
-                            l10n.recipient,
+                            l10n.theBuyer,
                             style: context.typo.bodySmall.copyWith(
                               color: context.color.blue200,
                             ),

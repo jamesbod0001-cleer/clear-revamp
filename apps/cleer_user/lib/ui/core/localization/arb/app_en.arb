@@ -656,7 +656,7 @@
   "attachPhotoEvidence": "Attach Photo evidence",
   "deliveryArrangedBy": "Delivery arranged by",
   "me": "Me",
-  "recipient": "Recipient",
+  "theBuyer": "The Buyer",
   "shareDeliveryDetails": "Share delivery details",
   "deliveryDetailsShared": "Delivery details shared",
   "reviewTheDeliveryContactAndTrackingDetailsSoYouKnowWhoWillBeBringingYourItem": "Review the delivery contact and tracking details so you know who will be bringing your item.",
@@ -668,5 +668,20 @@
   "call": "Call",
   "confirmItemReceived": "Confirm item received",
   "ifYouHaveReceivedYourItemConfirmItNowYouWillBeAbleToReportAnyIssuesWithin2HoursOfDelivery": "If you've received your item, confirm it now. You'll still be able to report any issues within 2 hours of delivery.",
-  "confirmReceipt": "Confirm Receipt"
+  "confirmReceipt": "Confirm Receipt",
+  "deliveryArrangedByName": "Delivery arranged by {name}",
+  "@deliveryArrangedByName": {
+    "description": "Indicates that the delivery was arranged by a specific person",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Bode"
+      }
+    }
+  },
+
+  "deliveryArrangedByYou": "Delivery arranged by You",
+  "@deliveryArrangedByYou": {
+    "description": "Indicates that the current user arranged the delivery"
+  }
 }

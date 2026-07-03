@@ -28,6 +28,10 @@ class ReviewDeliveryInformationCard extends ConsumerWidget {
       reviewDeliveryInformationViewModelProvider(agreement.id!).notifier,
     );
 
+    final hasAdditionalDetails =
+        deliveryDetails.additionalDetails != null &&
+        deliveryDetails.additionalDetails!.isNotEmpty;
+
     return EmphasizedActionCard(
       child: Column(
         crossAxisAlignment: .start,
@@ -54,6 +58,27 @@ class ReviewDeliveryInformationCard extends ConsumerWidget {
             Column(
               crossAxisAlignment: .start,
               children: [
+                Row(
+                  children: [
+                    PhosphorIcon(
+                      PhosphorIcons.info(.duotone),
+                      color: context.color.blue300,
+                      size: Dimens.size.s16,
+                    ),
+                    Gap(Dimens.spacing.sp4),
+                    Text(
+                      deliveryDetails.arrangedBy == .buyer
+                          ? l10n.deliveryArrangedByYou
+                          : l10n.deliveryArrangedByName(
+                              agreement.recipient!.firstName,
+                            ),
+                      style: context.typo.bodySmall.copyWith(
+                        color: context.color.outline,
+                      ),
+                    ),
+                  ],
+                ),
+                Gap(Dimens.spacing.sp24),
                 Text(
                   l10n.driverPhoneNumber,
                   style: context.typo.titleSmall.copyWith(
@@ -125,30 +150,30 @@ class ReviewDeliveryInformationCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Gap(Dimens.spacing.sp25),
-                Text(
-                  l10n.additionalDetails,
-                  style: context.typo.titleSmall.copyWith(
-                    color: context.color.blue200,
+
+                if (hasAdditionalDetails) ...[
+                  Gap(Dimens.spacing.sp24),
+                  Text(
+                    l10n.additionalDetails,
+                    style: context.typo.titleSmall.copyWith(
+                      color: context.color.blue200,
+                    ),
                   ),
-                ),
-                Gap(Dimens.spacing.sp8),
-                Text(
-                  deliveryDetails.additionalDetails ?? '',
-                  style: context.typo.bodyLarge.copyWith(
-                    color: context.color.outline,
+                  Gap(Dimens.spacing.sp8),
+                  Text(
+                    deliveryDetails.additionalDetails!,
+                    style: context.typo.bodyLarge.copyWith(
+                      color: context.color.outline,
+                    ),
                   ),
-                ),
-                Gap(Dimens.spacing.sp8),
-                Text(
-                  deliveryDetails.arrangedBy.name,
-                  style: context.typo.bodyMedium.copyWith(
-                    color: context.color.outline,
-                  ),
-                ),
+                ],
 
                 if (photos.isNotEmpty) ...[
-                  Gap(Dimens.spacing.sp8),
+                  Gap(
+                    hasAdditionalDetails
+                        ? Dimens.spacing.sp8
+                        : Dimens.spacing.sp24,
+                  ),
                   LayoutBuilder(
                     builder:
                         (BuildContext context, BoxConstraints constraints) {

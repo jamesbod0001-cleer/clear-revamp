@@ -270,8 +270,5 @@ class ShareDeliveryInformationViewModel
 
 extension ShareDeliveryInformationFormDataExtension
     on ShareDeliveryInformationFormData {
-  bool get isValid =>
-      driverPhoneNumber.isValidPhone &&
-      deliveryInformation.isNotEmpty &&
-      arrangedBy != null;
+  bool get isValid => driverPhoneNumber.isValidPhone && arrangedBy != null;
 }
