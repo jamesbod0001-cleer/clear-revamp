@@ -142,6 +142,7 @@ class AmplifyAgreementRepositoryImpl
   @override
   Future<ResultDart<List<Agreement>, DataFailure>>
   getUserOngoingAgreements() async {
+    /// TODO: Come and update here when needed to add the other states that fall under on going
     return await performDataOperation<List<Agreement>>(
       operation: () async {
         final response = await _amplifyAgreementServiceClient
@@ -162,6 +163,11 @@ class AmplifyAgreementRepositoryImpl
                     .or(
                       amplify_model.Agreement.STATUS.eq(
                         amplify_model.AgreementStatus.IN_PROGRESS,
+                      ),
+                    )
+                    .or(
+                      amplify_model.Agreement.STATUS.eq(
+                        amplify_model.AgreementStatus.READY_FOR_RELEASE,
                       ),
                     ),
               ),

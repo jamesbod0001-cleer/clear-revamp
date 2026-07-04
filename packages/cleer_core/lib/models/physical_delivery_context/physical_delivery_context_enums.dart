@@ -1,6 +1,6 @@
 enum PhysicalDeliveryContextStatus {
   awaitingPackaging,
   awaitingDispatch,
-  awaitingBuyerAcknowledgment,
+  awaitingBuyerAcknowledgement,
   inTransit,
 }

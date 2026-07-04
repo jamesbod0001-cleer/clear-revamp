@@ -44,7 +44,7 @@ PhysicalDeliveryContextStatus _mapPhysicalDeliveryContextStatusToDomain(
     case amplify_model
         .PhysicalDeliveryContextStatus
         .AWAITING_BUYER_ACKNOWLEDGEMENT:
-      return PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgment;
+      return PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement;
     case amplify_model.PhysicalDeliveryContextStatus.IN_TRANSIT:
       return PhysicalDeliveryContextStatus.inTransit;
   }
@@ -57,7 +57,7 @@ _mapPhysicalDeliveryContextStatusToAmplify(PhysicalDeliveryContextStatus p) {
       return amplify_model.PhysicalDeliveryContextStatus.AWAITING_PACKAGING;
     case PhysicalDeliveryContextStatus.awaitingDispatch:
       return amplify_model.PhysicalDeliveryContextStatus.AWAITING_DISPATCH;
-    case PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgment:
+    case PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement:
       return amplify_model
           .PhysicalDeliveryContextStatus
           .AWAITING_BUYER_ACKNOWLEDGEMENT;
