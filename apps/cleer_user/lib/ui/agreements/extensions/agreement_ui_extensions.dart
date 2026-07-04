@@ -4,7 +4,7 @@ import 'package:cleer_core/models/milestone/milestone.dart';
 import 'package:cleer_core/models/user/user.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart'; // For context.color and context.typo
+import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -18,11 +18,11 @@ extension AgreementUIExtensions on Agreement {
         return context.color.warningLight;
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
         return context.color.infoLight;
       case AgreementStatus.released:
         return context.color.successLight;
-      case AgreementStatus.readyForRelease:
-      case AgreementStatus.processingRelease:
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
@@ -38,11 +38,11 @@ extension AgreementUIExtensions on Agreement {
         return context.color.warning;
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
         return context.color.info;
       case AgreementStatus.released:
         return context.color.success;
-      case AgreementStatus.readyForRelease:
-      case AgreementStatus.processingRelease:
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
@@ -59,11 +59,11 @@ extension AgreementUIExtensions on Agreement {
         return l10n.pending;
       case AgreementStatus.funded:
       case AgreementStatus.inProgress:
+      case AgreementStatus.readyForRelease:
+      case AgreementStatus.processingRelease:
         return l10n.fundsHeld;
       case AgreementStatus.released:
         return l10n.released;
-      case AgreementStatus.readyForRelease:
-      case AgreementStatus.processingRelease:
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Add actual l10n strings later

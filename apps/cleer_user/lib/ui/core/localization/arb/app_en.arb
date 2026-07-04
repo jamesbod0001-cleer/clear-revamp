@@ -683,5 +683,6 @@
   "deliveryArrangedByYou": "Delivery arranged by You",
   "@deliveryArrangedByYou": {
     "description": "Indicates that the current user arranged the delivery"
-  }
+  },
+  "whereThisAgreementIs": "Where this agreement is"
 }
