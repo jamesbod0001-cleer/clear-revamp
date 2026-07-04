@@ -171,7 +171,7 @@ class ShareDeliveryInformationViewModel
             agreement.copyWith(
               physicalDeliveryContext: agreement.physicalDeliveryContext!
                   .copyWith(
-                    status: .awaitingBuyerAcknowledgment,
+                    status: .awaitingBuyerAcknowledgement,
                     deliveryDetails: DeliveryDetails(
                       driverPhoneNumber: fullE164Number,
                       additionalDetails: formData.deliveryInformation,
@@ -232,6 +232,7 @@ class ShareDeliveryInformationViewModel
           .read(agreementUseCaseProvider.notifier)
           .updateAgreement(
             agreement.copyWith(
+              status: .readyForRelease,
               physicalDeliveryContext: agreement.physicalDeliveryContext!
                   .copyWith(status: .inTransit),
             ),

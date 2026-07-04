@@ -42,6 +42,7 @@ class ReviewDeliveryInformationViewModel
           .read(agreementUseCaseProvider.notifier)
           .updateAgreement(
             agreement.copyWith(
+              status: .readyForRelease,
               physicalDeliveryContext: agreement.physicalDeliveryContext!
                   .copyWith(status: .inTransit),
             ),

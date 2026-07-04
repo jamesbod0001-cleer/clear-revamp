@@ -46,11 +46,9 @@ class DynamicAgreementHeader extends StatelessWidget {
             // Meaning the Vendor uploaded packaging photos
             return ReviewPackagePhotosCard(agreement: agreement);
           } else if (agreement.physicalDeliveryContext!.status ==
-                  .awaitingBuyerAcknowledgment &&
+                  .awaitingBuyerAcknowledgement &&
               agreement.physicalDeliveryContext!.deliveryDetails != null) {
             return ReviewDeliveryInformationCard(agreement: agreement);
-          } else if (agreement.physicalDeliveryContext!.status == .inTransit) {
-            return ConfirmItemReceivedCard(agreement: agreement);
           }
         } else if (isRecipient) {
           final needsToUploadPackagingPhotos =
@@ -64,6 +62,17 @@ class DynamicAgreementHeader extends StatelessWidget {
           }
         }
 
+        // Fallback to a standard banner if no specific action is needed
+        return AgreementActionBanner(
+          agreement: agreement,
+          currentUser: currentUser,
+        );
+      case AgreementStatus.readyForRelease:
+        if (isSender) {
+          if (agreement.physicalDeliveryContext!.status == .inTransit) {
+            return ConfirmItemReceivedCard(agreement: agreement);
+          }
+        }
         // Fallback to a standard banner if no specific action is needed
         return AgreementActionBanner(
           agreement: agreement,
@@ -146,19 +155,22 @@ class AgreementActionBanner extends StatelessWidget {
           }
         } else if (isRecipient) {
           if (agreement.physicalDeliveryContext!.status ==
-              .awaitingBuyerAcknowledgment) {
+              .awaitingBuyerAcknowledgement) {
             icon = PhosphorIcons.truck(.duotone);
             statusLabel = l10n.waitingForBuyerConfirmation;
             title = l10n.noActionNeededFromYouRightNow;
             description = l10n.theBuyerIsReviewingTheDeliveryDetailsYouShared;
-          } else if (agreement.physicalDeliveryContext!.status == .inTransit) {
-            icon = PhosphorIcons.truck(.duotone);
-            statusLabel = l10n.waitingForBuyerVerification;
-            title = l10n.noActionNeededFromYouRightNow;
-            description = l10n.theBuyerHasNotYetVerifiedPickup;
           }
         }
+      case AgreementStatus.readyForRelease:
+        if (agreement.physicalDeliveryContext!.status == .inTransit) {
+          icon = PhosphorIcons.truck(.duotone);
+          statusLabel = l10n.waitingForBuyerVerification;
+          title = l10n.noActionNeededFromYouRightNow;
+          description = l10n.theBuyerHasNotYetVerifiedPickup;
+        }
       default:
+        icon = PhosphorIcons.info(.duotone);
         statusLabel = kEmpty;
         title = kEmpty;
         description = kEmpty;
@@ -196,24 +208,23 @@ class AgreementActionBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Stack(
-            alignment: .center,
-            children: [
-              SizedBox.square(
-                dimension: Dimens.size.s36,
-                child: CircularProgressIndicator(
-                  strokeWidth: Dimens.size.s2,
-                  color: context.color.blue800,
-                  backgroundColor: context.color.grayComponent,
-                ),
+          Container(
+            width: Dimens.size.s36,
+            height: Dimens.size.s36,
+            decoration: BoxDecoration(
+              shape: .circle,
+              border: .all(
+                color: context.color.grayComponent,
+                width: Dimens.size.s2,
               ),
-              if (icon != null)
-                PhosphorIcon(
-                  icon,
-                  color: context.color.blue800,
-                  size: Dimens.size.s16,
-                ),
-            ],
+            ),
+            child: Center(
+              child: PhosphorIcon(
+                icon!,
+                color: context.color.blue800,
+                size: Dimens.size.s16,
+              ),
+            ),
           ),
           Gap(Dimens.spacing.sp12),
           Expanded(
