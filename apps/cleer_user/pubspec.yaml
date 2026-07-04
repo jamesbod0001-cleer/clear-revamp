@@ -78,7 +78,7 @@ dependencies:
   webview_flutter: ^4.13.1
   command_it: ^9.5.0
   listen_it: ^5.3.4
-  share_plus: ^12.0.1
+  share_plus: ^13.2.0
   flutter_image_compress: ^2.4.0
   image_picker: ^1.2.1
   blurhash_dart: ^1.2.1
