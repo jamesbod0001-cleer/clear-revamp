@@ -698,5 +698,7 @@
   "buyerAcknowledgedTheDeliveryDetails": "Buyer acknowledged the delivery details",
   "buyerHasReceivedAndInspectedTheGoods": "Buyer has received and inspected the goods",
   "releasingFunds": "Releasing funds",
-  "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours"
+  "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours",
+  "active": "Active",
+  "packagingAndShipping": "Preparing & shipping"
 }

@@ -666,7 +666,7 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
           builder: (BuildContext context, BoxConstraints constraints) {
             // Calculate the exact 3-column dimension upfront.
             // Screen width - 26px (Left icon & gap) - 24px (Container padding) - 12px (Wrap spacing)
-            final double photoDimension = (constraints.maxWidth - 62) / 3;
+            final double photoDimension = (constraints.maxWidth - 62) / 3.4;
 
             // Build the Micro Steps based on the active Macro Step
             final List<Step> activeSectionSteps = [];
@@ -789,19 +789,22 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
                             color: context.color.grayComponent,
                             borderRadius: .circular(Dimens.radius.r12),
                           ),
-                          child: Wrap(
-                            spacing: Dimens.spacing.sp6,
-                            runSpacing: Dimens.spacing.sp6,
-                            children: agreement
-                                .physicalDeliveryContext!
-                                .packagingPhotos!
-                                .map((photo) {
-                                  return ReviewPhotoThumbnail(
-                                    photo: photo,
-                                    dimension: photoDimension,
-                                  );
-                                })
-                                .toList(),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: Dimens.spacing.sp6,
+                              children: agreement
+                                  .physicalDeliveryContext!
+                                  .packagingPhotos!
+                                  .map((photo) {
+                                    return ReviewPhotoThumbnail(
+                                      photo: photo,
+                                      dimension:
+                                          photoDimension, // Keeps your perfect sizing!
+                                    );
+                                  })
+                                  .toList(),
+                            ),
                           ),
                         )
                       : null,
@@ -1073,7 +1076,7 @@ class AgreementProgressCard extends StatelessWidget {
                             ), // UPDATED
                             Gap(Dimens.spacing.sp8),
                             Text(
-                              'Active',
+                              l10n.active,
                               textAlign: TextAlign.center,
                               style: context.typo.bodySmall.copyWith(
                                 color: currentStep == 1
@@ -1095,7 +1098,7 @@ class AgreementProgressCard extends StatelessWidget {
                             ), // UPDATED
                             Gap(Dimens.spacing.sp8),
                             Text(
-                              'Preparing & shipping',
+                              l10n.packagingAndShipping,
                               textAlign: TextAlign.center,
                               style: context.typo.bodySmall.copyWith(
                                 color: currentStep == 2
@@ -1117,7 +1120,7 @@ class AgreementProgressCard extends StatelessWidget {
                             ), // UPDATED
                             Gap(Dimens.spacing.sp8),
                             Text(
-                              'Release Funds',
+                              l10n.releaseFunds,
                               textAlign: TextAlign.center,
                               style: context.typo.bodySmall.copyWith(
                                 color: currentStep == 3
@@ -1139,7 +1142,7 @@ class AgreementProgressCard extends StatelessWidget {
                             ), // UPDATED
                             Gap(Dimens.spacing.sp8),
                             Text(
-                              'Completed',
+                              l10n.completed,
                               textAlign: TextAlign.center,
                               style: context.typo.bodySmall.copyWith(
                                 color: currentStep == 4
