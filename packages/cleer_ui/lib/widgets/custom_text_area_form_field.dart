@@ -68,7 +68,7 @@ class _CustomTextAreaFormFieldState extends State<CustomTextAreaFormField> {
         final isFocused = _effectiveFocusNode.hasFocus;
 
         final fillColor = isDark
-            ? context.color.white.withValues(alpha: (isFocused || hasContent) ? 0.45 : 0.20)
+            ? context.color.white.withValues(alpha: (isFocused || hasContent) ? 0.10 : 0.20)
             : context.color.grayComponent;
 
         return Column(
@@ -109,6 +109,7 @@ class _CustomTextAreaFormFieldState extends State<CustomTextAreaFormField> {
                     minLines: widget.minLines,
                     textCapitalization: TextCapitalization.sentences,
                     keyboardType: TextInputType.multiline,
+                    style: isDark ? TextStyle(color: context.color.white) : null,
                     decoration: InputDecoration(
                       // 1. Force structural collapse without inner spacing constraints
                       isCollapsed: true,

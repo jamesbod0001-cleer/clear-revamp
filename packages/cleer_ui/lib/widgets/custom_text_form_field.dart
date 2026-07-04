@@ -127,7 +127,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         if (isDark) {
           final isActive = isFocused || hasContent;
           fillColor = context.color.white.withValues(
-            alpha: isActive ? 0.45 : 0.20,
+            alpha: isActive ? 0.10 : 0.20,
           );
         } else {
           fillColor = context.color.grayComponent;
@@ -157,6 +157,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               maxLength: widget.maxLength,
               textCapitalization: widget.textCapitalization,
               readOnly: widget.readOnly,
+              style: isDark ? TextStyle(color: context.color.white) : null,
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 errorText: state.errorText,
@@ -263,7 +264,12 @@ class PhoneNumberTextFormField extends StatelessWidget {
                         ],
                       ),
                       Gap(Dimens.spacing.sp4),
-                      Text('+234', style: context.typo.bodyMedium),
+                      Text(
+                        '+234',
+                        style: context.typo.bodyMedium.copyWith(
+                          color: isDark ? context.color.white : null,
+                        ),
+                      ),
                     ],
                   ),
                 ),
