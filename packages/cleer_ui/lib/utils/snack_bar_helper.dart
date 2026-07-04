@@ -41,6 +41,15 @@ class SnackBarHelper {
         backgroundColor = context.color.blue100;
         iconBackgroundColor = context.color.infoLight;
         icon = Assets.images.handshake.image(height: Dimens.size.s12);
+      case 'DELIVERY':
+        stripeColor = context.color.warning;
+        backgroundColor = context.color.warningLight;
+        iconBackgroundColor = Color(0xFFFDF0E1);
+        icon = PhosphorIcon(
+          PhosphorIcons.truck(PhosphorIconsStyle.duotone),
+          color: context.color.warning,
+          size: Dimens.size.s16,
+        );
 
       default:
         stripeColor = context.color.blue800;
