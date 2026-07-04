@@ -684,5 +684,19 @@
   "@deliveryArrangedByYou": {
     "description": "Indicates that the current user arranged the delivery"
   },
-  "whereThisAgreementIs": "Where this agreement is"
+  "whereThisAgreementIs": "Where this agreement is",
+  "packagePhotosSkipped": "Package photos skipped",
+  "packagePhotosUploaded": "Package photos uploaded",
+  "vendorOptedNotToUploadPhotos": "Vendor opted not to upload photos",
+  "vendorHasPreparedThePackage": "Vendor has prepared the package",
+  "deliveryDetailsSkipped": "Delivery details skipped",
+  "vendorSkippedSharingDeliveryInfo": "Vendor skipped sharing delivery info",
+  "vendorSharedTheDriverWaybillInfo": "Vendor shared the driver/waybill info",
+  "confirmationSkipped": "Confirmation skipped",
+  "deliveryDetailsConfirmed": "Delivery details confirmed",
+  "autoSkippedBecauseDetailsWereNotProvided": "Auto-skipped because details were not provided",
+  "buyerAcknowledgedTheDeliveryDetails": "Buyer acknowledged the delivery details",
+  "buyerHasReceivedAndInspectedTheGoods": "Buyer has received and inspected the goods",
+  "releasingFunds": "Releasing funds",
+  "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours"
 }

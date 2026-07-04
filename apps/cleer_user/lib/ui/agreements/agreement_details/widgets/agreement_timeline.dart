@@ -766,11 +766,11 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
               activeSectionSteps.add(
                 Step(
                   title: isPackagingSkipped
-                      ? 'Package photos skipped'
-                      : 'Package photos uploaded',
+                      ? l10n.packagePhotosSkipped
+                      : l10n.packagePhotosUploaded,
                   subtitle: isPackagingSkipped
-                      ? 'Vendor opted not to upload photos'
-                      : 'Vendor has prepared the package',
+                      ? l10n.vendorOptedNotToUploadPhotos
+                      : l10n.vendorHasPreparedThePackage,
                   state: dispatchDate == null
                       ? StepState.pending
                       : (isPackagingSkipped
@@ -798,8 +798,7 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
                                 .map((photo) {
                                   return ReviewPhotoThumbnail(
                                     photo: photo,
-                                    dimension:
-                                        photoDimension, // Applied cleanly here
+                                    dimension: photoDimension,
                                   );
                                 })
                                 .toList(),
@@ -825,11 +824,11 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
               activeSectionSteps.add(
                 Step(
                   title: isSharingDeliveryDetailsSkipped
-                      ? 'Delivery details skipped'
-                      : 'Delivery details shared',
+                      ? l10n.deliveryDetailsSkipped
+                      : l10n.deliveryDetailsShared,
                   subtitle: isSharingDeliveryDetailsSkipped
-                      ? 'Vendor skipped sharing delivery info'
-                      : 'Vendor shared the driver/waybill info',
+                      ? l10n.vendorSkippedSharingDeliveryInfo
+                      : l10n.vendorSharedTheDriverWaybillInfo,
                   state: detailsSharedDate == null
                       ? StepState.pending
                       : (isSharingDeliveryDetailsSkipped
@@ -843,11 +842,11 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
               activeSectionSteps.add(
                 Step(
                   title: isSharingDeliveryDetailsSkipped
-                      ? 'Confirmation skipped'
-                      : 'Delivery details confirmed',
+                      ? l10n.confirmationSkipped
+                      : l10n.deliveryDetailsConfirmed,
                   subtitle: isSharingDeliveryDetailsSkipped
-                      ? 'Auto-skipped because details were not provided'
-                      : 'Buyer acknowledged the delivery details',
+                      ? l10n.autoSkippedBecauseDetailsWereNotProvided
+                      : l10n.buyerAcknowledgedTheDeliveryDetails,
                   state: transitDate == null
                       ? StepState.pending
                       : (isSharingDeliveryDetailsSkipped
@@ -867,8 +866,8 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
               // Sub-step 1: Confirm item received
               activeSectionSteps.add(
                 Step(
-                  title: 'Confirm item received',
-                  subtitle: 'Buyer has received and inspected the goods',
+                  title: l10n.confirmItemReceived,
+                  subtitle: l10n.buyerHasReceivedAndInspectedTheGoods,
                   state: processingDate != null
                       ? StepState.completed
                       : StepState.pending,
@@ -880,8 +879,8 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
               // Sub-step 2: Releasing funds (2-hour timer started)
               activeSectionSteps.add(
                 Step(
-                  title: 'Releasing funds',
-                  subtitle: 'Funds will be released in 2 hours',
+                  title: l10n.releasingFunds,
+                  subtitle: l10n.fundsWillBeReleasedIn2Hours,
                   // If it's processing, it's currently "completed" in the sense that the timer has started
                   state: processingDate != null
                       ? StepState.completed
@@ -1050,7 +1049,9 @@ class AgreementProgressCard extends StatelessWidget {
               return Stack(
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Dimens.padding.p24),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.padding.p24,
+                    ),
                     child: Divider(
                       thickness: Dimens.size.s3,
                       height: Dimens.size.s28,
