@@ -58,6 +58,18 @@ class StorageUseCase extends _$StorageUseCase {
     return result;
   }
 
+  Future<ResultDart<List<XFile>, StorageFailure>> pickMultipleImages(
+    int? limit,
+  ) async {
+    _log.info("Picking multiple images");
+    final result = await _mediaRepository.pickMultipleImages(limit);
+    result.fold(
+      (imageFile) => _log.info("Picked ${imageFile.length} images"),
+      (failure) => _log.error("Error picking images", failure),
+    );
+    return result;
+  }
+
   Future<ResultDart<ProcessImageDomainResult, StorageFailure>> processImage(
     ProcessImageParams params,
   ) async {

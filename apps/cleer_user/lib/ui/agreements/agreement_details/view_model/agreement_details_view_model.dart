@@ -1,4 +1,4 @@
-import 'package:cleer/domain/use_cases/agreement/agreement_use_case.dart';
+import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,9 +10,6 @@ class AgreementDetailsViewModel extends _$AgreementDetailsViewModel {
 
   @override
   FutureOr<Agreement> build(String agreementId) async {
-    final agreementResult = await ref
-        .read(agreementUseCaseProvider.notifier)
-        .getAgreement(agreementId);
-    return agreementResult.getOrThrow();
+    return ref.watch(agreementDetailsProvider(agreementId).future);
   }
 }

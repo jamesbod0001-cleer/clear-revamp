@@ -68,37 +68,31 @@ cfnResources.amplifyDynamoDbTables['Milestone'].streamSpecification = {
 const agreementTable = backend.data.resources.tables['Agreement'];
 const milestoneTable = backend.data.resources.tables['Milestone'];
 
-const statusChangeFilter = FilterCriteria.filter({
-    eventName: FilterRule.or('INSERT', 'MODIFY'),
-    dynamodb: {
-        NewImage: {
-            status: { S: FilterRule.exists() }
-        }
-    }
+// Simplified filter: Just wake up on any modification.
+// The Lambdas will diff the old and new images to see thr actual change.
+const anyModificationFilter = FilterCriteria.filter({
+    eventName: FilterRule.or('INSERT', 'MODIFY')
 });
 
 backend.logAgreementStatus.resources.lambda.addEventSource(
     new DynamoEventSource(agreementTable, {
         startingPosition: StartingPosition.LATEST,
-        filters: [statusChangeFilter],
+        filters: [anyModificationFilter],
     })
 );
 
 backend.logMilestoneStatus.resources.lambda.addEventSource(
     new DynamoEventSource(milestoneTable, {
         startingPosition: StartingPosition.LATEST,
-        filters: [statusChangeFilter],
+        filters: [anyModificationFilter],
     })
 );
 
-const activityTriggerFilter = FilterCriteria.filter({
-    eventName: FilterRule.or('INSERT', 'MODIFY'),
-});
 
 backend.generateAgreementActivity.resources.lambda.addEventSource(
     new DynamoEventSource(agreementTable, {
         startingPosition: StartingPosition.LATEST,
-        filters: [activityTriggerFilter],
+        filters: [anyModificationFilter],
     })
 );
 

@@ -69,19 +69,31 @@ class ActivityCard extends StatelessWidget {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    final color = activity.type == ActivityType.agreement
-        ? context.color.infoLight
-        : context.color.successLight;
-    final icon = activity.type == ActivityType.agreement
-        ? Assets.images.handshake.image(
-            height: Dimens.size.s18,
-            width: Dimens.size.s28,
-          )
-        : PhosphorIcon(
-            PhosphorIcons.moneyWavy(PhosphorIconsStyle.duotone),
-            color: context.color.success,
-            size: Dimens.size.s24,
-          );
+    late Color color;
+    late Widget icon;
+
+    switch (activity.type) {
+      case ActivityType.agreement:
+        color = context.color.infoLight;
+        icon = Assets.images.handshake.image(
+          height: Dimens.size.s18,
+          width: Dimens.size.s28,
+        );
+      case ActivityType.payment:
+        color = context.color.successLight;
+        icon = PhosphorIcon(
+          PhosphorIcons.moneyWavy(PhosphorIconsStyle.duotone),
+          color: context.color.success,
+          size: Dimens.size.s24,
+        );
+      case ActivityType.delivery:
+        color = Color(0xFFFDF0E1);
+        icon = PhosphorIcon(
+          PhosphorIcons.truck(PhosphorIconsStyle.duotone),
+          color: context.color.warning,
+          size: Dimens.size.s24,
+        );
+    }
 
     return Container(
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),

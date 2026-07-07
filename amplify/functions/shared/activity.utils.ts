@@ -8,7 +8,7 @@ export const logger = new Logger({
 export async function createActivityRecord(
     client: any,
     userId: string,
-    type: 'AGREEMENT' | 'PAYMENT',
+    type: 'AGREEMENT' | 'PAYMENT' | 'DELIVERY',
     heading: string,
     supportingText: string,
     entityId: string,

@@ -22,14 +22,35 @@ export const handler: DynamoDBStreamHandler = async (event) => {
             const oldImage = record.dynamodb?.OldImage;
             const oldItem = oldImage ? unmarshall(oldImage as any) : null;
 
-            await logStatusChange(
-                client,
-                newItem.id,
-                'AGREEMENT',
-                oldItem ? oldItem.status : null,
-                newItem.status,
-                newItem.lastUpdatedBy || 'SYSTEM'
-            );
+            // Check and log CORE status changes
+            if (!oldItem || oldItem.status !== newItem.status) {
+                await logStatusChange(
+                    client,
+                    newItem.id,
+                    'AGREEMENT',
+                    'CORE_STATUS',
+                    oldItem ? oldItem.status : null,
+                    newItem.status,
+                    newItem.lastUpdatedBy || 'SYSTEM'
+                );
+            }
+
+            // Check and log DELIVERY status changes
+            // Using optional chaining because physicalDeliveryContext might be null (e.g. for service_work)
+            const newDeliveryStatus = newItem.physicalDeliveryContext?.status;
+            const oldDeliveryStatus = oldItem?.physicalDeliveryContext?.status;
+
+            if (newDeliveryStatus && newDeliveryStatus !== oldDeliveryStatus) {
+                await logStatusChange(
+                    client,
+                    newItem.id,
+                    'AGREEMENT',
+                    'DELIVERY_STATUS',
+                    oldDeliveryStatus || null,
+                    newDeliveryStatus,
+                    newItem.lastUpdatedBy || 'SYSTEM'
+                );
+            }
 
         } catch (error) {
             logger.error('Error processing record', { error, recordId: record.eventID });

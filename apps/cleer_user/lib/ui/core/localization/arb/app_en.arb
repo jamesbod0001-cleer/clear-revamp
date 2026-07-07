@@ -523,7 +523,7 @@
     "placeholders": {
       "name": {
         "type": "String",
-        "example": "Eziamachukwu"
+        "example": "John"
       }
     }
   },
@@ -584,5 +584,133 @@
   "whenYouCreateAgreementsOrSecurePaymentsYourActivityHistoryWillAppearHere": "When you create agreements or secure payments, your activity history will appear here.",
   "back": "Back",
   "showNumpad": "Show Numpad",
-  "amountLabel": "AMOUNT (₦)"
+  "amountLabel": "AMOUNT (₦)",
+  "waitingOnUser": "Waiting on {userName}",
+  "@waitingOnUser": {
+    "description": "Message shown when waiting for a specific user to take action.",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+
+  "noActionNeededFromYouRightNow": "No action needed from you right now",
+  "@noActionNeededFromYouRightNow": {
+    "description": "Message telling the user that no further action is required from their end at the moment."
+  },
+
+  "notifyWhenUserAccepts": "We'll notify you the moment {userName} accepts the agreement",
+  "@notifyWhenUserAccepts": {
+    "description": "Message indicating the user will be notified when the specified party accepts the agreement.",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+
+  "waitingForAcceptance": "Waiting for acceptance",
+  "@waitingForAcceptance": {
+    "description": "General status message indicating that the system is waiting for the agreement to be accepted."
+  },
+  "waitingForPayment": "Waiting for payment",
+  "wellNotifyYouTheMomentTheAgreementHasBeenAccepted": "We'll notify you the moment the agreement has been accepted",
+  "@wellNotifyYouTheMomentTheAgreementHasBeenAccepted": {
+    "description": "Message indicating the user will be notified generally when the agreement is accepted."
+  },
+  "notifyWhenUserDepositsFunds": "We'll notify you the moment {userName} deposits the funds",
+  "@notifyWhenUserDepositsFunds": {
+    "description": "Message indicating the user will be notified when a specific party deposits funds.",
+    "placeholders": {
+      "userName": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+
+  "wellNotifyYouTheMomentTheFundsHaveBeenDeposited": "We'll notify you the moment the funds have been deposited",
+  "@wellNotifyYouTheMomentTheFundsHaveBeenDeposited": {
+    "description": "General message indicating the user will be notified when funds are deposited."
+  },
+  "waitingForPackageImages": "Waiting for package images",
+  "theVendorIsPreparingYourItemAndUploadingPackagePhotosBeforeShipment": "The vendor is preparing your item and uploading package photos before shipment.",
+  "uploadPackagePhotos": "Upload package photos",
+  "takeClearPhotosBeforeHandingThePackageToTheDeliveryServiceThesePhotosMayBeUsedIfThereIsEverADispute": "Take clear photos before handing the package to the delivery service. These photos may be used if there's ever a dispute.",
+  "addPhoto": "Add Photo",
+  "saveAndContinue": "Save & Continue",
+  "avoidBlurryOrDarkPhotos": "Avoid blurry or dark photos.",
+  "skip": "Skip",
+  "waitingForDeliveryInformation": "Waiting for delivery information",
+  "theVendorIsSharingDeliveryDetailsSoYouKnowWhoWillBeDeliveringYourItem": "The vendor is sharing delivery details so you know who will be delivering your item.",
+  "packagePhotosReady": "Package photos ready",
+  "theVendorHasUploadedPhotosShowingTheItemBeforeShipmentReviewThemSoYouKnowExactlyWhatWasSent": "The vendor has uploaded photos showing the item before shipment. Review them so you know exactly what was sent.",
+  "shareDeliveryInformation": "Share delivery information",
+  "shareHowTheItemIsBeingDeliveredSoTheBuyerKnowsWhoToExpect": "Share how the item is being delivered so the buyer knows who to expect.",
+  "driverPhoneNumber": "Driver Phone Number",
+  "deliveryInformation": "Delivery Information",
+  "tellTheBuyerAnythingTheyShouldKnowAboutTheDeliveryEg": "Tell the buyer anything they should know about the delivery. E.g: GIG Logistics, Tracking No: GIG-38291, Vehicle Plate: KJA 123 AB.",
+  "attachPhotoEvidence": "Attach Photo evidence",
+  "deliveryArrangedBy": "Delivery arranged by",
+  "me": "Me",
+  "theBuyer": "The Buyer",
+  "shareDeliveryDetails": "Share delivery details",
+  "deliveryDetailsShared": "Delivery details shared",
+  "reviewTheDeliveryContactAndTrackingDetailsSoYouKnowWhoWillBeBringingYourItem": "Review the delivery contact and tracking details so you know who will be bringing your item.",
+  "waitingForBuyerConfirmation": "Waiting for buyer confirmation",
+  "theBuyerIsReviewingTheDeliveryDetailsYouShared": "The buyer is reviewing the delivery details you shared.",
+  "waitingForBuyerVerification": "Waiting for buyer verification",
+  "theBuyerHasNotYetVerifiedPickup": "The buyer has not yet verified pickup.",
+  "storedAsDeliveryEvidence": "Stored as delivery evidence",
+  "call": "Call",
+  "confirmItemReceived": "Confirm item received",
+  "ifYouHaveReceivedYourItemConfirmItNowYouWillBeAbleToReportAnyIssuesWithin2HoursOfDelivery": "If you've received your item, confirm it now. You'll still be able to report any issues within 2 hours of delivery.",
+  "confirmReceipt": "Confirm Receipt",
+  "deliveryArrangedByName": "Delivery arranged by {name}",
+  "@deliveryArrangedByName": {
+    "description": "Indicates that the delivery was arranged by a specific person",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Bode"
+      }
+    }
+  },
+
+  "deliveryArrangedByYou": "Delivery arranged by You",
+  "@deliveryArrangedByYou": {
+    "description": "Indicates that the current user arranged the delivery"
+  },
+  "whereThisAgreementIs": "Where this agreement is",
+  "packagePhotosSkipped": "Package photos skipped",
+  "packagePhotosUploaded": "Package photos uploaded",
+  "vendorOptedNotToUploadPhotos": "Vendor opted not to upload photos",
+  "vendorHasPreparedThePackage": "Vendor has prepared the package",
+  "deliveryDetailsSkipped": "Delivery details skipped",
+  "vendorSkippedSharingDeliveryInfo": "Vendor skipped sharing delivery info",
+  "vendorSharedTheDriverWaybillInfo": "Vendor shared the driver/waybill info",
+  "confirmationSkipped": "Confirmation skipped",
+  "deliveryDetailsConfirmed": "Delivery details confirmed",
+  "autoSkippedBecauseDetailsWereNotProvided": "Auto-skipped because details were not provided",
+  "buyerAcknowledgedTheDeliveryDetails": "Buyer acknowledged the delivery details",
+  "buyerHasReceivedAndInspectedTheGoods": "Buyer has received and inspected the goods",
+  "releasingFunds": "Releasing funds",
+  "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours",
+  "active": "Active",
+  "packagingAndShipping": "Preparing & shipping",
+  "reportIssue": "Report issue",
+  "serviceInProgress": "Service in progress",
+  "theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted": "The service provider is currently working on the agreed service. We'll notify you when they mark it as completed.",
+  "theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted": "The service provider is currently working on the active milestone. We'll notify you when they mark it as completed.",
+  "completeAgreedService": "Complete the agreed service",
+  "onceYouHaveCompletedTheAgreedWorkNotifyYourClientSoTheyCanReleasePayment": "Once you've completed the agreed work, notify your client so they can release payment.",
+  "milestoneCompleted": "Milestone completed?",
+  "finishedTheService": "Finished the service?",
+  "youHaveFinishedThisMilestoneNotifyYourClientSoTheyCanReleaseThisMilestonePayment": "You've finished this milestone. Notify your client so they can release this milestone payment.",
+  "letYourClientKnowTheAgreedWorkHasBeenCompleted": "Let your client know the agreed work has been completed.",
+  "markMilestoneComplete": "Mark Milestone Complete",
+  "markAsCompleted": "Mark as Completed"
 }

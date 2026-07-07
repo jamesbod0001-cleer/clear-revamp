@@ -6,6 +6,7 @@ import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
+import 'package:cleer_core/models/physical_delivery_context/physical_delivery_context_enums.dart';
 import 'package:cleer_core/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer_core/utils/riverpod_extensions.dart';
@@ -163,6 +164,48 @@ class AgreementStatusHistory extends _$AgreementStatusHistory {
 }
 
 @riverpod
+class AgreementDetails extends _$AgreementDetails {
+  StreamSubscription? _updateSub;
+
+  @override
+  FutureOr<Agreement> build(String agreementId) async {
+    final repository = ref.watch(agreementRepositoryProvider);
+
+    _setupSubscription(agreementId);
+
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        final result = await repository.getAgreement(agreementId);
+        state = AsyncData(result.getOrThrow());
+      },
+      onReconnectRequired: () => _setupSubscription(agreementId),
+    );
+
+    ref.onDispose(() => _updateSub?.cancel());
+
+    final result = await repository.getAgreement(agreementId);
+    return result.getOrThrow();
+  }
+
+  void _setupSubscription(String agreementId) {
+    _updateSub?.cancel();
+    _updateSub = ref
+        .read(agreementRepositoryProvider)
+        .observeUserAgreementsUpdates()
+        .where((a) => a.id == agreementId)
+        .listen((_) async {
+          // When an update is detected, re-fetch to get the full object
+          final result = await ref
+              .read(agreementRepositoryProvider)
+              .getAgreement(agreementId);
+          if (result.isSuccess()) {
+            state = AsyncData(result.getOrThrow());
+          }
+        });
+  }
+}
+
+@riverpod
 List<Agreement> needsActionAgreements(Ref ref) {
   final agreements = ref.watch(userOngoingAgreementsProvider).value ?? [];
   final currentUser = ref.watch(userProfileProvider).value;
@@ -173,9 +216,33 @@ List<Agreement> needsActionAgreements(Ref ref) {
         agreement.status == AgreementStatus.awaitingFunding;
     final amINotInitiator = agreement.initiator?.id != currentUser?.id;
     final isSender = agreement.sender?.id == currentUser?.id;
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    return (isPending && amINotInitiator) ||
-        (agreement.status == .readyForRelease && isSender);
+    // Check core agreement states
+    bool needsAction =
+        (isPending && amINotInitiator) ||
+        (agreement.status == AgreementStatus.readyForRelease && isSender);
+
+    // Check nested physical delivery states (if applicable)
+    if (agreement.status == AgreementStatus.inProgress &&
+        agreement.physicalDeliveryContext != null) {
+      final deliveryStatus = agreement.physicalDeliveryContext!.status;
+
+      if (isRecipient &&
+          (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+              deliveryStatus ==
+                  PhysicalDeliveryContextStatus.awaitingDispatch)) {
+        // Vendor needs to upload photos or dispatch details
+        needsAction = true;
+      } else if (isSender &&
+          deliveryStatus ==
+              PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+        // Buyer needs to acknowledge the dispatch details
+        needsAction = true;
+      }
+    }
+
+    return needsAction;
   }).toList();
 }
 
@@ -189,22 +256,48 @@ List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
         agreement.status == AgreementStatus.awaitingRecipient ||
         agreement.status == AgreementStatus.awaitingFunding;
     final amIInitiator = agreement.initiator?.id == currentUser?.id;
-
+    final isSender = agreement.sender?.id == currentUser?.id;
     final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    return (isPending && amIInitiator) ||
-        (agreement.status == .readyForRelease && isRecipient);
+    // Check core agreement states
+    bool isAwaiting =
+        (isPending && amIInitiator) ||
+        (agreement.status == AgreementStatus.readyForRelease && isRecipient);
+
+    // Check nested physical delivery states (if applicable)
+    if (agreement.status == AgreementStatus.inProgress &&
+        agreement.physicalDeliveryContext != null) {
+      final deliveryStatus = agreement.physicalDeliveryContext!.status;
+
+      if (isSender &&
+          (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+              deliveryStatus ==
+                  PhysicalDeliveryContextStatus.awaitingDispatch)) {
+        // Buyer is waiting for Vendor to upload photos or dispatch details
+        isAwaiting = true;
+      } else if (isRecipient &&
+          deliveryStatus ==
+              PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+        // Vendor is waiting for Buyer to acknowledge the dispatch details
+        isAwaiting = true;
+      }
+    }
+
+    return isAwaiting;
   }).toList();
 }
 
 @riverpod
 Future<double> currentlyProtectedAmount(Ref ref) async {
   final agreements = await ref.watch(userOngoingAgreementsProvider.future);
+  final currentUser = ref.watch(userProfileProvider).value;
 
   double totalProtected = 0.0;
 
   for (final agreement in agreements) {
-    if (agreement.status == AgreementStatus.awaitingFunding) {
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
+    if (agreement.status == AgreementStatus.awaitingFunding ||
+        (isRecipient && agreement.status == .awaitingRecipient)) {
       continue;
     }
 

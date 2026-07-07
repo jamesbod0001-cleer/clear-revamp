@@ -1,0 +1,1 @@
+enum DeliveryDetailArrangedBy { vendor, buyer }

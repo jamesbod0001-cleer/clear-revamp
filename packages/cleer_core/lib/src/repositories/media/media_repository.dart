@@ -5,7 +5,7 @@ import 'package:cleer_core/models/process_image_result/process_image_result.dart
 
 abstract class MediaRepository {
   Future<ResultDart<XFile, StorageFailure>> pickImageFromGallery();
-  // Future<ResultDart<List<XFile>, StorageFailure>> pickMultipleImages();
+  Future<ResultDart<List<XFile>, StorageFailure>> pickMultipleImages(int? limit);
   Future<ResultDart<ProcessImageDomainResult, StorageFailure>> processImage(
     ProcessImageParams params,
   );

@@ -12,6 +12,7 @@ class _AppSize {
   final double s8 = 8.0;
   final double s10 = 10.0;
   final double s12 = 12.0;
+  final double s14 = 14.0;
 
   final double s16 = 16.0;
   final double s17 = 17.0;
@@ -25,6 +26,7 @@ class _AppSize {
   final double s28 = 28.0;
 
   final double s32 = 32.0;
+  final double s36 = 36.0;
   final double s38 = 38.0;
   final double s39 = 39.0;
   final double s40 = 40.0;
@@ -47,6 +49,7 @@ class _AppSize {
 
   final double s100 = 100.0;
   final double s101 = 101.0;
+  final double s110 = 110.0;
   final double s126 = 126.0;
   final double s166 = 166.0;
   final double s248 = 248.0;

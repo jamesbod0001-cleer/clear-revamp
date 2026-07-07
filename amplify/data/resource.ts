@@ -17,6 +17,8 @@ import {logMilestoneStatus} from "../functions/log-milestone-status/resource";
 import {flutterwaveProxy} from "../functions/flutterwave-proxy/resource";
 import {Activity} from "./models/activity";
 import {generateAgreementActivity} from "../functions/generate-agreement-activity/resource";
+import {DeliveryDetails} from "./custom-types/delivery-details";
+import {PhysicalDeliveryContext} from "./custom-types/physical-delivery-context";
 
 const schema = a.schema({
     User,
@@ -30,6 +32,8 @@ const schema = a.schema({
     UserPreview,
     AgreementPreview,
     MilestonePreview,
+    DeliveryDetails,
+    PhysicalDeliveryContext,
     getServerTime: a
         .query()
         .returns(a.datetime())

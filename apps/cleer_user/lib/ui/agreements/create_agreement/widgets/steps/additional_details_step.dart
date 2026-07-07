@@ -1,4 +1,3 @@
-import 'package:cleer_core/models/agreement/agreement_enums.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -10,7 +9,6 @@ import 'package:cleer_ui/widgets/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -27,11 +25,6 @@ class AdditionalDetailsStep extends HookConsumerWidget {
     final state = ref.watch(createAgreementViewModelProvider(type));
     final viewModel = ref.read(createAgreementViewModelProvider(type).notifier);
 
-    final ValueNotifier<AgreementCategory?> selectedCategory =
-        useState<AgreementCategory?>(state.value?.formData.category);
-    final categoryController = useTextEditingController(
-      text: selectedCategory.value?.label,
-    );
     final ValueNotifier<DateTime?> selectedReleaseDate = useState<DateTime?>(
       state.value?.formData.releaseDate,
     );
@@ -45,39 +38,25 @@ class AdditionalDetailsStep extends HookConsumerWidget {
         useTextEditingController(text: state.value?.formData.description);
 
     useEffect(() {
-      categoryController.text = selectedCategory.value?.label ?? '';
-      return null;
-    }, [selectedCategory.value]);
-
-    useEffect(() {
       releaseDateController.text = formattedReleaseDate;
       return null;
     }, [selectedReleaseDate.value]);
 
-    useEffect(
-      () {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          viewModel.onFormChanged(
-            state.value!.formData.copyWith(
-              category: selectedCategory.value,
-              releaseDate: selectedReleaseDate.value,
-              description: descriptionController.text,
-            ),
-          );
-        });
-        return null;
-      },
-      [
-        selectedCategory.value,
-        selectedReleaseDate.value,
-        descriptionController.text,
-      ],
-    );
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        viewModel.onFormChanged(
+          state.value!.formData.copyWith(
+            releaseDate: selectedReleaseDate.value,
+            description: descriptionController.text,
+          ),
+        );
+      });
+      return null;
+    }, [selectedReleaseDate.value, descriptionController.text]);
 
     final formData = state.value?.formData;
 
     final bool isFormComplete =
-        (formData?.category != null) &&
         (formData?.disbursementType == .oneTime
             ? (formData?.releaseDate != null)
             : true) &&
@@ -98,7 +77,6 @@ class AdditionalDetailsStep extends HookConsumerWidget {
         onChanged: () {
           viewModel.onFormChanged(
             state.value!.formData.copyWith(
-              category: selectedCategory.value,
               releaseDate: selectedReleaseDate.value,
               description: descriptionController.text,
             ),
@@ -113,33 +91,8 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                   delegate: SliverChildListDelegate([
                     Gap(Dimens.spacing.sp12),
                     MenuSectionHeader(title: l10n.additionalDetails),
-                    CustomTextFormField(
-                      controller: categoryController,
-                      labelText: l10n.paymentCategory,
-                      readOnly: true,
-                      onTap: () => _showCategoryPickerBottomSheet(
-                        context,
-                        selectedCategory,
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () => _showCategoryPickerBottomSheet(
-                          context,
-                          selectedCategory,
-                        ),
-                        icon: PhosphorIcon(
-                          PhosphorIcons.caretDown(),
-                          color: context.color.blue700,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return l10n.fieldRequired('payment category');
-                        }
-                        return null;
-                      },
-                    ),
                     if (formData?.disbursementType == .oneTime) ...[
-                      Gap(Dimens.spacing.sp20),
+
                       CustomTextFormField(
                         controller: releaseDateController,
                         labelText: l10n.releaseDate,
@@ -173,8 +126,8 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                           color: context.color.grey600,
                         ),
                       ),
+                      Gap(Dimens.spacing.sp20),
                     ],
-                    Gap(Dimens.spacing.sp20),
                     CustomTextFormField(
                       controller: descriptionController,
                       label: Column(
@@ -309,33 +262,7 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                   delegate: SliverChildListDelegate([
                     Gap(Dimens.spacing.sp12),
                     MenuSectionHeader(title: l10n.additionalDetails),
-                    CustomTextFormField(
-                      controller: categoryController,
-                      labelText: l10n.paymentCategory,
-                      readOnly: true,
-                      onTap: () => _showCategoryPickerBottomSheet(
-                        context,
-                        selectedCategory,
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () => _showCategoryPickerBottomSheet(
-                          context,
-                          selectedCategory,
-                        ),
-                        icon: PhosphorIcon(
-                          PhosphorIcons.caretDown(),
-                          color: context.color.blue700,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return l10n.fieldRequired('payment category');
-                        }
-                        return null;
-                      },
-                    ),
                     if (formData?.disbursementType == .oneTime) ...[
-                      Gap(Dimens.spacing.sp20),
                       CustomTextFormField(
                         controller: releaseDateController,
                         labelText: l10n.releaseDate,
@@ -369,8 +296,9 @@ class AdditionalDetailsStep extends HookConsumerWidget {
                           color: context.color.grey600,
                         ),
                       ),
+                      Gap(Dimens.spacing.sp20),
                     ],
-                    Gap(Dimens.spacing.sp20),
+
                     CustomTextFormField(
                       controller: descriptionController,
                       label: Column(
@@ -466,89 +394,6 @@ class AdditionalDetailsStep extends HookConsumerWidget {
       ),
     );
   }
-
-  void _showCategoryPickerBottomSheet(
-    BuildContext context,
-    ValueNotifier<AgreementCategory?> selectedCategory,
-  ) =>
-      CustomBottomSheet.show(
-        context: context,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.selectCategory,
-              style: context.typo.headlineSmall,
-            ),
-            Gap(Dimens.spacing.sp24),
-            ListView.separated(
-              shrinkWrap: true,
-              itemBuilder: (BuildContext context, int index) {
-                final category = AgreementCategory.values[index];
-                return Column(
-                  crossAxisAlignment: .stretch,
-                  children: [
-                    if (index == 0)
-                      Divider(
-                        color: context.color.outline,
-                        height: Dimens.size.s1,
-                        thickness: Dimens.size.s1,
-                      ),
-                    Material(
-                      color: context.color.transparent,
-                      child: InkWell(
-                        onTap: () => context.pop(category),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimens.padding.p8,
-                            vertical: Dimens.padding.p12,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: .start,
-                            children: [
-                              Text(
-                                category.label,
-                                style: context.typo.bodyLarge.copyWith(
-                                  color: context.color.grey800,
-                                ),
-                              ),
-                              Text(
-                                category.examples,
-                                style: context.typo.bodyMedium.copyWith(
-                                  color: context.color.grey600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (index == AgreementCategory.values.length - 1)
-                      Divider(
-                        color: context.color.outline,
-                        height: Dimens.size.s1,
-                        thickness: Dimens.size.s1,
-                      ),
-                  ],
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return Divider(
-                  color: context.color.outline,
-                  height: Dimens.size.s1,
-                  thickness: Dimens.size.s1,
-                );
-              },
-              itemCount: AgreementCategory.values.length,
-            ),
-          ],
-        ),
-      ).then((value) {
-        if (value != null) {
-          selectedCategory.value = value;
-        }
-      });
 
   void _showDatePickerBottomSheet(
     BuildContext context,

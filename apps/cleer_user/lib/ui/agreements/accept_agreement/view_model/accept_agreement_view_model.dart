@@ -87,8 +87,18 @@ class AcceptAgreementViewModel extends _$AcceptAgreementViewModel {
 
         // Immediately advance to 'In Progress'
         _log.info('Transitioning to IN_PROGRESS');
+
+        // Initialize the delivery context if it's physical goods
+        PhysicalDeliveryContext? initialDeliveryContext;
+        if (agreement.category == .physicalGoods) {
+          initialDeliveryContext = PhysicalDeliveryContext(
+            status: PhysicalDeliveryContextStatus.awaitingPackaging,
+          );
+        }
+
         final inProgressAgreement = fundedResult.getOrNull()!.copyWith(
-          status: AgreementStatus.inProgress,
+          status: .inProgress,
+          physicalDeliveryContext: initialDeliveryContext,
         );
         final inProgressResult = await ref
             .read(agreementUseCaseProvider.notifier)

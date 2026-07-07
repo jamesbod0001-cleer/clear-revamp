@@ -16,12 +16,17 @@ MediaServiceClient mediaServiceClient(Ref ref) => MediaServiceClient();
 class MediaServiceClient {
   final ImagePicker _imagePicker = ImagePicker();
 
-  /// Step 1: Just pick the file from the gallery
+  /// Pick the image from the gallery
   Future<XFile?> pickImageFromGallery() async {
     return await _imagePicker.pickImage(source: ImageSource.gallery);
   }
 
-  /// Step 2: The "Heavy Lifting"
+  /// Pick multiple images
+  Future<List<XFile>> pickMultipleImages(int? limit) async {
+    return await _imagePicker.pickMultiImage(limit: limit);
+  }
+
+  /// The "Heavy Lifting" processing image
   Future<ProcessImageResult> processImage(ProcessImageRequest request) async {
     XFile resultFile;
     Uint8List compressedBytesForWorker;

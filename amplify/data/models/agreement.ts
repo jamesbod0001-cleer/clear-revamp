@@ -29,6 +29,9 @@ export const Agreement = a.model({
 
     status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'CANCELLED', 'REJECTED', 'RELEASED']),
 
+    // ONLY physical goods will have this object. For category 'service_work', it remains null.
+    physicalDeliveryContext: a.ref('PhysicalDeliveryContext'),
+
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
     initiator: a.belongsTo('User', 'initiatorId'),

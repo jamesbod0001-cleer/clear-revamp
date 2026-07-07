@@ -1,4 +1,5 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cleer_api/src/mappers/physical_delivery_context_mappers.dart';
 import 'package:cleer_api/src/models/ModelProvider.dart' as amplify_model;
 import 'package:cleer_api/src/mappers/payout_destination_mappers.dart';
 import 'package:cleer_api/src/mappers/user_mappers.dart';
@@ -21,6 +22,7 @@ extension AgreementToDomainMapper on amplify_model.Agreement {
       payoutDestination: payoutDestination?.toDomain(),
       initiatorRole: _mapInitiatorRoleToDomain(initiatorRole!),
       status: _mapAgreementStatusToDomain(status!),
+      physicalDeliveryContext: physicalDeliveryContext?.toDomain(),
       participants: participants,
       lastUpdatedBy: lastUpdatedBy,
       initiator: initiator?.toDomain(),
@@ -50,6 +52,7 @@ extension AgreementToAmplifyMapper on domain.Agreement {
       payoutDestination: payoutDestination?.toAmplify(),
       initiatorRole: _mapInitiatorRoleToAmplify(initiatorRole),
       status: _mapAgreementStatusToAmplify(status),
+      physicalDeliveryContext: physicalDeliveryContext?.toAmplify(),
       participants: participants,
       lastUpdatedBy: lastUpdatedBy,
       initiator: initiator?.toAmplify(),

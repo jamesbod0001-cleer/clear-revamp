@@ -2,7 +2,7 @@ import {a} from "@aws-amplify/backend"
 
 export const Activity = a.model({
     userId: a.id().required(),
-    type: a.enum(['AGREEMENT', 'PAYMENT']),
+    type: a.enum(['AGREEMENT', 'PAYMENT', 'DELIVERY']),
     heading: a.string().required(),
     supportingText: a.string().required(),
     formattedAmount: a.string(),

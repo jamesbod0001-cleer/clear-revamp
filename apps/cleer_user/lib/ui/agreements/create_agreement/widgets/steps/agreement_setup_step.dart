@@ -14,6 +14,7 @@ import 'package:cleer/ui/agreements/create_agreement/widgets/linked_bank_account
 import 'package:cleer/ui/agreements/create_agreement/widgets/recipient_identity_tile.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/cleer_ui.dart';
+import 'package:cleer_ui/widgets/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/add_bank_account_trigger.dart';
 import 'package:cleer/ui/profile/payout_destination/widgets/payout_destination_card.dart';
@@ -64,6 +65,12 @@ class AgreementSetupStep extends HookConsumerWidget {
 
     final selectedPayoutDestination = useState<PayoutDestination?>(null);
 
+    final ValueNotifier<AgreementCategory?> selectedCategory =
+        useState<AgreementCategory?>(state.value?.formData.category);
+    final categoryController = useTextEditingController(
+      text: selectedCategory.value?.label,
+    );
+
     final ValueNotifier<DisbursementType?> selectedDisbursementType =
         useState<DisbursementType?>(state.value?.formData.disbursementType);
 
@@ -71,6 +78,14 @@ class AgreementSetupStep extends HookConsumerWidget {
       bankController.text = selectedBank.value?.name ?? '';
       return null;
     }, [selectedBank.value]);
+
+    useEffect(() {
+      categoryController.text = selectedCategory.value?.label ?? '';
+      if (selectedCategory.value == .physicalGoods) {
+        selectedDisbursementType.value = .oneTime;
+      }
+      return null;
+    }, [selectedCategory.value]);
 
     useEffect(() {
       if (amountController.text == '' && context.isMobile) {
@@ -94,12 +109,20 @@ class AgreementSetupStep extends HookConsumerWidget {
               amount: amountController.text.replaceAll(',', ''),
               recipientBank: selectedBank.value,
               recipientAccountNumber: accountNumberController.text,
+              category: selectedCategory.value,
+              disbursementType: selectedDisbursementType.value,
             ),
           );
         });
         return null;
       },
-      [amountController.text, selectedBank.value, accountNumberController.text],
+      [
+        selectedCategory.value,
+        amountController.text,
+        selectedBank.value,
+        accountNumberController.text,
+        selectedDisbursementType.value,
+      ],
     );
 
     useEffect(() {
@@ -155,7 +178,7 @@ class AgreementSetupStep extends HookConsumerWidget {
     final formData = state.value?.formData;
     final resolution = formData?.recipientResolution;
 
-    bool isFormComplete() {
+    bool isFormCompleteAndValid() {
       return switch (type) {
         AgreementType.send =>
           ((formData?.amount.isNotEmpty ?? false) &&
@@ -163,12 +186,20 @@ class AgreementSetupStep extends HookConsumerWidget {
               (formData?.recipientAccountNumber.length == 10) &&
               (formData?.recipientBank != null) &&
               (formData?.disbursementType != null) &&
-              (resolution != null),
+              (resolution != null) &&
+              (formData?.category != null) &&
+              (formData?.category == .physicalGoods
+                  ? formData?.disbursementType == .oneTime
+                  : true),
         AgreementType.request =>
           ((formData?.amount.isNotEmpty ?? false) &&
                   double.parse(formData?.amount ?? '0') >= 1500) &&
               (formData?.payoutDestination != null) &&
-              (formData?.disbursementType != null),
+              (formData?.disbursementType != null) &&
+              (formData?.category != null) &&
+              (formData?.category == .physicalGoods
+                  ? formData?.disbursementType == .oneTime
+                  : true),
       };
     }
 
@@ -189,6 +220,7 @@ class AgreementSetupStep extends HookConsumerWidget {
               amount: amountController.text.replaceAll(',', ''),
               recipientBank: selectedBank.value,
               recipientAccountNumber: accountNumberController.text,
+              category: selectedCategory.value,
             ),
           );
         },
@@ -242,17 +274,46 @@ class AgreementSetupStep extends HookConsumerWidget {
                     ),
                     Gap(Dimens.spacing.sp40),
 
-                    _DisbursementTypeSection(
-                      selectedType: selectedDisbursementType.value,
-                      onChanged: (value) {
-                        selectedDisbursementType.value = value;
-                        viewModel.onFormChanged(
-                          state.value!.formData.copyWith(
-                            disbursementType: value,
-                          ),
-                        );
+                    CustomTextFormField(
+                      controller: categoryController,
+                      labelText: l10n.paymentCategory,
+                      readOnly: true,
+                      onTap: () => _showCategoryPickerBottomSheet(
+                        context,
+                        selectedCategory,
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () => _showCategoryPickerBottomSheet(
+                          context,
+                          selectedCategory,
+                        ),
+                        icon: PhosphorIcon(
+                          PhosphorIcons.caretDown(),
+                          color: context.color.blue700,
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return l10n.fieldRequired('payment category');
+                        }
+                        return null;
                       },
                     ),
+                    if (selectedCategory.value != null &&
+                        selectedCategory.value != .physicalGoods) ...[
+                      Gap(Dimens.spacing.sp40),
+                      _DisbursementTypeSection(
+                        selectedType: selectedDisbursementType.value,
+                        onChanged: (value) {
+                          selectedDisbursementType.value = value;
+                          viewModel.onFormChanged(
+                            state.value!.formData.copyWith(
+                              disbursementType: value,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ]),
                 ),
               ),
@@ -267,7 +328,7 @@ class AgreementSetupStep extends HookConsumerWidget {
                     children: [
                       Gap(Dimens.spacing.sp30),
                       PrimaryButton(
-                        onPressed: isFormComplete()
+                        onPressed: isFormCompleteAndValid()
                             ? () =>
                                   _handleNextStep(context, viewModel, formData)
                             : null,
@@ -391,24 +452,53 @@ class AgreementSetupStep extends HookConsumerWidget {
                         flex: context.isTablet ? 357 : 485,
                         child: Column(
                           children: [
-                            _DisbursementTypeSection(
-                              selectedType: selectedDisbursementType.value,
-                              onChanged: (value) {
-                                selectedDisbursementType.value = value;
-                                viewModel.onFormChanged(
-                                  state.value!.formData.copyWith(
-                                    disbursementType: value,
-                                  ),
-                                );
+                            CustomTextFormField(
+                              controller: categoryController,
+                              labelText: l10n.paymentCategory,
+                              readOnly: true,
+                              onTap: () => _showCategoryPickerBottomSheet(
+                                context,
+                                selectedCategory,
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () => _showCategoryPickerBottomSheet(
+                                  context,
+                                  selectedCategory,
+                                ),
+                                icon: PhosphorIcon(
+                                  PhosphorIcons.caretDown(),
+                                  color: context.color.blue700,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return l10n.fieldRequired('payment category');
+                                }
+                                return null;
                               },
                             ),
+                            if (selectedCategory.value != null &&
+                                selectedCategory.value != .physicalGoods) ...[
+                              Gap(Dimens.spacing.sp40),
+                              _DisbursementTypeSection(
+                                selectedType: selectedDisbursementType.value,
+                                onChanged: (value) {
+                                  selectedDisbursementType.value = value;
+                                  viewModel.onFormChanged(
+                                    state.value!.formData.copyWith(
+                                      disbursementType: value,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                             Gap(
                               context.isTablet
                                   ? Dimens.spacing.sp32
                                   : Dimens.spacing.sp54,
                             ),
                             PrimaryButton(
-                              onPressed: isFormComplete()
+                              onPressed: isFormCompleteAndValid()
                                   ? () => _handleNextStep(
                                       context,
                                       viewModel,
@@ -463,6 +553,89 @@ class AgreementSetupStep extends HookConsumerWidget {
       isAutomaticallyOpened: isAutomaticallyOpened,
     ),
   );
+
+  void _showCategoryPickerBottomSheet(
+    BuildContext context,
+    ValueNotifier<AgreementCategory?> selectedCategory,
+  ) =>
+      CustomBottomSheet.show(
+        context: context,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.selectCategory,
+              style: context.typo.headlineSmall,
+            ),
+            Gap(Dimens.spacing.sp24),
+            ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                final category = AgreementCategory.values[index];
+                return Column(
+                  crossAxisAlignment: .stretch,
+                  children: [
+                    if (index == 0)
+                      Divider(
+                        color: context.color.outline,
+                        height: Dimens.size.s1,
+                        thickness: Dimens.size.s1,
+                      ),
+                    Material(
+                      color: context.color.transparent,
+                      child: InkWell(
+                        onTap: () => context.pop(category),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Dimens.padding.p8,
+                            vertical: Dimens.padding.p12,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Text(
+                                category.label,
+                                style: context.typo.bodyLarge.copyWith(
+                                  color: context.color.grey800,
+                                ),
+                              ),
+                              Text(
+                                category.examples,
+                                style: context.typo.bodyMedium.copyWith(
+                                  color: context.color.grey600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (index == AgreementCategory.values.length - 1)
+                      Divider(
+                        color: context.color.outline,
+                        height: Dimens.size.s1,
+                        thickness: Dimens.size.s1,
+                      ),
+                  ],
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(
+                  color: context.color.outline,
+                  height: Dimens.size.s1,
+                  thickness: Dimens.size.s1,
+                );
+              },
+              itemCount: AgreementCategory.values.length,
+            ),
+          ],
+        ),
+      ).then((value) {
+        if (value != null) {
+          selectedCategory.value = value;
+        }
+      });
 
   void _handleNextStep(
     BuildContext context,

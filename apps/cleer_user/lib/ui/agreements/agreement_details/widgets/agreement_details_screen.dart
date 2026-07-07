@@ -1,7 +1,6 @@
 import 'package:cleer/routing/routes.dart';
-import 'package:cleer_core/models/agreement/agreement.dart';
-import 'package:cleer_core/models/agreement/agreement_enums.dart';
-import 'package:cleer_core/models/milestone/milestone.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/dynamic_agreement_header.dart';
+import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
@@ -14,7 +13,6 @@ import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
-import 'package:cleer_ui/widgets/buttons/primary_button.dart';
 import 'package:cleer_ui/widgets/status_circle_icon.dart';
 import 'package:cleer_ui/widgets/menu_section_header.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +81,45 @@ class AgreementDetailsScreen extends ConsumerWidget {
           crossAxisAlignment: .start,
           children: [
             Gap(Dimens.spacing.sp15),
-            AppBackButton(),
+            Row(
+              mainAxisAlignment: .spaceBetween,
+              children: [
+                AppBackButton(),
+                if (![
+                  AgreementStatus.awaitingFunding,
+                  AgreementStatus.awaitingRecipient,
+                ].contains(agreement.status))
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: context.color.errorLight,
+                      foregroundColor: context.color.error,
+                      side: BorderSide(color: Color(0xFFEED8D8)),
+                      textStyle: context.typo.bodyMedium.copyWith(height: 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: .circular(Dimens.radius.r40),
+                      ),
+                      minimumSize: .zero,
+                      padding: .symmetric(
+                        horizontal: Dimens.padding.p10,
+                        vertical: Dimens.padding.p8,
+                      ),
+                      tapTargetSize: .shrinkWrap,
+                    ),
+                    onPressed: () {},
+                    child: Row(
+                      mainAxisSize: .min,
+                      children: [
+                        PhosphorIcon(
+                          PhosphorIcons.warning(.duotone),
+                          size: Dimens.size.s16,
+                        ),
+                        Gap(Dimens.spacing.sp4),
+                        Text(l10n.reportIssue),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
             Gap(Dimens.spacing.sp22),
             Row(
               crossAxisAlignment: .start,
@@ -162,10 +198,15 @@ class AgreementDetailsScreen extends ConsumerWidget {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       Gap(Dimens.spacing.sp30),
+                      DynamicAgreementHeader(
+                        agreement: agreement,
+                        currentUser: user,
+                      ),
                       if ([
                         AgreementStatus.awaitingFunding,
                         AgreementStatus.awaitingRecipient,
                       ].contains(agreement.status)) ...[
+                        Gap(Dimens.spacing.sp24),
                         Row(
                           children: [
                             Expanded(
@@ -215,8 +256,13 @@ class AgreementDetailsScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Gap(Dimens.spacing.sp16),
-                      ],
+                        Gap(
+                          agreement.category == .physicalGoods
+                              ? Dimens.spacing.sp24
+                              : Dimens.spacing.sp16,
+                        ),
+                      ] else
+                        Gap(Dimens.spacing.sp48),
                       agreementStatusHistoryState.maybeWhen(
                         /// TODO: Show proper error here
                         error: (error, stackTrace) => SizedBox.shrink(),
@@ -371,38 +417,24 @@ class AgreementDetailsScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      Gap(Dimens.spacing.sp40),
-                      PrimaryButton(
-                        onPressed:
-                            ((agreement.sender?.id == user?.id)
-                                ? [
-                                    AgreementStatus.readyForRelease,
-                                  ].contains(agreement.status)
-                                : [
-                                    AgreementStatus.inProgress,
-                                  ].contains(agreement.status))
-                            ? () {}
-                            : null,
-                        child: Text(
-                          agreement.sender?.id == user?.id
-                              ? l10n.releaseFunds
-                              : l10n.requestRelease,
-                        ),
-                      ),
-                      Gap(Dimens.spacing.sp12),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: context.color.error,
-                        ),
-                        onPressed:
-                            ![
-                              AgreementStatus.awaitingFunding,
-                              AgreementStatus.awaitingRecipient,
-                            ].contains(agreement.status)
-                            ? () {}
-                            : null,
-                        child: Text(l10n.raiseDispute),
-                      ),
+                      // Gap(Dimens.spacing.sp40),
+                      // PrimaryButton(
+                      //   onPressed:
+                      //       ((agreement.sender?.id == user?.id)
+                      //           ? [
+                      //               AgreementStatus.readyForRelease,
+                      //             ].contains(agreement.status)
+                      //           : [
+                      //               AgreementStatus.inProgress,
+                      //             ].contains(agreement.status))
+                      //       ? () {}
+                      //       : null,
+                      //   child: Text(
+                      //     agreement.sender?.id == user?.id
+                      //         ? l10n.releaseFunds
+                      //         : l10n.requestRelease,
+                      //   ),
+                      // ),
                       Gap(Dimens.spacing.sp20),
                     ]),
                   ),
