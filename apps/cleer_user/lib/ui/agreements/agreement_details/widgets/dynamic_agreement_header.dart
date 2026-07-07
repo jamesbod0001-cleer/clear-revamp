@@ -182,7 +182,7 @@ class AgreementActionBanner extends StatelessWidget {
             if (agreement.physicalDeliveryContext!.status ==
                 .awaitingBuyerAcknowledgement) {
               icon = PhosphorIcons.truck(.duotone);
-              statusLabel = l10n.serviceInProgress;
+              statusLabel = l10n.waitingForBuyerConfirmation;
               title = l10n.noActionNeededFromYouRightNow;
               description = l10n.theBuyerIsReviewingTheDeliveryDetailsYouShared;
             }
