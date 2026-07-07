@@ -700,5 +700,17 @@
   "releasingFunds": "Releasing funds",
   "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours",
   "active": "Active",
-  "packagingAndShipping": "Preparing & shipping"
+  "packagingAndShipping": "Preparing & shipping",
+  "reportIssue": "Report issue",
+  "serviceInProgress": "Service in progress",
+  "theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted": "The service provider is currently working on the agreed service. We'll notify you when they mark it as completed.",
+  "theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted": "The service provider is currently working on the active milestone. We'll notify you when they mark it as completed.",
+  "completeAgreedService": "Complete the agreed service",
+  "onceYouHaveCompletedTheAgreedWorkNotifyYourClientSoTheyCanReleasePayment": "Once you've completed the agreed work, notify your client so they can release payment.",
+  "milestoneCompleted": "Milestone completed?",
+  "finishedTheService": "Finished the service?",
+  "youHaveFinishedThisMilestoneNotifyYourClientSoTheyCanReleaseThisMilestonePayment": "You've finished this milestone. Notify your client so they can release this milestone payment.",
+  "letYourClientKnowTheAgreedWorkHasBeenCompleted": "Let your client know the agreed work has been completed.",
+  "markMilestoneComplete": "Mark Milestone Complete",
+  "markAsCompleted": "Mark as Completed"
 }
