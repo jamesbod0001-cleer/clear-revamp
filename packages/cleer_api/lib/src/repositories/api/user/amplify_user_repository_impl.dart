@@ -65,7 +65,7 @@ class AmplifyUserRepositoryImpl
   @override
   Future<ResultDart<User, DataFailure>> updateDeviceToken(
     String userId,
-    String token,
+    String? token,
   ) async {
     return performDataOperation<User>(
       operation: () async {

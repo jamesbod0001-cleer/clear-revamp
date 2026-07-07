@@ -16,6 +16,7 @@ part 'push_notification_use_case.g.dart';
 @Riverpod(keepAlive: true)
 class PushNotificationUseCase extends _$PushNotificationUseCase {
   late final PushNotificationRepository _repository;
+  late final SecureStorageService _storage;
   final _log = AmplifyLogger("PushNotificationUseCase");
 
   String? _latestToken;
@@ -27,6 +28,7 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
   @override
   void build() {
     _repository = ref.watch(pushNotificationRepositoryProvider);
+    _storage = ref.watch(secureStorageServiceProvider);
 
     // 🛑 WEB GUARD: Skip all native listener setups if on Chrome
     if (kIsWeb) {
@@ -40,14 +42,9 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
     // Listen for user profile changes to sync token if we have one
     ref.listen(userProfileProvider, (previous, next) {
       final user = next.value;
-      if (user != null) {
-        // Automatically request permissions if not yet granted when user is signed in
-        _checkAndRequestPermissions();
-
-        if (_latestToken != null) {
-          _log.info('User profile available, syncing pending device token');
-          _updateDeviceToken(_latestToken!);
-        }
+      if (user != null && _latestToken != null) {
+        _log.info('User profile available, syncing pending device token');
+        _updateDeviceToken(_latestToken!);
       }
     });
 
@@ -58,18 +55,6 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
     });
   }
 
-  Future<void> _checkAndRequestPermissions() async {
-    try {
-      final status = await getPermissionStatus();
-      if (status == PushNotificationPermissionStatus.shouldRequest ||
-          status == PushNotificationPermissionStatus.shouldExplainThenRequest) {
-        _log.info('Permission status is $status, requesting permissions...');
-        await requestPermissions();
-      }
-    } catch (e) {
-      _log.error('Failed to check or request permissions: $e');
-    }
-  }
 
   void _setupListeners() {
     _tokenSub = _repository.onTokenReceived.listen((token) {
@@ -79,8 +64,8 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
     });
 
     _foregroundSub = _repository.onNotificationReceivedInForeground.listen((
-        notification,
-        ) {
+      notification,
+    ) {
       _log.info('Foreground notification received: ${notification.title}');
       ref.read(foregroundMessageProvider.notifier).notify(notification);
     });
@@ -102,8 +87,8 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
         .read(userUseCaseProvider.notifier)
         .updateDeviceToken(token);
     result.fold(
-          (_) => _log.info('Successfully synced device token'),
-          (failure) => _log.error('Failed to sync device token: $failure'),
+      (_) => _log.info('Successfully synced device token'),
+      (failure) => _log.error('Failed to sync device token: $failure'),
     );
   }
 
@@ -147,5 +132,24 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
     }
 
     return _repository.getPermissionStatus();
+  }
+
+  Future<bool> shouldShowNudge() async {
+    // Don't nudge on Web
+    if (kIsWeb) return false;
+
+    // Check current status
+    final status = await getPermissionStatus();
+    if (status == PushNotificationPermissionStatus.granted) return false;
+
+    // Check interval
+    final lastNudge = await _storage.getLastNotificationNudgeTime();
+    final now = DateTime.now();
+
+    return lastNudge == null || now.difference(lastNudge).inDays >= 3;
+  }
+
+  Future<void> markNudgeShown() async {
+    await _storage.saveLastNotificationNudgeTime(DateTime.now());
   }
 }

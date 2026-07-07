@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:amplify_flutter/amplify_flutter.dart' hide SignedOutException;
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer_core/cleer_core.dart';
@@ -427,6 +428,14 @@ class AuthUseCase extends _$AuthUseCase {
 
   Future<ResultDart<void, AuthFailure>> signOut() async {
     _log.info('Attempting to sign out user');
+
+    // Clear device token from backend first
+    final user = ref.read(userProfileProvider).value;
+    if (user != null) {
+      _log.info('Clearing device token from backend during sign-out');
+      await _userRepository.updateDeviceToken(user.id, null);
+    }
+
     final result = await _authRepository.signOut();
     result.fold(
       (success) {

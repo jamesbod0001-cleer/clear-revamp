@@ -712,5 +712,11 @@
   "youHaveFinishedThisMilestoneNotifyYourClientSoTheyCanReleaseThisMilestonePayment": "You've finished this milestone. Notify your client so they can release this milestone payment.",
   "letYourClientKnowTheAgreedWorkHasBeenCompleted": "Let your client know the agreed work has been completed.",
   "markMilestoneComplete": "Mark Milestone Complete",
-  "markAsCompleted": "Mark as Completed"
+  "markAsCompleted": "Mark as Completed",
+  "wellLetYouKnowWhenItMatters": "We’ll let you know when it matters",
+  "noSpamJustImportantUpdatesAboutYourAgreementsPaymentsDeliveriesAndDisputes": "No spam. Just important updates about your agreements, payments, deliveries, and disputes.",
+  "enableNotifications": "Enable Notifications",
+  "skipForNow": "Skip for Now",
+  "reportAnIssueWithThisAgreement": "Report an issue with this agreement",
+  "weWillPauseTheReleaseOfFundsWhileWeReviewWhatHappenedYouWillBeAskedToExplainTheIssueAndUploadAndyPhotosOrEvidenceThatCanHelpUsResolveItFairly": "We'll pause the release of funds while we review what happened.\n\nYou'll be asked to explain the issue and upload any photos or evidence that can help us resolve it fairly."
 }

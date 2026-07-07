@@ -2,6 +2,8 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/activity/activity_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
+import 'package:cleer/ui/home/home/view_model/notification_permission_view_model.dart';
+import 'package:cleer/ui/home/home/widgets/notification_permission_bottom_sheet.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card_skeleton_list.dart';
 import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
@@ -17,16 +19,30 @@ import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
 import 'package:cleer_ui/widgets/app_empty_state.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        final viewModel =
+            ref.read(notificationPermissionViewModelProvider.notifier);
+        final shouldShow = await viewModel.checkAndShowNudge();
+
+        if (shouldShow && context.mounted) {
+          NotificationPermissionBottomSheet.show(context);
+        }
+      });
+      return null;
+    }, []);
 
     final user = ref.watch(userProfileProvider).value;
 

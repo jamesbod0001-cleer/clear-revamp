@@ -35,14 +35,14 @@ class UserUseCase extends _$UserUseCase {
     return result;
   }
 
-  Future<ResultDart<User, DataFailure>> updateDeviceToken(String token) async {
+  Future<ResultDart<User, DataFailure>> updateDeviceToken(String? token) async {
     final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state not found for token update');
       return Failure(DataFailure.notFound());
     }
 
-    if (user.deviceToken == token) {
+    if (token != null && user.deviceToken == token) {
       _log.info('Device token already up to date');
       return Success(user);
     }

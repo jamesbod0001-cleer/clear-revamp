@@ -16,6 +16,7 @@ class SecureStorageService {
   static const String _flwTokenKey = "FLW_ACCESS_TOKEN";
   static const String _tempPassPrefix = "TEMP_PASS_";
   static const String _hiddenUsernamePrefix = "HIDDEN_USER_";
+  static const String _lastNudgeKey = "LAST_NOTIFICATION_NUDGE_TIME";
 
   // --- Flutterwave OAuth Methods ---
   Future<void> saveFlutterwaveToken(String token) async {
@@ -55,5 +56,15 @@ class SecureStorageService {
 
   Future<void> deleteHiddenUsername(String phoneNumber) async {
     await _storage.delete(key: "$_hiddenUsernamePrefix$phoneNumber");
+  }
+
+  // --- Notification Nudge Methods ---
+  Future<void> saveLastNotificationNudgeTime(DateTime time) async {
+    await _storage.write(key: _lastNudgeKey, value: time.toIso8601String());
+  }
+
+  Future<DateTime?> getLastNotificationNudgeTime() async {
+    final value = await _storage.read(key: _lastNudgeKey);
+    return value != null ? DateTime.tryParse(value) : null;
   }
 }

@@ -4,7 +4,7 @@ import 'package:result_dart/result_dart.dart';
 abstract class UserRepository {
   Future<ResultDart<User, DataFailure>> getOrCreateUserProfile(User user);
   Future<ResultDart<User, DataFailure>> updateUserProfile(User user);
-  Future<ResultDart<User, DataFailure>> updateDeviceToken(String userId, String token);
+  Future<ResultDart<User, DataFailure>> updateDeviceToken(String userId, String? token);
   Future<ResultDart<User, DataFailure>> getUser(String id);
   Stream<User> observeUserUpdates(String id);
 }
