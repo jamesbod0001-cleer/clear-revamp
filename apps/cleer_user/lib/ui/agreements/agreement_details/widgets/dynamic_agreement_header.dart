@@ -31,6 +31,10 @@ class DynamicAgreementHeader extends StatelessWidget {
     switch (agreement.status) {
       case AgreementStatus.awaitingRecipient:
       case AgreementStatus.awaitingFunding:
+        return AgreementActionBanner(
+          agreement: agreement,
+          currentUser: currentUser,
+        );
       case AgreementStatus.funded:
         if (agreement.category == .servicesWork) {
           return AgreementActionBanner(
