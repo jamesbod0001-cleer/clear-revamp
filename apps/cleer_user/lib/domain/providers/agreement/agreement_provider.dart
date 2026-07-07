@@ -6,6 +6,7 @@ import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
+import 'package:cleer_core/models/physical_delivery_context/physical_delivery_context_enums.dart';
 import 'package:cleer_core/models/status_history/status_history.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer_core/utils/riverpod_extensions.dart';
@@ -215,9 +216,33 @@ List<Agreement> needsActionAgreements(Ref ref) {
         agreement.status == AgreementStatus.awaitingFunding;
     final amINotInitiator = agreement.initiator?.id != currentUser?.id;
     final isSender = agreement.sender?.id == currentUser?.id;
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    return (isPending && amINotInitiator) ||
-        (agreement.status == .readyForRelease && isSender);
+    // Check core agreement states
+    bool needsAction =
+        (isPending && amINotInitiator) ||
+        (agreement.status == AgreementStatus.readyForRelease && isSender);
+
+    // Check nested physical delivery states (if applicable)
+    if (agreement.status == AgreementStatus.inProgress &&
+        agreement.physicalDeliveryContext != null) {
+      final deliveryStatus = agreement.physicalDeliveryContext!.status;
+
+      if (isRecipient &&
+          (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+              deliveryStatus ==
+                  PhysicalDeliveryContextStatus.awaitingDispatch)) {
+        // Vendor needs to upload photos or dispatch details
+        needsAction = true;
+      } else if (isSender &&
+          deliveryStatus ==
+              PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+        // Buyer needs to acknowledge the dispatch details
+        needsAction = true;
+      }
+    }
+
+    return needsAction;
   }).toList();
 }
 
@@ -231,11 +256,34 @@ List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
         agreement.status == AgreementStatus.awaitingRecipient ||
         agreement.status == AgreementStatus.awaitingFunding;
     final amIInitiator = agreement.initiator?.id == currentUser?.id;
-
+    final isSender = agreement.sender?.id == currentUser?.id;
     final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    return (isPending && amIInitiator) ||
-        (agreement.status == .readyForRelease && isRecipient);
+    // Check core agreement states
+    bool isAwaiting =
+        (isPending && amIInitiator) ||
+        (agreement.status == AgreementStatus.readyForRelease && isRecipient);
+
+    // Check nested physical delivery states (if applicable)
+    if (agreement.status == AgreementStatus.inProgress &&
+        agreement.physicalDeliveryContext != null) {
+      final deliveryStatus = agreement.physicalDeliveryContext!.status;
+
+      if (isSender &&
+          (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+              deliveryStatus ==
+                  PhysicalDeliveryContextStatus.awaitingDispatch)) {
+        // Buyer is waiting for Vendor to upload photos or dispatch details
+        isAwaiting = true;
+      } else if (isRecipient &&
+          deliveryStatus ==
+              PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+        // Vendor is waiting for Buyer to acknowledge the dispatch details
+        isAwaiting = true;
+      }
+    }
+
+    return isAwaiting;
   }).toList();
 }
 
