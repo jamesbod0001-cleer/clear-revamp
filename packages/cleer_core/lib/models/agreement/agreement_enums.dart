@@ -6,12 +6,12 @@ enum AgreementCategory {
   physicalGoods(
     'physical_goods',
     'Physical Goods',
-    'Electronics, Fashion, Wigs, Gadgets, etc.',
+    'E.g. Electronics, Fashion, Gadgets, etc.',
   ),
   servicesWork(
     'service_work',
     'Services & Work',
-    'Freelance, Repairs, Consulting, Digital services, etc.',
+    'E.g. Freelance, Repairs, Consulting, Digital services, etc.',
   );
 
   final String id;
