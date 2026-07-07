@@ -40,9 +40,14 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
     // Listen for user profile changes to sync token if we have one
     ref.listen(userProfileProvider, (previous, next) {
       final user = next.value;
-      if (user != null && _latestToken != null) {
-        _log.info('User profile available, syncing pending device token');
-        _updateDeviceToken(_latestToken!);
+      if (user != null) {
+        // Automatically request permissions if not yet granted when user is signed in
+        _checkAndRequestPermissions();
+
+        if (_latestToken != null) {
+          _log.info('User profile available, syncing pending device token');
+          _updateDeviceToken(_latestToken!);
+        }
       }
     });
 
@@ -51,6 +56,19 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
       _foregroundSub?.cancel();
       _openedSub?.cancel();
     });
+  }
+
+  Future<void> _checkAndRequestPermissions() async {
+    try {
+      final status = await getPermissionStatus();
+      if (status == PushNotificationPermissionStatus.shouldRequest ||
+          status == PushNotificationPermissionStatus.shouldExplainThenRequest) {
+        _log.info('Permission status is $status, requesting permissions...');
+        await requestPermissions();
+      }
+    } catch (e) {
+      _log.error('Failed to check or request permissions: $e');
+    }
   }
 
   void _setupListeners() {
