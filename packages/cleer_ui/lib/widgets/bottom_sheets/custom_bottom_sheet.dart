@@ -68,15 +68,18 @@ class CustomBottomSheet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showCancelIcon) ...[
-            IconButton(
-              style: IconButton.styleFrom(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-                minimumSize: const Size(0, 0),
+            Align(
+              alignment: .centerRight,
+              child: IconButton(
+                style: IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 0),
+                ),
+                onPressed: () => context.pop(),
+                icon: PhosphorIcon(PhosphorIcons.x()),
               ),
-              onPressed: () => context.pop(),
-              icon: PhosphorIcon(PhosphorIcons.x()),
             ),
             Gap(Dimens.spacing.sp24),
           ],
