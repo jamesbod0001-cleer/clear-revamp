@@ -46,24 +46,24 @@ melos:
       run: npx ampx generate graphql-client-code --format modelgen --model-target dart --out packages/cleer_api/lib/src/models --profile cleer
       description: Generate Dart models from the schema into the API package.
 
-    # --- Build & Deployment (Local APKs) ---
+    # --- Build & Deployment (Local AABs) ---
     # These chain the config pull and the build together so you never have a mismatch.
 
-    build:apk:develop:
+    build:aab:develop:
       run: |
         melos run amplify:pull:develop && \
         cd apps/cleer_user && \
         flutter build aab --release --obfuscate --split-debug-info=build/app/outputs/symbols --dart-define=APP_ENV=develop && \
         dart run sentry_dart_plugin
-      description: Pulls staging config, builds APK, and uploads symbols to Sentry.
+      description: Pulls staging config, builds AAB, and uploads symbols to Sentry.
 
-    build:apk:main:
+    build:aab:main:
       run: |
         melos run amplify:pull:main && \
         cd apps/cleer_user && \
         flutter build aab --release --obfuscate --split-debug-info=build/app/outputs/symbols --dart-define=APP_ENV=main && \
         dart run sentry_dart_plugin
-      description: Pulls production config, builds APK, and uploads symbols to Sentry.
+      description: Pulls production config, builds AAB, and uploads symbols to Sentry.
 
     # --- Maintenance ---
     clean:
