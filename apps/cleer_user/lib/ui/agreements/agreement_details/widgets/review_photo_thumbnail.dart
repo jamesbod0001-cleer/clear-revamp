@@ -12,33 +12,37 @@ class ReviewPhotoThumbnail extends ConsumerWidget {
   const ReviewPhotoThumbnail({
     super.key,
     required this.photo,
-    required this.dimension,
+    required this.dimension, this.onTap,
   });
 
   final Photo photo;
   final double dimension;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final photoUrlAsync = ref.watch(fileUrlProvider(photo.key));
 
-    return Container(
-      width: dimension,
-      height: dimension,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        color: context.color.white.withValues(alpha: .08),
-        borderRadius: BorderRadius.circular(Dimens.radius.r8),
-      ),
-      child: photoUrlAsync.when(
-        data: (url) => AppImage(
-          imageUrl: url,
-          blurHash: photo.blurHash ?? '',
-          fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: dimension,
+        height: dimension,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: context.color.white.withValues(alpha: .08),
+          borderRadius: BorderRadius.circular(Dimens.radius.r8),
         ),
-        loading: () => BlurHashWidget(hash: photo.blurHash ?? ''),
-        error: (_, _) =>
-            Center(child: PhosphorIcon(PhosphorIcons.imageBroken())),
+        child: photoUrlAsync.when(
+          data: (url) => AppImage(
+            imageUrl: url,
+            blurHash: photo.blurHash ?? '',
+            fit: BoxFit.cover,
+          ),
+          loading: () => BlurHashWidget(hash: photo.blurHash ?? ''),
+          error: (_, _) =>
+              Center(child: PhosphorIcon(PhosphorIcons.imageBroken())),
+        ),
       ),
     );
   }

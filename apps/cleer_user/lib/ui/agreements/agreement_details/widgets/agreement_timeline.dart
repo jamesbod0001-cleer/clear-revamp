@@ -1,8 +1,10 @@
+import 'package:cleer/ui/agreements/agreement_details/widgets/photo_viewer_dialog.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_photo_thumbnail.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/milestone/milestone_enums.dart';
 import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_core/models/photo/photo.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -796,11 +798,27 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
                               children: agreement
                                   .physicalDeliveryContext!
                                   .packagingPhotos!
-                                  .map((photo) {
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                    final int index = entry.key;
+                                    final Photo photo = entry.value;
+
                                     return ReviewPhotoThumbnail(
                                       photo: photo,
-                                      dimension:
-                                          photoDimension, // Keeps your perfect sizing!
+                                      dimension: photoDimension,
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              PhotoViewerDialog(
+                                                photos: agreement
+                                                    .physicalDeliveryContext!
+                                                    .packagingPhotos!,
+                                                initialIndex: index,
+                                              ),
+                                        );
+                                      },
                                     );
                                   })
                                   .toList(),

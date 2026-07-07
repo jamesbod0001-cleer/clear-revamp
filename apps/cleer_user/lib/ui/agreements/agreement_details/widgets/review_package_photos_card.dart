@@ -1,7 +1,9 @@
 import 'package:cleer/ui/agreements/agreement_details/widgets/emphasized_action_card.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/photo_viewer_dialog.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_photo_thumbnail.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer_core/models/photo/photo.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -40,10 +42,22 @@ class ReviewPackagePhotosCard extends ConsumerWidget {
               return Wrap(
                 spacing: Dimens.spacing.sp8,
                 runSpacing: Dimens.spacing.sp8,
-                children: photos.map((photo) {
+                children: photos.asMap().entries.map((entry) {
+                  final int index = entry.key;
+                  final Photo photo = entry.value;
+
                   return ReviewPhotoThumbnail(
                     photo: photo,
                     dimension: dimension,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => PhotoViewerDialog(
+                          photos: photos,
+                          initialIndex: index,
+                        ),
+                      );
+                    },
                   );
                 }).toList(),
               );
