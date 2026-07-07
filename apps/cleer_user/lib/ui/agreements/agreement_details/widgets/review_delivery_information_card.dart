@@ -5,11 +5,13 @@ import 'package:cleer/ui/agreements/agreement_details/widgets/review_photo_thumb
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_ui/cleer_ui.dart';
+import 'package:cleer_ui/utils/snack_bar_helper.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ReviewDeliveryInformationCard extends ConsumerWidget {
   const ReviewDeliveryInformationCard({super.key, required this.agreement});
@@ -89,18 +91,43 @@ class ReviewDeliveryInformationCard extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: .spaceBetween,
                   children: [
-                    Text(
-                      deliveryDetails.driverPhoneNumber,
-                      style: context.typo.titleLarge.copyWith(
-                        color: context.color.outline,
-                        decoration: .underline,
-                        decorationStyle: .dotted,
-                        decorationColor: context.color.outline,
+                    GestureDetector(
+                      onTap: () async {
+                        Uri url = Uri(
+                          scheme: 'tel',
+                          path: deliveryDetails.driverPhoneNumber,
+                        );
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          SnackBarHelper.showError(
+                            'Could not open the phone dialer',
+                          );
+                        }
+                      },
+                      child: Text(
+                        deliveryDetails.driverPhoneNumber,
+                        style: context.typo.titleLarge.copyWith(
+                          color: context.color.outline,
+                          decoration: .underline,
+                          decorationStyle: .dotted,
+                          decorationColor: context.color.outline,
+                        ),
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        ///TODO: Implement Call
+                      onTap: () async {
+                        Uri url = Uri(
+                          scheme: 'tel',
+                          path: deliveryDetails.driverPhoneNumber,
+                        );
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          SnackBarHelper.showError(
+                            'Could not open the phone dialer',
+                          );
+                        }
                       },
                       child: Assets.images.callButton.image(
                         height: Dimens.size.s28,
