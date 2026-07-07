@@ -1,5 +1,6 @@
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/dynamic_agreement_header.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/raise_dispute_bottom_sheet.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
@@ -105,7 +106,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                       ),
                       tapTargetSize: .shrinkWrap,
                     ),
-                    onPressed: () {},
+                    onPressed: () => RaiseDisputeBottomSheet.show(context),
                     child: Row(
                       mainAxisSize: .min,
                       children: [

@@ -1,4 +1,4 @@
-import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer_ui/generated/assets.gen.dart' as ui_assets;
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/action_alerts/models/action_alert.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -43,7 +43,9 @@ extension ActionAlertUIExtension on ActionAlert {
       ActiveDisputesAlert a => AlertUIProperties(
         title: l10n.activeDisputesCount(a.count),
         subtitle: l10n.tapToViewAndResolve,
-        leading: Assets.images.errorFlag.image(height: Dimens.size.s32),
+        leading: ui_assets.Assets.images.errorFlag.image(
+          height: Dimens.size.s32,
+        ),
         backgroundColor: backgroundColor,
         contentColor: foregroundColor,
         onTap: () {
