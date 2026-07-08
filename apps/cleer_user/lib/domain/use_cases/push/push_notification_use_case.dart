@@ -4,8 +4,10 @@ import 'package:amplify_flutter/amplify_flutter.dart'
     hide PushNotificationMessage, PushNotificationPermissionStatus;
 import 'package:cleer/domain/providers/push/foreground_message_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/domain/use_cases/user/user_use_case.dart';
 import 'package:cleer/routing/pending_route_provider.dart';
+import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:flutter/foundation.dart';
@@ -41,9 +43,19 @@ class PushNotificationUseCase extends _$PushNotificationUseCase {
 
     // Listen for user profile changes to sync token if we have one
     ref.listen(userProfileProvider, (previous, next) {
-      final user = next.value;
-      if (user != null && _latestToken != null) {
-        _log.info('User profile available, syncing pending device token');
+      final user = next.asData?.value;
+
+      final authState = ref.read(authUseCaseProvider);
+      final isAuthenticated = authState.value?.isAuthenticated ?? false;
+      final isAuthLoading = authState.isLoading;
+
+      if (user != null &&
+          _latestToken != null &&
+          isAuthenticated &&
+          !isAuthLoading) {
+        _log.info(
+          'User profile available and authenticated, syncing pending device token',
+        );
         _updateDeviceToken(_latestToken!);
       }
     });

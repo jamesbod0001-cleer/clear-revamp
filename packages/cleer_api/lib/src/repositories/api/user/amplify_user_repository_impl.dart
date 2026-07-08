@@ -1,5 +1,6 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
-import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer_api/src/models/ModelProvider.dart' show ModelFieldValue;
+import 'package:cleer_core/cleer_core.dart' hide SignedOutException;
 import 'package:result_dart/result_dart.dart';
 import 'package:cleer_api/src/mappers/user_mappers.dart';
 import 'package:cleer_api/src/repositories/api/mixins/amplify_api_repository_mixin.dart';
@@ -70,9 +71,25 @@ class AmplifyUserRepositoryImpl
     return performDataOperation<User>(
       operation: () async {
         final currentUser = await _amplifyUserServiceClient.queryUser(userId);
-        final updatedUser = currentUser.copyWith(deviceToken: token);
-        final response = await _amplifyUserServiceClient.updateUser(updatedUser);
-        return response.toDomain();
+        final updatedUser = currentUser.copyWithModelFieldValues(
+          deviceToken: ModelFieldValue<String?>.value(token),
+        );
+
+        try {
+          final response = await _amplifyUserServiceClient.updateUser(
+            updatedUser,
+          );
+          return response.toDomain();
+        } on SignedOutException {
+          log.info('UpdateDeviceToken skipped: User signed out.');
+          return currentUser.toDomain();
+        } catch (e) {
+          if (e.toString().contains('No user is currently signed in')) {
+            log.info('UpdateDeviceToken skipped: User signed out.');
+            return currentUser.toDomain();
+          }
+          rethrow;
+        }
       },
       operationName: 'UpdateDeviceToken',
       targetId: userId,
