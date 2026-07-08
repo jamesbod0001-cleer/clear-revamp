@@ -65,6 +65,23 @@ melos:
         dart run sentry_dart_plugin
       description: Pulls production config, builds AAB, and uploads symbols to Sentry.
 
+    # --- Build & Deployment (iOS IPAs) ---
+    build:ipa:develop:
+      run: |
+        melos run amplify:pull:develop && \
+        cd apps/cleer_user && \
+        flutter build ipa --release --obfuscate --split-debug-info=build/ios/outputs/symbols --dart-define=APP_ENV=develop && \
+        dart run sentry_dart_plugin
+      description: Pulls staging config, builds IPA, and uploads symbols to Sentry.
+
+    build:ipa:main:
+      run: |
+        melos run amplify:pull:main && \
+        cd apps/cleer_user && \
+        flutter build ipa --release --obfuscate --split-debug-info=build/ios/outputs/symbols --dart-define=APP_ENV=main && \
+        dart run sentry_dart_plugin
+      description: Pulls production config, builds IPA, and uploads symbols to Sentry.
+
     # --- Maintenance ---
     clean:
       run: melos exec -- "flutter clean"
