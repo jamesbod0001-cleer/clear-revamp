@@ -1,3 +1,4 @@
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/photo_viewer_dialog.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_photo_thumbnail.dart';
 import 'package:cleer_core/cleer_core.dart';
@@ -617,7 +618,7 @@ class _StandardTimeline extends StatelessWidget {
   }
 }
 
-class _PhysicalGoodsTimeline extends StatelessWidget {
+class _PhysicalGoodsTimeline extends ConsumerWidget {
   const _PhysicalGoodsTimeline({
     required this.agreement,
     required this.statusDates,
@@ -629,7 +630,7 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
   final Map<PhysicalDeliveryContextStatus, DateTime> deliveryStatusDates;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
 
     // 1. Safely calculate the current macro step
@@ -651,6 +652,9 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
       default:
         calculatedCurrentStep = 1;
     }
+
+    final user = ref.watch(userProfileProvider).value;
+    final isRecipient = agreement.recipient?.id == user?.id;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -783,8 +787,11 @@ class _PhysicalGoodsTimeline extends StatelessWidget {
                   footer:
                       dispatchDate != null &&
                           !isPackagingSkipped &&
-                          agreement.physicalDeliveryContext?.status !=
-                              PhysicalDeliveryContextStatus.awaitingDispatch
+                          (isRecipient
+                              ? true
+                              : agreement.physicalDeliveryContext?.status !=
+                                    PhysicalDeliveryContextStatus
+                                        .awaitingDispatch)
                       ? Container(
                           padding: .all(Dimens.padding.p12),
                           decoration: BoxDecoration(
