@@ -6,8 +6,10 @@ import 'package:cleer/ui/agreements/agreement_details/widgets/share_delivery_inf
 import 'package:cleer/ui/agreements/agreement_details/widgets/upload_package_photos_card.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_core/models/milestone/milestone_enums.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
@@ -17,16 +19,26 @@ class DynamicAgreementHeader extends StatelessWidget {
     super.key,
     required this.agreement,
     required this.currentUser,
+    this.milestones,
   });
 
   final Agreement agreement;
   final User? currentUser;
+  final List<Milestone>? milestones;
 
   @override
   Widget build(BuildContext context) {
     // final amIInitiator = agreement.initiator?.id == currentUser?.id;
     final isSender = agreement.sender?.id == currentUser?.id;
     final isRecipient = agreement.recipient?.id == currentUser?.id;
+
+    Milestone? activeMilestone;
+    if (agreement.disbursementType == DisbursementType.milestones &&
+        milestones != null) {
+      activeMilestone = milestones!.firstWhereOrNull(
+        (m) => m.status != MilestoneStatus.released,
+      );
+    }
 
     switch (agreement.status) {
       case AgreementStatus.awaitingRecipient:
@@ -67,9 +79,41 @@ class DynamicAgreementHeader extends StatelessWidget {
               return ShareDeliveryInformationCard(agreement: agreement);
             }
           }
-        } else if (agreement.category == .servicesWork) {
+        } else if (agreement.category == AgreementCategory.servicesWork) {
           if (isRecipient) {
-            return MarkServiceCompletedCard(agreement: agreement);
+            if (agreement.disbursementType == DisbursementType.oneTime) {
+              // 1. One-Time: Provider marks the entire job as done
+              return MarkServiceCompletedCard(agreement: agreement);
+            } else if (agreement.disbursementType ==
+                    DisbursementType.milestones &&
+                activeMilestone != null) {
+              if (activeMilestone.status == MilestoneStatus.inProgress) {
+                // 2. Milestone: Provider is working, show card to mark this specific milestone done
+                return MarkServiceCompletedCard(
+                  agreement: agreement,
+                  activeMilestone: activeMilestone, // Pass it down!
+                );
+              } else if (activeMilestone.status ==
+                  MilestoneStatus.readyForRelease) {
+                // 3. Milestone: Provider clicked 'done', waiting for Client to release funds
+                return AgreementActionBanner(
+                  agreement: agreement,
+                  currentUser: currentUser,
+                  activeMilestone: activeMilestone, // Pass it down!
+                );
+              }
+            }
+          } else if (isSender) {
+            if (agreement.disbursementType == DisbursementType.milestones &&
+                activeMilestone != null &&
+                activeMilestone.status == MilestoneStatus.readyForRelease) {
+              // // 4. Milestone: Provider finished, Client needs to release funds!
+              // return ConfirmServiceReceivedCard( // Create this widget next!
+              //   agreement: agreement,
+              //   activeMilestone: activeMilestone,
+              // );
+              return Text('ConfirmServiceReceivedCard');
+            }
           }
         }
         // Fallback to a standard banner if no specific action is needed
@@ -79,10 +123,18 @@ class DynamicAgreementHeader extends StatelessWidget {
         );
       case AgreementStatus.readyForRelease:
         if (agreement.category == AgreementCategory.physicalGoods) {
+          if (isSender &&
+              agreement.physicalDeliveryContext?.status ==
+                  PhysicalDeliveryContextStatus.inTransit) {
+            return ConfirmItemReceivedCard(agreement: agreement);
+          }
+        } else if (agreement.category == AgreementCategory.servicesWork) {
           if (isSender) {
-            if (agreement.physicalDeliveryContext!.status == .inTransit) {
-              return ConfirmItemReceivedCard(agreement: agreement);
-            }
+            // // 5. One-Time: Provider finished, Client needs to release funds!
+            // return ConfirmServiceReceivedCard( // Use the same new widget here!
+            //   agreement: agreement,
+            // );
+            return Text('ConfirmServiceReceivedCard');
           }
         }
         // Fallback to a standard banner if no specific action is needed
@@ -103,9 +155,11 @@ class AgreementActionBanner extends StatelessWidget {
     super.key,
     required this.agreement,
     required this.currentUser,
+    this.activeMilestone,
   });
   final Agreement agreement;
   final User? currentUser;
+  final Milestone? activeMilestone;
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +253,13 @@ class AgreementActionBanner extends StatelessWidget {
             description = agreement.disbursementType == .milestones
                 ? l10n.theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted
                 : l10n.theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted;
+          } else if (isRecipient &&
+              activeMilestone?.status == MilestoneStatus.readyForRelease) {
+            icon = PhosphorIcons.hourglass(.duotone);
+            statusLabel = l10n.waitingForMilestonePayment;
+            title = l10n.noActionNeededFromYouRightNow;
+            description = l10n
+                .yourClientHasBeenNotifiedThatThisMilestoneIsCompleteAndCanNowReleasePayment;
           }
         }
       case AgreementStatus.readyForRelease:
@@ -209,6 +270,13 @@ class AgreementActionBanner extends StatelessWidget {
             title = l10n.noActionNeededFromYouRightNow;
             description = l10n.theBuyerHasNotYetVerifiedPickup;
           }
+        } else if (agreement.category == AgreementCategory.servicesWork &&
+            isRecipient) {
+          icon = PhosphorIcons.hourglass(.duotone);
+          statusLabel = l10n.waitingForPayment;
+          title = l10n.noActionNeededFromYouRightNow;
+          description = l10n
+              .yourClientHasBeenNotifiedThatTheServiceIsCompleteAndCanNowReleasePayment;
         }
       default:
         icon = PhosphorIcons.info(.duotone);
