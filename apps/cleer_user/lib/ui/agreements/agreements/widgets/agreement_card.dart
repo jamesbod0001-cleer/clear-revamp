@@ -1,7 +1,5 @@
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
-import 'package:cleer_core/models/milestone/milestone.dart';
-import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
@@ -30,17 +28,7 @@ class AgreementCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
-
     final user = ref.watch(userProfileProvider).value;
-    Milestone? currentlyRunning;
-    if (agreement.disbursementType == .milestones) {
-      final milestonesState = ref.watch(
-        agreementMilestonesProvider(agreement.id!),
-      );
-      currentlyRunning = milestonesState.value?.currentlyRunning;
-    }
-
-    DateTime? dueDate = agreement.dueDate(currentlyRunning: currentlyRunning);
 
     Widget content = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,8 +73,8 @@ class AgreementCard extends ConsumerWidget {
                       Gap(Dimens.spacing.sp4),
                       Text(
                         l10n.dueDate(
-                          dueDate != null
-                              ? DateFormat('d MMM').format(dueDate)
+                          agreement.dueDate != null
+                              ? DateFormat('d MMM').format(agreement.dueDate!)
                               : '',
                         ),
                         style: context.typo.bodySmall.copyWith(

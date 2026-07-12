@@ -346,12 +346,21 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
               }
               final List<Step> steps = [
                 Step(
-                  title: l10n.fundsReleased,
-                  subtitle: l10n.releaseInitiatedCompletingIn2Hours,
+                  title: l10n.milestonePaymentRequested,
+                  subtitle:
+                      l10n.providerHasFinishedThisMilestoneAndRequestedItsFunds,
+                  state: statusDates[MilestoneStatus.readyForRelease] != null
+                      ? StepState.completed
+                      : StepState.pending,
+                  date: statusDates[MilestoneStatus.readyForRelease],
+                ),
+                Step(
+                  title: l10n.releasingFunds,
+                  subtitle: l10n.fundsWillBeReleasedIn2Hours,
                   state: statusDates[MilestoneStatus.processingRelease] != null
                       ? StepState.completed
                       : StepState.pending,
-                  date: null,
+                  date: statusDates[MilestoneStatus.processingRelease],
                 ),
                 Step(
                   title: l10n.completed,
@@ -359,7 +368,7 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
                   state: statusDates[MilestoneStatus.released] != null
                       ? StepState.completed
                       : StepState.pending,
-                  date: null,
+                  date: statusDates[MilestoneStatus.released],
                 ),
               ];
 
@@ -391,11 +400,10 @@ class AgreementTimeline extends HookWidget {
     super.key,
     required this.agreement,
     required this.statusHistory,
-    this.milestones,
   });
+
   final Agreement agreement;
   final List<StatusHistory> statusHistory;
-  final List<Milestone>? milestones;
 
   @override
   Widget build(BuildContext context) {
@@ -431,27 +439,18 @@ class AgreementTimeline extends HookWidget {
       );
     }
 
-    return _StandardTimeline(
-      agreement: agreement,
-      statusDates: statusDates,
-      milestones: milestones,
-    );
+    return _StandardTimeline(agreement: agreement, statusDates: statusDates);
   }
 }
 
-class _StandardTimeline extends StatelessWidget {
-  const _StandardTimeline({
-    required this.agreement,
-    required this.statusDates,
-    this.milestones,
-  });
+class _StandardTimeline extends ConsumerWidget {
+  const _StandardTimeline({required this.agreement, required this.statusDates});
 
   final Agreement agreement;
   final Map<AgreementStatus, DateTime> statusDates;
-  final List<Milestone>? milestones;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final List<Step> steps = [];
 
@@ -489,16 +488,25 @@ class _StandardTimeline extends StatelessWidget {
         ),
       );
       if (agreement.disbursementType == .oneTime) {
-        final fundsReleasedDate =
-            statusDates[AgreementStatus.processingRelease];
+        final readyDate = statusDates[AgreementStatus.readyForRelease];
         steps.add(
           Step(
-            title: l10n.fundsReleased,
-            subtitle: l10n.releaseInitiatedCompletingIn2Hours,
-            state: fundsReleasedDate != null
+            title: l10n.paymentRequested,
+            subtitle: l10n.providerHasFinishedTheWorkAndRequestedTheirFunds,
+            state: readyDate != null ? StepState.completed : StepState.pending,
+            date: readyDate,
+          ),
+        );
+
+        final processingDate = statusDates[AgreementStatus.processingRelease];
+        steps.add(
+          Step(
+            title: l10n.releasingFunds,
+            subtitle: l10n.fundsWillBeReleasedIn2Hours,
+            state: processingDate != null
                 ? StepState.completed
                 : StepState.pending,
-            date: fundsReleasedDate,
+            date: processingDate,
           ),
         );
 
@@ -550,16 +558,25 @@ class _StandardTimeline extends StatelessWidget {
         ),
       );
       if (agreement.disbursementType == .oneTime) {
-        final fundsReleasedDate =
-            statusDates[AgreementStatus.processingRelease];
+        final readyDate = statusDates[AgreementStatus.readyForRelease];
         steps.add(
           Step(
-            title: l10n.fundsReleased,
-            subtitle: l10n.releaseInitiatedCompletingIn2Hours,
-            state: fundsReleasedDate != null
+            title: l10n.paymentRequested,
+            subtitle: l10n.providerHasFinishedTheWorkAndRequestedTheirFunds,
+            state: readyDate != null ? StepState.completed : StepState.pending,
+            date: readyDate,
+          ),
+        );
+
+        final processingDate = statusDates[AgreementStatus.processingRelease];
+        steps.add(
+          Step(
+            title: l10n.releasingFunds,
+            subtitle: l10n.fundsWillBeReleasedIn2Hours,
+            state: processingDate != null
                 ? StepState.completed
                 : StepState.pending,
-            date: fundsReleasedDate,
+            date: processingDate,
           ),
         );
 
@@ -602,18 +619,61 @@ class _StandardTimeline extends StatelessWidget {
             }),
           ),
         ),
-        if (agreement.disbursementType == DisbursementType.milestones &&
-            milestones != null) ...[
+        if (agreement.disbursementType == DisbursementType.milestones) ...[
           Gap(Dimens.spacing.sp12),
-          ...List.generate(milestones!.length, (index) {
-            return _MilestoneTimelineTile(
-              milestone: milestones![index],
-              index: index,
-              isLast: (index + 1) == milestones!.length,
-            );
-          }),
+
+          Builder(
+            builder: (context) {
+              final milestonesState = ref.watch(
+                agreementMilestonesProvider(agreement.id!),
+              );
+
+              return milestonesState.maybeWhen(
+                error: (_, _) => const SizedBox.shrink(),
+                orElse: () {
+                  final milestones = milestonesState.value ?? [];
+
+                  return Skeletonizer(
+                    enabled: milestonesState.isLoading,
+                    child: Column(
+                      children: List.generate(
+                        // If loading, show 2 skeleton cards. Otherwise show real count.
+                        milestonesState.isLoading ? 2 : milestones.length,
+                        (index) {
+                          return _MilestoneTimelineTile(
+                            // If loading, pass a dummy milestone so the skeleton can draw
+                            milestone: milestonesState.isLoading
+                                ? _getDummyMilestone(agreement.id!)
+                                : milestones[index],
+                            index: index,
+                            isLast:
+                                (index + 1) ==
+                                (milestonesState.isLoading
+                                    ? 2
+                                    : milestones.length),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ],
       ],
+    );
+  }
+
+  Milestone _getDummyMilestone(String agreementId) {
+    return Milestone(
+      id: 'dummy',
+      order: 1,
+      name: 'Loading Milestone...',
+      amount: 50000,
+      status: MilestoneStatus.pending,
+      expectedReleaseDate: DateTime.now(),
+      agreement: null,
     );
   }
 }

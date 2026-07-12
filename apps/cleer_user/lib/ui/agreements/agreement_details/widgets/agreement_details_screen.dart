@@ -3,7 +3,6 @@ import 'package:cleer/ui/agreements/agreement_details/widgets/dynamic_agreement_
 import 'package:cleer/ui/agreements/agreement_details/widgets/raise_dispute_bottom_sheet.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
-import 'package:cleer/domain/providers/milestone/milestone_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreement_details/view_model/agreement_details_view_model.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/agreement_timeline.dart';
@@ -59,15 +58,6 @@ class AgreementDetailsScreen extends ConsumerWidget {
       });
       return const Center(child: CircularProgressIndicator());
     }
-
-    Milestone? currentlyRunning;
-    AsyncValue<List<Milestone>>? milestonesState;
-    if (agreement.disbursementType == .milestones) {
-      milestonesState = ref.watch(agreementMilestonesProvider(agreement.id!));
-      currentlyRunning = milestonesState!.value?.currentlyRunning;
-    }
-
-    DateTime? dueDate = agreement.dueDate(currentlyRunning: currentlyRunning);
 
     final agreementStatusHistoryState = ref.watch(
       agreementStatusHistoryProvider(agreement.id!),
@@ -168,8 +158,10 @@ class AgreementDetailsScreen extends ConsumerWidget {
                           Gap(Dimens.spacing.sp8),
                           Text(
                             l10n.dueDate(
-                              dueDate != null
-                                  ? DateFormat('d MMM').format(dueDate)
+                              agreement.dueDate != null
+                                  ? DateFormat(
+                                      'd MMM',
+                                    ).format(agreement.dueDate!)
                                   : '',
                             ),
                             style: context.typo.bodySmall.copyWith(
@@ -276,11 +268,6 @@ class AgreementDetailsScreen extends ConsumerWidget {
                               agreement: agreement,
                               statusHistory:
                                   agreementStatusHistoryState.value ?? [],
-                              milestones:
-                                  agreement.disbursementType ==
-                                      DisbursementType.milestones
-                                  ? milestonesState!.value
-                                  : null,
                             ),
                           );
                         },

@@ -1,6 +1,5 @@
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
-import 'package:cleer_core/models/milestone/milestone.dart';
 import 'package:cleer_core/models/physical_delivery_context/physical_delivery_context_enums.dart';
 import 'package:cleer_core/models/user/user.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
@@ -109,25 +108,44 @@ extension AgreementUIExtensions on Agreement {
     final l10n = AppLocalizations.of(context)!;
 
     // 1. Establish base identity variables
-    final isPending = status == AgreementStatus.awaitingRecipient ||
+    final isPending =
+        status == AgreementStatus.awaitingRecipient ||
         status == AgreementStatus.awaitingFunding;
     final amIInitiator = initiator?.id == currentUser.id;
     final isSender = sender?.id == currentUser.id;
     final isRecipient = recipient?.id == currentUser.id;
 
-    // 2. Evaluate "Action Required" logic
-    bool needsAction = (isPending && !amIInitiator) ||
+    // 2. Evaluate base "Action Required" logic
+    bool needsAction =
+        (isPending && !amIInitiator) ||
         (status == AgreementStatus.readyForRelease && isSender);
 
-    // 3. Evaluate Physical Delivery states ONLY for "Action Required"
-    if (status == AgreementStatus.inProgress && physicalDeliveryContext != null) {
-      final deliveryStatus = physicalDeliveryContext!.status;
-
-      if (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
-          deliveryStatus == PhysicalDeliveryContextStatus.awaitingDispatch) {
-        if (isRecipient) needsAction = true;
-      } else if (deliveryStatus == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
-        if (isSender) needsAction = true;
+    // 3. Evaluate nested category states when IN_PROGRESS
+    if (status == AgreementStatus.inProgress) {
+      // --- Physical Goods ---
+      if (category == AgreementCategory.physicalGoods &&
+          physicalDeliveryContext != null) {
+        final deliveryStatus = physicalDeliveryContext!.status;
+        if (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+            deliveryStatus == PhysicalDeliveryContextStatus.awaitingDispatch) {
+          if (isRecipient) needsAction = true;
+        } else if (deliveryStatus ==
+            PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+          if (isSender) needsAction = true;
+        }
+      }
+      // --- Services & Works (One-Time & Milestones) ---
+      else if (category == AgreementCategory.servicesWork) {
+        if (disbursementType == DisbursementType.oneTime) {
+          if (isRecipient) needsAction = true; // Vendor needs to do work
+        } else if (disbursementType == DisbursementType.milestones) {
+          // Using our denormalized NoSQL field directly on the UI model!
+          if (isRecipient && activeMilestoneStatus == 'IN_PROGRESS') {
+            needsAction = true;
+          } else if (isSender && activeMilestoneStatus == 'READY_FOR_RELEASE') {
+            needsAction = true;
+          }
+        }
       }
     }
 
@@ -165,15 +183,12 @@ extension AgreementUIExtensions on Agreement {
     return const SizedBox.shrink();
   }
 
-  DateTime? dueDate({Milestone? currentlyRunning}) {
+  DateTime? get dueDate {
     switch (disbursementType) {
       case DisbursementType.oneTime:
-        return expectedReleaseDate!;
+        return expectedReleaseDate;
       case DisbursementType.milestones:
-        if (currentlyRunning != null) {
-          return currentlyRunning.expectedReleaseDate;
-        }
-        return null;
+        return activeMilestoneExpectedReleaseDate;
     }
   }
 }

@@ -64,4 +64,19 @@ class MilestoneUseCase extends _$MilestoneUseCase {
     );
     return result;
   }
+
+  Future<ResultDart<Milestone, DataFailure>> getMilestone(String id) async {
+    _log.info('Attempting to get milestone');
+    final result = await _milestoneRepository.getMilestone(id);
+    result.fold(
+      (milestone) {
+        _log.info('Successfully retrieved milestone');
+      },
+      (failure) {
+        _log.error('Error retrieving milestone', failure);
+        return Failure(failure);
+      },
+    );
+    return result;
+  }
 }
