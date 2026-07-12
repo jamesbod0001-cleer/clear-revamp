@@ -18,6 +18,7 @@ import { logAgreementStatus } from "./functions/log-agreement-status/resource";
 import { logMilestoneStatus } from "./functions/log-milestone-status/resource";
 import { generateAgreementActivity } from "./functions/generate-agreement-activity/resource";
 import { dispatchActivityNotification } from "./functions/dispatch-activity-notification/resource";
+import {syncMilestoneToAgreement} from "./functions/sync-milestone-to-agreement/resource";
 
 const backend = defineBackend({
     auth,
@@ -28,7 +29,8 @@ const backend = defineBackend({
     flutterwaveWebhook,
     previewAgreement,
     generateAgreementActivity,
-    dispatchActivityNotification, // Fully active!
+    dispatchActivityNotification,
+    syncMilestoneToAgreement,
 });
 
 // --- Auth Overrides ---
@@ -91,6 +93,13 @@ backend.logMilestoneStatus.resources.lambda.addEventSource(
 
 backend.generateAgreementActivity.resources.lambda.addEventSource(
     new DynamoEventSource(agreementTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [anyModificationFilter],
+    })
+);
+
+backend.syncMilestoneToAgreement.resources.lambda.addEventSource(
+    new DynamoEventSource(milestoneTable, {
         startingPosition: StartingPosition.LATEST,
         filters: [anyModificationFilter],
     })
