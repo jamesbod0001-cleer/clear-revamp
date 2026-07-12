@@ -213,32 +213,45 @@ List<Agreement> needsActionAgreements(Ref ref) {
   return agreements.where((agreement) {
     final isPending =
         agreement.status == AgreementStatus.awaitingRecipient ||
-        agreement.status == AgreementStatus.awaitingFunding;
+            agreement.status == AgreementStatus.awaitingFunding;
     final amINotInitiator = agreement.initiator?.id != currentUser?.id;
     final isSender = agreement.sender?.id == currentUser?.id;
     final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    // Check core agreement states
+    // 1. Core agreement states
     bool needsAction =
         (isPending && amINotInitiator) ||
-        (agreement.status == AgreementStatus.readyForRelease && isSender);
+            (agreement.status == AgreementStatus.readyForRelease && isSender);
 
-    // Check nested physical delivery states (if applicable)
-    if (agreement.status == AgreementStatus.inProgress &&
-        agreement.physicalDeliveryContext != null) {
-      final deliveryStatus = agreement.physicalDeliveryContext!.status;
-
-      if (isRecipient &&
-          (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
-              deliveryStatus ==
-                  PhysicalDeliveryContextStatus.awaitingDispatch)) {
-        // Vendor needs to upload photos or dispatch details
-        needsAction = true;
-      } else if (isSender &&
-          deliveryStatus ==
-              PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
-        // Buyer needs to acknowledge the dispatch details
-        needsAction = true;
+    // 2. Nested states when the agreement is IN_PROGRESS
+    if (agreement.status == AgreementStatus.inProgress) {
+      // --- Physical Goods ---
+      if (agreement.category == AgreementCategory.physicalGoods &&
+          agreement.physicalDeliveryContext != null) {
+        final deliveryStatus = agreement.physicalDeliveryContext!.status;
+        if (isRecipient &&
+            (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+                deliveryStatus == PhysicalDeliveryContextStatus.awaitingDispatch)) {
+          needsAction = true;
+        } else if (isSender &&
+            deliveryStatus == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+          needsAction = true;
+        }
+      }
+      // --- Services & Works (One-Time & Milestones) ---
+      else if (agreement.category == AgreementCategory.servicesWork) {
+        if (agreement.disbursementType == DisbursementType.oneTime) {
+          // One-Time: Vendor needs to do the work and mark it complete
+          if (isRecipient) needsAction = true;
+        } else if (agreement.disbursementType == DisbursementType.milestones) {
+          // Milestones: Cleanly check our denormalized NoSQL field!
+          final activeStatus = agreement.activeMilestoneStatus;
+          if (isRecipient && activeStatus == 'IN_PROGRESS') {
+            needsAction = true; // Vendor needs to submit active milestone
+          } else if (isSender && activeStatus == 'READY_FOR_RELEASE') {
+            needsAction = true; // Client needs to approve active milestone payment
+          }
+        }
       }
     }
 
@@ -254,32 +267,45 @@ List<Agreement> awaitingOtherPartyAgreements(Ref ref) {
   return agreements.where((agreement) {
     final isPending =
         agreement.status == AgreementStatus.awaitingRecipient ||
-        agreement.status == AgreementStatus.awaitingFunding;
+            agreement.status == AgreementStatus.awaitingFunding;
     final amIInitiator = agreement.initiator?.id == currentUser?.id;
     final isSender = agreement.sender?.id == currentUser?.id;
     final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    // Check core agreement states
+    // 1. Core agreement states
     bool isAwaiting =
         (isPending && amIInitiator) ||
-        (agreement.status == AgreementStatus.readyForRelease && isRecipient);
+            (agreement.status == AgreementStatus.readyForRelease && isRecipient);
 
-    // Check nested physical delivery states (if applicable)
-    if (agreement.status == AgreementStatus.inProgress &&
-        agreement.physicalDeliveryContext != null) {
-      final deliveryStatus = agreement.physicalDeliveryContext!.status;
-
-      if (isSender &&
-          (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
-              deliveryStatus ==
-                  PhysicalDeliveryContextStatus.awaitingDispatch)) {
-        // Buyer is waiting for Vendor to upload photos or dispatch details
-        isAwaiting = true;
-      } else if (isRecipient &&
-          deliveryStatus ==
-              PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
-        // Vendor is waiting for Buyer to acknowledge the dispatch details
-        isAwaiting = true;
+    // 2. Nested states when the agreement is IN_PROGRESS
+    if (agreement.status == AgreementStatus.inProgress) {
+      // --- Physical Goods ---
+      if (agreement.category == AgreementCategory.physicalGoods &&
+          agreement.physicalDeliveryContext != null) {
+        final deliveryStatus = agreement.physicalDeliveryContext!.status;
+        if (isSender &&
+            (deliveryStatus == PhysicalDeliveryContextStatus.awaitingPackaging ||
+                deliveryStatus == PhysicalDeliveryContextStatus.awaitingDispatch)) {
+          isAwaiting = true;
+        } else if (isRecipient &&
+            deliveryStatus == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+          isAwaiting = true;
+        }
+      }
+      // --- Services & Works (One-Time & Milestones) ---
+      else if (agreement.category == AgreementCategory.servicesWork) {
+        if (agreement.disbursementType == DisbursementType.oneTime) {
+          // One-Time: Client is waiting for Vendor to finish work
+          if (isSender) isAwaiting = true;
+        } else if (agreement.disbursementType == DisbursementType.milestones) {
+          // Milestones: Cleanly check our denormalized NoSQL field!
+          final activeStatus = agreement.activeMilestoneStatus;
+          if (isSender && activeStatus == 'IN_PROGRESS') {
+            isAwaiting = true; // Client waiting for Vendor to finish active milestone
+          } else if (isRecipient && activeStatus == 'READY_FOR_RELEASE') {
+            isAwaiting = true; // Vendor waiting for Client to release funds
+          }
+        }
       }
     }
 

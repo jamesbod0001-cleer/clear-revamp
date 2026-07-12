@@ -18,6 +18,16 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
   AmplifyMilestoneServiceClient({required APICategory amplifyAPI})
     : _amplifyAPI = amplifyAPI;
 
+  Future<Milestone> queryMilestone(String id) async {
+    final request = ModelQueries.get(
+      Milestone.classType,
+      MilestoneModelIdentifier(id: id),
+    );
+    final response = await _amplifyAPI.query(request: request).response;
+    return validateRequiredResponse(response);
+  }
+
+
   Future<PaginatedResult<Milestone>> queryMilestonesByAgreement(
     String agreementId,
   ) async {

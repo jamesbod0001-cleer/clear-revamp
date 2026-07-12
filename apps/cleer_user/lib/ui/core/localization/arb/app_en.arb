@@ -515,7 +515,7 @@
   "agreementInitiated": "Agreement Initiated",
   "fundsLocked": "Funds Locked",
   "agreementAccepted": "Agreement Accepted",
-  "fundsReleased": "Funds Released",
+  "work": "Funds Released",
   "paymentMilestones": "Payment Milestones",
   "initiatedBy": "Initiated by {name}",
   "@initiatedBy": {
@@ -699,6 +699,10 @@
   "buyerHasReceivedAndInspectedTheGoods": "Buyer has received and inspected the goods",
   "releasingFunds": "Releasing funds",
   "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours",
+  "paymentRequested": "Payment Requested",
+  "providerHasFinishedTheWorkAndRequestedTheirFunds": "Provider has finished the work and requested their funds",
+  "milestonePaymentRequested": "Milestone Payment Requested",
+  "providerHasFinishedThisMilestoneAndRequestedItsFunds": "Provider has finished this milestone and requested its funds",
   "active": "Active",
   "packagingAndShipping": "Preparing & shipping",
   "reportIssue": "Report issue",
@@ -709,7 +713,15 @@
   "onceYouHaveCompletedTheAgreedWorkNotifyYourClientSoTheyCanReleasePayment": "Once you've completed the agreed work, notify your client so they can release payment.",
   "milestoneCompleted": "Milestone completed?",
   "finishedTheService": "Finished the service?",
-  "youHaveFinishedThisMilestoneNotifyYourClientSoTheyCanReleaseThisMilestonePayment": "You've finished this milestone. Notify your client so they can release this milestone payment.",
+  "youHaveFinishedThisMilestoneNotifyYourClient": "You've finished this milestone {name}. Notify your client so they can release this milestone payment.",
+  "@youHaveFinishedThisMilestoneNotifyYourClient": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "First"
+      }
+    }
+  },
   "letYourClientKnowTheAgreedWorkHasBeenCompleted": "Let your client know the agreed work has been completed.",
   "markMilestoneComplete": "Mark Milestone Complete",
   "markAsCompleted": "Mark as Completed",
@@ -718,5 +730,12 @@
   "enableNotifications": "Enable Notifications",
   "skipForNow": "Skip for Now",
   "reportAnIssueWithThisAgreement": "Report an issue with this agreement",
-  "weWillPauseTheReleaseOfFundsWhileWeReviewWhatHappenedYouWillBeAskedToExplainTheIssueAndUploadAndyPhotosOrEvidenceThatCanHelpUsResolveItFairly": "We'll pause the release of funds while we review what happened.\n\nYou'll be asked to explain the issue and upload any photos or evidence that can help us resolve it fairly."
+  "weWillPauseTheReleaseOfFundsWhileWeReviewWhatHappenedYouWillBeAskedToExplainTheIssueAndUploadAndyPhotosOrEvidenceThatCanHelpUsResolveItFairly": "We'll pause the release of funds while we review what happened.\n\nYou'll be asked to explain the issue and upload any photos or evidence that can help us resolve it fairly.",
+  "yourClientHasBeenNotifiedThatTheServiceIsCompleteAndCanNowReleasePayment": "Your client has been notified that the service is complete and can now release payment.",
+  "waitingForMilestonePayment": "Waiting for milestone payment",
+  "yourClientHasBeenNotifiedThatThisMilestoneIsCompleteAndCanNowReleasePayment": "Your client has been notified that this milestone is complete and can now release payment.",
+  "approvePaymentRelease": "Approve payment release",
+  "theProviderHasMarkedTheAgreedWorkAsFinished": "The provider has marked the agreed work as finished.",
+  "approveMilestoneRelease": "Approve milestone release",
+  "theProviderHasMarkedThisMilestoneAsFinished": "The provider has marked this milestone as finished."
 }

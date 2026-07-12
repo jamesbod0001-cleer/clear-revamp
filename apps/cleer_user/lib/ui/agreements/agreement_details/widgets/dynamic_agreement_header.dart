@@ -1,3 +1,4 @@
+import 'package:cleer/ui/agreements/agreement_details/widgets/approve_service_payment_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/confirm_item_received_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/mark_service_completed_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_delivery_information_card.dart';
@@ -12,90 +13,130 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+// ============================================================================
+// DYNAMIC HEADER
+// ============================================================================
+
 class DynamicAgreementHeader extends StatelessWidget {
   const DynamicAgreementHeader({
     super.key,
     required this.agreement,
     required this.currentUser,
-  });
+  }); // <-- DELETED the milestones parameter!
 
   final Agreement agreement;
   final User? currentUser;
 
   @override
   Widget build(BuildContext context) {
-    // final amIInitiator = agreement.initiator?.id == currentUser?.id;
+    if (agreement.status == AgreementStatus.draft) {
+      return const SizedBox.shrink();
+    }
+
     final isSender = agreement.sender?.id == currentUser?.id;
     final isRecipient = agreement.recipient?.id == currentUser?.id;
 
-    switch (agreement.status) {
-      case AgreementStatus.awaitingRecipient:
-      case AgreementStatus.awaitingFunding:
-        return AgreementActionBanner(
-          agreement: agreement,
-          currentUser: currentUser,
-        );
-      case AgreementStatus.funded:
-        if (agreement.category == .servicesWork) {
-          return AgreementActionBanner(
-            agreement: agreement,
-            currentUser: currentUser,
-          );
-        }
-        return SizedBox();
-      case AgreementStatus.inProgress:
-        if (agreement.category == AgreementCategory.physicalGoods) {
-          if (isSender) {
-            if (agreement.physicalDeliveryContext!.status ==
-                    .awaitingDispatch &&
-                agreement.physicalDeliveryContext!.packagingPhotos != null) {
-              // Meaning the Vendor uploaded packaging photos
-              return ReviewPackagePhotosCard(agreement: agreement);
-            } else if (agreement.physicalDeliveryContext!.status ==
-                    .awaitingBuyerAcknowledgement &&
-                agreement.physicalDeliveryContext!.deliveryDetails != null) {
-              return ReviewDeliveryInformationCard(agreement: agreement);
-            }
-          } else if (isRecipient) {
-            final needsToUploadPackagingPhotos =
-                agreement.physicalDeliveryContext?.status == .awaitingPackaging;
-            final needsToShareDelivery =
-                agreement.physicalDeliveryContext?.status == .awaitingDispatch;
-            if (needsToUploadPackagingPhotos) {
-              return UploadPackagePhotosCard(agreement: agreement);
-            } else if (needsToShareDelivery) {
-              return ShareDeliveryInformationCard(agreement: agreement);
-            }
-          }
-        } else if (agreement.category == .servicesWork) {
-          if (isRecipient) {
-            return MarkServiceCompletedCard(agreement: agreement);
-          }
-        }
-        // Fallback to a standard banner if no specific action is needed
-        return AgreementActionBanner(
-          agreement: agreement,
-          currentUser: currentUser,
-        );
-      case AgreementStatus.readyForRelease:
-        if (agreement.category == AgreementCategory.physicalGoods) {
-          if (isSender) {
-            if (agreement.physicalDeliveryContext!.status == .inTransit) {
-              return ConfirmItemReceivedCard(agreement: agreement);
-            }
-          }
-        }
-        // Fallback to a standard banner if no specific action is needed
-        return AgreementActionBanner(
-          agreement: agreement,
-          currentUser: currentUser,
-        );
-
-      default:
-        // Returns an empty widget for states that don't need a header
-        return const SizedBox.shrink();
+    // STEP 1: Attempt to get a high-priority action card
+    final actionCard = _getActionCard(isSender, isRecipient);
+    if (actionCard != null) {
+      return actionCard;
     }
+
+    // STEP 2: Handle edge cases where NO header should show
+    if (agreement.status == AgreementStatus.funded &&
+        agreement.category == AgreementCategory.physicalGoods) {
+      return const SizedBox.shrink();
+    }
+
+    // STEP 3: Fallback to the informational banner
+    return AgreementActionBanner(
+      agreement: agreement,
+      currentUser: currentUser,
+    );
   }
+
+  // --- HELPER DELEGATES ---
+
+  Widget? _getActionCard(bool isSender, bool isRecipient) {
+    if (agreement.category == AgreementCategory.physicalGoods) {
+      return _getPhysicalGoodsAction(isSender, isRecipient);
+    } else if (agreement.category == AgreementCategory.servicesWork) {
+      return _getServicesAction(isSender, isRecipient);
+    }
+    return null;
+  }
+
+  Widget? _getPhysicalGoodsAction(bool isSender, bool isRecipient) {
+    final deliveryCtx = agreement.physicalDeliveryContext;
+
+    if (agreement.status == AgreementStatus.inProgress && deliveryCtx != null) {
+      if (isSender) {
+        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingDispatch &&
+            deliveryCtx.packagingPhotos != null) {
+          return ReviewPackagePhotosCard(agreement: agreement);
+        }
+        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement &&
+            deliveryCtx.deliveryDetails != null) {
+          return ReviewDeliveryInformationCard(agreement: agreement);
+        }
+      } else if (isRecipient) {
+        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingPackaging) {
+          return UploadPackagePhotosCard(agreement: agreement);
+        }
+        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingDispatch) {
+          return ShareDeliveryInformationCard(agreement: agreement);
+        }
+      }
+    } else if (agreement.status == AgreementStatus.readyForRelease) {
+      if (isSender && deliveryCtx?.status == PhysicalDeliveryContextStatus.inTransit) {
+        return ConfirmItemReceivedCard(agreement: agreement);
+      }
+    }
+    return null;
+  }
+
+  Widget? _getServicesAction(bool isSender, bool isRecipient) {
+    final isOneTime = agreement.disbursementType == DisbursementType.oneTime;
+    final isMilestones = agreement.disbursementType == DisbursementType.milestones;
+
+    // NEW: We just read the string directly from the Agreement model!
+    final activeStatus = agreement.activeMilestoneStatus;
+
+    if (agreement.status == AgreementStatus.inProgress) {
+      if (isRecipient) {
+        if (isOneTime) {
+          return MarkServiceCompletedCard(agreement: agreement);
+        }
+        // Milestones: Check the denormalized status string
+        if (isMilestones && activeStatus == 'IN_PROGRESS') {
+          return MarkServiceCompletedCard(agreement: agreement);
+        }
+      } else if (isSender) {
+        // Milestones: Check the denormalized status string
+        if (isMilestones && activeStatus == 'READY_FOR_RELEASE') {
+          return ApproveServicePaymentCard(agreement: agreement);
+        }
+      }
+    } else if (agreement.status == AgreementStatus.readyForRelease) {
+      if (isSender && isOneTime) {
+        return ApproveServicePaymentCard(agreement: agreement);
+      }
+    }
+    return null;
+  }
+}
+
+// ============================================================================
+// BANNER DATA CLASS & WIDGET
+// ============================================================================
+
+class _BannerData {
+  final IconData icon;
+  final String statusLabel;
+  final String title;
+  final String description;
+
+  _BannerData(this.icon, this.statusLabel, this.title, this.description);
 }
 
 class AgreementActionBanner extends StatelessWidget {
@@ -103,149 +144,24 @@ class AgreementActionBanner extends StatelessWidget {
     super.key,
     required this.agreement,
     required this.currentUser,
-  });
+  }); // <-- DELETED activeMilestone parameter!
+
   final Agreement agreement;
   final User? currentUser;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    final amIInitiator = agreement.initiator?.id == currentUser?.id;
-    final isSender = agreement.sender?.id == currentUser?.id;
-    final isRecipient = agreement.recipient?.id == currentUser?.id;
-
-    IconData? icon;
-    String statusLabel = kEmpty;
-    String title = kEmpty;
-    String description = kEmpty;
-
-    switch (agreement.status) {
-      case AgreementStatus.awaitingRecipient:
-        if (amIInitiator) {
-          icon = PhosphorIcons.handshake(.duotone);
-          statusLabel = agreement.recipient != null
-              ? l10n.waitingOnUser(agreement.recipient!.firstName)
-              : l10n.waitingForAcceptance;
-          title = l10n.noActionNeededFromYouRightNow;
-          description = agreement.recipient != null
-              ? l10n.notifyWhenUserAccepts(agreement.recipient!.firstName)
-              : l10n.wellNotifyYouTheMomentTheAgreementHasBeenAccepted;
-        }
-      case AgreementStatus.awaitingFunding:
-        if (amIInitiator) {
-          icon = PhosphorIcons.handshake(.duotone);
-          statusLabel = agreement.sender != null
-              ? l10n.waitingOnUser(agreement.sender!.firstName)
-              : l10n.waitingForPayment;
-          title = l10n.noActionNeededFromYouRightNow;
-          description = agreement.sender != null
-              ? l10n.notifyWhenUserDepositsFunds(agreement.sender!.firstName)
-              : l10n.wellNotifyYouTheMomentTheFundsHaveBeenDeposited;
-        }
-      case AgreementStatus.funded:
-        if (agreement.category == AgreementCategory.servicesWork) {
-          if (isSender) {
-            icon = PhosphorIcons.gear(.duotone);
-            statusLabel = l10n.serviceInProgress;
-            title = l10n.noActionNeededFromYouRightNow;
-            description = agreement.disbursementType == .milestones
-                ? l10n.theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted
-                : l10n.theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted;
-          } else if (isRecipient) {
-            icon = PhosphorIcons.gear(.duotone);
-            statusLabel = l10n.completeAgreedService;
-            title = l10n.noActionNeededFromYouRightNow;
-            description = l10n
-                .onceYouHaveCompletedTheAgreedWorkNotifyYourClientSoTheyCanReleasePayment;
-          }
-        }
-      case AgreementStatus.inProgress:
-        if (agreement.category == AgreementCategory.physicalGoods) {
-          /// TODO: I still need to come back here later...
-          if (isSender) {
-            if (agreement.physicalDeliveryContext!.status ==
-                .awaitingPackaging) {
-              icon = PhosphorIcons.images(.duotone);
-              statusLabel = l10n.waitingForPackageImages;
-              title = l10n.noActionNeededFromYouRightNow;
-              description = l10n
-                  .theVendorIsPreparingYourItemAndUploadingPackagePhotosBeforeShipment;
-            } else if (agreement.physicalDeliveryContext!.status ==
-                .awaitingDispatch) {
-              if (agreement.physicalDeliveryContext!.packagingPhotos == null) {
-                // Meaning the Vendor skipped uploading packaging photos
-                icon = PhosphorIcons.truck(.duotone);
-                statusLabel = l10n.waitingForDeliveryInformation;
-                title = l10n.noActionNeededFromYouRightNow;
-                description = l10n
-                    .theVendorIsSharingDeliveryDetailsSoYouKnowWhoWillBeDeliveringYourItem;
-              }
-            }
-          } else if (isRecipient) {
-            if (agreement.physicalDeliveryContext!.status ==
-                .awaitingBuyerAcknowledgement) {
-              icon = PhosphorIcons.truck(.duotone);
-              statusLabel = l10n.waitingForBuyerConfirmation;
-              title = l10n.noActionNeededFromYouRightNow;
-              description = l10n.theBuyerIsReviewingTheDeliveryDetailsYouShared;
-            }
-          }
-        } else if (agreement.category == AgreementCategory.servicesWork) {
-          if (isSender) {
-            icon = PhosphorIcons.gear(.duotone);
-            statusLabel = l10n.serviceInProgress;
-            title = l10n.noActionNeededFromYouRightNow;
-            description = agreement.disbursementType == .milestones
-                ? l10n.theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted
-                : l10n.theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted;
-          }
-        }
-      case AgreementStatus.readyForRelease:
-        if (agreement.category == AgreementCategory.physicalGoods) {
-          if (agreement.physicalDeliveryContext!.status == .inTransit) {
-            icon = PhosphorIcons.truck(.duotone);
-            statusLabel = l10n.waitingForBuyerVerification;
-            title = l10n.noActionNeededFromYouRightNow;
-            description = l10n.theBuyerHasNotYetVerifiedPickup;
-          }
-        }
-      default:
-        icon = PhosphorIcons.info(.duotone);
-        statusLabel = kEmpty;
-        title = kEmpty;
-        description = kEmpty;
-      // case AgreementStatus.draft:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-      // case AgreementStatus.funded:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-      // case AgreementStatus.readyForRelease:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-      // case AgreementStatus.processingRelease:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-      // case AgreementStatus.cancelled:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-      // case AgreementStatus.rejected:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-      // case AgreementStatus.released:
-      //   // TODO: Handle this case.
-      //   throw UnimplementedError();
-    }
+    final data = _getBannerData(context);
+    if (data == null) return const SizedBox.shrink();
 
     return Container(
-      padding: .symmetric(
+      padding: EdgeInsets.symmetric(
         horizontal: Dimens.padding.p12,
         vertical: Dimens.padding.p8,
       ),
       decoration: BoxDecoration(
         color: context.color.outline,
-        borderRadius: .circular(Dimens.radius.r8),
+        borderRadius: BorderRadius.circular(Dimens.radius.r8),
       ),
       child: Row(
         children: [
@@ -253,15 +169,15 @@ class AgreementActionBanner extends StatelessWidget {
             width: Dimens.size.s36,
             height: Dimens.size.s36,
             decoration: BoxDecoration(
-              shape: .circle,
-              border: .all(
+              shape: BoxShape.circle,
+              border: Border.all(
                 color: context.color.grayComponent,
                 width: Dimens.size.s2,
               ),
             ),
             child: Center(
               child: PhosphorIcon(
-                icon!,
+                data.icon,
                 color: context.color.blue800,
                 size: Dimens.size.s16,
               ),
@@ -270,20 +186,20 @@ class AgreementActionBanner extends StatelessWidget {
           Gap(Dimens.spacing.sp12),
           Expanded(
             child: Column(
-              mainAxisSize: .min,
-              crossAxisAlignment: .start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  statusLabel,
+                  data.statusLabel,
                   style: context.typo.bodySmall.copyWith(
                     color: context.color.grey600,
                   ),
                 ),
                 Gap(Dimens.spacing.sp4),
-                Text(title, style: context.typo.titleSmall),
+                Text(data.title, style: context.typo.titleSmall),
                 Gap(Dimens.spacing.sp4),
                 Text(
-                  description,
+                  data.description,
                   style: context.typo.bodySmall.copyWith(
                     color: context.color.grey600,
                   ),
@@ -294,5 +210,132 @@ class AgreementActionBanner extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // --- LOGIC EXTRACTOR ---
+
+  _BannerData? _getBannerData(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final amIInitiator = agreement.initiator?.id == currentUser?.id;
+    final isSender = agreement.sender?.id == currentUser?.id;
+    final isRecipient = agreement.recipient?.id == currentUser?.id;
+
+    final activeStatus = agreement.activeMilestoneStatus;
+
+    switch (agreement.status) {
+      case AgreementStatus.awaitingRecipient:
+        if (amIInitiator) {
+          return _BannerData(
+            PhosphorIcons.handshake(PhosphorIconsStyle.duotone),
+            agreement.recipient != null
+                ? l10n.waitingOnUser(agreement.recipient!.firstName)
+                : l10n.waitingForAcceptance,
+            l10n.noActionNeededFromYouRightNow,
+            agreement.recipient != null
+                ? l10n.notifyWhenUserAccepts(agreement.recipient!.firstName)
+                : l10n.wellNotifyYouTheMomentTheAgreementHasBeenAccepted,
+          );
+        }
+        break;
+
+      case AgreementStatus.awaitingFunding:
+        if (amIInitiator) {
+          return _BannerData(
+            PhosphorIcons.handshake(PhosphorIconsStyle.duotone),
+            agreement.sender != null
+                ? l10n.waitingOnUser(agreement.sender!.firstName)
+                : l10n.waitingForPayment,
+            l10n.noActionNeededFromYouRightNow,
+            agreement.sender != null
+                ? l10n.notifyWhenUserDepositsFunds(agreement.sender!.firstName)
+                : l10n.wellNotifyYouTheMomentTheFundsHaveBeenDeposited,
+          );
+        }
+        break;
+
+      case AgreementStatus.funded:
+      case AgreementStatus.inProgress:
+        if (agreement.category == AgreementCategory.physicalGoods) {
+          if (isSender) {
+            if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.awaitingPackaging) {
+              return _BannerData(
+                PhosphorIcons.images(PhosphorIconsStyle.duotone),
+                l10n.waitingForPackageImages,
+                l10n.noActionNeededFromYouRightNow,
+                l10n.theVendorIsPreparingYourItemAndUploadingPackagePhotosBeforeShipment,
+              );
+            } else if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.awaitingDispatch &&
+                agreement.physicalDeliveryContext?.packagingPhotos == null) {
+              return _BannerData(
+                PhosphorIcons.truck(PhosphorIconsStyle.duotone),
+                l10n.waitingForDeliveryInformation,
+                l10n.noActionNeededFromYouRightNow,
+                l10n.theVendorIsSharingDeliveryDetailsSoYouKnowWhoWillBeDeliveringYourItem,
+              );
+            }
+          } else if (isRecipient) {
+            if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+              return _BannerData(
+                PhosphorIcons.truck(PhosphorIconsStyle.duotone),
+                l10n.waitingForBuyerConfirmation,
+                l10n.noActionNeededFromYouRightNow,
+                l10n.theBuyerIsReviewingTheDeliveryDetailsYouShared,
+              );
+            }
+          }
+        } else if (agreement.category == AgreementCategory.servicesWork) {
+          if (isSender) {
+            return _BannerData(
+              PhosphorIcons.gear(PhosphorIconsStyle.duotone),
+              l10n.serviceInProgress,
+              l10n.noActionNeededFromYouRightNow,
+              agreement.disbursementType == DisbursementType.milestones
+                  ? l10n.theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted
+                  : l10n.theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted,
+            );
+          } else if (isRecipient && activeStatus == 'READY_FOR_RELEASE') {
+            // NEW: Reading straight from the denormalized string
+            return _BannerData(
+              PhosphorIcons.hourglass(PhosphorIconsStyle.duotone),
+              l10n.waitingForMilestonePayment,
+              l10n.noActionNeededFromYouRightNow,
+              l10n.yourClientHasBeenNotifiedThatThisMilestoneIsCompleteAndCanNowReleasePayment,
+            );
+          } else if (isRecipient && agreement.status == AgreementStatus.funded) {
+            return _BannerData(
+              PhosphorIcons.gear(PhosphorIconsStyle.duotone),
+              l10n.completeAgreedService,
+              l10n.noActionNeededFromYouRightNow,
+              l10n.onceYouHaveCompletedTheAgreedWorkNotifyYourClientSoTheyCanReleasePayment,
+            );
+          }
+        }
+        break;
+
+      case AgreementStatus.readyForRelease:
+        if (agreement.category == AgreementCategory.physicalGoods) {
+          if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.inTransit) {
+            return _BannerData(
+              PhosphorIcons.truck(PhosphorIconsStyle.duotone),
+              l10n.waitingForBuyerVerification,
+              l10n.noActionNeededFromYouRightNow,
+              l10n.theBuyerHasNotYetVerifiedPickup,
+            );
+          }
+        } else if (agreement.category == AgreementCategory.servicesWork && isRecipient) {
+          return _BannerData(
+            PhosphorIcons.hourglass(PhosphorIconsStyle.duotone),
+            l10n.waitingForPayment,
+            l10n.noActionNeededFromYouRightNow,
+            l10n.yourClientHasBeenNotifiedThatTheServiceIsCompleteAndCanNowReleasePayment,
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    return _BannerData(PhosphorIcons.info(PhosphorIconsStyle.duotone), kEmpty, kEmpty, kEmpty);
   }
 }

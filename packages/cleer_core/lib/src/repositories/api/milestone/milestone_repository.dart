@@ -2,6 +2,7 @@ import 'package:cleer_core/cleer_core.dart';
 import 'package:result_dart/result_dart.dart';
 
 abstract class MilestoneRepository {
+  Future<ResultDart<Milestone, DataFailure>> getMilestone(String id);
   Future<ResultDart<List<Milestone>, DataFailure>> getMilestonesByAgreement(
     String agreementId,
   );

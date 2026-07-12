@@ -32,6 +32,14 @@ export const Agreement = a.model({
     // ONLY physical goods will have this object. For category 'service_work', it remains null.
     physicalDeliveryContext: a.ref('PhysicalDeliveryContext'),
 
+    // ==========================================
+    // NEW: NoSQL Denormalized Milestone Tracking
+    // ==========================================
+    activeMilestoneId: a.id(),
+    activeMilestoneStatus: a.string(),
+    activeMilestoneName: a.string(),
+    activeMilestoneExpectedReleaseDate: a.date(),
+
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
     initiator: a.belongsTo('User', 'initiatorId'),
@@ -41,7 +49,9 @@ export const Agreement = a.model({
     transactions: a.hasMany('Transaction', 'agreementId'),
 
     createdAt: a.datetime(),
-}).secondaryIndexes((index) => [index("shortCode"), index("status")
-    .sortKeys(["createdAt"]).queryField("agreementsByStatus")]).authorization(allow => [
+}).secondaryIndexes((index) => [
+    index("shortCode"),
+    index("status").sortKeys(["createdAt"]).queryField("agreementsByStatus")
+]).authorization(allow => [
     allow.ownersDefinedIn('participants').identityClaim('sub'),
 ]);

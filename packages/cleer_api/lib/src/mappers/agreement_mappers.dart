@@ -25,6 +25,10 @@ extension AgreementToDomainMapper on amplify_model.Agreement {
       physicalDeliveryContext: physicalDeliveryContext?.toDomain(),
       participants: participants,
       lastUpdatedBy: lastUpdatedBy,
+      activeMilestoneId: activeMilestoneId,
+      activeMilestoneStatus: activeMilestoneStatus,
+      activeMilestoneName: activeMilestoneName,
+      activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate?.getDateTime(),
       initiator: initiator?.toDomain(),
       sender: sender?.toDomain(),
       recipient: recipient?.toDomain(),
@@ -55,6 +59,14 @@ extension AgreementToAmplifyMapper on domain.Agreement {
       physicalDeliveryContext: physicalDeliveryContext?.toAmplify(),
       participants: participants,
       lastUpdatedBy: lastUpdatedBy,
+      activeMilestoneId: activeMilestoneId,
+      activeMilestoneStatus: activeMilestoneStatus,
+      activeMilestoneName: activeMilestoneName,
+      activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate != null
+          ? TemporalDate.fromString(
+              DateFormat('yyyy-MM-dd').format(activeMilestoneExpectedReleaseDate!),
+            )
+          : null,
       initiator: initiator?.toAmplify(),
       sender: sender?.toAmplify(),
       recipient: recipient?.toAmplify(),
