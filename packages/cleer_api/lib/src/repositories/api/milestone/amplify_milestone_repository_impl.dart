@@ -20,6 +20,20 @@ class AmplifyMilestoneRepositoryImpl
   AmplifyLogger get log => AmplifyLogger('AmplifyMilestoneRepositoryImpl');
 
   @override
+  Future<ResultDart<Milestone, DataFailure>> getMilestone(String id) async {
+    return await performDataOperation<Milestone>(
+      operation: () async {
+        final response = await _amplifyMilestoneServiceClient.queryMilestone(
+          id,
+        );
+        return response.toDomain();
+      },
+      operationName: 'GetMilestone',
+      targetId: id,
+    );
+  }
+
+  @override
   Future<ResultDart<List<Milestone>, DataFailure>> getMilestonesByAgreement(
     String agreementId,
   ) async {

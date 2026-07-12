@@ -1,6 +1,5 @@
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_core/models/milestone/milestone_enums.dart';
-import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'milestone.freezed.dart';
@@ -18,17 +17,4 @@ abstract class Milestone with _$Milestone {
     List<String>? participants,
     String? lastUpdatedBy,
   }) = _Milestone;
-}
-
-extension MilestoneListX on List<Milestone> {
-  /// Returns the currently active milestone, or the first milestone if all are pending or all are released.
-  /// Assumes the list is already sorted by order.
-  Milestone? get currentlyRunning {
-    return firstWhereOrNull(
-          (milestone) =>
-              milestone.status != MilestoneStatus.pending &&
-              milestone.status != MilestoneStatus.released,
-        ) ??
-        firstOrNull;
-  }
 }
