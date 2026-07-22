@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 
 enum StatusIconType {
   error,
-  errorFlag,
+  warning,          // formerly errorFlag
   secured,
   success,
-  successOutlined,
-  handshake,
-  bellRinging,
+  successSecondary, // formerly successOutlined
+  agreement,        // formerly handshake
+  notification,     // formerly bellRinging
+  unknown,          // formerly questionMark
 }
 
 class StatusCircleIcon extends StatelessWidget {
@@ -24,10 +25,10 @@ class StatusCircleIcon extends StatelessWidget {
     // Resolve styling based on the type
     final double defaultDim = dimension ?? Dimens.size.s100;
 
-    // Handshake uses s50 (50%), others use s60 (60%)
-    final double iconScale = type == StatusIconType.handshake
+    // Agreement (handshake) uses s50 (50%), Warning (errorFlag) uses s80 (80%), others use s60 (60%)
+    final double iconScale = type == StatusIconType.agreement
         ? 0.5
-        : type == .errorFlag
+        : type == StatusIconType.warning
         ? 0.8
         : 0.6;
     final double iconDim = (defaultDim * iconScale);
@@ -52,7 +53,7 @@ class StatusCircleIcon extends StatelessWidget {
             width: Dimens.size.s2,
           ),
         );
-      case StatusIconType.errorFlag:
+      case StatusIconType.warning:
         return BoxDecoration(
           color: context.color.errorLight,
           shape: BoxShape.circle,
@@ -62,7 +63,8 @@ class StatusCircleIcon extends StatelessWidget {
           ),
         );
       case StatusIconType.secured:
-      case StatusIconType.handshake: // Grouped: Blue Border/White Fill
+      case StatusIconType.agreement:
+      case StatusIconType.unknown: // Grouped: Blue Border/White Fill
         return BoxDecoration(
           color: context.color.white,
           shape: BoxShape.circle,
@@ -76,7 +78,7 @@ class StatusCircleIcon extends StatelessWidget {
           color: Color(0xFF007443),
           shape: BoxShape.circle,
         );
-      case StatusIconType.successOutlined: // The new one!
+      case StatusIconType.successSecondary:
         return BoxDecoration(
           color: context.color.white,
           shape: BoxShape.circle,
@@ -85,7 +87,7 @@ class StatusCircleIcon extends StatelessWidget {
             width: Dimens.size.s2,
           ),
         );
-      case StatusIconType.bellRinging:
+      case StatusIconType.notification:
         return BoxDecoration(
           color: context.color.white,
           shape: BoxShape.circle,
@@ -101,17 +103,19 @@ class StatusCircleIcon extends StatelessWidget {
     switch (type) {
       case StatusIconType.error:
         return Assets.images.x.image(height: size);
-      case StatusIconType.errorFlag:
+      case StatusIconType.warning:
         return Assets.images.errorFlag.image(height: size);
       case StatusIconType.secured:
         return Assets.images.shield.image(height: size);
       case StatusIconType.success:
-      case StatusIconType.successOutlined:
+      case StatusIconType.successSecondary:
         return Assets.images.checkmark.image(height: size);
-      case StatusIconType.handshake:
+      case StatusIconType.agreement:
         return Assets.images.handshake.image(height: size);
-      case StatusIconType.bellRinging:
+      case StatusIconType.notification:
         return Assets.images.bellRinging.image(height: size);
+      case StatusIconType.unknown:
+        return Assets.images.questionMark.image(height: size);
     }
   }
 }

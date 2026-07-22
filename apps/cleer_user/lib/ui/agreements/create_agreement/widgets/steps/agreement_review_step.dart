@@ -334,7 +334,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                             mainAxisAlignment: .spaceBetween,
                             children: [
                               Text(
-                                l10n.fundsReleaseDate,
+                                l10n.expectedReleaseDate,
                                 style: context.typo.bodyMedium.copyWith(
                                   fontWeight: AppFontWeights.regular,
                                   color: context.color.grey600,

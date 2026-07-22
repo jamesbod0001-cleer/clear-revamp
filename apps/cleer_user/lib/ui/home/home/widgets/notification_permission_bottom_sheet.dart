@@ -37,7 +37,7 @@ class NotificationPermissionBottomSheet extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          StatusCircleIcon(type: .bellRinging),
+          StatusCircleIcon(type: .notification),
           Gap(Dimens.spacing.sp24),
           Text(
             l10n.wellLetYouKnowWhenItMatters,

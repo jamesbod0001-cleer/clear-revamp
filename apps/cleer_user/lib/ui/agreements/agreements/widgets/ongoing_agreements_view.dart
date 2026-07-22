@@ -4,6 +4,7 @@ import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
+import 'package:cleer/ui/agreements/agreements/widgets/agreement_card_skeleton_list.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/app_empty_state.dart';
@@ -79,7 +80,10 @@ class OngoingAgreementsView extends ConsumerWidget {
               final filteredState = ref.watch(agreementsScreenListProvider);
 
               if (filteredState.isLoading && !filteredState.isReloading) {
-                return const Center(child: CircularProgressIndicator());
+                return Padding(
+                  padding: EdgeInsets.only(top: Dimens.padding.p24),
+                  child: AgreementCardSkeletonList(),
+                );
               }
 
               final filteredOngoingAgreements = filteredState.value;
@@ -121,7 +125,10 @@ class OngoingAgreementsView extends ConsumerWidget {
                         crossAxisCount;
 
                     return SingleChildScrollView(
-                      padding: EdgeInsets.only(top: Dimens.padding.p24, bottom: Dimens.padding.p32),
+                      padding: EdgeInsets.only(
+                        top: Dimens.padding.p24,
+                        bottom: Dimens.padding.p32,
+                      ),
                       child: SizedBox(
                         width: double.infinity,
                         child: Wrap(

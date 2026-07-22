@@ -43,7 +43,7 @@ class SuccessStep extends ConsumerWidget {
                 children: [
                   const Spacer(flex: 148),
                   Gap(Dimens.spacing.sp48),
-                  StatusCircleIcon(type: .successOutlined),
+                  StatusCircleIcon(type: .successSecondary),
                   Gap(Dimens.spacing.sp48),
                   Text(
                     agreement.initiatorRole == .sender

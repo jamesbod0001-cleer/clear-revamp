@@ -170,6 +170,8 @@
   "ongoingAgreements": "Ongoing Agreements",
   "completed": "Completed",
   "noOngoingAgreementsYet": "No ongoing agreement yet.",
+  "noCompletedAgreementsYet": "No completed agreement yet.",
+  "whenYourAgreementsAreCompletedTheyWillAppearHere": "When your agreements are completed, they will appear here.",
   "currentlyProtected": "Currently Protected",
   "totalFundsSecured": "Total Funds Secured",
   "help": "Help",
@@ -252,7 +254,7 @@
   "accountName": "Account Name",
   "category": "Category",
   "fees": "Fees",
-  "fundsReleaseDate": "Funds Release Date",
+  "expectedReleaseDate": "Expected Release Date",
   "confirmAndPay": "Confirm & Pay",
   "ngn": "NGN",
   "secureYourPayment": "Secure your payment",
@@ -700,15 +702,15 @@
   "releasingFunds": "Releasing funds",
   "fundsWillBeReleasedIn2Hours": "Funds will be released in 2 hours",
   "paymentRequested": "Payment Requested",
-  "providerHasFinishedTheWorkAndRequestedTheirFunds": "Provider has finished the work and requested their funds",
-  "milestonePaymentRequested": "Milestone Payment Requested",
-  "providerHasFinishedThisMilestoneAndRequestedItsFunds": "Provider has finished this milestone and requested its funds",
+  "theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds": "The provider has marked this service as complete and requested the release of funds",
+  "providerHasCompletedThisMilestoneAndRequestedItsFunds": "Provider has completed this milestone and requested its funds",
   "active": "Active",
   "packagingAndShipping": "Preparing & shipping",
   "reportIssue": "Report issue",
   "serviceInProgress": "Service in progress",
-  "theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted": "The service provider is currently working on the agreed service. We'll notify you when they mark it as completed.",
-  "theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted": "The service provider is currently working on the active milestone. We'll notify you when they mark it as completed.",
+  "theAgreementIsNowActiveYouWillBeNotifiedWhenTheProviderMarksTheServiceAsCompleted": "The agreement is now active. You'll be notified when the provider marks the service as completed.",
+  "milestoneInProgress": "Milestone in progress",
+  "thisMilestoneIsNowActiveYouWillBeNotifiedOnceTheProviderMarksItAsCompleted": "This milestone is now active, you’ll be notified once the provider marks it as completed",
   "completeAgreedService": "Complete the agreed service",
   "onceYouHaveCompletedTheAgreedWorkNotifyYourClientSoTheyCanReleasePayment": "Once you've completed the agreed work, notify your client so they can release payment.",
   "milestoneCompleted": "Milestone completed?",
@@ -734,8 +736,81 @@
   "yourClientHasBeenNotifiedThatTheServiceIsCompleteAndCanNowReleasePayment": "Your client has been notified that the service is complete and can now release payment.",
   "waitingForMilestonePayment": "Waiting for milestone payment",
   "yourClientHasBeenNotifiedThatThisMilestoneIsCompleteAndCanNowReleasePayment": "Your client has been notified that this milestone is complete and can now release payment.",
-  "approvePaymentRelease": "Approve payment release",
-  "theProviderHasMarkedTheAgreedWorkAsFinished": "The provider has marked the agreed work as finished.",
+  "confirmServiceCompletion": "Confirm Service Completion",
+  "theProviderHasMarkedThisServiceAsCompleteConfirmCompletionToReleaseFunds": "The provider has marked this service as complete. Confirm completion to release funds.",
   "approveMilestoneRelease": "Approve milestone release",
-  "theProviderHasMarkedThisMilestoneAsFinished": "The provider has marked this milestone as finished."
+  "theProviderHasMarkedThisMilestoneAsCompleted": "The provider has marked this milestone as completed.",
+  "releasePayment": "Release Payment",
+  "releaseMilestonePaymentTitle": "Release Milestone {milestoneNumber} Payment",
+  "@releaseMilestonePaymentTitle": {
+    "placeholders": {
+      "milestoneNumber": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+
+  "releasePhysicalGoodsWarningSubtitle": "You're about to release {amount} to {userName}.",
+  "@releasePhysicalGoodsWarningSubtitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦500,000"
+      },
+      "userName": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+
+  "releasePhysicalGoodsWarningBody": "Only continue if:\n• You've received your item.\nOnce funds are released, you'll still have up to 2 hours to report any issues with this agreement.",
+  "@releasePhysicalGoodsWarningBody": {},
+
+  "releaseServiceWarningSubtitle": "You're about to release {amount} to {userName} for the completed service.",
+  "@releaseServiceWarningSubtitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦500,000"
+      },
+      "userName": {
+        "type": "String",
+        "example": "John Doe"
+      }
+    }
+  },
+
+  "releaseServiceWarningBody": "Only continue if:\n• The agreed service has been delivered.\nOnce funds are released, you'll still have up to 2 hours to report any issues with this agreement.",
+  "@releaseServiceWarningBody": {},
+
+  "releaseMilestoneWarningSubtitle": "You're about to release {amount} to {userName} for \"{milestoneName}.\"",
+  "@releaseMilestoneWarningSubtitle": {
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "₦100,000"
+      },
+      "userName": {
+        "type": "String",
+        "example": "John Doe"
+      },
+      "milestoneName": {
+        "type": "String",
+        "example": "UI Design Delivery"
+      }
+    }
+  },
+
+  "releaseMilestoneWarningBody": "Only continue if:\n• This milestone has been completed as agreed.\nOnce funds are released, you'll still have up to 2 hours to report any issues with this milestone.",
+  "@releaseMilestoneWarningBody": {},
+  "theVendor": "the vendor",
+  "theProvider": "the provider",
+  "thisMilestone": "this milestone",
+  "releaseProcessing": "Release Processing",
+  "fundsAreOnTheWay": "Funds are on the way",
+  "theClientHasApprovedTheReleaseTheFundsWillArriveInYourRegisteredPayoutDestinationWithin2Hours": "The client has approved the release. The funds will arrive in your registered payout destination within 2 hours.",
+  "paymentReleased": "Payment Released",
+  "youHaveSuccessfullyApprovedThisPaymentTheFundsAreCurrentlyBeingRoutedToTheProvider": "You have successfully approved this payment. The funds are currently being routed to the provider."
 }

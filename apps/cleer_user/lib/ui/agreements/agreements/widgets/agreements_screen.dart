@@ -1,6 +1,7 @@
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
+import 'package:cleer/ui/agreements/agreements/widgets/completed_agreements_view.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/ongoing_agreements_view.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
@@ -110,7 +111,10 @@ class AgreementsScreen extends HookConsumerWidget {
                 ),
                 child: TabBarView(
                   controller: tabController,
-                  children: [OngoingAgreementsView(), SingleChildScrollView()],
+                  children: const [
+                    OngoingAgreementsView(),
+                    CompletedAgreementsView(),
+                  ],
                 ),
               ),
             ),
@@ -130,8 +134,10 @@ class _TabBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userOngoingAgreementsState = ref.watch(userOngoingAgreementsProvider);
+    final userCompletedAgreementsState = ref.watch(userCompletedAgreementsProvider);
 
     final ongoingAgreements = userOngoingAgreementsState.value;
+    final completedAgreements = userCompletedAgreementsState.value?.items;
 
     return Container(
       height: Dimens.size.s44,
@@ -182,8 +188,31 @@ class _TabBar extends ConsumerWidget {
                 ],
               ],
             ),
+          ),Tab(
+            child: Row(
+              mainAxisSize: .min,
+              children: [
+                Text(l10n.completed),
+                if (completedAgreements != null &&
+                    completedAgreements.isNotEmpty) ...[
+                  Gap(Dimens.spacing.sp6),
+                  Container(
+                    padding: .symmetric(horizontal: Dimens.padding.p5),
+                    decoration: BoxDecoration(
+                      shape: .circle,
+                      color: context.color.blue100,
+                    ),
+                    child: Text(
+                      completedAgreements.length.toString(),
+                      style: context.typo.bodySmall.copyWith(
+                        color: context.color.grey600,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-          Tab(text: l10n.completed),
         ],
       ),
     );

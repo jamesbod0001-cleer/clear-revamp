@@ -29,7 +29,10 @@ class DynamicAgreementHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (agreement.status == AgreementStatus.draft) {
+    if ([
+      AgreementStatus.draft,
+      AgreementStatus.released,
+    ].contains(agreement.status)) {
       return const SizedBox.shrink();
     }
 
@@ -71,24 +74,29 @@ class DynamicAgreementHeader extends StatelessWidget {
 
     if (agreement.status == AgreementStatus.inProgress && deliveryCtx != null) {
       if (isSender) {
-        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingDispatch &&
+        if (deliveryCtx.status ==
+                PhysicalDeliveryContextStatus.awaitingDispatch &&
             deliveryCtx.packagingPhotos != null) {
           return ReviewPackagePhotosCard(agreement: agreement);
         }
-        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement &&
+        if (deliveryCtx.status ==
+                PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement &&
             deliveryCtx.deliveryDetails != null) {
           return ReviewDeliveryInformationCard(agreement: agreement);
         }
       } else if (isRecipient) {
-        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingPackaging) {
+        if (deliveryCtx.status ==
+            PhysicalDeliveryContextStatus.awaitingPackaging) {
           return UploadPackagePhotosCard(agreement: agreement);
         }
-        if (deliveryCtx.status == PhysicalDeliveryContextStatus.awaitingDispatch) {
+        if (deliveryCtx.status ==
+            PhysicalDeliveryContextStatus.awaitingDispatch) {
           return ShareDeliveryInformationCard(agreement: agreement);
         }
       }
     } else if (agreement.status == AgreementStatus.readyForRelease) {
-      if (isSender && deliveryCtx?.status == PhysicalDeliveryContextStatus.inTransit) {
+      if (isSender &&
+          deliveryCtx?.status == PhysicalDeliveryContextStatus.inTransit) {
         return ConfirmItemReceivedCard(agreement: agreement);
       }
     }
@@ -97,7 +105,8 @@ class DynamicAgreementHeader extends StatelessWidget {
 
   Widget? _getServicesAction(bool isSender, bool isRecipient) {
     final isOneTime = agreement.disbursementType == DisbursementType.oneTime;
-    final isMilestones = agreement.disbursementType == DisbursementType.milestones;
+    final isMilestones =
+        agreement.disbursementType == DisbursementType.milestones;
 
     // NEW: We just read the string directly from the Agreement model!
     final activeStatus = agreement.activeMilestoneStatus;
@@ -257,14 +266,16 @@ class AgreementActionBanner extends StatelessWidget {
       case AgreementStatus.inProgress:
         if (agreement.category == AgreementCategory.physicalGoods) {
           if (isSender) {
-            if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.awaitingPackaging) {
+            if (agreement.physicalDeliveryContext?.status ==
+                PhysicalDeliveryContextStatus.awaitingPackaging) {
               return _BannerData(
                 PhosphorIcons.images(PhosphorIconsStyle.duotone),
                 l10n.waitingForPackageImages,
                 l10n.noActionNeededFromYouRightNow,
                 l10n.theVendorIsPreparingYourItemAndUploadingPackagePhotosBeforeShipment,
               );
-            } else if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.awaitingDispatch &&
+            } else if (agreement.physicalDeliveryContext?.status ==
+                    PhysicalDeliveryContextStatus.awaitingDispatch &&
                 agreement.physicalDeliveryContext?.packagingPhotos == null) {
               return _BannerData(
                 PhosphorIcons.truck(PhosphorIconsStyle.duotone),
@@ -274,7 +285,8 @@ class AgreementActionBanner extends StatelessWidget {
               );
             }
           } else if (isRecipient) {
-            if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
+            if (agreement.physicalDeliveryContext?.status ==
+                PhysicalDeliveryContextStatus.awaitingBuyerAcknowledgement) {
               return _BannerData(
                 PhosphorIcons.truck(PhosphorIconsStyle.duotone),
                 l10n.waitingForBuyerConfirmation,
@@ -284,14 +296,35 @@ class AgreementActionBanner extends StatelessWidget {
             }
           }
         } else if (agreement.category == AgreementCategory.servicesWork) {
+          if (agreement.disbursementType == DisbursementType.milestones &&
+              activeStatus == 'PROCESSING_RELEASE') {
+            if (isRecipient) {
+              return _BannerData(
+                PhosphorIcons.hourglass(PhosphorIconsStyle.duotone),
+                l10n.releaseProcessing,
+                l10n.fundsAreOnTheWay,
+                l10n.theClientHasApprovedTheReleaseTheFundsWillArriveInYourRegisteredPayoutDestinationWithin2Hours,
+              );
+            } else if (isSender) {
+              return _BannerData(
+                PhosphorIcons.checkCircle(PhosphorIconsStyle.duotone),
+                l10n.releaseProcessing,
+                l10n.paymentReleased,
+                l10n.youHaveSuccessfullyApprovedThisPaymentTheFundsAreCurrentlyBeingRoutedToTheProvider,
+              );
+            }
+          }
+
           if (isSender) {
             return _BannerData(
               PhosphorIcons.gear(PhosphorIconsStyle.duotone),
-              l10n.serviceInProgress,
+              agreement.disbursementType == DisbursementType.milestones
+                  ? l10n.milestoneInProgress
+                  : l10n.serviceInProgress,
               l10n.noActionNeededFromYouRightNow,
               agreement.disbursementType == DisbursementType.milestones
-                  ? l10n.theServiceProviderIsCurrentlyWorkingOnTheActiveMilestoneWeWillNotifyYouWhenTheyMarkItAsCompleted
-                  : l10n.theServiceProviderIsCurrentlyWorkingOnTheAgreedServiceWeWillNotifyYouWhenTheyMarkItAsCompleted,
+                  ? l10n.thisMilestoneIsNowActiveYouWillBeNotifiedOnceTheProviderMarksItAsCompleted
+                  : l10n.theAgreementIsNowActiveYouWillBeNotifiedWhenTheProviderMarksTheServiceAsCompleted,
             );
           } else if (isRecipient && activeStatus == 'READY_FOR_RELEASE') {
             // NEW: Reading straight from the denormalized string
@@ -301,7 +334,8 @@ class AgreementActionBanner extends StatelessWidget {
               l10n.noActionNeededFromYouRightNow,
               l10n.yourClientHasBeenNotifiedThatThisMilestoneIsCompleteAndCanNowReleasePayment,
             );
-          } else if (isRecipient && agreement.status == AgreementStatus.funded) {
+          } else if (isRecipient &&
+              agreement.status == AgreementStatus.funded) {
             return _BannerData(
               PhosphorIcons.gear(PhosphorIconsStyle.duotone),
               l10n.completeAgreedService,
@@ -314,7 +348,8 @@ class AgreementActionBanner extends StatelessWidget {
 
       case AgreementStatus.readyForRelease:
         if (agreement.category == AgreementCategory.physicalGoods) {
-          if (agreement.physicalDeliveryContext?.status == PhysicalDeliveryContextStatus.inTransit) {
+          if (agreement.physicalDeliveryContext?.status ==
+              PhysicalDeliveryContextStatus.inTransit) {
             return _BannerData(
               PhosphorIcons.truck(PhosphorIconsStyle.duotone),
               l10n.waitingForBuyerVerification,
@@ -322,7 +357,8 @@ class AgreementActionBanner extends StatelessWidget {
               l10n.theBuyerHasNotYetVerifiedPickup,
             );
           }
-        } else if (agreement.category == AgreementCategory.servicesWork && isRecipient) {
+        } else if (agreement.category == AgreementCategory.servicesWork &&
+            isRecipient) {
           return _BannerData(
             PhosphorIcons.hourglass(PhosphorIconsStyle.duotone),
             l10n.waitingForPayment,
@@ -332,10 +368,33 @@ class AgreementActionBanner extends StatelessWidget {
         }
         break;
 
+      case AgreementStatus.processingRelease:
+        if (isRecipient) {
+          return _BannerData(
+            PhosphorIcons.hourglass(PhosphorIconsStyle.duotone),
+            l10n.releaseProcessing,
+            l10n.fundsAreOnTheWay,
+            l10n.theClientHasApprovedTheReleaseTheFundsWillArriveInYourRegisteredPayoutDestinationWithin2Hours,
+          );
+        } else if (isSender) {
+          return _BannerData(
+            PhosphorIcons.checkCircle(PhosphorIconsStyle.duotone),
+            l10n.releaseProcessing,
+            l10n.paymentReleased,
+            l10n.youHaveSuccessfullyApprovedThisPaymentTheFundsAreCurrentlyBeingRoutedToTheProvider,
+          );
+        }
+        break;
+
       default:
         break;
     }
 
-    return _BannerData(PhosphorIcons.info(PhosphorIconsStyle.duotone), kEmpty, kEmpty, kEmpty);
+    return _BannerData(
+      PhosphorIcons.info(PhosphorIconsStyle.duotone),
+      kEmpty,
+      kEmpty,
+      kEmpty,
+    );
   }
 }

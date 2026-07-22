@@ -79,6 +79,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                 if (![
                   AgreementStatus.awaitingFunding,
                   AgreementStatus.awaitingRecipient,
+                  AgreementStatus.released,
                 ].contains(agreement.status))
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
@@ -174,7 +175,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                   ),
                 ),
                 Gap(Dimens.spacing.sp24),
-                StatusCircleIcon(type: .handshake),
+                StatusCircleIcon(type: .agreement),
               ],
             ),
           ],
@@ -254,7 +255,9 @@ class AgreementDetailsScreen extends ConsumerWidget {
                               ? Dimens.spacing.sp24
                               : Dimens.spacing.sp16,
                         ),
-                      ] else
+                      ] else if(![
+                        AgreementStatus.released,
+                      ].contains(agreement.status))
                         Gap(Dimens.spacing.sp48),
                       agreementStatusHistoryState.maybeWhen(
                         /// TODO: Show proper error here
@@ -363,7 +366,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                               mainAxisAlignment: .spaceBetween,
                               children: [
                                 Text(
-                                  l10n.fundsReleaseDate,
+                                  l10n.expectedReleaseDate,
                                   style: context.typo.bodyMedium.copyWith(
                                     fontWeight: AppFontWeights.regular,
                                     color: context.color.grey600,

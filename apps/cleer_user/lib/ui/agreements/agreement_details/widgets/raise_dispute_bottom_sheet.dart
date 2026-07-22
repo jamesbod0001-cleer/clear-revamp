@@ -24,7 +24,7 @@ class RaiseDisputeBottomSheet extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StatusCircleIcon(type: .errorFlag),
+        StatusCircleIcon(type: .warning),
         Gap(Dimens.spacing.sp24),
         Text(
           l10n.reportAnIssueWithThisAgreement,

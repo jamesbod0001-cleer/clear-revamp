@@ -26,7 +26,7 @@ class PaymentSecuredSuccessfullyStep extends ConsumerWidget {
         child: Column(
           mainAxisSize: .min,
           children: [
-            StatusCircleIcon(type: .successOutlined),
+            StatusCircleIcon(type: .successSecondary),
             Gap(Dimens.spacing.sp48),
             Text(
               l10n.paymentSecuredSuccessfully,

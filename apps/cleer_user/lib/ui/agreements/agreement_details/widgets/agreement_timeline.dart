@@ -346,9 +346,9 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
               }
               final List<Step> steps = [
                 Step(
-                  title: l10n.milestonePaymentRequested,
+                  title: l10n.paymentRequested,
                   subtitle:
-                      l10n.providerHasFinishedThisMilestoneAndRequestedItsFunds,
+                      l10n.providerHasCompletedThisMilestoneAndRequestedItsFunds,
                   state: statusDates[MilestoneStatus.readyForRelease] != null
                       ? StepState.completed
                       : StepState.pending,
@@ -492,7 +492,7 @@ class _StandardTimeline extends ConsumerWidget {
         steps.add(
           Step(
             title: l10n.paymentRequested,
-            subtitle: l10n.providerHasFinishedTheWorkAndRequestedTheirFunds,
+            subtitle: l10n.theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds,
             state: readyDate != null ? StepState.completed : StepState.pending,
             date: readyDate,
           ),
@@ -562,7 +562,7 @@ class _StandardTimeline extends ConsumerWidget {
         steps.add(
           Step(
             title: l10n.paymentRequested,
-            subtitle: l10n.providerHasFinishedTheWorkAndRequestedTheirFunds,
+            subtitle: l10n.theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds,
             state: readyDate != null ? StepState.completed : StepState.pending,
             date: readyDate,
           ),
