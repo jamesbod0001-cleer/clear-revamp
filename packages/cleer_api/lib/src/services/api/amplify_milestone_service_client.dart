@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:cleer_api/src/exceptions/backend_exception.dart';
 import 'package:cleer_api/src/models/Milestone.dart';
 import 'package:cleer_api/src/models/StatusHistory.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -86,5 +89,24 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
     );
     final response = await _amplifyAPI.mutate(request: request).response;
     return validateRequiredResponse(response);
+  }
+
+  /// Fetches the authoritative AWS Server Time
+  Future<TemporalDateTime> getServerTime() async {
+    const String document = '''
+      query GetServerTime {
+        getServerTime
+      }
+    ''';
+
+    final request = GraphQLRequest<String>(document: document);
+    final response = await _amplifyAPI.query(request: request).response;
+
+    if (response.hasErrors || response.data == null) {
+      throw BackendException('Failed to fetch server time: ${response.errors}');
+    }
+
+    final Map<String, dynamic> data = jsonDecode(response.data!);
+    return TemporalDateTime.fromString(data['getServerTime']);
   }
 }

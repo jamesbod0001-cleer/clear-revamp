@@ -14,6 +14,11 @@ abstract class MilestoneRepository {
     required String currentUserId,
   });
 
+  Future<ResultDart<Milestone, DataFailure>> releaseFunds(
+    String id, {
+    required String currentUserId,
+  });
+
   Stream<Milestone> observeAgreementMilestonesUpdates(String agreementId);
 
   Future<ResultDart<List<StatusHistory>, DataFailure>>

@@ -79,13 +79,68 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
           currency
           category
           description
-          initiatorId
-          recipientAccountNumber
-          recipientBankCode
           status
           createdAt
           disbursementType
           initiatorRole
+          expectedReleaseDate
+          lastUpdatedBy
+          participants
+          physicalDeliveryContext {
+            status
+            packagingPhotos {
+              key
+              blurHash
+              width
+              height
+              altText
+            }
+            deliveryDetails {
+              driverPhoneNumber
+              additionalDetails
+              photos {
+                key
+                blurHash
+                width
+                height
+                altText
+              }
+              arrangedBy
+            }
+          }
+          releaseEligibleAt
+          updatedAt
+          initiator {
+            id
+            identityId
+            firstName
+            lastName
+            phoneNumber
+            flutterwaveCustomerId
+          }
+          sender {
+            id
+            identityId
+            firstName
+            lastName
+            phoneNumber
+            flutterwaveCustomerId
+          }
+          recipient {
+            id
+            identityId
+            firstName
+            lastName
+            phoneNumber
+            flutterwaveCustomerId
+          }
+          payoutDestination {
+            accountNumber
+            bankCode
+            bankName
+            accountName
+            currency
+          }
         }
         nextToken
       }

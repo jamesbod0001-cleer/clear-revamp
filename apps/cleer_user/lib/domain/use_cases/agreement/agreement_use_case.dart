@@ -480,4 +480,29 @@ class AgreementUseCase extends _$AgreementUseCase {
     );
     return result;
   }
+
+  Future<ResultDart<Agreement, DataFailure>> releaseFunds(String id) async {
+    _log.info('Attempting to get user');
+    final user = ref.read(userProfileProvider).value;
+    if (user == null) {
+      _log.error('User state is missing');
+      return Failure(DataFailure.notFound());
+    }
+
+    _log.info('Attempting to release funds for agreement: $id');
+    final result = await _agreementRepository.releaseFunds(
+      id,
+      currentUserId: user.id,
+    );
+    result.fold(
+      (agreement) {
+        _log.info('Successfully released funds for agreement');
+      },
+      (failure) {
+        _log.error('Error releasing funds for agreement', failure);
+        return Failure(failure);
+      },
+    );
+    return result;
+  }
 }

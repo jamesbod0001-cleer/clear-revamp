@@ -13,6 +13,7 @@ abstract class Milestone with _$Milestone {
     required double amount,
     required MilestoneStatus status,
     required DateTime expectedReleaseDate,
+    DateTime? releaseEligibleAt,
     Agreement? agreement,
     List<String>? participants,
     String? lastUpdatedBy,

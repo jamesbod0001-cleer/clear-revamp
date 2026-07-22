@@ -3,6 +3,7 @@ import 'package:cleer_api/src/mappers/milestone_mappers.dart';
 import 'package:cleer_api/src/mappers/status_history_mappers.dart';
 import 'package:cleer_api/src/services/api/amplify_milestone_service_client.dart';
 import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer_core/models/milestone/milestone_enums.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:cleer_api/src/repositories/api/mixins/amplify_api_repository_mixin.dart';
 import 'package:cleer_api/src/models/ModelProvider.dart' as amplify_model;
@@ -86,6 +87,38 @@ class AmplifyMilestoneRepositoryImpl
       },
       operationName: 'UpdateMilestone',
       targetId: milestone.id,
+    );
+  }
+
+  @override
+  Future<ResultDart<Milestone, DataFailure>> releaseFunds(
+    String id, {
+    required String currentUserId,
+  }) async {
+    return await performDataOperation<Milestone>(
+      operation: () async {
+        final response = await _amplifyMilestoneServiceClient.queryMilestone(
+          id,
+        );
+        final Milestone milestone = response.toDomain();
+        final serverTime = await _amplifyMilestoneServiceClient.getServerTime();
+        final releaseEligibleTime = serverTime.getDateTimeInUtc().toLocal().add(
+          const Duration(hours: 2),
+        );
+        final updatedResponse = await _amplifyMilestoneServiceClient
+            .updateMilestone(
+              milestone
+                  .copyWith(
+                    lastUpdatedBy: currentUserId,
+                    status: MilestoneStatus.processingRelease,
+                    releaseEligibleAt: releaseEligibleTime,
+                  )
+                  .toAmplify(),
+            );
+        return updatedResponse.toDomain();
+      },
+      operationName: 'ReleaseFunds',
+      targetId: id,
     );
   }
 

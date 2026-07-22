@@ -27,4 +27,8 @@ abstract class AgreementRepository {
     String shortCode,
   );
   Future<ResultDart<String, DataFailure>> joinAgreement(String shortCode);
+  Future<ResultDart<Agreement, DataFailure>> releaseFunds(
+    String id, {
+    required String currentUserId,
+  });
 }

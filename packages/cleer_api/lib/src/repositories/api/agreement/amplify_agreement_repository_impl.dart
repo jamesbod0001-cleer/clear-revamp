@@ -169,6 +169,11 @@ class AmplifyAgreementRepositoryImpl
                       amplify_model.Agreement.STATUS.eq(
                         amplify_model.AgreementStatus.READY_FOR_RELEASE,
                       ),
+                    )
+                    .or(
+                      amplify_model.Agreement.STATUS.eq(
+                        amplify_model.AgreementStatus.PROCESSING_RELEASE,
+                      ),
                     ),
               ),
             );
@@ -222,6 +227,48 @@ class AmplifyAgreementRepositoryImpl
       },
       operationName: 'JoinAgreement',
       targetId: shortCode,
+    );
+  }
+
+  @override
+  Future<ResultDart<Agreement, DataFailure>> releaseFunds(
+    String id, {
+    required String currentUserId,
+  }) async {
+    return await performDataOperation<Agreement>(
+      operation: () async {
+        final response = await _amplifyAgreementServiceClient.queryAgreement(
+          id,
+        );
+        final Agreement agreement = response.toDomain();
+        if (agreement.disbursementType == DisbursementType.oneTime) {
+          final serverTime = await _amplifyAgreementServiceClient
+              .getServerTime();
+          final releaseEligibleTime = serverTime
+              .getDateTimeInUtc()
+              .toLocal()
+              .add(const Duration(hours: 2));
+          final updatedResponse = await _amplifyAgreementServiceClient
+              .updateAgreement(
+                agreement
+                    .copyWith(
+                      lastUpdatedBy: currentUserId,
+                      status: AgreementStatus.processingRelease,
+                      releaseEligibleAt: releaseEligibleTime,
+                    )
+                    .toAmplify(),
+              );
+          return (await _amplifyAgreementServiceClient.queryAgreement(
+            updatedResponse.id,
+          )).toDomain();
+        } else {
+          throw BackendException(
+            'This function is only meant to be called for agreements with one time disbursement type.',
+          );
+        }
+      },
+      operationName: 'ReleaseFunds',
+      targetId: id,
     );
   }
 

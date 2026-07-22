@@ -79,4 +79,29 @@ class MilestoneUseCase extends _$MilestoneUseCase {
     );
     return result;
   }
+
+  Future<ResultDart<Milestone, DataFailure>> releaseFunds(String id) async {
+    _log.info('Attempting to get user');
+    final user = ref.read(userProfileProvider).value;
+    if (user == null) {
+      _log.error('User state is missing');
+      return Failure(DataFailure.notFound());
+    }
+
+    _log.info('Attempting to release funds for milestone: $id');
+    final result = await _milestoneRepository.releaseFunds(
+      id,
+      currentUserId: user.id,
+    );
+    result.fold(
+      (milestone) {
+        _log.info('Successfully released funds for milestone');
+      },
+      (failure) {
+        _log.error('Error releasing funds for milestone', failure);
+        return Failure(failure);
+      },
+    );
+    return result;
+  }
 }
