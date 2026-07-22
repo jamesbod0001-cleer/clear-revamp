@@ -10,6 +10,7 @@ export const PayoutDestination = a.model({
 
     user: a.belongsTo('User', 'userId'),
     agreements: a.hasMany('Agreement', ['recipientAccountNumber', 'recipientBankCode']),
+    payouts: a.hasMany('Payout', ['recipientAccountNumber', 'recipientBankCode']),
 }).identifier(['accountNumber', 'bankCode'])
     .authorization(allow => [
         allow.authenticated().to(['create', 'read', 'delete']),

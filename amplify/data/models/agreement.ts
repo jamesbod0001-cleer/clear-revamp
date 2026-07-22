@@ -40,8 +40,11 @@ export const Agreement = a.model({
     activeMilestoneName: a.string(),
     activeMilestoneExpectedReleaseDate: a.date(),
 
+    releaseEligibleAt: a.datetime(),
+
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
+    payouts: a.hasMany('Payout', 'agreementId'),
     initiator: a.belongsTo('User', 'initiatorId'),
     sender: a.belongsTo('User', 'senderId'),
     recipient: a.belongsTo('User', 'recipientId'),

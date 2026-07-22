@@ -67,3 +67,88 @@ export async function updatePaymentSuccess(
         }
     }
 }
+
+export async function updateTransactionFailed(transactionId: string) {
+    const txUpdate = await client.models.Transaction.update({
+        id: transactionId,
+        status: 'FAILED'
+    });
+
+    if (txUpdate.errors) {
+        logger.error('Failed to update Transaction to FAILED', { errors: txUpdate.errors });
+    }
+}
+
+export async function findPayoutByRef(reference: string) {
+    const { data, errors } = await client.models.Payout.list({
+        filter: { reference: { eq: reference } }
+    });
+    if (errors) logger.error('Failed to list payouts', { errors });
+    return data?.[0];
+}
+
+export async function updatePayoutSuccess(
+    payoutId: string,
+    agreementId: string,
+    milestoneId?: string | null
+) {
+    const updaterIdentifier = 'FLUTTERWAVE_WEBHOOK';
+
+    // 1. Mark Payout as SUCCESSFUL
+    const payoutUpdate = await client.models.Payout.update({
+        id: payoutId,
+        status: 'SUCCESSFUL'
+    });
+    if (payoutUpdate.errors) logger.error('Failed to update Payout', { errors: payoutUpdate.errors });
+
+    // 2. If this was a Milestone payout, close the Milestone
+    if (milestoneId) {
+        const msUpdate = await client.models.Milestone.update({
+            id: milestoneId,
+            status: 'RELEASED',
+            lastUpdatedBy: updaterIdentifier
+        });
+        if (msUpdate.errors) logger.error('Failed to update Milestone', { errors: msUpdate.errors });
+
+        // NEW: Check if this was the final milestone
+        const { data: allMilestones, errors: msErrors } = await client.models.Milestone.list({
+            filter: { agreementId: { eq: agreementId } }
+        });
+
+        if (!msErrors && allMilestones) {
+            // Because DynamoDB is eventually consistent, we check if all OTHER milestones are released
+            const allReleased = allMilestones.every(m => m.id === milestoneId || m.status === 'RELEASED');
+
+            if (allReleased) {
+                logger.info(`All milestones released. Closing parent agreement: ${agreementId}`);
+                const agreeUpdate = await client.models.Agreement.update({
+                    id: agreementId,
+                    status: 'RELEASED',
+                    lastUpdatedBy: updaterIdentifier
+                });
+                if (agreeUpdate.errors) logger.error('Failed to update Agreement', { errors: agreeUpdate.errors });
+            }
+        }
+    }
+    // 3. Otherwise, close the core Agreement directly
+    else {
+        const agreeUpdate = await client.models.Agreement.update({
+            id: agreementId,
+            status: 'RELEASED',
+            lastUpdatedBy: updaterIdentifier
+        });
+        if (agreeUpdate.errors) logger.error('Failed to update Agreement', { errors: agreeUpdate.errors });
+    }
+}
+
+export async function updatePayoutFailed(payoutId: string, failureReason: string) {
+    const payoutUpdate = await client.models.Payout.update({
+        id: payoutId,
+        status: 'FAILED',
+        failureReason: failureReason
+    });
+
+    if (payoutUpdate.errors) {
+        logger.error('Failed to update Payout to FAILED', { errors: payoutUpdate.errors });
+    }
+}

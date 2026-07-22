@@ -12,6 +12,10 @@ import { StreamViewType } from 'aws-cdk-lib/aws-dynamodb';
 
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
+import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { Duration } from 'aws-cdk-lib/core';
+
 import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
 import { previewAgreement } from "./functions/preview-agreement/resource";
 import { logAgreementStatus } from "./functions/log-agreement-status/resource";
@@ -19,6 +23,7 @@ import { logMilestoneStatus } from "./functions/log-milestone-status/resource";
 import { generateAgreementActivity } from "./functions/generate-agreement-activity/resource";
 import { dispatchActivityNotification } from "./functions/dispatch-activity-notification/resource";
 import {syncMilestoneToAgreement} from "./functions/sync-milestone-to-agreement/resource";
+import {processPayouts} from "./functions/process-payouts/resource";
 
 const backend = defineBackend({
     auth,
@@ -31,6 +36,7 @@ const backend = defineBackend({
     generateAgreementActivity,
     dispatchActivityNotification,
     syncMilestoneToAgreement,
+    processPayouts
 });
 
 // --- Auth Overrides ---
@@ -160,3 +166,15 @@ const pinpointStatement = new PolicyStatement({
 
 backend.auth.resources.authenticatedUserIamRole.addToPrincipalPolicy(pinpointStatement);
 backend.auth.resources.unauthenticatedUserIamRole.addToPrincipalPolicy(pinpointStatement);
+
+
+const payoutLambda = backend.processPayouts.resources.lambda;
+// Create the EventBridge Rule for the 5-Minute CRON Schedule
+const customResourceStack = backend.createStack('CustomInfrastructureStack');
+
+const cronRule = new Rule(customResourceStack, 'ProcessPayoutsSweeperSchedule', {
+    // Wakes the Lambda up every 5 minutes
+    schedule: Schedule.rate(Duration.minutes(5)),
+});
+
+cronRule.addTarget(new LambdaFunction(payoutLambda));

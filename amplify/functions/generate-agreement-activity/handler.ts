@@ -111,50 +111,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 }
 
                 // ==========================================
-                // FLOW 3: POST-FUNDING CORE STATUSES (Both Flows)
-                // ==========================================
-                // Once an agreement moves past FUNDED, the sender/recipient roles act exactly the same way.
-                if (isStatusChanged && senderId && recipientId) {
-                    switch (newStatus) {
-                        case 'IN_PROGRESS':
-                            if (newItem.category === 'physical_goods') {
-                                await notify(senderId, 'Packaging Started', 'The vendor has started preparing your order for dispatch.', 'AGREEMENT');
-                            } else {
-                                await notify(senderId, 'Work Started', 'The provider has officially begun working on your service.', 'AGREEMENT');
-                                await notify(recipientId, 'Service In Progress', 'You have officially started the work. The client has been notified.', 'AGREEMENT');
-                            }
-                            break;
-
-                        case 'READY_FOR_RELEASE':
-                            // I am thinking that because of this in transit notifications sent the user should not receive another notification again when in ready for release for physical goods
-                            if (newItem.category === 'physical_goods') {
-                                await notify(senderId, 'Confirm Item Received', 'Your item is on its way. Please confirm receipt once it arrives to release the funds.', 'AGREEMENT');
-                                await notify(recipientId, 'Awaiting Buyer Confirmation', 'The buyer has been notified to confirm receipt of the item.', 'AGREEMENT');
-                            } else {
-                                await notify(senderId, 'Approve Payment Release', 'The provider has marked the agreed work as finished. Please approve their payment.', 'AGREEMENT');
-                                await notify(recipientId, 'Payment Requested', 'You have marked the work as finished. Waiting for the client to approve payment.', 'AGREEMENT');
-                            }
-                            break;
-
-                        case 'PROCESSING_RELEASE':
-                            if (newItem.category === 'physical_goods') {
-                                await notify(senderId, 'Release Initiated', 'You confirmed receipt of the item. Funds will be released in 2 hours.', 'PAYMENT');
-                                await notify(recipientId, 'Item Received', 'The buyer confirmed receipt! Funds will be released to your wallet in 2 hours.', 'PAYMENT');
-                            } else {
-                                await notify(senderId, 'Release Initiated', 'You approved the payment. Funds will be released in 2 hours.', 'PAYMENT');
-                                await notify(recipientId, 'Payment Approved', 'The client approved the payment! Funds will be released to your wallet in 2 hours.', 'PAYMENT');
-                            }
-                            break;
-
-                        case 'RELEASED':
-                            await notify(senderId, 'Agreement Completed', 'The agreement has been successfully completed.', 'AGREEMENT');
-                            await notify(recipientId, 'Funds Released', 'The funds have been successfully released to your wallet.', 'PAYMENT');
-                            break;
-                    }
-                }
-
-                // ==========================================
-                // FLOW 4: PHYSICAL DELIVERY TRACKING
+                // FLOW 3: PHYSICAL DELIVERY TRACKING
                 // ==========================================
                 if (isDeliveryStatusChanged && senderId && recipientId) {
                     const buyerId = senderId;
@@ -164,28 +121,60 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                         case 'AWAITING_DISPATCH':
                             const hasPackagingPhotos = newItem.physicalDeliveryContext.packagingPhotos && newItem.physicalDeliveryContext.packagingPhotos.length > 0;
                             if (hasPackagingPhotos) {
-                                await notify(vendorId, 'Packaging Uploaded', 'You uploaded the packaging photos.', 'DELIVERY');
-                                await notify(buyerId, 'Packaging Uploaded', 'Vendor has uploaded the packaging photos.', 'DELIVERY');
+                                await notify(vendorId, 'Packaging Photos Uploaded', 'Packaging photos have been uploaded for this agreement.', 'DELIVERY');
+                                await notify(buyerId, 'Packaging Photos Uploaded', 'Packaging photos have been uploaded for this agreement.', 'DELIVERY');
                             } else {
-                                await notify(vendorId, 'Packaging Skipped', 'You skipped uploading packaging photos.', 'DELIVERY');
-                                await notify(buyerId, 'Packaging Skipped', 'Vendor skipped uploading packaging photos.', 'DELIVERY');
+                                await notify(vendorId, 'Packaging Skipped', 'You chose not to upload packaging photos.', 'DELIVERY');
+                                await notify(buyerId, 'Packaging Skipped', 'Packaging photos were not added to this agreement.', 'DELIVERY');
                             }
                             break;
 
                         case 'AWAITING_BUYER_ACKNOWLEDGEMENT':
-                            await notify(vendorId, 'Details Shared', 'You shared the delivery details.', 'DELIVERY');
-                            await notify(buyerId, 'Details Shared', 'Vendor has shared the delivery details for your review.', 'DELIVERY');
+                            await notify(vendorId, 'Delivery Details Shared', 'Delivery details have been shared for this agreement.', 'DELIVERY');
+                            await notify(buyerId, 'Delivery Details Shared', 'Delivery details have been shared for this agreement.', 'DELIVERY');
                             break;
 
                         case 'IN_TRANSIT':
-                            // I am thinking that because of this in transit notifications sent the user should not receive another notification again when in ready for release for physical goods
                             if (oldDeliveryStatus === 'AWAITING_DISPATCH') {
-                                await notify(vendorId, 'Details Skipped', 'You skipped sharing delivery details.', 'DELIVERY');
-                                await notify(buyerId, 'Details Skipped', 'Vendor skipped sharing delivery details. Item is in transit.', 'DELIVERY');
+                                await notify(vendorId, 'Delivery Details Skipped', 'You skipped sharing delivery details.', 'DELIVERY');
+                                await notify(buyerId, 'Delivery Details Skipped', 'Delivery details were not provided for this agreement.', 'DELIVERY');
                             } else if (oldDeliveryStatus === 'AWAITING_BUYER_ACKNOWLEDGEMENT') {
-                                await notify(vendorId, 'Details Confirmed', 'Buyer acknowledged the delivery details. Item is now in transit.', 'DELIVERY');
-                                await notify(buyerId, 'Details Confirmed', 'You acknowledged the delivery details. Item is in transit.', 'DELIVERY');
+                                await notify(vendorId, 'Delivery Details Confirmed', 'Delivery details have been acknowledged. This agreement is now awaiting delivery confirmation.', 'DELIVERY');
+                                await notify(buyerId, 'Delivery Details Confirmed', 'You confirmed the delivery information. This agreement is now in transit.', 'DELIVERY');
                             }
+                            break;
+                    }
+                }
+
+                // ==========================================
+                // FLOW 4: POST-FUNDING CORE STATUSES (Both Flows)
+                // ==========================================
+                // Once an agreement moves past FUNDED, the sender/recipient roles act exactly the same way.
+                if (isStatusChanged && senderId && recipientId) {
+                    switch (newStatus) {
+                        case 'READY_FOR_RELEASE':
+                            if (newItem.category === 'physical_goods') {
+                                await notify(senderId, 'Confirm Item Received', "Confirm receipt once you've received your item. You'll have 2 hours to report any issues after delivery.", 'AGREEMENT');
+                                await notify(recipientId, 'Awaiting Buyer Confirmation', 'Waiting for the buyer to confirm receipt of the item.', 'AGREEMENT');
+                            } else {
+                                await notify(senderId, 'Approve Payment Release', 'The provider has marked this service as completed. Confirm completion to release the payment.', 'AGREEMENT');
+                                await notify(recipientId, 'Payment Requested', 'You marked this service as complete. Funds will be released once the client confirms completion.', 'AGREEMENT');
+                            }
+                            break;
+
+                        case 'PROCESSING_RELEASE':
+                            if (newItem.category === 'physical_goods') {
+                                await notify(senderId, 'Release Initiated', 'You confirmed receipt of the item. Funds will be released in 2 hours.', 'PAYMENT');
+                                await notify(recipientId, 'Item Received', 'The buyer confirmed receipt! Funds will be released to your payout destination in 2 hours.', 'PAYMENT');
+                            } else {
+                                await notify(senderId, 'Release Initiated', 'You approved the payment. Funds will be released in 2 hours.', 'PAYMENT');
+                                await notify(recipientId, 'Payment Approved', 'The client approved the payment! Funds will be released to your payout destination in 2 hours.', 'PAYMENT');
+                            }
+                            break;
+
+                        case 'RELEASED':
+                            await notify(senderId, 'Agreement Completed', 'The agreement has been successfully completed.', 'AGREEMENT');
+                            await notify(recipientId, 'Funds Released', 'The funds have been successfully released to your payout destination.', 'PAYMENT');
                             break;
                     }
                 }
@@ -198,12 +187,12 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 
                     switch (newMilestoneStatus) {
                         case 'IN_PROGRESS':
-                            await notify(senderId, 'Milestone Started', `The provider has begun working on ${milestoneName}.`, 'AGREEMENT');
-                            await notify(recipientId, 'Milestone In Progress', `You started working on ${milestoneName}.`, 'AGREEMENT');
+                            await notify(senderId, 'Milestone Active', `This milestone ${milestoneName} is now active, you’ll be notified once the provider marks it as completed.`, 'AGREEMENT');
+                            await notify(recipientId, 'Milestone In Progress', `This milestone ${milestoneName} is now active. Notify your client when you've completed it.`, 'AGREEMENT');
                             break;
 
                         case 'READY_FOR_RELEASE':
-                            await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Please review and approve the payment.`, 'AGREEMENT');
+                            await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT');
                             await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT');
                             break;
 
@@ -214,7 +203,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
 
                         case 'RELEASED':
                             await notify(senderId, 'Milestone Completed', `${milestoneName} has been successfully completed.`, 'AGREEMENT');
-                            await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your wallet.`, 'PAYMENT');
+                            await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your payout destination.`, 'PAYMENT');
                             break;
                     }
                 }

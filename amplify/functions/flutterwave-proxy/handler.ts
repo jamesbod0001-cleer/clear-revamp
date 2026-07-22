@@ -1,10 +1,14 @@
+// amplify/functions/flutterwave-proxy/handler.ts
+
 import type { Schema } from "../../data/resource";
 import { env } from '$amplify/env/flutterwave-proxy';
 import { Logger } from "@aws-lambda-powertools/logger";
+// Import the centralized base URL utility
+import { getBaseUrl, getAccessToken as fetchNewToken } from "../shared/flutterwave.client";
 
 const logger = new Logger({ logLevel: "INFO", serviceName: "flutterwave-proxy" });
 
-// Cold start cache variables preserved in the warm container
+// Cold start cache variables preserved in the warm container memory
 let cachedToken: string | null = null;
 let tokenExpiryTime: number = 0;
 
@@ -14,17 +18,14 @@ export const handler: Schema["flutterwaveProxy"]["functionHandler"] = async (eve
     logger.info("--- PROXY INVOCATION START ---", { method, endpoint });
 
     try {
-        // All retry logic is now handled cleanly by the helper function
         const responseData = await executeWithTokenRetry(method, endpoint, payload, headers);
-
         logger.info("Proxy request successful");
         return JSON.stringify(responseData);
 
     } catch (error: any) {
-        // We only catch errors ONCE here at the top level
         if (error.name && error.name !== 'Error') {
             logger.error(`[Proxy Error] Code: ${error.name}`, { error_message: error.message });
-            throw error; // AppSync maps this error.name to errorType
+            throw error;
         }
 
         logger.error('Unhandled Proxy Error', { error });
@@ -36,10 +37,6 @@ export const handler: Schema["flutterwaveProxy"]["functionHandler"] = async (eve
 
 // --- HELPER FUNCTIONS ---
 
-/**
- * Handles fetching the token and executing the request.
- * If the token is rejected (10401), it forces a refresh and retries once.
- */
 async function executeWithTokenRetry(
     method: string,
     endpoint: string,
@@ -49,23 +46,17 @@ async function executeWithTokenRetry(
     let token = await getAccessToken();
 
     try {
-        // First attempt
         return await proxyRequest(method, endpoint, token, payload, headers);
     } catch (error: any) {
-        // If unauthorized, clear cache and retry exactly once
         if (error.name === '10401') {
             logger.warn("Cached token was rejected by Flutterwave. Forcing refresh and retry...");
 
             cachedToken = null;
             tokenExpiryTime = 0;
 
-            token = await getAccessToken(); // Fetch new token
-
-            // Second attempt (if this fails, it throws directly to the main handler)
+            token = await getAccessToken();
             return await proxyRequest(method, endpoint, token, payload, headers);
         }
-
-        // Any other error is thrown directly to the main handler, avoiding local catches
         throw error;
     }
 }
@@ -78,36 +69,25 @@ async function getAccessToken(): Promise<string> {
         return cachedToken;
     }
 
-    logger.info("Fetching new Flutterwave Token...");
+    logger.info("Cache expired or empty. Delegating token generation to shared client...");
 
-    const environment = process.env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox';
-    const clientId = environment === 'prod' ? env.FLW_PROD_CLIENT_ID : env.FLW_SANDBOX_CLIENT_ID;
-    const clientSecret = environment === 'prod' ? env.FLW_PROD_CLIENT_SECRET : env.FLW_SANDBOX_CLIENT_SECRET;
+    const environment = env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox';
 
-    const response = await fetch('https://idp.flutterwave.com/realms/flutterwave/protocol/openid-connect/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-            'client_id': clientId as string,
-            'client_secret': clientSecret as string,
-            'grant_type': 'client_credentials'
-        }).toString()
+    // Natively utilize your shared config injection protocol
+    const token = await fetchNewToken({
+        clientId: environment === 'prod' ? env.FLW_PROD_CLIENT_ID! : env.FLW_SANDBOX_CLIENT_ID!,
+        clientSecret: environment === 'prod' ? env.FLW_PROD_CLIENT_SECRET! : env.FLW_SANDBOX_CLIENT_SECRET!,
+        businessEnv: environment
     });
 
-    if (!response.ok) {
-        logger.error("Failed to authenticate with IDP", { status: response.status });
-        throw new Error('Payment authentication failed');
-    }
+    cachedToken = token;
 
-    const data = await response.json();
-    cachedToken = data.access_token;
-
-    const lifespanSeconds = data.expires_in ? Number(data.expires_in) : 15 * 60;
+    // Maintain local safety buffer evaluation blocks
+    const lifespanSeconds = 15 * 60;
     const safetyBufferMs = 60 * 1000;
-
     tokenExpiryTime = now + (lifespanSeconds * 1000) - safetyBufferMs;
 
-    logger.info("New token fetched and cached successfully", { token_lifespan_sec: lifespanSeconds });
+    logger.info("New token successfully locked into proxy container memory.");
     return cachedToken as string;
 }
 
@@ -118,11 +98,10 @@ async function proxyRequest(
     payload?: string | null,
     customHeadersStr?: string | null
 ) {
-    const environment = process.env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox';
-    const baseUrl = environment === 'prod'
-        ? 'https://f4bexperience.flutterwave.com'
-        : 'https://developersandbox-api.flutterwave.com';
+    const environment = env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox';
 
+    // Resolved cleanly via the shared library function instead of hardcoded strings
+    const baseUrl = getBaseUrl(environment);
     const url = `${baseUrl}${endpoint}`;
 
     const requestHeaders: Record<string, string> = {
@@ -162,7 +141,7 @@ async function proxyRequest(
         if (data?.errors) {
             (error as any).validationErrors = JSON.stringify(data.errors);
         }
-        throw error; // This now safely bubbles up exactly one level
+        throw error;
     }
 
     return data;

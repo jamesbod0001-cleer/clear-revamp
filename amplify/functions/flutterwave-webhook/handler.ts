@@ -4,7 +4,7 @@ import { env } from '$amplify/env/flutterwave-webhook';
 import type { Handler } from 'aws-lambda';
 import { Logger } from "@aws-lambda-powertools/logger";
 import * as crypto from 'crypto';
-import * as flw from './flutterwave.client';
+import * as flw from '../shared/flutterwave.client';
 import * as db from './db.utils';
 
 const logger = new Logger({ logLevel: "INFO", serviceName: "flutterwave-webhook" });
@@ -50,8 +50,16 @@ export const handler: Handler = async (event) => {
         const payload = JSON.parse(rawBody);
         logger.info(`Processing event type: ${payload.event || payload.type}`);
 
-        if (payload.type === 'charge.completed' || payload.event === 'charge.completed') {
+        const eventType = payload.type || payload.event;
+
+        // Inflow (Collections / Charges)
+        if (eventType === 'charge.completed') {
             await processCharge(payload.data);
+        }
+
+        // Outflow (Payouts / Transfers)
+        else if (eventType === 'transfer.disburse') {
+            await processTransfer(payload.data);
         }
 
         return { statusCode: 200, body: 'Webhook received' };
@@ -62,7 +70,6 @@ export const handler: Handler = async (event) => {
 };
 
 async function processCharge(data: any) {
-    // ... keep your processCharge logic exactly the same as the previous step ...
     const transaction = await db.findTransactionByRef(data.tx_ref || data.reference);
 
     if (!transaction || !transaction.id || !transaction.agreementId || transaction.status === 'SUCCESSFUL') {
@@ -70,8 +77,13 @@ async function processCharge(data: any) {
         return;
     }
 
-    const token = await flw.getAccessToken();
-    const verification = await flw.verifyCharge(data.id, token);
+    const businessEnv = env.AMPLIFY_DATA_BUSINESS_ENV!;
+    const token = await flw.getAccessToken({
+        clientId: businessEnv === 'prod' ? env.FLW_PROD_CLIENT_ID! : env.FLW_SANDBOX_CLIENT_ID!,
+        clientSecret: businessEnv === 'prod' ? env.FLW_PROD_CLIENT_SECRET! : env.FLW_SANDBOX_CLIENT_SECRET!,
+        businessEnv: businessEnv
+    });
+    const verification = await flw.verifyCharge(data.id, token, businessEnv);
 
     const flwStatus = verification.data?.status?.toLowerCase();
 
@@ -87,7 +99,46 @@ async function processCharge(data: any) {
             nextStatus,
             agreement?.disbursementType ?? 'ONE_TIME'
         );
-    } else {
-        logger.error('Charge verification failed or amount mismatch', { verificationData: verification.data });
+    } else if (flwStatus === 'failed') {
+        logger.warn(`Charge verification returned failed. Marking Transaction as FAILED: ${transaction.id}`);
+        await db.updateTransactionFailed(transaction.id);
+    }
+    // NEW: Handle explicitly VOIDED charges (e.g. Expired Virtual Accounts)
+    else if (flwStatus === 'voided') {
+        logger.warn(`Charge voided/expired. Marking Transaction as CANCELLED: ${transaction.id}`);
+        // Re-use your failed utility, or create a specific updateTransactionCancelled utility
+        await db.updateTransactionFailed(transaction.id);
+    }
+    else {
+        logger.error('Charge verification pending or amount mismatch', { verificationData: verification.data });
+    }
+}
+
+async function processTransfer(data: any) {
+    logger.info(`Processing transfer webhook for reference: ${data.reference}`);
+
+    // Find the Payout we created in the Sweeper Lambda
+    const payout = await db.findPayoutByRef(data.reference);
+
+    if (!payout || !payout.id || payout.status === 'SUCCESSFUL') {
+        logger.info('Payout invalid, already processed, or not found. Skipping.');
+        return;
+    }
+
+    // Verify status securely against the payload
+    if (data.status === 'SUCCESSFUL') {
+        logger.info(`Transfer successful. Finalizing Payout: ${payout.id}`);
+
+        await db.updatePayoutSuccess(
+            payout.id,
+            payout.agreementId,
+            payout.milestoneId
+        );
+    } else if (data.status === 'FAILED') {
+        logger.error(`Transfer failed by banking partner.`, { data });
+
+        const failureReason = 'Transfer failed at the provider or bank level.';
+
+        await db.updatePayoutFailed(payout.id, failureReason);
     }
 }
