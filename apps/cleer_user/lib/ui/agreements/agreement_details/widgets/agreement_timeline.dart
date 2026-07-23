@@ -347,8 +347,8 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
               final List<Step> steps = [
                 Step(
                   title: l10n.paymentRequested,
-                  subtitle:
-                      l10n.providerHasCompletedThisMilestoneAndRequestedItsFunds,
+                  subtitle: l10n
+                      .providerHasCompletedThisMilestoneAndRequestedItsFunds,
                   state: statusDates[MilestoneStatus.readyForRelease] != null
                       ? StepState.completed
                       : StepState.pending,
@@ -492,7 +492,8 @@ class _StandardTimeline extends ConsumerWidget {
         steps.add(
           Step(
             title: l10n.paymentRequested,
-            subtitle: l10n.theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds,
+            subtitle: l10n
+                .theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds,
             state: readyDate != null ? StepState.completed : StepState.pending,
             date: readyDate,
           ),
@@ -562,7 +563,8 @@ class _StandardTimeline extends ConsumerWidget {
         steps.add(
           Step(
             title: l10n.paymentRequested,
-            subtitle: l10n.theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds,
+            subtitle: l10n
+                .theProviderHasMarkedThisServiceAsCompleteAndRequestedTheReleaseOfFunds,
             state: readyDate != null ? StepState.completed : StepState.pending,
             date: readyDate,
           ),
@@ -697,8 +699,7 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
       AgreementStatus.draft ||
       AgreementStatus.awaitingRecipient ||
       AgreementStatus.awaitingFunding ||
-      AgreementStatus.funded =>
-        1,
+      AgreementStatus.funded => 1,
       AgreementStatus.inProgress => 2,
       AgreementStatus.readyForRelease => 3,
       AgreementStatus.processingRelease || AgreementStatus.released => 4,
@@ -862,51 +863,51 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
           date: dispatchDate,
           footer:
               dispatchDate != null &&
-                      !isPackagingSkipped &&
-                      (isRecipient
-                          ? true
-                          : agreement.physicalDeliveryContext?.status !=
-                              PhysicalDeliveryContextStatus.awaitingDispatch)
-                  ? Container(
-                      padding: .all(Dimens.padding.p12),
-                      decoration: BoxDecoration(
-                        color: context.color.grayComponent,
-                        borderRadius: .circular(Dimens.radius.r12),
-                      ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          spacing: Dimens.spacing.sp6,
-                          children: agreement
-                              .physicalDeliveryContext!
-                              .packagingPhotos!
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                                final int index = entry.key;
-                                final Photo photo = entry.value;
+                  !isPackagingSkipped &&
+                  (isRecipient
+                      ? true
+                      : agreement.physicalDeliveryContext?.status !=
+                            PhysicalDeliveryContextStatus.awaitingDispatch)
+              ? Container(
+                  padding: .all(Dimens.padding.p12),
+                  decoration: BoxDecoration(
+                    color: context.color.grayComponent,
+                    borderRadius: .circular(Dimens.radius.r12),
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      spacing: Dimens.spacing.sp6,
+                      children: agreement
+                          .physicalDeliveryContext!
+                          .packagingPhotos!
+                          .asMap()
+                          .entries
+                          .map((entry) {
+                            final int index = entry.key;
+                            final Photo photo = entry.value;
 
-                                return ReviewPhotoThumbnail(
-                                  photo: photo,
-                                  dimension: photoDimension,
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => PhotoViewerDialog(
-                                        photos: agreement
-                                            .physicalDeliveryContext!
-                                            .packagingPhotos!,
-                                        initialIndex: index,
-                                      ),
-                                    );
-                                  },
+                            return ReviewPhotoThumbnail(
+                              photo: photo,
+                              dimension: photoDimension,
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => PhotoViewerDialog(
+                                    photos: agreement
+                                        .physicalDeliveryContext!
+                                        .packagingPhotos!,
+                                    initialIndex: index,
+                                  ),
                                 );
-                              })
-                              .toList(),
-                        ),
-                      ),
-                    )
-                  : null,
+                              },
+                            );
+                          })
+                          .toList(),
+                    ),
+                  ),
+                )
+              : null,
         ),
       );
 
@@ -931,8 +932,8 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
           state: detailsSharedDate == null
               ? StepState.pending
               : (isSharingDeliveryDetailsSkipped
-                  ? StepState.skipped
-                  : StepState.completed),
+                    ? StepState.skipped
+                    : StepState.completed),
           date: detailsSharedDate,
         ),
       );
@@ -948,8 +949,8 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
           state: transitDate == null
               ? StepState.pending
               : (isSharingDeliveryDetailsSkipped
-                  ? StepState.skipped
-                  : StepState.completed),
+                    ? StepState.skipped
+                    : StepState.completed),
           date: transitDate,
         ),
       );
@@ -959,7 +960,9 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
         Step(
           title: l10n.confirmItemReceived,
           subtitle: l10n.buyerHasReceivedAndInspectedTheGoods,
-          state: processingDate != null ? StepState.completed : StepState.pending,
+          state: processingDate != null
+              ? StepState.completed
+              : StepState.pending,
           date: processingDate,
         ),
       );
@@ -967,7 +970,9 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
         Step(
           title: l10n.releasingFunds,
           subtitle: l10n.fundsWillBeReleasedIn2Hours,
-          state: processingDate != null ? StepState.completed : StepState.pending,
+          state: processingDate != null
+              ? StepState.completed
+              : StepState.pending,
           date: processingDate,
         ),
       );
@@ -1011,7 +1016,9 @@ class _ProgressNode extends StatelessWidget {
               shape: BoxShape.circle,
               color: context.color.white,
               border: Border.all(
-                color: isSelected ? context.color.secondary : context.color.outline,
+                color: isSelected
+                    ? context.color.secondary
+                    : context.color.outline,
                 width: isSelected ? Dimens.size.s2 : Dimens.size.s1,
               ),
             ),
@@ -1019,7 +1026,9 @@ class _ProgressNode extends StatelessWidget {
               child: Text(
                 step.toString(),
                 style: context.typo.bodySmall.copyWith(
-                  color: isSelected ? context.color.secondary : context.color.grey500,
+                  color: isSelected
+                      ? context.color.secondary
+                      : context.color.grey500,
                 ),
               ),
             ),
@@ -1055,7 +1064,7 @@ class _ProgressNode extends StatelessWidget {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: context.color.secondary.withOpacity(0.3),
+                        color: context.color.secondary.withValues(alpha: 0.3),
                         spreadRadius: 4,
                       ),
                     ]
