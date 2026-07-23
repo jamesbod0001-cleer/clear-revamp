@@ -16,7 +16,7 @@ export const Milestone = a.model({
     agreement: a.belongsTo('Agreement', 'agreementId'),
     payouts: a.hasMany('Payout', 'milestoneId'),
 }).secondaryIndexes((index) => [
-    index("status").sortKeys(["releaseEligibleAt"]).queryField("milestonesByStatus")
+    index("status").queryField("milestonesByStatus")
 ]).authorization(allow => [
     allow.ownersDefinedIn('participants').identityClaim('sub'),
 ]);
