@@ -110,14 +110,16 @@ export async function updatePayoutSuccess(
         });
         if (msUpdate.errors) logger.error('Failed to update Milestone', { errors: msUpdate.errors });
 
-        // NEW: Check if this was the final milestone
         const { data: allMilestones, errors: msErrors } = await client.models.Milestone.list({
             filter: { agreementId: { eq: agreementId } }
         });
 
         if (!msErrors && allMilestones) {
-            // Because DynamoDB is eventually consistent, we check if all OTHER milestones are released
-            const allReleased = allMilestones.every(m => m.id === milestoneId || m.status === 'RELEASED');
+            // Sort by order so we process them in the correct sequence (0, 1, 2...)
+            const sortedMilestones = allMilestones.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            // Check if all OTHER milestones are released
+            const allReleased = sortedMilestones.every(m => m.id === milestoneId || m.status === 'RELEASED');
 
             if (allReleased) {
                 logger.info(`All milestones released. Closing parent agreement: ${agreementId}`);
@@ -127,6 +129,28 @@ export async function updatePayoutSuccess(
                     lastUpdatedBy: updaterIdentifier
                 });
                 if (agreeUpdate.errors) logger.error('Failed to update Agreement', { errors: agreeUpdate.errors });
+            } else {
+                // ==========================================
+                // WAKE UP THE NEXT MILESTONE
+                // ==========================================
+                // Find the first milestone that is still PENDING
+                const nextMilestone = sortedMilestones.find(m => m.status === 'PENDING' && m.id !== milestoneId);
+
+                if (nextMilestone) {
+                    const today = new Date().toISOString().split('T')[0];
+                    const nextDate = nextMilestone.expectedReleaseDate ? nextMilestone.expectedReleaseDate.split('T')[0] : null;
+
+                    // If it's already overdue when it wakes up, fast-forward it instantly!
+                    const targetStatus = (nextDate && nextDate <= today) ? 'READY_FOR_RELEASE' : 'IN_PROGRESS';
+
+                    logger.info(`Waking up next milestone: ${nextMilestone.id} (Order: ${nextMilestone.order}). Setting to ${targetStatus} based on date.`);
+
+                    await client.models.Milestone.update({
+                        id: nextMilestone.id,
+                        status: targetStatus,
+                        lastUpdatedBy: updaterIdentifier
+                    });
+                }
             }
         }
     }
