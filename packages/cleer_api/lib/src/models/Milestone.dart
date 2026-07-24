@@ -329,7 +329,7 @@ class Milestone extends amplify_core.Model {
     ];
     
     modelSchemaDefinition.indexes = [
-      amplify_core.ModelIndex(fields: const ["status", "releaseEligibleAt"], name: "milestonesByStatusAndReleaseEligibleAt")
+      amplify_core.ModelIndex(fields: const ["status"], name: "milestonesByStatus")
     ];
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.id());

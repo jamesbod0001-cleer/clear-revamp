@@ -43,6 +43,7 @@ class Agreement extends amplify_core.Model {
   final String? _activeMilestoneId;
   final String? _activeMilestoneStatus;
   final String? _activeMilestoneName;
+  final double? _activeMilestoneAmount;
   final amplify_core.TemporalDate? _activeMilestoneExpectedReleaseDate;
   final amplify_core.TemporalDateTime? _releaseEligibleAt;
   final List<Milestone>? _milestones;
@@ -173,6 +174,10 @@ class Agreement extends amplify_core.Model {
     return _activeMilestoneName;
   }
   
+  double? get activeMilestoneAmount {
+    return _activeMilestoneAmount;
+  }
+  
   amplify_core.TemporalDate? get activeMilestoneExpectedReleaseDate {
     return _activeMilestoneExpectedReleaseDate;
   }
@@ -217,9 +222,9 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, physicalDeliveryContext, activeMilestoneId, activeMilestoneStatus, activeMilestoneName, activeMilestoneExpectedReleaseDate, releaseEligibleAt, milestones, payouts, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _physicalDeliveryContext = physicalDeliveryContext, _activeMilestoneId = activeMilestoneId, _activeMilestoneStatus = activeMilestoneStatus, _activeMilestoneName = activeMilestoneName, _activeMilestoneExpectedReleaseDate = activeMilestoneExpectedReleaseDate, _releaseEligibleAt = releaseEligibleAt, _milestones = milestones, _payouts = payouts, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, physicalDeliveryContext, activeMilestoneId, activeMilestoneStatus, activeMilestoneName, activeMilestoneAmount, activeMilestoneExpectedReleaseDate, releaseEligibleAt, milestones, payouts, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _physicalDeliveryContext = physicalDeliveryContext, _activeMilestoneId = activeMilestoneId, _activeMilestoneStatus = activeMilestoneStatus, _activeMilestoneName = activeMilestoneName, _activeMilestoneAmount = activeMilestoneAmount, _activeMilestoneExpectedReleaseDate = activeMilestoneExpectedReleaseDate, _releaseEligibleAt = releaseEligibleAt, _milestones = milestones, _payouts = payouts, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Payout>? payouts, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
+  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, double? activeMilestoneAmount, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Payout>? payouts, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       shortCode: shortCode,
@@ -237,6 +242,7 @@ class Agreement extends amplify_core.Model {
       activeMilestoneId: activeMilestoneId,
       activeMilestoneStatus: activeMilestoneStatus,
       activeMilestoneName: activeMilestoneName,
+      activeMilestoneAmount: activeMilestoneAmount,
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate,
       releaseEligibleAt: releaseEligibleAt,
       milestones: milestones != null ? List<Milestone>.unmodifiable(milestones) : milestones,
@@ -273,6 +279,7 @@ class Agreement extends amplify_core.Model {
       _activeMilestoneId == other._activeMilestoneId &&
       _activeMilestoneStatus == other._activeMilestoneStatus &&
       _activeMilestoneName == other._activeMilestoneName &&
+      _activeMilestoneAmount == other._activeMilestoneAmount &&
       _activeMilestoneExpectedReleaseDate == other._activeMilestoneExpectedReleaseDate &&
       _releaseEligibleAt == other._releaseEligibleAt &&
       DeepCollectionEquality().equals(_milestones, other._milestones) &&
@@ -309,6 +316,7 @@ class Agreement extends amplify_core.Model {
     buffer.write("activeMilestoneId=" + "$_activeMilestoneId" + ", ");
     buffer.write("activeMilestoneStatus=" + "$_activeMilestoneStatus" + ", ");
     buffer.write("activeMilestoneName=" + "$_activeMilestoneName" + ", ");
+    buffer.write("activeMilestoneAmount=" + (_activeMilestoneAmount != null ? _activeMilestoneAmount!.toString() : "null") + ", ");
     buffer.write("activeMilestoneExpectedReleaseDate=" + (_activeMilestoneExpectedReleaseDate != null ? _activeMilestoneExpectedReleaseDate!.format() : "null") + ", ");
     buffer.write("releaseEligibleAt=" + (_releaseEligibleAt != null ? _releaseEligibleAt!.format() : "null") + ", ");
     buffer.write("initiator=" + (_initiator != null ? _initiator!.toString() : "null") + ", ");
@@ -322,7 +330,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Payout>? payouts, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
+  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, double? activeMilestoneAmount, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Payout>? payouts, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id,
       shortCode: shortCode ?? this.shortCode,
@@ -340,6 +348,7 @@ class Agreement extends amplify_core.Model {
       activeMilestoneId: activeMilestoneId ?? this.activeMilestoneId,
       activeMilestoneStatus: activeMilestoneStatus ?? this.activeMilestoneStatus,
       activeMilestoneName: activeMilestoneName ?? this.activeMilestoneName,
+      activeMilestoneAmount: activeMilestoneAmount ?? this.activeMilestoneAmount,
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate ?? this.activeMilestoneExpectedReleaseDate,
       releaseEligibleAt: releaseEligibleAt ?? this.releaseEligibleAt,
       milestones: milestones ?? this.milestones,
@@ -368,6 +377,7 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<String?>? activeMilestoneId,
     ModelFieldValue<String?>? activeMilestoneStatus,
     ModelFieldValue<String?>? activeMilestoneName,
+    ModelFieldValue<double?>? activeMilestoneAmount,
     ModelFieldValue<amplify_core.TemporalDate?>? activeMilestoneExpectedReleaseDate,
     ModelFieldValue<amplify_core.TemporalDateTime?>? releaseEligibleAt,
     ModelFieldValue<List<Milestone>?>? milestones,
@@ -396,6 +406,7 @@ class Agreement extends amplify_core.Model {
       activeMilestoneId: activeMilestoneId == null ? this.activeMilestoneId : activeMilestoneId.value,
       activeMilestoneStatus: activeMilestoneStatus == null ? this.activeMilestoneStatus : activeMilestoneStatus.value,
       activeMilestoneName: activeMilestoneName == null ? this.activeMilestoneName : activeMilestoneName.value,
+      activeMilestoneAmount: activeMilestoneAmount == null ? this.activeMilestoneAmount : activeMilestoneAmount.value,
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate == null ? this.activeMilestoneExpectedReleaseDate : activeMilestoneExpectedReleaseDate.value,
       releaseEligibleAt: releaseEligibleAt == null ? this.releaseEligibleAt : releaseEligibleAt.value,
       milestones: milestones == null ? this.milestones : milestones.value,
@@ -430,6 +441,7 @@ class Agreement extends amplify_core.Model {
       _activeMilestoneId = json['activeMilestoneId'],
       _activeMilestoneStatus = json['activeMilestoneStatus'],
       _activeMilestoneName = json['activeMilestoneName'],
+      _activeMilestoneAmount = (json['activeMilestoneAmount'] as num?)?.toDouble(),
       _activeMilestoneExpectedReleaseDate = json['activeMilestoneExpectedReleaseDate'] != null ? amplify_core.TemporalDate.fromString(json['activeMilestoneExpectedReleaseDate']) : null,
       _releaseEligibleAt = json['releaseEligibleAt'] != null ? amplify_core.TemporalDateTime.fromString(json['releaseEligibleAt']) : null,
       _milestones = json['milestones']  is Map
@@ -495,7 +507,7 @@ class Agreement extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'physicalDeliveryContext': _physicalDeliveryContext?.toJson(), 'activeMilestoneId': _activeMilestoneId, 'activeMilestoneStatus': _activeMilestoneStatus, 'activeMilestoneName': _activeMilestoneName, 'activeMilestoneExpectedReleaseDate': _activeMilestoneExpectedReleaseDate?.format(), 'releaseEligibleAt': _releaseEligibleAt?.format(), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'payouts': _payouts?.map((Payout? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'physicalDeliveryContext': _physicalDeliveryContext?.toJson(), 'activeMilestoneId': _activeMilestoneId, 'activeMilestoneStatus': _activeMilestoneStatus, 'activeMilestoneName': _activeMilestoneName, 'activeMilestoneAmount': _activeMilestoneAmount, 'activeMilestoneExpectedReleaseDate': _activeMilestoneExpectedReleaseDate?.format(), 'releaseEligibleAt': _releaseEligibleAt?.format(), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'payouts': _payouts?.map((Payout? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -515,6 +527,7 @@ class Agreement extends amplify_core.Model {
     'activeMilestoneId': _activeMilestoneId,
     'activeMilestoneStatus': _activeMilestoneStatus,
     'activeMilestoneName': _activeMilestoneName,
+    'activeMilestoneAmount': _activeMilestoneAmount,
     'activeMilestoneExpectedReleaseDate': _activeMilestoneExpectedReleaseDate,
     'releaseEligibleAt': _releaseEligibleAt,
     'milestones': _milestones,
@@ -545,6 +558,7 @@ class Agreement extends amplify_core.Model {
   static final ACTIVEMILESTONEID = amplify_core.QueryField(fieldName: "activeMilestoneId");
   static final ACTIVEMILESTONESTATUS = amplify_core.QueryField(fieldName: "activeMilestoneStatus");
   static final ACTIVEMILESTONENAME = amplify_core.QueryField(fieldName: "activeMilestoneName");
+  static final ACTIVEMILESTONEAMOUNT = amplify_core.QueryField(fieldName: "activeMilestoneAmount");
   static final ACTIVEMILESTONEEXPECTEDRELEASEDATE = amplify_core.QueryField(fieldName: "activeMilestoneExpectedReleaseDate");
   static final RELEASEELIGIBLEAT = amplify_core.QueryField(fieldName: "releaseEligibleAt");
   static final MILESTONES = amplify_core.QueryField(
@@ -683,6 +697,12 @@ class Agreement extends amplify_core.Model {
       key: Agreement.ACTIVEMILESTONENAME,
       isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
+      key: Agreement.ACTIVEMILESTONEAMOUNT,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.double)
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(

@@ -28,6 +28,7 @@ extension AgreementToDomainMapper on amplify_model.Agreement {
       activeMilestoneId: activeMilestoneId,
       activeMilestoneStatus: activeMilestoneStatus,
       activeMilestoneName: activeMilestoneName,
+      activeMilestoneAmount: activeMilestoneAmount,
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate?.getDateTime(),
       releaseEligibleAt: releaseEligibleAt?.getDateTimeInUtc().toLocal(),
       initiator: initiator?.toDomain(),
@@ -63,6 +64,7 @@ extension AgreementToAmplifyMapper on domain.Agreement {
       activeMilestoneId: activeMilestoneId,
       activeMilestoneStatus: activeMilestoneStatus,
       activeMilestoneName: activeMilestoneName,
+      activeMilestoneAmount: activeMilestoneAmount,
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate != null
           ? TemporalDate.fromString(
               DateFormat('yyyy-MM-dd').format(activeMilestoneExpectedReleaseDate!),

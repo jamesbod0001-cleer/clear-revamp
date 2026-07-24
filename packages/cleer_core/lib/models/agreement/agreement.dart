@@ -24,6 +24,7 @@ abstract class Agreement with _$Agreement {
     String? activeMilestoneId,
     String? activeMilestoneStatus,
     String? activeMilestoneName,
+    double? activeMilestoneAmount,
     DateTime? activeMilestoneExpectedReleaseDate,
     DateTime? releaseEligibleAt,
     PayoutDestination? payoutDestination,
