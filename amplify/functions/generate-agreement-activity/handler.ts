@@ -35,12 +35,16 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 const isDeliveryStatusChanged = newDeliveryStatus && (newDeliveryStatus !== oldDeliveryStatus);
 
                 // 3. Check Active Milestone Status (NoSQL Denormalization)
+                const newMilestoneId = newItem.activeMilestoneId;
+                const oldMilestoneId = oldItem?.activeMilestoneId;
+                const isMilestoneIdChanged = oldMilestoneId && newMilestoneId && (oldMilestoneId !== newMilestoneId);
+
                 const newMilestoneStatus = newItem.activeMilestoneStatus;
                 const oldMilestoneStatus = oldItem?.activeMilestoneStatus;
                 const isMilestoneStatusChanged = newMilestoneStatus && (newMilestoneStatus !== oldMilestoneStatus);
 
                 // Exit early if NOTHING changed
-                if (!isStatusChanged && !isSenderJoined && !isDeliveryStatusChanged && !isMilestoneStatusChanged) {
+                if (!isStatusChanged && !isSenderJoined && !isDeliveryStatusChanged && !isMilestoneStatusChanged && !isMilestoneIdChanged) {
                     continue;
                 }
 
@@ -198,31 +202,46 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 // ==========================================
                 // FLOW 5: MILESTONE TRACKING
                 // ==========================================
-                if (isMilestoneStatusChanged && senderId && recipientId) {
-                    const milestoneName = newItem.activeMilestoneName || 'Milestone';
-                    const milestoneAmount = newItem.activeMilestoneAmount || 0;
-                    const formattedMilestoneAmount = formatCurrency(milestoneAmount, newItem.currency);
+                if ((isMilestoneStatusChanged || isMilestoneIdChanged) && senderId && recipientId) {
 
-                    switch (newMilestoneStatus) {
-                        case 'IN_PROGRESS':
-                            await notify(senderId, 'Milestone Active', `This milestone ${milestoneName} is now active, you’ll be notified once the provider marks it as completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
-                            await notify(recipientId, 'Milestone In Progress', `This milestone ${milestoneName} is now active. Notify your client when you've completed it.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
-                            break;
+                    // 5a. If the Milestone ID changed, the previous milestone successfully completed!
+                    if (isMilestoneIdChanged) {
+                        const oldMilestoneName = oldItem.activeMilestoneName || 'Milestone';
+                        const oldMilestoneAmount = oldItem.activeMilestoneAmount || 0;
+                        const formattedOldAmount = formatCurrency(oldMilestoneAmount, newItem.currency);
 
-                        case 'READY_FOR_RELEASE':
-                            await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
-                            await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
-                            break;
+                        await notify(senderId, 'Milestone Completed', `${oldMilestoneName} has been successfully completed.`, 'AGREEMENT', formattedOldAmount, oldMilestoneName);
+                        await notify(recipientId, 'Funds Released', `Funds for ${oldMilestoneName} have been released to your payout destination.`, 'PAYMENT', formattedOldAmount, oldMilestoneName);
+                    }
 
-                        case 'PROCESSING_RELEASE':
-                            await notify(senderId, 'Release Initiated', `You approved payment for ${milestoneName}. Funds will be released in 2 hours.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
-                            await notify(recipientId, 'Payment Approved', `The client approved ${milestoneName}! Funds will be released in 2 hours.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
-                            break;
+                    // 5b. Evaluate the current milestone's status change
+                    if (isMilestoneStatusChanged) {
+                        const milestoneName = newItem.activeMilestoneName || 'Milestone';
+                        const milestoneAmount = newItem.activeMilestoneAmount || 0;
+                        const formattedMilestoneAmount = formatCurrency(milestoneAmount, newItem.currency);
 
-                        case 'RELEASED':
-                            await notify(senderId, 'Milestone Completed', `${milestoneName} has been successfully completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
-                            await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your payout destination.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
-                            break;
+                        switch (newMilestoneStatus) {
+                            case 'IN_PROGRESS':
+                                await notify(senderId, 'Milestone Active', `This milestone ${milestoneName} is now active, you’ll be notified once the provider marks it as completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                await notify(recipientId, 'Milestone In Progress', `This milestone ${milestoneName} is now active. Notify your client when you've completed it.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                break;
+
+                            case 'READY_FOR_RELEASE':
+                                await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                break;
+
+                            case 'PROCESSING_RELEASE':
+                                await notify(senderId, 'Release Initiated', `You approved payment for ${milestoneName}. Funds will be released in 2 hours.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
+                                await notify(recipientId, 'Payment Approved', `The client approved ${milestoneName}! Funds will be released in 2 hours.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
+                                break;
+
+                            case 'RELEASED':
+                                // This still fires for the FINAL milestone of the agreement (because the ID doesn't change)
+                                await notify(senderId, 'Milestone Completed', `${milestoneName} has been successfully completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your payout destination.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
+                                break;
+                        }
                     }
                 }
 
