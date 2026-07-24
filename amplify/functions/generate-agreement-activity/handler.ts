@@ -1,16 +1,16 @@
-import { DynamoDBStreamHandler } from 'aws-lambda';
-import { unmarshall } from '@aws-sdk/util-dynamodb';
-import { Amplify } from 'aws-amplify';
-import { generateClient } from 'aws-amplify/data';
-import { getAmplifyDataClientConfig } from '@aws-amplify/backend/function/runtime';
-import { env } from '$amplify/env/generate-agreement-activity';
-import type { Schema } from '../../data/resource';
-import { createActivityRecord } from '../shared/activity.utils';
-import { Logger } from "@aws-lambda-powertools/logger";
-import { formatCurrency } from "../shared/currency.utils";
+import {DynamoDBStreamHandler} from 'aws-lambda';
+import {unmarshall} from '@aws-sdk/util-dynamodb';
+import {Amplify} from 'aws-amplify';
+import {generateClient} from 'aws-amplify/data';
+import {getAmplifyDataClientConfig} from '@aws-amplify/backend/function/runtime';
+import {env} from '$amplify/env/generate-agreement-activity';
+import type {Schema} from '../../data/resource';
+import {createActivityRecord} from '../shared/activity.utils';
+import {Logger} from "@aws-lambda-powertools/logger";
+import {formatCurrency} from "../shared/currency.utils";
 
-const logger = new Logger({ serviceName: "generate-agreement-activity" });
-const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env);
+const logger = new Logger({serviceName: "generate-agreement-activity"});
+const {resourceConfig, libraryOptions} = await getAmplifyDataClientConfig(env);
 Amplify.configure(resourceConfig, libraryOptions);
 const client = generateClient<Schema>();
 
@@ -52,9 +52,25 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 const formattedAmount = formatCurrency(newItem.amount, newItem.currency);
                 const description = newItem.description;
 
-                const notify = async (userId: string | undefined, heading: string, text: string, type: 'AGREEMENT' | 'PAYMENT' | 'DELIVERY' = 'AGREEMENT') => {
+                const notify = async (
+                    userId: string | undefined,
+                    heading: string,
+                    text: string,
+                    type: 'AGREEMENT' | 'PAYMENT' | 'DELIVERY' = 'AGREEMENT',
+                    amountOverride?: string,
+                    descriptionOverride?: string
+                ) => {
                     if (userId) {
-                        await createActivityRecord(client, userId, type, heading, text, newItem.id, formattedAmount, description);
+                        await createActivityRecord(
+                            client,
+                            userId,
+                            type,
+                            heading,
+                            text,
+                            newItem.id,
+                            amountOverride || formattedAmount,
+                            descriptionOverride || description
+                        );
                     }
                 };
 
@@ -184,37 +200,39 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 // ==========================================
                 if (isMilestoneStatusChanged && senderId && recipientId) {
                     const milestoneName = newItem.activeMilestoneName || 'Milestone';
+                    const milestoneAmount = newItem.activeMilestoneAmount || 0;
+                    const formattedMilestoneAmount = formatCurrency(milestoneAmount, newItem.currency);
 
                     switch (newMilestoneStatus) {
                         case 'IN_PROGRESS':
-                            await notify(senderId, 'Milestone Active', `This milestone ${milestoneName} is now active, you’ll be notified once the provider marks it as completed.`, 'AGREEMENT');
-                            await notify(recipientId, 'Milestone In Progress', `This milestone ${milestoneName} is now active. Notify your client when you've completed it.`, 'AGREEMENT');
+                            await notify(senderId, 'Milestone Active', `This milestone ${milestoneName} is now active, you’ll be notified once the provider marks it as completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                            await notify(recipientId, 'Milestone In Progress', `This milestone ${milestoneName} is now active. Notify your client when you've completed it.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
                             break;
 
                         case 'READY_FOR_RELEASE':
-                            await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT');
-                            await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT');
+                            await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                            await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
                             break;
 
                         case 'PROCESSING_RELEASE':
-                            await notify(senderId, 'Release Initiated', `You approved payment for ${milestoneName}. Funds will be released in 2 hours.`, 'PAYMENT');
-                            await notify(recipientId, 'Payment Approved', `The client approved ${milestoneName}! Funds will be released in 2 hours.`, 'PAYMENT');
+                            await notify(senderId, 'Release Initiated', `You approved payment for ${milestoneName}. Funds will be released in 2 hours.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
+                            await notify(recipientId, 'Payment Approved', `The client approved ${milestoneName}! Funds will be released in 2 hours.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
                             break;
 
                         case 'RELEASED':
-                            await notify(senderId, 'Milestone Completed', `${milestoneName} has been successfully completed.`, 'AGREEMENT');
-                            await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your payout destination.`, 'PAYMENT');
+                            await notify(senderId, 'Milestone Completed', `${milestoneName} has been successfully completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                            await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your payout destination.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
                             break;
                     }
                 }
 
             }
         } catch (error) {
-            logger.error('Error generating activity', { error, recordId: record.eventID });
+            logger.error('Error generating activity', {error, recordId: record.eventID});
             if (record.dynamodb?.SequenceNumber) {
-                batchItemFailures.push({ itemIdentifier: record.dynamodb.SequenceNumber });
+                batchItemFailures.push({itemIdentifier: record.dynamodb.SequenceNumber});
             }
         }
     }
-    return { batchItemFailures };
+    return {batchItemFailures};
 };
