@@ -22,6 +22,7 @@ import {PhysicalDeliveryContext} from "./custom-types/physical-delivery-context"
 import {syncMilestoneToAgreement} from "../functions/sync-milestone-to-agreement/resource";
 import {processPayouts} from "../functions/process-payouts/resource";
 import {Payout} from "./models/payout";
+import {evaluateDeadlines} from "../functions/evaluate-deadlines/resource";
 
 const schema = a.schema({
     User,
@@ -64,7 +65,7 @@ const schema = a.schema({
         .returns(a.string())
         .authorization(allow => [allow.authenticated()])
         .handler(a.handler.function(flutterwaveProxy)),
-}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity),allow.resource(syncMilestoneToAgreement),allow.resource(processPayouts)]);
+}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity),allow.resource(syncMilestoneToAgreement),allow.resource(processPayouts), allow.resource(evaluateDeadlines)]);
 
 export type Schema = ClientSchema<typeof schema>;
 

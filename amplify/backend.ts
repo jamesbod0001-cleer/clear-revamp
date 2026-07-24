@@ -24,6 +24,7 @@ import { generateAgreementActivity } from "./functions/generate-agreement-activi
 import { dispatchActivityNotification } from "./functions/dispatch-activity-notification/resource";
 import {syncMilestoneToAgreement} from "./functions/sync-milestone-to-agreement/resource";
 import {processPayouts} from "./functions/process-payouts/resource";
+import {evaluateDeadlines} from "./functions/evaluate-deadlines/resource";
 
 const backend = defineBackend({
     auth,
@@ -36,7 +37,8 @@ const backend = defineBackend({
     generateAgreementActivity,
     dispatchActivityNotification,
     syncMilestoneToAgreement,
-    processPayouts
+    processPayouts,
+    evaluateDeadlines
 });
 
 // --- Auth Overrides ---
@@ -178,3 +180,12 @@ const cronRule = new Rule(customResourceStack, 'ProcessPayoutsSweeperSchedule', 
 });
 
 cronRule.addTarget(new LambdaFunction(payoutLambda));
+
+
+const deadlinesLambda = backend.evaluateDeadlines.resources.lambda;
+
+const dailyCronRule = new Rule(customResourceStack, 'EvaluateDeadlinesSchedule', {
+    // 8:00 AM UTC translates to 9:00 AM WAT (Lagos)
+    schedule: Schedule.expression('cron(0 8 * * ? *)'),
+});
+dailyCronRule.addTarget(new LambdaFunction(deadlinesLambda));
