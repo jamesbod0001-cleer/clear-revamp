@@ -78,6 +78,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     activeMilestoneId: milestoneToSync.id,
                     activeMilestoneStatus: milestoneToSync.status,
                     activeMilestoneName: milestoneToSync.name || `Milestone`,
+                    activeMilestoneAmount: milestoneToSync.amount,
                     activeMilestoneExpectedReleaseDate: milestoneToSync.expectedReleaseDate
                 });
 

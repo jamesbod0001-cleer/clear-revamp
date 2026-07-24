@@ -38,6 +38,7 @@ export const Agreement = a.model({
     activeMilestoneId: a.id(),
     activeMilestoneStatus: a.string(),
     activeMilestoneName: a.string(),
+    activeMilestoneAmount: a.float(),
     activeMilestoneExpectedReleaseDate: a.date(),
 
     releaseEligibleAt: a.datetime(),
