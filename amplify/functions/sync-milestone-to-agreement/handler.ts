@@ -79,7 +79,8 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     activeMilestoneStatus: milestoneToSync.status,
                     activeMilestoneName: milestoneToSync.name || `Milestone`,
                     activeMilestoneAmount: milestoneToSync.amount,
-                    activeMilestoneExpectedReleaseDate: milestoneToSync.expectedReleaseDate
+                    activeMilestoneExpectedReleaseDate: milestoneToSync.expectedReleaseDate,
+                    lastUpdatedBy: milestoneToSync.lastUpdatedBy
                 });
 
                 // Explicit failure handling without throwing caught exceptions locally

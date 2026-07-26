@@ -53,6 +53,9 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 const senderId = newItem.senderId;
                 const recipientId = newItem.recipientId;
 
+                // Detect if the Deadline Sweeper made this change
+                const isSystemUpdate = newItem.lastUpdatedBy === 'SYSTEM_DEADLINE_SWEEPER';
+
                 const formattedAmount = formatCurrency(newItem.amount, newItem.currency);
                 const description = newItem.description;
 
@@ -133,7 +136,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 // ==========================================
                 // FLOW 3: PHYSICAL DELIVERY TRACKING
                 // ==========================================
-                if (isDeliveryStatusChanged && senderId && recipientId) {
+                if (isDeliveryStatusChanged && senderId && recipientId && !isSystemUpdate) {
                     const buyerId = senderId;
                     const vendorId = recipientId;
 
@@ -173,12 +176,14 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                 if (isStatusChanged && senderId && recipientId) {
                     switch (newStatus) {
                         case 'READY_FOR_RELEASE':
-                            if (newItem.category === 'physical_goods') {
-                                await notify(senderId, 'Confirm Item Received', "Confirm receipt once you've received your item. You'll have 2 hours to report any issues after delivery.", 'AGREEMENT');
-                                await notify(recipientId, 'Awaiting Buyer Confirmation', 'Waiting for the buyer to confirm receipt of the item.', 'AGREEMENT');
-                            } else {
-                                await notify(senderId, 'Approve Payment Release', 'The provider has marked this service as completed. Confirm completion to release the payment.', 'AGREEMENT');
-                                await notify(recipientId, 'Payment Requested', 'You marked this service as complete. Funds will be released once the client confirms completion.', 'AGREEMENT');
+                            if (!isSystemUpdate) {
+                                if (newItem.category === 'physical_goods') {
+                                    await notify(senderId, 'Confirm Item Received', "Confirm receipt once you've received your item. You'll have 2 hours to report any issues after delivery.", 'AGREEMENT');
+                                    await notify(recipientId, 'Awaiting Buyer Confirmation', 'Waiting for the buyer to confirm receipt of the item.', 'AGREEMENT');
+                                } else {
+                                    await notify(senderId, 'Approve Payment Release', 'The provider has marked this service as completed. Confirm completion to release the payment.', 'AGREEMENT');
+                                    await notify(recipientId, 'Payment Requested', 'You marked this service as complete. Funds will be released once the client confirms completion.', 'AGREEMENT');
+                                }
                             }
                             break;
 
@@ -227,8 +232,10 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                                 break;
 
                             case 'READY_FOR_RELEASE':
-                                await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
-                                await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                if (!isSystemUpdate) {
+                                    await notify(senderId, `Approve ${milestoneName}`, `The provider has finished ${milestoneName}. Review and approve the payment.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                    await notify(recipientId, 'Milestone Submitted', `You have marked ${milestoneName} as finished. Waiting for client approval.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
+                                }
                                 break;
 
                             case 'PROCESSING_RELEASE':
