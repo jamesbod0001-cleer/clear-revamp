@@ -845,9 +845,17 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
     } else if (stepNumber == 2) {
       final dispatchDate =
           deliveryStatusDates[PhysicalDeliveryContextStatus.awaitingDispatch];
+      final transitDate =
+          deliveryStatusDates[PhysicalDeliveryContextStatus
+              .inTransit]; // Pull this up early
+
       final bool isPackagingSkipped =
-          dispatchDate != null &&
-          (agreement.physicalDeliveryContext?.packagingPhotos?.isEmpty ?? true);
+          (dispatchDate != null &&
+              (agreement.physicalDeliveryContext?.packagingPhotos?.isEmpty ??
+                  true)) ||
+          (dispatchDate == null &&
+              transitDate !=
+                  null); // FIX: Treat as skipped if we are already in transit!
 
       microSteps.add(
         Step(
@@ -858,9 +866,11 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
               ? l10n.vendorOptedNotToUploadPhotos
               : l10n.vendorHasPreparedThePackage,
           state: dispatchDate == null
-              ? StepState.pending
+              ? (transitDate != null
+                    ? StepState.skipped
+                    : StepState.pending) // FIX: UI renders grey skipped icon
               : (isPackagingSkipped ? StepState.skipped : StepState.completed),
-          date: dispatchDate,
+          date: dispatchDate ?? transitDate,
           footer:
               dispatchDate != null &&
                   !isPackagingSkipped &&
@@ -914,12 +924,11 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
       final acknowledgementDate =
           deliveryStatusDates[PhysicalDeliveryContextStatus
               .awaitingBuyerAcknowledgement];
-      final transitDate =
-          deliveryStatusDates[PhysicalDeliveryContextStatus.inTransit];
       final detailsSharedDate = acknowledgementDate ?? transitDate;
+
       final bool isSharingDeliveryDetailsSkipped =
-          transitDate != null &&
-          agreement.physicalDeliveryContext?.deliveryDetails == null;
+          (transitDate != null &&
+          agreement.physicalDeliveryContext?.deliveryDetails == null);
 
       microSteps.add(
         Step(
@@ -929,7 +938,7 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
           subtitle: isSharingDeliveryDetailsSkipped
               ? l10n.vendorSkippedSharingDeliveryInfo
               : l10n.vendorSharedTheDriverWaybillInfo,
-          state: detailsSharedDate == null
+          state: (detailsSharedDate == null && transitDate == null)
               ? StepState.pending
               : (isSharingDeliveryDetailsSkipped
                     ? StepState.skipped
