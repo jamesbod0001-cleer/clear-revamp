@@ -1,6 +1,7 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
+import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer_core/models/agreement/agreement_enums.dart';
 import 'package:cleer_core/models/bank/bank.dart';
 import 'package:cleer_core/models/payout_destination/payout_destination.dart';
@@ -824,8 +825,12 @@ class _PaymentDestinationSection extends ConsumerWidget {
             return BankPickerBottomSheet(
               banks: banksAsync.value ?? [],
               isLoading: banksAsync.isLoading,
-              errorMessage: banksAsync.hasError
-                  ? banksAsync.error.toString()
+              errorState: banksAsync.hasError
+                  ? banksAsync.error!.toErrorState(
+                      ref,
+                      variant: .card,
+                      onRetry: () => ref.invalidate(getBanksProvider(.NG)),
+                    )
                   : null,
             );
           },

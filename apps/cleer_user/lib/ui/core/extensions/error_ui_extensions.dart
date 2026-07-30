@@ -24,11 +24,8 @@ extension ErrorUIExtensions on Object {
       isOffline: showOfflineUI,
       onRetry: onRetry,
       variant: variant,
-      title: showOfflineUI 
-          ? l10n.youreOfflineCheckYourInternetConnection 
-          : l10n.somethingWentWrong,
-      subtitle: showOfflineUI 
-          ? l10n.networkExceptionMessage 
+      message: showOfflineUI
+          ? l10n.pleaseCheckYourInternetConnectionAndTryAgain
           : l10n.unknownExceptionMessage,
       retryText: l10n.refresh,
     );

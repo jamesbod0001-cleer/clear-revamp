@@ -1,3 +1,4 @@
+import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/recipient_resolution/recipient_resolution.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
@@ -358,7 +359,19 @@ class RecipientIdentityTile extends HookConsumerWidget {
                             ],
                           );
                         }
-                        return SizedBox.shrink();
+                        if (error != null) {
+                          return Column(
+                            children: [
+                              Gap(Dimens.spacing.sp12),
+                              error.toErrorState(
+                                ref,
+                                variant: .minimal,
+                                onRetry: () {},
+                              ),
+                            ],
+                          );
+                        }
+                        return SizedBox();
                       },
                 );
               },

@@ -27,26 +27,21 @@ class AgreementsViewModel extends _$AgreementsViewModel {
 // Because fetching the data relies on async Domain providers,
 // we keep the actual filtering as a separate derived provider that "watches" your ViewModel.
 @riverpod
-AsyncValue<List<Agreement>> agreementsScreenList(Ref ref) {
+Future<List<Agreement>> agreementsScreenList(Ref ref) async {
   // Watch the filter from your ViewModel!
   final filter = ref.watch(
     agreementsViewModelProvider.select((s) => s.ongoingFilter),
   );
 
-  // Watch the base data
-  final agreementsState = ref.watch(userOngoingAgreementsProvider);
-
-  if (agreementsState.isLoading || agreementsState.hasError) {
-    return agreementsState;
-  }
+  final agreements = await ref.watch(userOngoingAgreementsProvider.future);
 
   // Apply the logic using the Domain's business rules
   switch (filter) {
     case OngoingAgreementFilter.all:
-      return AsyncData(agreementsState.value ?? []);
+      return agreements;
     case OngoingAgreementFilter.needsAction:
-      return AsyncData(ref.watch(needsActionAgreementsProvider));
+      return ref.watch(needsActionAgreementsProvider);
     case OngoingAgreementFilter.awaitingOtherParty:
-      return AsyncData(ref.watch(awaitingOtherPartyAgreementsProvider));
+      return ref.watch(awaitingOtherPartyAgreementsProvider);
   }
 }

@@ -1,12 +1,11 @@
+import 'package:cleer/domain/providers/network/network_provider.dart';
+import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
-import 'package:cleer_ui/widgets/bottom_sheets/bank_picker_bottom_sheet.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
-import 'package:cleer_ui/widgets/custom_text_form_field.dart';
 import 'package:cleer_ui/widgets/form_error.dart';
 import 'package:cleer/ui/profile/payout_destination/view_model/payout_destination_view_model.dart';
 import 'package:command_it/command_it.dart';
@@ -134,6 +133,8 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
                 valueListenable:
                     viewModel.resolveAccountForPayoutDestinationCommand.errors,
                 builder: (BuildContext context, error, Widget? child) {
+                  final isOffline = ref.watch(isOfflineProvider);
+                  if (isOffline) return const SizedBox.shrink();
                   return FormError(
                     hasError: error != null,
                     errorMessage: (error?.error is UnknownDataFailure)
@@ -180,6 +181,22 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
                     return l10n.enterAValid10DigitsAccountNumber;
                   }
                   return null;
+                },
+              ),
+              Consumer(
+                builder: (context, ref, _) {
+                  final isOffline = ref.watch(isOfflineProvider);
+                  if (!isOffline) return const SizedBox.shrink();
+                  return Padding(
+                    padding: EdgeInsets.only(top: Dimens.padding.p16),
+                    child: AppErrorState(
+                      isOffline: true,
+                      onRetry: () {},
+                      variant: AppErrorStateVariant.minimal,
+                      message:
+                          l10n.pleaseCheckYourInternetConnectionAndTryAgain,
+                    ),
+                  );
                 },
               ),
               ValueListenableBuilder(
@@ -348,8 +365,12 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
             return BankPickerBottomSheet(
               banks: banksAsync.value ?? [],
               isLoading: banksAsync.isLoading,
-              errorMessage: banksAsync.hasError
-                  ? banksAsync.error.toString()
+              errorState: banksAsync.hasError
+                  ? banksAsync.error!.toErrorState(
+                      ref,
+                      variant: .card,
+                      onRetry: () => ref.invalidate(getBanksProvider(.NG)),
+                    )
                   : null,
             );
           },

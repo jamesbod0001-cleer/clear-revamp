@@ -5,9 +5,9 @@ import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card_skeleton_list.dart';
+import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/cleer_ui.dart';
-import 'package:cleer_ui/widgets/app_empty_state.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -20,17 +20,20 @@ class OngoingAgreementsView extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     final ongoingAgreementsState = ref.watch(userOngoingAgreementsProvider);
+    final filteredState = ref.watch(agreementsScreenListProvider);
 
     return Column(
       children: [
-        if (!(ongoingAgreementsState.value == null ||
-            ongoingAgreementsState.value?.isEmpty == true))
+        // Only show filters if we have actual data in the base list
+        if (ongoingAgreementsState.value?.isNotEmpty == true)
           const _OngoingFiltersRow(),
+
         Expanded(
-          child: Builder(
-            builder: (BuildContext context) {
-              if ((ongoingAgreementsState.value == null ||
-                  ongoingAgreementsState.value?.isEmpty == true)) {
+          child: filteredState.when(
+            skipLoadingOnReload: true,
+            data: (filteredOngoingAgreements) {
+              // 1. If the base user list is entirely empty, show the main empty state
+              if (ongoingAgreementsState.value?.isEmpty == true) {
                 return AppEmptyState(
                   icon: Assets.icons.handshakeOff.svg(
                     width: Dimens.size.s80,
@@ -77,22 +80,13 @@ class OngoingAgreementsView extends ConsumerWidget {
                   ),
                 );
               }
-              final filteredState = ref.watch(agreementsScreenListProvider);
 
-              if (filteredState.isLoading && !filteredState.isReloading) {
-                return Padding(
-                  padding: EdgeInsets.only(top: Dimens.padding.p24),
-                  child: AgreementCardSkeletonList(),
-                );
-              }
-
-              final filteredOngoingAgreements = filteredState.value;
-
-              if (filteredOngoingAgreements == null ||
-                  filteredOngoingAgreements.isEmpty) {
+              // 2. If the base list has data, but the current filter result is empty
+              if (filteredOngoingAgreements.isEmpty) {
                 return const SizedBox.shrink();
               }
 
+              // 3. Render the lists
               return ResponsiveLayout(
                 mobile: ListView.separated(
                   padding: EdgeInsets.only(top: Dimens.padding.p24),
@@ -113,12 +107,10 @@ class OngoingAgreementsView extends ConsumerWidget {
                     final spacing = Dimens.spacing.sp20;
                     const maxExtent = 450.0;
 
-                    // Use floor to ensure we don't overflow the container
                     int crossAxisCount =
                         (constraints.maxWidth / (maxExtent + spacing)).floor();
                     if (crossAxisCount < 2) crossAxisCount = 2;
 
-                    // Calculate exact width for each item to fill the row
                     final itemWidth =
                         (constraints.maxWidth -
                             (spacing * (crossAxisCount - 1))) /
@@ -153,6 +145,16 @@ class OngoingAgreementsView extends ConsumerWidget {
                 ),
               );
             },
+            // Properly map the loading state to your skeleton UI
+            loading: () => Padding(
+              padding: EdgeInsets.only(top: Dimens.padding.p24),
+              child: const AgreementCardSkeletonList(),
+            ),
+            // Properly map the error state to your gorgeous Error UI extension
+            error: (error, stack) => error.toErrorState(
+              ref,
+              onRetry: () => ref.invalidate(userOngoingAgreementsProvider),
+            ),
           ),
         ),
       ],
