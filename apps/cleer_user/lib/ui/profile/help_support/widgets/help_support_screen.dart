@@ -1,4 +1,5 @@
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -15,7 +16,8 @@ class HelpSupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -218,6 +220,7 @@ class HelpSupportScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

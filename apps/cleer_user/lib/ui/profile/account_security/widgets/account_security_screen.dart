@@ -3,6 +3,7 @@ import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -41,7 +42,8 @@ class AccountSecurityScreen extends HookConsumerWidget {
       uploadProfilePictureCommand.errors.addListener(listener);
       return () => uploadProfilePictureCommand.errors.removeListener(listener);
     }, [uploadProfilePictureCommand]);
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -317,8 +319,9 @@ class AccountSecurityScreen extends HookConsumerWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class ProfilePicture extends ConsumerWidget {

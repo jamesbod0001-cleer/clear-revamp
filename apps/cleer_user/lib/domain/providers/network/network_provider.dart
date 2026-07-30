@@ -8,3 +8,11 @@ part 'network_provider.g.dart';
 Stream<AppConnectionStatus> connectionStatus(Ref ref) {
   return ref.watch(networkRepositoryProvider).connectionStatus;
 }
+
+@riverpod
+bool isOffline(Ref ref) {
+  return ref.watch(connectionStatusProvider).maybeWhen(
+        data: (status) => status.isDisconnected,
+        orElse: () => false,
+      );
+}

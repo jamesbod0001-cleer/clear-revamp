@@ -10,6 +10,7 @@ import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_rev
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/agreement_setup_step.dart';
 import 'package:cleer/ui/agreements/create_agreement/widgets/steps/funds_secured_step.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
@@ -76,7 +77,8 @@ class CreateAgreementScreen extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       backgroundColor: currentStep == .agreementCreated
           ? context.color.green900
           : null,
@@ -152,6 +154,7 @@ class CreateAgreementScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

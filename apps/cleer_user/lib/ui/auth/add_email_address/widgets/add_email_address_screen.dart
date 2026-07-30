@@ -1,6 +1,7 @@
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/auth/add_email_address/view_model/add_email_address_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
@@ -35,7 +36,8 @@ class AddEmailAddressScreen extends HookConsumerWidget {
       return Material(child: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -99,6 +101,7 @@ class AddEmailAddressScreen extends HookConsumerWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

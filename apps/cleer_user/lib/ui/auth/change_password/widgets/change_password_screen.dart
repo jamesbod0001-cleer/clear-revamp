@@ -4,6 +4,7 @@ import 'package:cleer/ui/auth/change_password/view_model/change_password_view_mo
 import 'package:cleer/ui/auth/create_password/widgets/password_validation_checklist.dart';
 import 'package:cleer/ui/core/localization/error_messages.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -57,7 +58,8 @@ class ChangePasswordScreen extends HookConsumerWidget {
       return Material(child: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -161,6 +163,7 @@ class ChangePasswordScreen extends HookConsumerWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }

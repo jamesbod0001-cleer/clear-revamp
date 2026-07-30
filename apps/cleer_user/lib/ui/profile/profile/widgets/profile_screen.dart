@@ -7,6 +7,7 @@ import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer/ui/auth/log_out/view_model/log_out_view_model.dart';
 import 'package:cleer/ui/auth/log_out/widgets/log_out_button.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -47,7 +48,8 @@ class ProfileScreen extends ConsumerWidget {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -249,6 +251,7 @@ class ProfileScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

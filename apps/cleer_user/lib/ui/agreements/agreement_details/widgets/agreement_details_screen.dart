@@ -1,6 +1,7 @@
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/dynamic_agreement_header.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/raise_dispute_bottom_sheet.dart';
+import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
@@ -9,11 +10,9 @@ import 'package:cleer/ui/agreements/agreement_details/widgets/agreement_timeline
 import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
 import 'package:cleer/ui/core/extensions/string_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
-import 'package:cleer_ui/themes/dimensions.dart';
-import 'package:cleer_ui/themes/theme.dart';
-import 'package:cleer_ui/themes/theme_utils.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
+import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/app_back_button.dart';
-import 'package:cleer_ui/widgets/status_circle_icon.dart';
 import 'package:cleer_ui/widgets/menu_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,8 +45,14 @@ class AgreementDetailsScreen extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (agreement == null && state.hasError) {
-      /// TODO: Show proper error here
-      return SizedBox.shrink();
+      return Scaffold(
+        appBar: AppBar(leading: const AppBackButton()),
+        body: state.error!.toErrorState(
+          ref,
+          onRetry: () =>
+              ref.refresh(agreementDetailsViewModelProvider(agreementId)),
+        ),
+      );
     }
 
     if ((agreement!.status == AgreementStatus.awaitingRecipient ||
@@ -63,7 +68,8 @@ class AgreementDetailsScreen extends ConsumerWidget {
       agreementStatusHistoryProvider(agreement.id!),
     );
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -260,8 +266,13 @@ class AgreementDetailsScreen extends ConsumerWidget {
                       ].contains(agreement.status))
                         Gap(Dimens.spacing.sp48),
                       agreementStatusHistoryState.maybeWhen(
-                        /// TODO: Show proper error here
-                        error: (error, stackTrace) => SizedBox.shrink(),
+                        error: (error, stackTrace) => error.toErrorState(
+                          ref,
+                          onRetry: () => ref.refresh(
+                            agreementStatusHistoryProvider(agreement.id!),
+                          ),
+                          variant: AppErrorStateVariant.card,
+                        ),
                         orElse: () {
                           bool isLoading =
                               agreementStatusHistoryState.isLoading;
@@ -435,6 +446,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
           },
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

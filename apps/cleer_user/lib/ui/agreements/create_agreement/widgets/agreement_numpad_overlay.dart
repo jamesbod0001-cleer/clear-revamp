@@ -2,6 +2,7 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
 import 'package:flutter/foundation.dart';
@@ -67,10 +68,18 @@ class AgreementNumpadOverlay extends HookWidget {
               fit: BoxFit.cover,
             ),
           ),
-          child: SafeArea(
-            child: Padding(
-              padding: Dimens.of(context).edgeInsetsScreenHorizontal,
-              child: Stack(
+          child: Column(
+            children: [
+              const SafeArea(
+                bottom: false,
+                child: AppOfflineBanner(isFullWidth: true),
+              ),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: Dimens.of(context).edgeInsetsScreenHorizontal,
+                    child: Stack(
                 children: [
                   Positioned(
                     top: 29,
@@ -232,8 +241,11 @@ class AgreementNumpadOverlay extends HookWidget {
             ),
           ),
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+),
+);
   }
 }
 

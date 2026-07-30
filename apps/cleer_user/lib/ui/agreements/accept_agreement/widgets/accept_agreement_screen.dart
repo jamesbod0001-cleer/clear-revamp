@@ -4,6 +4,7 @@ import 'package:cleer/ui/agreements/accept_agreement/view_model/accept_agreement
 import 'package:cleer/ui/agreements/accept_agreement/widgets/steps/agreement_details_step.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/steps/success_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/payment_orchestrator_view.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -50,7 +51,8 @@ class AcceptAgreementScreen extends ConsumerWidget {
       };
     }
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       body: SafeArea(
         bottom: false,
         child: Stack(
@@ -65,6 +67,7 @@ class AcceptAgreementScreen extends ConsumerWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

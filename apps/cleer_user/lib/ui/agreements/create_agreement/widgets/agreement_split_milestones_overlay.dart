@@ -2,6 +2,7 @@ import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart'
 import 'package:cleer/ui/agreements/create_agreement/state/create_agreement_state.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
@@ -75,7 +76,8 @@ class AgreementSplitMilestonesOverlay extends HookConsumerWidget {
       return true;
     }
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -274,8 +276,9 @@ class AgreementSplitMilestonesOverlay extends HookConsumerWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class MilestoneItemCard extends HookWidget {

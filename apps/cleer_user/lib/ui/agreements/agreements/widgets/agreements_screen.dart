@@ -4,6 +4,7 @@ import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.
 import 'package:cleer/ui/agreements/agreements/widgets/completed_agreements_view.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/ongoing_agreements_view.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer/ui/core/widgets/user_profile_pill.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,8 @@ class AgreementsScreen extends HookConsumerWidget {
       },
     );
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: context.isMobile
             ? Dimens.of(context).paddingScreenHorizontal
@@ -121,8 +123,9 @@ class AgreementsScreen extends HookConsumerWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _TabBar extends ConsumerWidget {

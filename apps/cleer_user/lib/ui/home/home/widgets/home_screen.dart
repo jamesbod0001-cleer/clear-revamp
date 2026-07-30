@@ -2,6 +2,8 @@ import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/activity/activity_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
+import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner.dart';
 import 'package:cleer/ui/home/home/view_model/notification_permission_view_model.dart';
 import 'package:cleer/ui/home/home/widgets/notification_permission_bottom_sheet.dart';
 import 'package:cleer/ui/agreements/agreements/widgets/agreement_card.dart';
@@ -16,7 +18,6 @@ import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/paginated_list/paginated_list.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer/ui/home/home/widgets/quick_actions_section.dart';
-import 'package:cleer_ui/widgets/app_empty_state.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -227,7 +228,11 @@ class HomeScreen extends HookConsumerWidget {
       ),
       body: SafeArea(
         bottom: false,
-        child: CustomScrollView(
+        child: Column(
+          children: [
+            const AppOfflineBanner(isFullWidth: true),
+            Expanded(
+              child: CustomScrollView(
           slivers: [
             SliverPadding(
               padding: Dimens.of(context).edgeInsetsScreenHorizontal,
@@ -340,10 +345,11 @@ class HomeScreen extends HookConsumerWidget {
                                       Gap(Dimens.spacing.sp28),
                             );
                           },
-                          error: (Object error, StackTrace stackTrace) {
-                            /// TODO: Add proper error state here
-                            return SizedBox.shrink();
-                          },
+                          error: (error, stack) => error.toErrorState(
+                            ref,
+                            variant: .card,
+                            onRetry: () => ref.invalidate(userActivitiesProvider),
+                          ),
                           loading: () => ActivityCardSkeletonList(itemCount: 3),
                         ),
                       ],
@@ -727,9 +733,12 @@ class HomeScreen extends HookConsumerWidget {
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+);
   }
 }

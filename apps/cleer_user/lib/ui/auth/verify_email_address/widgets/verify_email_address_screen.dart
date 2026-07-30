@@ -2,6 +2,7 @@ import 'package:cleer_core/models/confirm_user_attribute_result/confirm_user_att
 import 'package:cleer/ui/auth/verify_email_address/view_model/verify_email_address_view_model.dart';
 import 'package:cleer/ui/auth/verify_email_address/widgets/change_email_address_bottom_sheet.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer/ui/core/widgets/app_offline_banner_wrapper.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -62,7 +63,8 @@ class VerifyEmailAddressScreen extends HookConsumerWidget {
 
     final codeDeliveryDetails = state.value!.codeDeliveryDetails;
 
-    return Scaffold(
+    return AppOfflineBannerWrapper(
+      child: Scaffold(
       appBar: AppBar(
         titleSpacing: Dimens.padding.p18,
         titleTextStyle: context.typo.headlineSmall,
@@ -197,6 +199,7 @@ class VerifyEmailAddressScreen extends HookConsumerWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
