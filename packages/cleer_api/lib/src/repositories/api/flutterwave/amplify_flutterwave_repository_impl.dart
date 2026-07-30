@@ -43,9 +43,12 @@ class AmplifyFlutterwaveRepositoryImpl
 
   @override
   Future<ResultDart<List<Bank>, DataFailure>> getBanks(
-    CountryCode countryCode,
-  ) async {
+      CountryCode countryCode,
+      ) async {
     return await performDataOperation<List<Bank>>(
+      operationName: 'GetBanks',
+      targetId: countryCode.name,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Retrieving banks for country code: ${countryCode.name}');
         final response = await _proxyServiceClient.retrieveBanks(
@@ -53,16 +56,17 @@ class AmplifyFlutterwaveRepositoryImpl
         );
         return response.data.map((dto) => dto.toDomain()).toList();
       },
-      operationName: 'GetBanks',
-      targetId: countryCode.name,
     );
   }
 
   @override
   Future<ResultDart<String, DataFailure>> resolveAccount(
-    ResolveAccountParams params,
-  ) async {
+      ResolveAccountParams params,
+      ) async {
     return await performDataOperation<String>(
+      operationName: 'ResolveAccount',
+      targetId: params.accountNumber,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info(
           'Resolving account for bank code: ${params.bankCode} and account number: ${params.accountNumber}',
@@ -77,8 +81,6 @@ class AmplifyFlutterwaveRepositoryImpl
         );
         return response.data.accountName;
       },
-      operationName: 'ResolveAccount',
-      targetId: params.accountNumber,
     );
   }
 
@@ -92,6 +94,9 @@ class AmplifyFlutterwaveRepositoryImpl
     required String userId,
   }) async {
     return await performDataOperation<Customer>(
+      operationName: 'CreateCustomer',
+      targetId: userId,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Creating customer for userId: $userId');
 
@@ -99,7 +104,6 @@ class AmplifyFlutterwaveRepositoryImpl
             .replaceAll('+234', '')
             .replaceFirst(RegExp(r'^0'), '');
 
-        // Generate an Idempotency Key locally to ensure safe retries
         final String idempotencyKey = PaymentSecurityUtils.generateNonce();
 
         final response = await _proxyServiceClient.createCustomer(
@@ -118,8 +122,6 @@ class AmplifyFlutterwaveRepositoryImpl
 
         return response.data.toDomain(userId);
       },
-      operationName: 'CreateCustomer',
-      targetId: userId,
     );
   }
 
@@ -129,75 +131,58 @@ class AmplifyFlutterwaveRepositoryImpl
 
   @override
   Future<ResultDart<PaymentMethod, DataFailure>> getPaymentMethod(
-    String id,
-  ) async {
+      String id,
+      ) async {
     return await performDataOperation<PaymentMethod>(
+      operationName: 'GetPaymentMethod',
+      targetId: id,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Retrieving payment method with id: $id');
         final response = await _proxyServiceClient.retrievePaymentMethod(id);
         return response.data.toDomain();
       },
-      operationName: 'GetPaymentMethod',
-      targetId: id,
     );
   }
 
   @override
   Future<ResultDart<PaymentMethod, DataFailure>> createPaymentMethod(
-    CreatePaymentMethodParams params,
-  ) async {
+      CreatePaymentMethodParams params,
+      ) async {
     return await performDataOperation<PaymentMethod>(
+      operationName: 'CreatePaymentMethod',
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Creating payment method with type: ${params.runtimeType}');
 
         final CreatePaymentMethodRequest request = await params.when(
           card:
               (
-                cardNumber,
-                expiryMonth,
-                expiryYear,
-                cvv,
-                cardHolderName,
-                customerId,
-                meta,
+              cardNumber,
+              expiryMonth,
+              expiryYear,
+              cvv,
+              cardHolderName,
+              customerId,
+              meta,
               ) async {
-                // Local Encryption: Card details never hit our backend in plaintext.
-                final String nonce = PaymentSecurityUtils.generateNonce();
-                final String encryptionKey = Env.flutterwaveEncryptionKey;
+            final String nonce = PaymentSecurityUtils.generateNonce();
+            final String encryptionKey = Env.flutterwaveEncryptionKey;
 
-                return CreatePaymentMethodRequest(
-                  type: PaymentMethodType.card.snakeCase,
-                  card: CardRequestObject(
-                    encryptedCardNumber:
-                        await PaymentSecurityUtils.encryptAESGCM(
-                          cardNumber,
-                          encryptionKey,
-                          nonce,
-                        ),
-                    encryptedExpiryMonth:
-                        await PaymentSecurityUtils.encryptAESGCM(
-                          expiryMonth,
-                          encryptionKey,
-                          nonce,
-                        ),
-                    encryptedExpiryYear:
-                        await PaymentSecurityUtils.encryptAESGCM(
-                          expiryYear,
-                          encryptionKey,
-                          nonce,
-                        ),
-                    encryptedCvv: await PaymentSecurityUtils.encryptAESGCM(
-                      cvv,
-                      encryptionKey,
-                      nonce,
-                    ),
-                    nonce: nonce,
-                    cof: COFObject(enabled: true),
-                  ),
-                  customerId: customerId,
-                  meta: meta,
-                );
-              },
+            return CreatePaymentMethodRequest(
+              type: PaymentMethodType.card.snakeCase,
+              card: CardRequestObject(
+                encryptedCardNumber: await PaymentSecurityUtils.encryptAESGCM(cardNumber, encryptionKey, nonce),
+                encryptedExpiryMonth: await PaymentSecurityUtils.encryptAESGCM(expiryMonth, encryptionKey, nonce),
+                encryptedExpiryYear: await PaymentSecurityUtils.encryptAESGCM(expiryYear, encryptionKey, nonce),
+                encryptedCvv: await PaymentSecurityUtils.encryptAESGCM(cvv, encryptionKey, nonce),
+                nonce: nonce,
+                cof: COFObject(enabled: true),
+              ),
+              customerId: customerId,
+              meta: meta,
+            );
+          },
           opay: (customerId, meta) async {
             return CreatePaymentMethodRequest(
               type: PaymentMethodType.opay.snakeCase,
@@ -218,7 +203,6 @@ class AmplifyFlutterwaveRepositoryImpl
         final response = await _proxyServiceClient.createPaymentMethod(request);
         return response.data.toDomain();
       },
-      operationName: 'CreatePaymentMethod',
     );
   }
 
@@ -228,56 +212,42 @@ class AmplifyFlutterwaveRepositoryImpl
 
   @override
   Future<ResultDart<VirtualAccount, DataFailure>> createVirtualAccount(
-    CreateVirtualAccountParams params,
-  ) async {
+      CreateVirtualAccountParams params,
+      ) async {
     return await performDataOperation<VirtualAccount>(
+      operationName: 'CreateVirtualAccount',
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Creating virtual account');
 
         final CreateVirtualAccountRequest request = await params.when(
           dynamic:
-              (
-                reference,
-                customerId,
-                amount,
-                expiry,
-                narration,
-                merchantVatAmount,
-                meta,
-              ) async {
-                return CreateVirtualAccountRequest(
-                  reference: reference,
-                  customerId: customerId,
-                  amount: amount,
-                  accountType: VirtualAccountType.dynamic.name,
-                  expiry: expiry,
-                  narration: narration,
-                  merchantVatAmount: merchantVatAmount,
-                  meta: meta,
-                );
-              },
+              (reference, customerId, amount, expiry, narration, merchantVatAmount, meta) async {
+            return CreateVirtualAccountRequest(
+              reference: reference,
+              customerId: customerId,
+              amount: amount,
+              accountType: VirtualAccountType.dynamic.name,
+              expiry: expiry,
+              narration: narration,
+              merchantVatAmount: merchantVatAmount,
+              meta: meta,
+            );
+          },
           static:
-              (
-                reference,
-                customerId,
-                bvn,
-                nin,
-                narration,
-                merchantVatAmount,
-                meta,
-              ) {
-                return CreateVirtualAccountRequest(
-                  reference: reference,
-                  customerId: customerId,
-                  amount: 0, // Static accounts don't have a fixed amount
-                  accountType: VirtualAccountType.static.name,
-                  narration: narration,
-                  merchantVatAmount: merchantVatAmount,
-                  meta: meta,
-                  bvn: bvn,
-                  nin: nin,
-                );
-              },
+              (reference, customerId, bvn, nin, narration, merchantVatAmount, meta) {
+            return CreateVirtualAccountRequest(
+              reference: reference,
+              customerId: customerId,
+              amount: 0,
+              accountType: VirtualAccountType.static.name,
+              narration: narration,
+              merchantVatAmount: merchantVatAmount,
+              meta: meta,
+              bvn: bvn,
+              nin: nin,
+            );
+          },
         );
 
         final response = await _proxyServiceClient.createVirtualAccount(
@@ -285,7 +255,6 @@ class AmplifyFlutterwaveRepositoryImpl
         );
         return response.data.toDomain();
       },
-      operationName: 'CreateVirtualAccount',
     );
   }
 
@@ -295,13 +264,16 @@ class AmplifyFlutterwaveRepositoryImpl
 
   @override
   Future<ResultDart<Charge, DataFailure>> createCharge(
-    CreateChargeParams params,
-  ) async {
+      CreateChargeParams params,
+      ) async {
     return await performDataOperation<Charge>(
+      operationName: 'CreateCharge',
+      targetId: params.agreementId,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Creating charge for Agreement ID: ${params.agreementId}');
-
         log.info(params.redirectUrl.toString());
+
         final request = CreateChargeRequest(
           amount: params.amount,
           reference: ReferenceGenerator.generate(params.agreementId),
@@ -314,29 +286,30 @@ class AmplifyFlutterwaveRepositoryImpl
         final response = await _proxyServiceClient.createCharge(request);
         return response.data.toDomain(params.agreementId);
       },
-      operationName: 'CreateCharge',
-      targetId: params.agreementId,
     );
   }
 
   @override
   Future<ResultDart<Charge, DataFailure>> getCharge(String id) async {
     return await performDataOperation<Charge>(
+      operationName: 'GetCharge',
+      targetId: id,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Retrieving charge with id: $id');
         final response = await _proxyServiceClient.retrieveCharge(id);
         return response.data.toDomain('');
       },
-      operationName: 'GetCharge',
-      targetId: id,
     );
   }
 
   @override
   Future<ResultDart<List<Charge>, DataFailure>> listCharges(
-    ListChargesParams params,
-  ) async {
+      ListChargesParams params,
+      ) async {
     return await performDataOperation<List<Charge>>(
+      operationName: 'ListCharges',
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         log.info('Retrieving charges list');
 
@@ -355,7 +328,6 @@ class AmplifyFlutterwaveRepositoryImpl
         final response = await _proxyServiceClient.listCharges(request);
         return response.data.map((charge) => charge.toDomain('')).toList();
       },
-      operationName: 'ListCharges',
     );
   }
 }

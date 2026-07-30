@@ -17,7 +17,7 @@ class AmplifyPayoutDestinationRepositoryImpl
     required AmplifyPayoutDestinationServiceClient
     amplifyPayoutDestinationServiceClient,
   }) : _amplifyPayoutDestinationServiceClient =
-           amplifyPayoutDestinationServiceClient;
+      amplifyPayoutDestinationServiceClient;
 
   @override
   AmplifyLogger get log =>
@@ -27,43 +27,46 @@ class AmplifyPayoutDestinationRepositoryImpl
   Future<ResultDart<Option<PayoutDestination>, DataFailure>>
   getPayoutDestination(GetPayoutDestinationParams params) async {
     return await performDataOperation<Option<PayoutDestination>>(
+      operationName: 'GetPayoutDestination',
+      targetId: params.accountNumber,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         final response = await _amplifyPayoutDestinationServiceClient
             .queryPayoutDestination(params.accountNumber, params.bankCode);
         return Option.fromNullable(response?.toDomain());
       },
-      operationName: 'GetPayoutDestination',
-      targetId: params.accountNumber,
     );
   }
 
   @override
   Future<ResultDart<PayoutDestination, DataFailure>> createPayoutDestination(
-    PayoutDestination payoutDestination,
-  ) async {
+      PayoutDestination payoutDestination,
+      ) async {
     return await performDataOperation<PayoutDestination>(
+      operationName: 'CreatePayoutDestination',
+      targetId: payoutDestination.accountNumber,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         final response = await _amplifyPayoutDestinationServiceClient
             .createPayoutDestination(payoutDestination.toAmplify());
         return response.toDomain();
       },
-      operationName: 'CreatePayoutDestination',
-      targetId: payoutDestination.accountNumber,
     );
   }
 
   @override
   Future<ResultDart<PayoutDestination, DataFailure>> deletePayoutDestination(
-    PayoutDestination payoutDestination,
-  ) async {
+      PayoutDestination payoutDestination,
+      ) async {
     return await performDataOperation<PayoutDestination>(
+      operationName: 'DeletePayoutDestination',
+      targetId: payoutDestination.accountNumber,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         final response = await _amplifyPayoutDestinationServiceClient
             .deletePayoutDestination(payoutDestination.toAmplify());
         return response.toDomain();
       },
-      operationName: 'DeletePayoutDestination',
-      targetId: payoutDestination.accountNumber,
     );
   }
 
@@ -71,6 +74,8 @@ class AmplifyPayoutDestinationRepositoryImpl
   Future<ResultDart<List<PayoutDestination>, DataFailure>>
   getPayoutDestinationsByUser(String userId) async {
     return await performDataOperation<List<PayoutDestination>>(
+      operationName: 'GetUserPayoutDestinations',
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
       operation: () async {
         final response = await _amplifyPayoutDestinationServiceClient
             .queryPayoutDestinationsByUser(userId);
@@ -80,35 +85,34 @@ class AmplifyPayoutDestinationRepositoryImpl
             .map((e) => e.toDomain())
             .toList();
       },
-      operationName: 'GetUserPayoutDestinations',
     );
   }
 
   @override
   Stream<PayoutDestination> observeUserPayoutDestinationsCreates(
-    String userId,
-  ) {
+      String userId,
+      ) {
     return _amplifyPayoutDestinationServiceClient
         .observeUserPayoutDestinationsCreates(userId)
         .handleError(
           (error) => log.error('Stream error for payout destination', error),
-        )
+    )
         .where((event) => event.data != null)
         .map((event) {
-          log.info('New event: Payout destination created: ${event.data}');
-          return event.data!.toDomain();
-        });
+      log.info('New event: Payout destination created: ${event.data}');
+      return event.data!.toDomain();
+    });
   }
 
   @override
   Stream<PayoutDestination> observeUserPayoutDestinationsDeletes(
-    String userId,
-  ) {
+      String userId,
+      ) {
     return _amplifyPayoutDestinationServiceClient
         .observeUserPayoutDestinationsDeletes(userId)
         .handleError(
           (error) => log.error('Stream error for payout destination', error),
-        )
+    )
         .where((event) => event.data != null)
         .map((event) => event.data!.toDomain());
   }

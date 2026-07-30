@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer_api/src/exceptions/amplify/amplify_api_exception_handler.dart';
 import 'package:cleer_api/src/exceptions/backend_exception.dart';
@@ -11,16 +13,31 @@ mixin AmplifyApiRepositoryMixin {
   Future<ResultDart<Unit, DataFailure>> performVoidOperation({
     required Future<void> Function() operation,
     required String operationName,
+    Duration timeoutDuration = const Duration(seconds: 15),
     String? targetId,
     String? targetDetails,
   }) async {
     try {
       log.info('Starting $operationName (ID: $targetId)...');
 
-      await operation();
+      await operation().timeout(
+        timeoutDuration,
+        onTimeout: () => throw TimeoutException('The request timed out.'),
+      );
 
       log.info('Successfully completed $operationName (ID: $targetId)');
       return Success.unit();
+    } on TimeoutException catch (e, st) {
+      log.error(
+        'Timeout Error during $operationName (ID: $targetId): ${e.message}',
+        e,
+        st,
+      );
+      return Failure(
+        DataFailure.unknown(
+          message: 'Connection timed out. Please check your internet.',
+        ),
+      );
     } on BackendException catch (e, st) {
       log.error(
         'Server Logic Error during $operationName (ID: $targetId): ${e.message}',
@@ -48,16 +65,31 @@ mixin AmplifyApiRepositoryMixin {
   Future<ResultDart<R, DataFailure>> performDataOperation<R extends Object>({
     required Future<R> Function() operation,
     required String operationName,
+    Duration timeoutDuration = const Duration(seconds: 15),
     String? targetId,
     String? targetDetails,
   }) async {
     try {
       log.info('Starting $operationName (ID: $targetId)...');
 
-      final result = await operation();
+      final result = await operation().timeout(
+        timeoutDuration,
+        onTimeout: () => throw TimeoutException('The request timed out.'),
+      );
 
       log.info('Successfully completed $operationName (ID: $targetId)');
       return Success(result);
+    } on TimeoutException catch (e, st) {
+      log.error(
+        'Timeout Error during $operationName (ID: $targetId): ${e.message}',
+        e,
+        st,
+      );
+      return Failure(
+        DataFailure.unknown(
+          message: 'Connection timed out. Please check your internet.',
+        ),
+      );
     } on BackendException catch (e, st) {
       log.error(
         'Server Logic Error during $operationName (ID: $targetId): code: ${e.code} message: ${e.message} recoverySuggestion: ${e.recoverySuggestion}',

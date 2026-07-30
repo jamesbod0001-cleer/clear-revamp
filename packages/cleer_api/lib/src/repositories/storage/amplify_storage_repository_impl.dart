@@ -1,3 +1,4 @@
+import 'dart:async'; // 🔴 Added for TimeoutException
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer_api/src/exceptions/amplify/amplify_storage_exception_handler.dart';
 import 'package:cleer_core/cleer_core.dart';
@@ -16,8 +17,8 @@ class AmplifyStorageRepositoryImpl extends StorageRepository {
 
   @override
   Future<ResultDart<String, StorageFailure>> uploadFile(
-    UploadFileParams params,
-  ) async {
+      UploadFileParams params,
+      ) async {
     _log.info('Uploading file to storage with path: ${params.path}');
     try {
       final request = UploadFileRequest(
@@ -25,11 +26,21 @@ class AmplifyStorageRepositoryImpl extends StorageRepository {
         path: params.path,
         onProgress: params.onProgress,
       );
-      final result = await _amplifyStorageServiceClient.uploadFile(request);
+
+      // 🔴 60-Second Timeout applied here for heavy file uploads
+      final result = await _amplifyStorageServiceClient.uploadFile(request).timeout(
+        const Duration(seconds: 60),
+        onTimeout: () => throw TimeoutException('File upload timed out'),
+      );
+
       _log.info(
         'File uploaded successfully to storage with path: ${params.path}',
       );
       return Success(result);
+    } on TimeoutException catch (_) {
+      _log.error('Upload timeout for path: ${params.path}');
+      // Assuming your StorageFailure has an unknown or network constructor
+      return const Failure(StorageFailure.unknown(message: 'Upload timed out. Please check your internet connection.'));
     } on StorageException catch (e) {
       _log.error('Error uploading file to storage: $e');
       return Failure(AmplifyStorageExceptionHandler.handleException(e));
@@ -40,9 +51,15 @@ class AmplifyStorageRepositoryImpl extends StorageRepository {
   Future<ResultDart<Uri, StorageFailure>> getUrl(String path) async {
     _log.info('Getting URL for path: $path');
     try {
-      final result = await _amplifyStorageServiceClient.getUrl(path);
+      // 🔴 15-second timeout is fine here since it just fetches a string URL, not the file itself
+      final result = await _amplifyStorageServiceClient.getUrl(path).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('Request timed out'),
+      );
       _log.info('Got URL for path: $path');
       return Success(result);
+    } on TimeoutException catch (_) {
+      return const Failure(StorageFailure.unknown(message: 'Request timed out.'));
     } on StorageException catch (e) {
       _log.error('Error getting URL for path: $path: $e');
       return Failure(AmplifyStorageExceptionHandler.handleException(e));
@@ -53,38 +70,17 @@ class AmplifyStorageRepositoryImpl extends StorageRepository {
   Future<ResultDart<String, StorageFailure>> deleteFile(String path) async {
     _log.info('Deleting file with path: $path');
     try {
-      final result = await _amplifyStorageServiceClient.removeFile(path);
+      final result = await _amplifyStorageServiceClient.removeFile(path).timeout(
+        const Duration(seconds: 15),
+        onTimeout: () => throw TimeoutException('Request timed out'),
+      );
       _log.info('File deleted successfully with path: $path');
       return Success(result.removedItem.path);
+    } on TimeoutException catch (_) {
+      return const Failure(StorageFailure.unknown(message: 'Request timed out.'));
     } on StorageException catch (e) {
       _log.error('Error deleting file with path: $path: $e');
       return Failure(AmplifyStorageExceptionHandler.handleException(e));
     }
   }
-
-  // @override
-  // Future<ResultDart<List<String>, StorageFailure>> deleteFiles(
-  //     List<String> paths,
-  //     ) async {
-  //   _log.info('Deleting files with paths: $paths');
-  //   try {
-  //     final result = await _amplifyStorageServiceClient.removeManyFiles(paths);
-  //     final successfullyDeletedFiles = result.removedItems
-  //         .map((item) => item.path)
-  //         .toList();
-  //     _log.info(
-  //       'Successfully deleted files with paths: $successfullyDeletedFiles',
-  //     );
-  //     if (result.errors.isEmpty) {
-  //       _log.info('No errors occurred while deleting files');
-  //       return Success(successfullyDeletedFiles);
-  //     } else {
-  //       _log.error('Errors occurred while deleting files: ${result.errors}');
-  //       return Success(successfullyDeletedFiles);
-  //     }
-  //   } on StorageException catch (e) {
-  //     _log.error('Error deleting files: $e');
-  //     return Failure(AmplifyStorageExceptionHandler.handleException(e));
-  //   }
-  // }
 }
