@@ -66,5 +66,7 @@
   "passwordMustContainAtLeastOneDigit": "Password must contain at least one digit.",
   "passwordCannotContainSpaces": "Password cannot contain spaces.",
   "passwordMustContainAtLeastOneSpecialCharacter": "Password must contain at least one special character.",
-  "passwordDoesNotMatch": "Password does not match."
+  "passwordDoesNotMatch": "Password does not match.",
+  "retry": "Retry",
+  "refresh": "Refresh"
 }

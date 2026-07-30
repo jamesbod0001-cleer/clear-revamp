@@ -3,24 +3,32 @@ import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 
-
 /// Defines the visual variant styles for the primary application button.
 enum PrimaryButtonVariant { primary, error }
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({super.key, required this.onPressed, required this.child})
-    : variant = PrimaryButtonVariant.primary;
+  const PrimaryButton({
+    super.key,
+    required this.onPressed,
+    required this.child,
+    this.minimumSize,
+    this.padding,
+  }) : variant = PrimaryButtonVariant.primary;
 
   /// Named constructor specifically tailored for dangerous or error actions.
   const PrimaryButton.error({
     super.key,
     required this.onPressed,
     required this.child,
+    this.minimumSize,
+    this.padding,
   }) : variant = PrimaryButtonVariant.error;
 
   final Widget child;
   final VoidCallback? onPressed;
   final PrimaryButtonVariant variant;
+  final Size? minimumSize;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +52,12 @@ class PrimaryButton extends StatelessWidget {
         backgroundColor: Colors.transparent,
         disabledForegroundColor: context.color.grey500,
         disabledBackgroundColor: context.color.grey200,
+        padding: padding,
+        minimumSize: minimumSize,
         backgroundBuilder: (context, states, internalChild) {
           final bool isDisabled = states.contains(WidgetState.disabled);
           return SizedBox.fromSize(
-            size: Dimens.mobile.buttonMinimumSize,
+            size: minimumSize ?? Dimens.mobile.buttonMinimumSize,
             child: Container(
               clipBehavior: .antiAlias,
               decoration: BoxDecoration(
@@ -86,4 +96,3 @@ class PrimaryButton extends StatelessWidget {
     );
   }
 }
-

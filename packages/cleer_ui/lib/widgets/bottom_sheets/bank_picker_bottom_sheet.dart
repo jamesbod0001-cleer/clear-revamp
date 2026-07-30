@@ -15,13 +15,13 @@ class BankPickerBottomSheet extends HookWidget {
     super.key,
     required this.banks,
     this.isLoading = false,
-    this.errorMessage,
+    this.errorState,
   });
 
   // Pure Dart state variables injected from the application shell
   final List<Bank> banks;
   final bool isLoading;
-  final String? errorMessage;
+  final Widget? errorState;
 
   // The static framework expects a wrapped structural layout child (e.g., Consumer)
   static Future<Bank?> show(BuildContext context, {required Widget child}) =>
@@ -38,12 +38,17 @@ class BankPickerBottomSheet extends HookWidget {
     final searchQuery = useValueListenable(searchController);
 
     // Filter and sort calculated dynamically based on local text input
-    final filteredList = banks
-        .where((bank) => bank.name.toLowerCase().contains(
-      searchQuery.text.toLowerCase(),
-    ))
-        .toList()
-      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    final filteredList =
+        banks
+            .where(
+              (bank) => bank.name.toLowerCase().contains(
+                searchQuery.text.toLowerCase(),
+              ),
+            )
+            .toList()
+          ..sort(
+            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+          );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,31 +62,33 @@ class BankPickerBottomSheet extends HookWidget {
         Gap(Dimens.spacing.sp24),
         Expanded(
           child: switch (true) {
-            _ when isLoading =>
-            const Center(child: CircularProgressIndicator()),
+            _ when isLoading => const Center(
+              child: CircularProgressIndicator(),
+            ),
 
-            _ when errorMessage != null =>
-                Center(child: Text(errorMessage!)),
+            _ when errorState != null => Align(
+              alignment: .topCenter,
+              child: errorState!,
+            ),
 
-            _ when filteredList.isEmpty =>
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PhosphorIcon(
-                      PhosphorIcons.x(.bold),
-                      size: Dimens.size.s20,
-                      color: context.color.grey600,
-                    ),
-                    Gap(Dimens.spacing.sp8),
-                    Text(
-                      l10n.searchNotFound,
-                      style: context.typo.bodyLarge.copyWith(
-                        color: context.color.grey600,
-                      ),
-                    ),
-                  ],
+            _ when filteredList.isEmpty => Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PhosphorIcon(
+                  PhosphorIcons.x(.bold),
+                  size: Dimens.size.s20,
+                  color: context.color.grey600,
                 ),
+                Gap(Dimens.spacing.sp8),
+                Text(
+                  l10n.searchNotFound,
+                  style: context.typo.bodyLarge.copyWith(
+                    color: context.color.grey600,
+                  ),
+                ),
+              ],
+            ),
 
             _ => ListView.separated(
               itemCount: filteredList.length,
