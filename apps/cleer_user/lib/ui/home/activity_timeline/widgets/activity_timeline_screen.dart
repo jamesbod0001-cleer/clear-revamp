@@ -140,7 +140,13 @@ class ActivityTimelineScreen extends ConsumerWidget {
           },
           error: (error, stack) => error.toErrorState(
             ref,
-            onRetry: () => ref.invalidate(userActivitiesProvider),
+            onRetry: () {
+              if (ref.read(userProfileProvider).hasError) {
+                ref.invalidate(userProfileProvider);
+              } else {
+                ref.invalidate(userActivitiesProvider);
+              }
+            },
           ),
           loading: () => Padding(
             padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(

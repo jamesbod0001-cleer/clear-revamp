@@ -8,13 +8,13 @@ class UserPerformanceStatsCard extends StatelessWidget {
   const UserPerformanceStatsCard({
     super.key,
     required this.successfulAgreements,
-    required this.disputeFreeAgreements,
-    required this.totalValueTransacted,
+    required this.totalAmountSent,
+    required this.totalAmountReceived,
   });
 
   final int successfulAgreements;
-  final int disputeFreeAgreements;
-  final String totalValueTransacted;
+  final String totalAmountSent;
+  final String totalAmountReceived;
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +37,13 @@ class UserPerformanceStatsCard extends StatelessWidget {
               ),
               _verticalDivider(context),
               _StatItem(
-                value: '$disputeFreeAgreements',
-                label: l10n.disputeFreeAgreements,
+                value: totalAmountSent,
+                label: l10n.totalAmountSent,
               ),
               _verticalDivider(context),
               _StatItem(
-                value: totalValueTransacted,
-                label: l10n.totalValueTransacted,
+                value: totalAmountReceived,
+                label: l10n.totalAmountReceived,
               ),
             ],
           ),

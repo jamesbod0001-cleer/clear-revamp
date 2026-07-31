@@ -1,5 +1,6 @@
 import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
+import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/agreements/agreements/state/agreements_state.dart';
 import 'package:cleer/ui/agreements/agreements/view_model/agreements_view_model.dart';
@@ -153,7 +154,15 @@ class OngoingAgreementsView extends ConsumerWidget {
             // Properly map the error state to your gorgeous Error UI extension
             error: (error, stack) => error.toErrorState(
               ref,
-              onRetry: () => ref.invalidate(userOngoingAgreementsProvider),
+              onRetry: () {
+                // If the user profile failed, we must refresh it first.
+                // Otherwise, just refreshing this list won't work because it depends on the user.
+                if (ref.read(userProfileProvider).hasError) {
+                  ref.invalidate(userProfileProvider);
+                } else {
+                  ref.invalidate(userOngoingAgreementsProvider);
+                }
+              },
             ),
           ),
         ),

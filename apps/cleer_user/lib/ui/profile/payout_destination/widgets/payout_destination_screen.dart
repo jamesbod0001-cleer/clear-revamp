@@ -31,7 +31,9 @@ class PayoutDestinationScreen extends ConsumerWidget {
       userPayoutDestinationsProvider,
     );
 
-    bool isLoading = userPayoutDestinationsState.isLoading;
+    bool isLoading =
+        userPayoutDestinationsState.isLoading &&
+        !userPayoutDestinationsState.isReloading;
 
     return AppOfflineBannerWrapper(
       child: Scaffold(

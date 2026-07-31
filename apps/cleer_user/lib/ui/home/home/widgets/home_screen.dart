@@ -249,6 +249,7 @@ class HomeScreen extends HookConsumerWidget {
                     needsActionCount: needsActionList.length,
                     awaitingOtherPartyCount: awaitingOtherPartyList.length,
                     isLoading: isSummaryLoading,
+                    hasError: ongoingState.hasError || protectedAmountState.hasError,
                   ),
                 ]),
               ),
@@ -348,7 +349,13 @@ class HomeScreen extends HookConsumerWidget {
                           error: (error, stack) => error.toErrorState(
                             ref,
                             variant: .card,
-                            onRetry: () => ref.invalidate(userActivitiesProvider),
+                            onRetry: () {
+                              if (ref.read(userProfileProvider).hasError) {
+                                ref.invalidate(userProfileProvider);
+                              } else {
+                                ref.invalidate(userActivitiesProvider);
+                              }
+                            },
                           ),
                           loading: () => ActivityCardSkeletonList(itemCount: 3),
                         ),
@@ -479,14 +486,17 @@ class HomeScreen extends HookConsumerWidget {
                                               ),
                                             );
                                           },
-                                      error:
-                                          (
-                                            Object error,
-                                            StackTrace stackTrace,
-                                          ) {
-                                            /// TODO: Add proper error state here
-                                            return SizedBox.shrink();
-                                          },
+                                      error: (error, stack) => error.toErrorState(
+                                        ref,
+                                        variant: .card,
+                                        onRetry: () {
+                                          if (ref.read(userProfileProvider).hasError) {
+                                            ref.invalidate(userProfileProvider);
+                                          } else {
+                                            ref.invalidate(userOngoingAgreementsProvider);
+                                          }
+                                        },
+                                      ),
                                       loading: () => ActivityCardSkeletonList(
                                         itemCount: 4,
                                       ),
@@ -707,14 +717,17 @@ class HomeScreen extends HookConsumerWidget {
                                           ),
                                         );
                                       },
-                                      error:
-                                          (
-                                            Object error,
-                                            StackTrace stackTrace,
-                                          ) {
-                                            /// TODO: Add proper error state here
-                                            return SizedBox.shrink();
-                                          },
+                                      error: (error, stack) => error.toErrorState(
+                                        ref,
+                                        variant: .card,
+                                        onRetry: () {
+                                          if (ref.read(userProfileProvider).hasError) {
+                                            ref.invalidate(userProfileProvider);
+                                          } else {
+                                            ref.invalidate(userOngoingAgreementsProvider);
+                                          }
+                                        },
+                                      ),
                                       loading: () => Padding(
                                         padding: EdgeInsets.all(
                                           Dimens.padding.p12,

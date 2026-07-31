@@ -12,6 +12,7 @@ class EscrowSummaryCard extends StatelessWidget {
   final int needsActionCount;
   final int awaitingOtherPartyCount;
   final bool isLoading;
+  final bool hasError;
 
   const EscrowSummaryCard({
     super.key,
@@ -20,13 +21,14 @@ class EscrowSummaryCard extends StatelessWidget {
     required this.needsActionCount,
     required this.awaitingOtherPartyCount,
     this.isLoading = false,
+    this.hasError = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Skeletonizer(
-      enabled: isLoading,
+      enabled: isLoading && !hasError,
       child: Container(
         decoration: BoxDecoration(
           color: context.color.blue100,
@@ -59,85 +61,109 @@ class EscrowSummaryCard extends StatelessWidget {
                         color: context.color.grey800,
                       ),
                     ),
-                    Text(
-                      '${l10n.nairaSign}${NumberFormat('#,###.##').format(currentlyProtectedAmount)}',
-                      style: (context.isMobile ? context.typo.headlineSmall : context.typo.headlineMedium).copyWith(
-                        color: context.color.grey800,
+                    if (!hasError)
+                      Text(
+                        '${l10n.nairaSign}${NumberFormat('#,###.##').format(currentlyProtectedAmount)}',
+                        style:
+                            (context.isMobile
+                                    ? context.typo.headlineSmall
+                                    : context.typo.headlineMedium)
+                                .copyWith(color: context.color.grey800),
+                      )
+                    else
+                      Container(
+                        margin: .only(top: Dimens.padding.p8),
+                        padding: .symmetric(
+                          horizontal: Dimens.padding.p8,
+                          vertical: Dimens.padding.p4,
+                        ),
+                        constraints: BoxConstraints(maxWidth: 174),
+                        decoration: BoxDecoration(
+                          borderRadius: .circular(Dimens.radius.r8),
+                          color: context.color.background,
+                        ),
+                        child: Text(
+                          l10n.pleaseCheckYourInternetConnectionAndTryAgain,
+                          style: context.typo.bodySmall.copyWith(
+                            color: context.color.grey600,
+                          ),
+                        ),
                       ),
-                    ),
                   ],
                 ),
-                TrustScoreBadge(score: trustScore),
+                if (!hasError) TrustScoreBadge(score: trustScore),
               ],
             ),
-            Gap(context.isMobile ? Dimens.spacing.sp12 : Dimens.spacing.sp32),
-            Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: context.color.background,
-                    border: .all(
-                      color: context.color.blue200,
-                      strokeAlign: BorderSide.strokeAlignInside,
+            if (!hasError) ...[
+              Gap(context.isMobile ? Dimens.spacing.sp12 : Dimens.spacing.sp32),
+              Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: context.color.background,
+                      border: .all(
+                        color: context.color.blue200,
+                        strokeAlign: BorderSide.strokeAlignInside,
+                      ),
+                      borderRadius: .circular(Dimens.radius.r80),
                     ),
-                    borderRadius: .circular(Dimens.radius.r80),
-                  ),
-                  padding: .symmetric(
-                    vertical: Dimens.padding.p2,
-                    horizontal: Dimens.padding.p8,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        needsActionCount.toString(),
-                        style: context.typo.bodySmall.copyWith(
-                          color: context.color.blue700,
-                        ),
-                      ),
-                      Gap(Dimens.spacing.sp4),
-                      Text(
-                        l10n.needsYourAction,
-                        style: context.typo.bodySmall.copyWith(
-                          color: context.color.grey600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Gap(Dimens.spacing.sp4),
-                Container(
-                  decoration: BoxDecoration(
-                    color: context.color.background,
-                    border: .all(
-                      color: context.color.blue200,
-                      strokeAlign: BorderSide.strokeAlignInside,
+                    padding: .symmetric(
+                      vertical: Dimens.padding.p2,
+                      horizontal: Dimens.padding.p8,
                     ),
-                    borderRadius: .circular(Dimens.radius.r80),
-                  ),
-                  padding: .symmetric(
-                    vertical: Dimens.padding.p2,
-                    horizontal: Dimens.padding.p8,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        awaitingOtherPartyCount.toString(),
-                        style: context.typo.bodySmall.copyWith(
-                          color: context.color.blue700,
+                    child: Row(
+                      children: [
+                        Text(
+                          needsActionCount.toString(),
+                          style: context.typo.bodySmall.copyWith(
+                            color: context.color.blue700,
+                          ),
                         ),
-                      ),
-                      Gap(Dimens.spacing.sp4),
-                      Text(
-                        l10n.awaitingOtherParty,
-                        style: context.typo.bodySmall.copyWith(
-                          color: context.color.grey600,
+                        Gap(Dimens.spacing.sp4),
+                        Text(
+                          l10n.needsYourAction,
+                          style: context.typo.bodySmall.copyWith(
+                            color: context.color.grey600,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                  Gap(Dimens.spacing.sp4),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: context.color.background,
+                      border: .all(
+                        color: context.color.blue200,
+                        strokeAlign: BorderSide.strokeAlignInside,
+                      ),
+                      borderRadius: .circular(Dimens.radius.r80),
+                    ),
+                    padding: .symmetric(
+                      vertical: Dimens.padding.p2,
+                      horizontal: Dimens.padding.p8,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          awaitingOtherPartyCount.toString(),
+                          style: context.typo.bodySmall.copyWith(
+                            color: context.color.blue700,
+                          ),
+                        ),
+                        Gap(Dimens.spacing.sp4),
+                        Text(
+                          l10n.awaitingOtherParty,
+                          style: context.typo.bodySmall.copyWith(
+                            color: context.color.grey600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

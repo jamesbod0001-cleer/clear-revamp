@@ -50,7 +50,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
         body: state.error!.toErrorState(
           ref,
           onRetry: () =>
-              ref.refresh(agreementDetailsViewModelProvider(agreementId)),
+              ref.invalidate(agreementDetailsProvider(agreementId)),
         ),
       );
     }
@@ -268,7 +268,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                       agreementStatusHistoryState.maybeWhen(
                         error: (error, stackTrace) => error.toErrorState(
                           ref,
-                          onRetry: () => ref.refresh(
+                          onRetry: () => ref.invalidate(
                             agreementStatusHistoryProvider(agreement.id!),
                           ),
                           variant: AppErrorStateVariant.card,

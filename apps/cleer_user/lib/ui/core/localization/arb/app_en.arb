@@ -129,8 +129,8 @@
   "enterValid6DigitsCode": "Enter a valid 6-digits code",
   "resetPassword": "Reset Password",
   "successfulAgreements": "Successful\nAgreements",
-  "disputeFreeAgreements": "Dispute-Free\nAgreements",
-  "totalValueTransacted": "Total Value\nTransacted",
+  "totalAmountSent": "Total Amount\nSent",
+  "totalAmountReceived": "Total Amount\nReceived",
   "activeDisputesCount": "{count, plural, =0{You have no active disputes} =1{You have 1 active dispute} other{You have {count} active disputes}}",
   "@activeDisputesCount": {
     "description": "Message showing the number of active disputes on the user's account.",

@@ -1,6 +1,7 @@
 import 'package:cleer/config/assets.gen.dart';
-import 'package:cleer/domain/providers/user/user_provider.dart';
+import 'package:cleer/domain/use_cases/auth/auth_use_case.dart';
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/ui/auth/auth_state.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +13,30 @@ class SplashScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!ref.read(userProfileProvider).isLoading) {
-        final width = MediaQuery.sizeOf(context).width;
+    ref.listen(authUseCaseProvider, (previous, next) {
+      if (next.isLoading) return;
+
+      final authState = next.value;
+      final hasError = next.hasError;
+
+      final width = MediaQuery.sizeOf(context).width;
+
+      // Handle Success
+      if (authState is SignedIn) {
+        HomeRoute().go(context);
+        return;
+      }
+
+      // Handle Sign Out OR Error (Total failure)
+      if (authState is SignedOut || hasError) {
         if (width >= Breakpoints.tablet) {
           CreateAccountRoute().go(context);
         } else {
-          const OnboardingRoute().go(context);
+          OnboardingRoute().go(context);
         }
       }
     });
+
     return DecoratedBox(
       decoration: BoxDecoration(
         image: DecorationImage(
