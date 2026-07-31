@@ -17,7 +17,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'agreement_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, retry: noRetry)
 class UserOngoingAgreements extends _$UserOngoingAgreements {
   StreamSubscription? _updateSub;
 
@@ -25,26 +25,25 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
 
   @override
   FutureOr<List<Agreement>> build() async {
-    final user = await ref.watch(userProfileProvider.future);
-    if (user == null) return [];
-
     final repository = ref.watch(agreementRepositoryProvider);
 
-    // Initial setup
-    _setupSubscription();
-
-    // The "Self-Healing" Listener
+    // The "Self-Healing" Listener MUST be at the top
     ref.listenForSubscriptionRecovery(
-      onSyncRequired: () async {
-        _log.info('🔄 Agreements Sync: Fetching latest list');
-        final result = await repository.getUserOngoingAgreements();
-        state = AsyncData(_sort(result.getOrThrow()));
+      onSyncRequired: () {
+        // We rely on Riverpod's reactivity to the UserProfile recovery.
+        // No manual sync needed here to avoid race conditions.
       },
       onReconnectRequired: () {
         _log.info('📡 Agreements Recovery: Restarting Stream');
         _setupSubscription();
       },
     );
+
+    final user = await ref.watch(userProfileProvider.future);
+    if (user == null) return [];
+
+    // Initial setup
+    _setupSubscription();
 
     ref.onDispose(() => _updateSub?.cancel());
 
@@ -57,7 +56,10 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
     _updateSub = ref
         .read(agreementRepositoryProvider)
         .observeUserAgreementsUpdates()
-        .listen(_handleUpdate);
+        .listen(
+          _handleUpdate,
+          onError: (e) => _log.error('❌ Agreements Subscription Error', e),
+        );
   }
 
   Future<void> _handleUpdate(Agreement incompleteItem) async {
@@ -114,31 +116,29 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
   ].contains(s);
 }
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, retry: noRetry)
 class UserCompletedAgreements extends _$UserCompletedAgreements {
   StreamSubscription? _updateSub;
   final _log = AmplifyLogger('UserCompletedAgreements');
 
   @override
   FutureOr<PaginatedList<Agreement>> build() async {
-    final user = await ref.watch(userProfileProvider.future);
-    if (user == null) return const PaginatedList(items: [], hasNextPage: false);
-
     final repository = ref.watch(agreementRepositoryProvider);
 
-    _setupSubscription();
-
     ref.listenForSubscriptionRecovery(
-      onSyncRequired: () async {
-        _log.info('🔄 Completed Agreements Sync: Fetching latest list');
-        final result = await repository.getUserCompletedAgreements();
-        state = AsyncData(result.getOrThrow());
+      onSyncRequired: () {
+        // We rely on Riverpod's reactivity to the UserProfile recovery.
       },
       onReconnectRequired: () {
         _log.info('📡 Completed Agreements Recovery: Restarting Stream');
         _setupSubscription();
       },
     );
+
+    final user = await ref.watch(userProfileProvider.future);
+    if (user == null) return const PaginatedList(items: [], hasNextPage: false);
+
+    _setupSubscription();
 
     ref.onDispose(() => _updateSub?.cancel());
 
@@ -151,7 +151,10 @@ class UserCompletedAgreements extends _$UserCompletedAgreements {
     _updateSub = ref
         .read(agreementRepositoryProvider)
         .observeUserAgreementsUpdates()
-        .listen(_handleUpdate);
+        .listen(
+          _handleUpdate,
+          onError: (e) => _log.error('❌ Agreements Subscription Error', e),
+        );
   }
 
   Future<void> _handleUpdate(Agreement incompleteItem) async {
@@ -214,14 +217,28 @@ class UserCompletedAgreements extends _$UserCompletedAgreements {
   }
 }
 
-@riverpod
+@Riverpod(retry: noRetry)
 class AgreementStatusHistory extends _$AgreementStatusHistory {
   StreamSubscription? _createSub;
+  final _log = AmplifyLogger('AgreementStatusHistory');
 
   @override
   FutureOr<List<StatusHistory>> build(String agreementId) async {
     // Keep in memory for 5 mins of inactivity
     ref.cacheFor(const Duration(minutes: 5));
+
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        final result = await ref
+            .read(agreementRepositoryProvider)
+            .getAgreementStatusHistory(agreementId);
+        result.fold(
+          (list) => state = AsyncData(_sort(list)),
+          (failure) => state = AsyncError(failure, StackTrace.current),
+        );
+      },
+      onReconnectRequired: () => _setupSubscription(agreementId),
+    );
 
     final userId = ref.watch(
       userProfileProvider.select((user) => user.value?.id),
@@ -231,16 +248,6 @@ class AgreementStatusHistory extends _$AgreementStatusHistory {
     }
 
     _setupSubscription(agreementId);
-
-    ref.listenForSubscriptionRecovery(
-      onSyncRequired: () async {
-        final result = await ref
-            .read(agreementRepositoryProvider)
-            .getAgreementStatusHistory(agreementId);
-        state = AsyncData(_sort(result.getOrThrow()));
-      },
-      onReconnectRequired: () => _setupSubscription(agreementId),
-    );
 
     ref.onDispose(() => _createSub?.cancel());
 
@@ -255,33 +262,40 @@ class AgreementStatusHistory extends _$AgreementStatusHistory {
     _createSub = ref
         .read(agreementRepositoryProvider)
         .observeAgreementStatusHistoryCreates(agreementId)
-        .listen((newItem) {
-          final current = state.value ?? [];
-          state = AsyncData(_sort([...current, newItem]));
-        });
+        .listen(
+          (newItem) {
+            final current = state.value ?? [];
+            state = AsyncData(_sort([...current, newItem]));
+          },
+          onError: (e) => _log.error('❌ Agreement History Subscription Error', e),
+        );
   }
 
   List<StatusHistory> _sort(List<StatusHistory> list) =>
       list..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 }
 
-@riverpod
+@Riverpod(retry: noRetry)
 class AgreementDetails extends _$AgreementDetails {
   StreamSubscription? _updateSub;
+  final _log = AmplifyLogger('AgreementDetails');
 
   @override
   FutureOr<Agreement> build(String agreementId) async {
     final repository = ref.watch(agreementRepositoryProvider);
 
-    _setupSubscription(agreementId);
-
     ref.listenForSubscriptionRecovery(
       onSyncRequired: () async {
         final result = await repository.getAgreement(agreementId);
-        state = AsyncData(result.getOrThrow());
+        result.fold(
+          (item) => state = AsyncData(item),
+          (failure) => state = AsyncError(failure, StackTrace.current),
+        );
       },
       onReconnectRequired: () => _setupSubscription(agreementId),
     );
+
+    _setupSubscription(agreementId);
 
     ref.onDispose(() => _updateSub?.cancel());
 
@@ -295,15 +309,18 @@ class AgreementDetails extends _$AgreementDetails {
         .read(agreementRepositoryProvider)
         .observeUserAgreementsUpdates()
         .where((a) => a.id == agreementId)
-        .listen((_) async {
-          // When an update is detected, re-fetch to get the full object
-          final result = await ref
-              .read(agreementRepositoryProvider)
-              .getAgreement(agreementId);
-          if (result.isSuccess()) {
-            state = AsyncData(result.getOrThrow());
-          }
-        });
+        .listen(
+          (_) async {
+            // When an update is detected, re-fetch to get the full object
+            final result = await ref
+                .read(agreementRepositoryProvider)
+                .getAgreement(agreementId);
+            if (result.isSuccess()) {
+              state = AsyncData(result.getOrThrow());
+            }
+          },
+          onError: (e) => _log.error('❌ Agreement Details Subscription Error', e),
+        );
   }
 }
 
@@ -453,4 +470,37 @@ Future<double> currentlyProtectedAmount(Ref ref) async {
   }
 
   return totalProtected;
+}
+
+@riverpod
+Future<(int count, double sent, double received)> userPerformanceStats(
+  Ref ref,
+) async {
+  final user = await ref.watch(userProfileProvider.future);
+  if (user == null) return (0, 0.0, 0.0);
+
+  // TODO(aggregation): This currently calculates stats based on the local paginated list
+  // to avoid a "Sync Storm" of network calls. For large datasets, these aggregates 
+  // should be moved to a specific backend endpoint or computed via a Lambda function.
+  final completedAgreements = await ref.watch(
+    userCompletedAgreementsProvider.future,
+  );
+
+  int successfulCount = 0;
+  double totalSent = 0.0;
+  double totalReceived = 0.0;
+
+  for (final agreement in completedAgreements.items) {
+    if (agreement.status == AgreementStatus.released) {
+      successfulCount++;
+      if (agreement.sender?.id == user.id) {
+        totalSent += agreement.amount;
+      }
+      if (agreement.recipient?.id == user.id) {
+        totalReceived += agreement.amount;
+      }
+    }
+  }
+
+  return (successfulCount, totalSent, totalReceived);
 }

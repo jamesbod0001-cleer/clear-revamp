@@ -11,36 +11,35 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'activity_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, retry: noRetry)
 class UserActivities extends _$UserActivities {
   StreamSubscription? _createSub;
   final _log = AmplifyLogger('UserActivities');
 
   @override
   FutureOr<PaginatedList<Activity>> build() async {
+    final repository = ref.watch(activityRepositoryProvider);
+
+    // The "Self-Healing" Listener for Offline/Online Recovery
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () {
+        // We rely on Riverpod's reactivity to the UserProfile recovery.
+      },
+      onReconnectRequired: () {
+        final user = ref.read(userProfileProvider).value;
+        if (user == null) return;
+        _log.info('📡 Activities Recovery: Restarting Stream');
+        _setupSubscription(user.id);
+      },
+    );
+
     final user = await ref.watch(userProfileProvider.future);
     if (user == null) {
       return PaginatedList(items: [], hasNextPage: false);
     }
 
-    final repository = ref.watch(activityRepositoryProvider);
-
     // Initial setup for Real-time Creation
     _setupSubscription(user.id);
-
-    // The "Self-Healing" Listener for Offline/Online Recovery
-    ref.listenForSubscriptionRecovery(
-      onSyncRequired: () async {
-        _log.info('🔄 Activities Sync: Fetching latest list');
-        // When internet returns, fetch page 1 to grab anything missed while offline
-        final result = await repository.getUserActivities(userId: user.id);
-        state = AsyncData(result.getOrThrow());
-      },
-      onReconnectRequired: () {
-        _log.info('📡 Activities Recovery: Restarting Stream');
-        _setupSubscription(user.id);
-      },
-    );
 
     ref.onDispose(() => _createSub?.cancel());
 
@@ -54,7 +53,10 @@ class UserActivities extends _$UserActivities {
     _createSub = ref
         .read(activityRepositoryProvider)
         .observeUserActivityCreates(userId: userId)
-        .listen(_handleNewActivity);
+        .listen(
+          _handleNewActivity,
+          onError: (e) => _log.error('❌ Activity Subscription Error', e),
+        );
   }
 
   void _handleNewActivity(Activity newActivity) {

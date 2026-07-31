@@ -12,7 +12,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'milestone_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, retry: noRetry)
 class AgreementMilestones extends _$AgreementMilestones {
   StreamSubscription? _updateSub;
 
@@ -20,6 +20,20 @@ class AgreementMilestones extends _$AgreementMilestones {
 
   @override
   FutureOr<List<Milestone>> build(String agreementId) async {
+    final repository = ref.watch(milestoneRepositoryProvider);
+
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        _log.info('🔄 Milestones Sync: Refreshing for $agreementId');
+        final result = await repository.getMilestonesByAgreement(agreementId);
+        result.fold(
+          (list) => state = AsyncData(_sort(list)),
+          (failure) => state = AsyncError(failure, StackTrace.current),
+        );
+      },
+      onReconnectRequired: () => _setupSubscription(agreementId),
+    );
+
     final userId = ref.watch(
       userProfileProvider.select((user) => user.value?.id),
     );
@@ -27,18 +41,7 @@ class AgreementMilestones extends _$AgreementMilestones {
       return [];
     }
 
-    final repository = ref.watch(milestoneRepositoryProvider);
-
     _setupSubscription(agreementId);
-
-    ref.listenForSubscriptionRecovery(
-      onSyncRequired: () async {
-        _log.info('🔄 Milestones Sync: Refreshing for $agreementId');
-        final result = await repository.getMilestonesByAgreement(agreementId);
-        state = AsyncData(_sort(result.getOrThrow()));
-      },
-      onReconnectRequired: () => _setupSubscription(agreementId),
-    );
 
     ref.onDispose(() => _updateSub?.cancel());
 
@@ -51,26 +54,43 @@ class AgreementMilestones extends _$AgreementMilestones {
     _updateSub = ref
         .read(milestoneRepositoryProvider)
         .observeAgreementMilestonesUpdates(agreementId)
-        .listen((updatedItem) {
-          final current = state.value ?? [];
-          final newList = current
-              .map((item) => item.id == updatedItem.id ? updatedItem : item)
-              .toList();
-          state = AsyncData(_sort(newList));
-        });
+        .listen(
+          (updatedItem) {
+            final current = state.value ?? [];
+            final newList = current
+                .map((item) => item.id == updatedItem.id ? updatedItem : item)
+                .toList();
+            state = AsyncData(_sort(newList));
+          },
+          onError: (e) => _log.error('❌ Milestones Subscription Error', e),
+        );
   }
 
   List<Milestone> _sort(List<Milestone> list) =>
       list..sort((a, b) => a.order.compareTo(b.order));
 }
 
-@riverpod
+@Riverpod(retry: noRetry)
 class MilestoneStatusHistory extends _$MilestoneStatusHistory {
   StreamSubscription? _createSub;
+  final _log = AmplifyLogger('MilestoneStatusHistory');
 
   @override
   FutureOr<List<StatusHistory>> build(String milestoneId) async {
     ref.cacheFor(const Duration(minutes: 5));
+
+    ref.listenForSubscriptionRecovery(
+      onSyncRequired: () async {
+        final result = await ref
+            .read(milestoneRepositoryProvider)
+            .getMilestoneStatusHistory(milestoneId);
+        result.fold(
+          (list) => state = AsyncData(_sort(list)),
+          (failure) => state = AsyncError(failure, StackTrace.current),
+        );
+      },
+      onReconnectRequired: () => _setupSubscription(milestoneId),
+    );
 
     final userId = ref.watch(
       userProfileProvider.select((user) => user.value?.id),
@@ -80,16 +100,6 @@ class MilestoneStatusHistory extends _$MilestoneStatusHistory {
     }
 
     _setupSubscription(milestoneId);
-
-    ref.listenForSubscriptionRecovery(
-      onSyncRequired: () async {
-        final result = await ref
-            .read(milestoneRepositoryProvider)
-            .getMilestoneStatusHistory(milestoneId);
-        state = AsyncData(_sort(result.getOrThrow()));
-      },
-      onReconnectRequired: () => _setupSubscription(milestoneId),
-    );
 
     ref.onDispose(() => _createSub?.cancel());
 
@@ -104,10 +114,13 @@ class MilestoneStatusHistory extends _$MilestoneStatusHistory {
     _createSub = ref
         .read(milestoneRepositoryProvider)
         .observeMilestoneStatusHistoryCreates(milestoneId)
-        .listen((createdItem) {
-          final current = state.value ?? [];
-          state = AsyncData(_sort([...current, createdItem]));
-        });
+        .listen(
+          (createdItem) {
+            final current = state.value ?? [];
+            state = AsyncData(_sort([...current, createdItem]));
+          },
+          onError: (e) => _log.error('❌ Milestone History Subscription Error', e),
+        );
   }
 
   List<StatusHistory> _sort(List<StatusHistory> list) =>

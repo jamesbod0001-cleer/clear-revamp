@@ -5,12 +5,11 @@ import 'package:cleer_api/cleer_api.dart';
 import 'package:cleer/utils/riverpod_extensions.dart';
 import 'package:cleer_core/models/payout_destination/payout_destination.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'payout_destination_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, retry: noRetry)
 class UserPayoutDestinations extends _$UserPayoutDestinations {
   StreamSubscription? _createSub;
   StreamSubscription? _deleteSub;
@@ -19,32 +18,40 @@ class UserPayoutDestinations extends _$UserPayoutDestinations {
 
   @override
   FutureOr<List<PayoutDestination>> build() async {
-    final userId = ref.watch(
-      userProfileProvider.select((user) => user.value?.id),
-    );
-    if (userId == null) {
-      return [];
-    }
-
     final repository = ref.watch(payoutDestinationRepositoryProvider);
-
-    _setupSubscriptions(userId);
 
     ref.listenForSubscriptionRecovery(
       onSyncRequired: () async {
+        final userId = ref.read(userProfileProvider).value?.id;
+        if (userId == null) return;
+
         _log.info('🔄 Payout Sync: Fetching latest destinations');
         final result = await repository.getPayoutDestinationsByUser(userId);
-        state = AsyncData(result.getOrThrow());
+        result.fold(
+          (list) => state = AsyncData(list),
+          (failure) => state = AsyncError(failure, StackTrace.current),
+        );
       },
-      onReconnectRequired: () => _setupSubscriptions(userId),
+      onReconnectRequired: () {
+        final userId = ref.read(userProfileProvider).value?.id;
+        if (userId == null) return;
+        _setupSubscriptions(userId);
+      },
     );
+
+    final user = await ref.watch(userProfileProvider.future);
+    if (user == null) {
+      return [];
+    }
+
+    _setupSubscriptions(user.id);
 
     ref.onDispose(() {
       _createSub?.cancel();
       _deleteSub?.cancel();
     });
 
-    final result = await repository.getPayoutDestinationsByUser(userId);
+    final result = await repository.getPayoutDestinationsByUser(user.id);
     return result.getOrThrow();
   }
 
@@ -59,7 +66,7 @@ class UserPayoutDestinations extends _$UserPayoutDestinations {
     ) {
       final current = state.value ?? [];
       state = AsyncData([...current, newItem]);
-    });
+    }, onError: (e) => _log.error('❌ Payout Create Subscription Error', e));
 
     _deleteSub = repo.observeUserPayoutDestinationsDeletes(userId).listen((
       deletedItem,
@@ -70,6 +77,6 @@ class UserPayoutDestinations extends _$UserPayoutDestinations {
             .where((item) => item.accountNumber != deletedItem.accountNumber)
             .toList(),
       );
-    });
+    }, onError: (e) => _log.error('❌ Payout Delete Subscription Error', e));
   }
 }

@@ -5,6 +5,10 @@ import 'package:cleer/domain/providers/network/network_provider.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+/// Helper to disable Riverpod 3's automatic retry for providers that handle
+/// their own recovery logic (Self-Healing).
+Duration? noRetry(int retryCount, Object error) => null;
+
 extension ApiSubscriptionReconnection on Ref {
   /// Watches both hardware connectivity and Amplify protocol status
   /// to ensure real-time streams stay active and data stays in sync.
@@ -12,12 +16,15 @@ extension ApiSubscriptionReconnection on Ref {
     required VoidCallback onSyncRequired,
     required VoidCallback onReconnectRequired,
   }) {
-    var prevApiStatus = ApiSubscriptionStatus.disconnected;
-    var wasHardwareOffline = false;
+    // We initialize our state by reading the CURRENT values.
+    // This is critical for the "Refresh while offline" case, so the new
+    // listener knows it is starting in an offline state.
+    var prevApiStatus = read(apiSubscriptionStatusProvider).value ??
+        ApiSubscriptionStatus.disconnected;
+    var wasHardwareOffline =
+        read(connectionStatusProvider).value?.isDisconnected ?? false;
 
     // PROTOCOL WATCHER (Amplify Hub)
-    // When Amplify moves from 'connecting' to 'connected', we know the
-    // handshake is done and we likely missed data. Time to re-fetch.
     listen(apiSubscriptionStatusProvider, (previous, next) {
       final currentStatus = next.value ?? ApiSubscriptionStatus.unknown;
 
@@ -31,8 +38,6 @@ extension ApiSubscriptionReconnection on Ref {
     });
 
     // HARDWARE WATCHER (Internet Connection Checker)
-    // When internet returns, Amplify's internal retry might have already
-    // died (failed). We manually poke the stream to restart.
     listen(connectionStatusProvider, (previous, next) {
       final isOnline = next.value?.isConnected ?? false;
 
@@ -40,7 +45,14 @@ extension ApiSubscriptionReconnection on Ref {
         wasHardwareOffline = true;
       } else if (wasHardwareOffline && isOnline) {
         wasHardwareOffline = false;
+
+        // When hardware returns, we always want to restart subscriptions.
         onReconnectRequired();
+
+        // IMPORTANT: If we are currently in an error state, we should also
+        // trigger a sync immediately, as we might have missed the protocol
+        // handshake or Amplify might not trigger it.
+        onSyncRequired();
       }
     });
   }

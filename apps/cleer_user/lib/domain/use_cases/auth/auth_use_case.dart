@@ -11,6 +11,7 @@ import 'package:cleer_core/models/sign_in_result/sign_in_result.dart';
 import 'package:cleer_core/models/sign_up_result/sign_up_result.dart';
 import 'package:cleer_core/models/update_password_result/update_password_result.dart';
 import 'package:cleer_core/models/update_user_attribute_result/update_user_attribute_result.dart';
+import 'package:flutter/foundation.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -112,7 +113,9 @@ class AuthUseCase extends _$AuthUseCase {
           },
           (failure) {
             _log.error('Error syncing user profile', failure);
-            return AuthState.unknown();
+            // On network failure during profile sync, we still want to throw
+            // so the caller can fall back to the Passport cache.
+            throw failure;
           },
         );
       },
@@ -130,7 +133,9 @@ class AuthUseCase extends _$AuthUseCase {
 
           return AuthState.signedOut();
         }
-        return AuthState.unknown();
+        
+        // For network or unknown failures, throw so we can check the cache
+        throw onFailure;
       },
     );
   }
@@ -141,6 +146,12 @@ class AuthUseCase extends _$AuthUseCase {
     bool isCompilingRegistration,
   ) {
     _log.info('Successfully synced user profile');
+    
+    // Save to Passport cache for offline access (Mobile only)
+    if (!kIsWeb) {
+      _secureStorageService.savePassport(identity);
+    }
+
     Sentry.configureScope(
       (scope) => scope.setUser(
         SentryUser(
@@ -160,22 +171,41 @@ class AuthUseCase extends _$AuthUseCase {
   Future<void> _initialiseAuthStatus() async {
     _log.info('Initialising auth status');
     state = const AsyncValue.loading();
+
+    final isSignedInResult = await _authRepository.isSignedIn();
+
     state = await AsyncValue.guard(() async {
-      return (await _authRepository.isSignedIn()).fold(
-        (isSignedIn) async {
-          if (isSignedIn) {
-            _log.info('User is signed in');
-            return await _syncUserProfile();
-          } else {
-            _log.info('User is not signed in');
-            return AuthState.signedOut();
+      final isSignedIn = isSignedInResult.getOrDefault(false);
+
+      if (isSignedIn) {
+        _log.info('User is signed in');
+
+        // 1. Try to sync with network (Fastest/Latest)
+        try {
+          return await _syncUserProfile().timeout(
+            const Duration(seconds: 5),
+          );
+        } catch (e) {
+          _log.warn('Network sync timed out or failed. Checking cache...', e);
+
+          // 2. Fallback to Cached Passport (Offline Access)
+          if (!kIsWeb) {
+            final cachedIdentity =
+                await _secureStorageService.getCachedPassport();
+            if (cachedIdentity != null) {
+              _log.info('Entering app using cached Passport');
+              return AuthState.signedIn(identity: cachedIdentity);
+            }
           }
-        },
-        (onFailure) {
-          _log.error('Error checking if user is signed in', onFailure);
-          return AuthState.unknown();
-        },
-      );
+
+          // 3. Last Resort: Try sync again without timeout if no cache
+          // If this fails, it will throw and be caught by AsyncValue.guard
+          return await _syncUserProfile();
+        }
+      } else {
+        _log.info('User is not signed in');
+        return AuthState.signedOut();
+      }
     });
   }
 
@@ -456,6 +486,9 @@ class AuthUseCase extends _$AuthUseCase {
     result.fold(
       (success) {
         _log.info('Successfully signed out user');
+        if (!kIsWeb) {
+          _secureStorageService.clearPassport();
+        }
         state = AsyncValue.data(AuthState.signedOut());
       },
       (failure) {
