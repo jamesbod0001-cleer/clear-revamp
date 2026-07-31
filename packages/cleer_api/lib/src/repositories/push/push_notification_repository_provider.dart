@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'push_notification_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 PushNotificationRepository pushNotificationRepository(Ref ref) {
   return AmplifyPushNotificationRepositoryImpl(
     serviceClient: ref.watch(amplifyPushNotificationServiceClientProvider),

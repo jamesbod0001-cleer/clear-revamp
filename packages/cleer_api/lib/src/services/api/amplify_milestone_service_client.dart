@@ -11,7 +11,7 @@ import 'package:cleer_api/src/services/api/mixins/api_error_checker.dart';
 
 part 'amplify_milestone_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyMilestoneServiceClient amplifyMilestoneServiceClient(Ref ref) =>
     AmplifyMilestoneServiceClient(amplifyAPI: ref.watch(amplifyAPIProvider));
 

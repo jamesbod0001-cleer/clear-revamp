@@ -23,7 +23,7 @@ import 'package:cleer_api/src/services/api/models/flutterwave/responses/virtual_
 
 part 'amplify_flutterwave_proxy_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyFlutterwaveProxyServiceClient amplifyFlutterwaveProxyServiceClient(Ref ref) =>
     AmplifyFlutterwaveProxyServiceClient(amplifyAPI: ref.watch(amplifyAPIProvider));
 

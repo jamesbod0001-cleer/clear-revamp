@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'milestone_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 MilestoneRepository milestoneRepository(Ref ref) =>
     AmplifyMilestoneRepositoryImpl(
       amplifyMilestoneServiceClient: ref.watch(

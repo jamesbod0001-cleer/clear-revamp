@@ -5,7 +5,7 @@ import 'package:cleer_api/src/services/media/media_service_client.dart';
 
 part 'media_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 MediaRepository mediaRepository(Ref ref) => MediaRepositoryImpl(
   mediaServiceClient: ref.watch(mediaServiceClientProvider),
 );

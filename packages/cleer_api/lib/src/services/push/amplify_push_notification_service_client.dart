@@ -4,7 +4,7 @@ import 'package:cleer_api/src/services/amplify_providers.dart';
 
 part 'amplify_push_notification_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyPushNotificationServiceClient amplifyPushNotificationServiceClient(
   Ref ref,
 ) => AmplifyPushNotificationServiceClient(

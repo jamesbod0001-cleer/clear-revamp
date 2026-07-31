@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'flutterwave_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 FlutterwaveRepository flutterwaveRepository(Ref ref) =>
     AmplifyFlutterwaveRepositoryImpl(
       proxyServiceClient: ref.watch(amplifyFlutterwaveProxyServiceClientProvider),

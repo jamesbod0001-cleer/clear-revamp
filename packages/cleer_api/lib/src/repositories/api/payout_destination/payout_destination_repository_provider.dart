@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'payout_destination_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 PayoutDestinationRepository payoutDestinationRepository(Ref ref) =>
     AmplifyPayoutDestinationRepositoryImpl(
       amplifyPayoutDestinationServiceClient: ref.watch(

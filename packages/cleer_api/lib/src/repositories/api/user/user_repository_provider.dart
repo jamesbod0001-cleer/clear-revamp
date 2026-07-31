@@ -5,7 +5,7 @@ import 'package:cleer_api/src/services/api/amplify_user_service_client.dart';
 
 part 'user_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 UserRepository userRepository(Ref ref) => AmplifyUserRepositoryImpl(
   amplifyUserServiceClient: ref.watch(amplifyUserServiceClientProvider),
 );

@@ -123,7 +123,7 @@ class AmplifyAgreementRepositoryImpl
         final response = await _amplifyAgreementServiceClient
             .queryUserAgreementsByStatus(
               status: amplify_model.AgreementStatus.RELEASED,
-              limit: 20,
+              limit: 100,
               nextRequest: nextRequest,
             );
         return PaginatedList(

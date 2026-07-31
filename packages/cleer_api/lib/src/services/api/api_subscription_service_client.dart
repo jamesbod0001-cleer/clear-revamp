@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_subscription_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 ApiSubscriptionServiceClient apiSubscriptionServiceClient(Ref ref) =>
     ApiSubscriptionServiceClient(amplifyHub: ref.watch(amplifyHubProvider));
 

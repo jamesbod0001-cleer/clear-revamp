@@ -3,18 +3,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'amplify_providers.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthCategory amplifyAuth(Ref ref) => Amplify.Auth;
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyHub amplifyHub(Ref ref) => Amplify.Hub;
 
-@riverpod
+@Riverpod(keepAlive: true)
 APICategory amplifyAPI(Ref ref) => Amplify.API;
 
-@riverpod
+@Riverpod(keepAlive: true)
 StorageCategory amplifyStorage(Ref ref) => Amplify.Storage;
 
-@riverpod
+@Riverpod(keepAlive: true)
 PushNotificationsCategory amplifyPushNotifications(Ref ref) =>
     Amplify.Notifications.Push;

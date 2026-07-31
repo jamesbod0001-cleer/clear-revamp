@@ -11,7 +11,7 @@ import 'package:cleer_api/src/services/api/mixins/api_error_checker.dart';
 
 part 'amplify_agreement_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyAgreementServiceClient amplifyAgreementServiceClient(Ref ref) =>
     AmplifyAgreementServiceClient(amplifyAPI: ref.watch(amplifyAPIProvider));
 

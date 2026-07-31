@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'agreement_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AgreementRepository agreementRepository(Ref ref) =>
     AmplifyAgreementRepositoryImpl(
       amplifyAgreementServiceClient: ref.watch(

@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'subscription_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 SubscriptionRepository subscriptionRepository(Ref ref) =>
     AmplifySubscriptionRepositoryImpl(
       apiSubscriptionServiceClient: ref.watch(

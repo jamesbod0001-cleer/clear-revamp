@@ -13,7 +13,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'amplify_auth_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyAuthServiceClient amplifyAuthServiceClient(Ref ref) =>
     AmplifyAuthServiceClient(
       amplifyAuth: ref.watch(amplifyAuthProvider),

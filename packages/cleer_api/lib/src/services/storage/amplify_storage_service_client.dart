@@ -6,7 +6,7 @@ import 'package:cleer_api/src/services/storage/models/upload_file/upload_file_re
 
 part 'amplify_storage_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyStorageServiceClient amplifyStorageServiceClient(Ref ref) =>
     AmplifyStorageServiceClient(
       amplifyStorage: ref.watch(amplifyStorageProvider),

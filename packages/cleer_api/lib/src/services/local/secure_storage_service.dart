@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:cleer_core/cleer_core.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,6 +20,28 @@ class SecureStorageService {
   static const String _tempPassPrefix = "TEMP_PASS_";
   static const String _hiddenUsernamePrefix = "HIDDEN_USER_";
   static const String _lastNudgeKey = "LAST_NOTIFICATION_NUDGE_TIME";
+  static const String _passportKey = "USER_PASSPORT";
+
+  // --- Passport Methods ---
+  Future<void> savePassport(AuthIdentity identity) async {
+    final jsonString = jsonEncode(identity.toJson());
+    await _storage.write(key: _passportKey, value: jsonString);
+  }
+
+  Future<AuthIdentity?> getCachedPassport() async {
+    final jsonString = await _storage.read(key: _passportKey);
+    if (jsonString == null) return null;
+    try {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return AuthIdentity.fromJson(jsonMap);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> clearPassport() async {
+    await _storage.delete(key: _passportKey);
+  }
 
   // --- Flutterwave OAuth Methods ---
   Future<void> saveFlutterwaveToken(String token) async {

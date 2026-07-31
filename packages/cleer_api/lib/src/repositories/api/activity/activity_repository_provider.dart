@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'activity_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 ActivityRepository activityRepository(Ref ref) =>
     AmplifyActivityRepositoryImpl(
       amplifyActivityServiceClient: ref.watch(

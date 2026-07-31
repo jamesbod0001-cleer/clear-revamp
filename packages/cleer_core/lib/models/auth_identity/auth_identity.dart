@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_identity.freezed.dart';
+part 'auth_identity.g.dart';
 
 @freezed
 abstract class AuthIdentity with _$AuthIdentity {
@@ -13,4 +14,7 @@ abstract class AuthIdentity with _$AuthIdentity {
     String? email,
     bool? isEmailVerified,
   }) = _AuthIdentity;
+
+  factory AuthIdentity.fromJson(Map<String, dynamic> json) =>
+      _$AuthIdentityFromJson(json);
 }

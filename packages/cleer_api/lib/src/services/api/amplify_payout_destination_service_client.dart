@@ -7,7 +7,7 @@ import 'package:cleer_api/src/services/api/mixins/api_error_checker.dart';
 
 part 'amplify_payout_destination_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AmplifyPayoutDestinationServiceClient amplifyPayoutDestinationServiceClient(
   Ref ref,
 ) => AmplifyPayoutDestinationServiceClient(

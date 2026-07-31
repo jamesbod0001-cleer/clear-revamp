@@ -3,10 +3,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'network_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 InternetConnection internetConnection(Ref ref) => InternetConnection();
 
-@riverpod
+@Riverpod(keepAlive: true)
 NetworkServiceClient networkServiceClient(Ref ref) => NetworkServiceClient(
   internetConnection: ref.watch(internetConnectionProvider),
 );

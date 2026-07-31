@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'transaction_repository_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 TransactionRepository transactionRepository(Ref ref) =>
     AmplifyTransactionRepositoryImpl(
       amplifyTransactionServiceClient: ref.watch(

@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'media_service_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 MediaServiceClient mediaServiceClient(Ref ref) => MediaServiceClient();
 
 class MediaServiceClient {
