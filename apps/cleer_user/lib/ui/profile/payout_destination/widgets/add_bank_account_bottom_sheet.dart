@@ -294,9 +294,9 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
                     ) {
                       return PrimaryButton(
                         onPressed:
-                            /// TODO: For now just let users be ale to create payout destination, come back and fix this when flutterwave is active
-                            (isFormValid && resolveAccountName.isEmpty)
-                            // (isFormValid && resolveAccountName.isNotEmpty)
+                            (AppConfig.environment == 'main'
+                                ? (isFormValid && resolveAccountName.isNotEmpty)
+                                : (isFormValid && resolveAccountName.isEmpty))
                             ? () => createPayoutDestinationCommand.run(
                                 PayoutDestination(
                                   accountNumber: accountNumberController.text,

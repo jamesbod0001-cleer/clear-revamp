@@ -4,6 +4,7 @@ import 'package:cleer/domain/use_cases/payout_destination/payout_destination_use
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:command_it/command_it.dart';
+import 'package:result_dart/result_dart.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'payout_destination_view_model.g.dart';
@@ -169,16 +170,22 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
     final user = ref.read(userProfileProvider).value;
     if (user == null) throw DataFailure.notFound();
     _log.info("Creating payout destination");
-    final result = await ref
-        .read(payoutDestinationUseCaseProvider.notifier)
-        .createPayoutDestination(
-          payoutDestination.copyWith(
-            user: user,
+    late ResultDart<PayoutDestination, DataFailure> result;
+    if (AppConfig.environment == 'main') {
+      result = await ref
+          .read(payoutDestinationUseCaseProvider.notifier)
+          .createPayoutDestination(payoutDestination.copyWith(user: user));
+    } else {
+      result = await ref
+          .read(payoutDestinationUseCaseProvider.notifier)
+          .createPayoutDestination(
+            payoutDestination.copyWith(
+              user: user,
+              accountName: '${user.firstName} ${user.lastName}',
+            ),
+          );
+    }
 
-            /// TODO: Come back and fix this when the flutterwave is active
-            accountName: '${user.firstName} ${user.lastName}',
-          ),
-        );
     return result.fold(
       (payoutDestination) {
         _log.info("Payout destination created: $payoutDestination");
