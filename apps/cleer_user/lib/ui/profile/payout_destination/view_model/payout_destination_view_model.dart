@@ -171,7 +171,7 @@ class PayoutDestinationViewModel extends _$PayoutDestinationViewModel {
     if (user == null) throw DataFailure.notFound();
     _log.info("Creating payout destination");
     late ResultDart<PayoutDestination, DataFailure> result;
-    if (AppConfig.environment == 'main') {
+    if (AppConfig.isLive) {
       result = await ref
           .read(payoutDestinationUseCaseProvider.notifier)
           .createPayoutDestination(payoutDestination.copyWith(user: user));

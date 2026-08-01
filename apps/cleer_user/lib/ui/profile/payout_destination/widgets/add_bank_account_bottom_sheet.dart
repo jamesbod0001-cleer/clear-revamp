@@ -294,7 +294,7 @@ class AddBankAccountBottomSheet extends HookConsumerWidget {
                     ) {
                       return PrimaryButton(
                         onPressed:
-                            (AppConfig.environment == 'main'
+                            (AppConfig.isLive
                                 ? (isFormValid && resolveAccountName.isNotEmpty)
                                 : (isFormValid && resolveAccountName.isEmpty))
                             ? () => createPayoutDestinationCommand.run(
