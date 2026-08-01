@@ -65,7 +65,7 @@
     }
   },
   "invalidEmailAddress": "Please enter a valid email address",
-  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)",
+  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +234XXXXXXXXXX)",
   "createYourPassword": "Create your Password",
   "createAPasswordToProtectYourAccount": "Create a password to protect your account.",
   "enterPassword": "Enter Password",
