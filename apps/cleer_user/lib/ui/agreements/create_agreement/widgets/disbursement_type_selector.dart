@@ -6,8 +6,6 @@ import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-/// TODO: Come back and implement milestone payment
-
 class DisbursementTypeSelector extends StatelessWidget {
   const DisbursementTypeSelector({
     super.key,
