@@ -37,7 +37,7 @@
     }
   },
   "invalidEmailAddress": "Please enter a valid email address",
-  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +2349037006685)",
+  "invalidPhoneNumber": "Please enter a valid Nigerian number (e.g. +234XXXXXXXXXX)",
   "cardNumber": "Card Number",
   "cardExpiry": "Card Expiry",
   "cvv": "CVV",
