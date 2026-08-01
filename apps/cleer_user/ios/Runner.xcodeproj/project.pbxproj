@@ -279,7 +279,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if echo \"$DART_DEFINES\" | grep -qE \"(QVBQX0VOVj1tYWlu|APP_ENV=main)\"; then\n  cp -f \"$PROJECT_DIR/Runner/Runner-Live.entitlements\" \"$PROJECT_DIR/Runner/Runner.entitlements\"\nelse\n  cp -f \"$PROJECT_DIR/Runner/Runner-Staging.entitlements\" \"$PROJECT_DIR/Runner/Runner.entitlements\"\nfi\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
 /* End PBXShellScriptBuildPhase section */
 

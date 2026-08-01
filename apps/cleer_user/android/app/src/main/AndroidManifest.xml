@@ -31,9 +31,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Cleer App Domain (dynamically set via deepLinkHost placeholder) -->
-                <data android:scheme="http" android:host="${deepLinkHost}" />
-                <data android:scheme="https" android:host="${deepLinkHost}" />
+                <!-- Your Hostinger Domain -->
+<!--                <data android:scheme="http" android:host="app.cleerpayments.com" />-->
+                <data android:scheme="http" android:host="staging.cleerpayments.com" />
+                <data android:scheme="https" />
             </intent-filter>
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
         </activity>
