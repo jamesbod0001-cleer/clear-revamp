@@ -14,11 +14,16 @@ abstract class Transaction with _$Transaction {
     required String reference,
     required String flutterwaveId,
     required double amount,
+    @Default(0.0) double cleerFee,
+    @Default(0.0) double gatewayFee,
     @Default(TransactionStatus.pending) TransactionStatus status,
     @Default('NGN') String currency,
     String? flutterwavePaymentMethodId,
     Agreement? agreement,
   }) = _Transaction;
+
+  /// Total debited from the user
+  double get totalPaid => amount + gatewayFee;
 
   bool get isTerminal =>
       status == TransactionStatus.successful ||
