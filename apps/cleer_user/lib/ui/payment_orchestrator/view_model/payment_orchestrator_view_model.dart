@@ -287,10 +287,14 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
 
   Future<PaymentOrchestratorState> _verifyChargeTransaction() async {
     _log.info('Attempting to verify charge transaction');
+
+    // Fetch latest charge state from Flutterwave
     final chargeResult = await ref
         .read(flutterwaveUseCaseProvider.notifier)
         .getCharge(state.value!.ongoingCharge!.id);
     final charge = chargeResult.getOrThrow();
+
+    // Retrieve corresponding internal Transaction record from DB
     final transactionResult = await ref
         .read(transactionUseCaseProvider.notifier)
         .getTransactionByFlutterwaveId(charge.id);
@@ -301,7 +305,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     }
     final transaction = transactionOption.toNullable()!;
 
-    // If the transaction is already "finished" in the DB, don't ask Flutterwave anything.
+    // Idempotency Guard: Stop if transaction has already reached a terminal state (e.g., webhook finished first)
     if (transaction.isTerminal) {
       _log.info(
         'Transaction already in terminal state: ${transaction.status.name}',
@@ -313,55 +317,59 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         );
         return state.value!.copyWith(agreement: updatedAgreement);
       } else {
-        // If it failed or was cancelled in the background, take them back to method selection
-        return state.value!.copyWith(currentStep: .paymentNotSecured);
+        return state.value!.copyWith(
+          currentStep: PaymentOrchestratorStep.paymentNotSecured,
+        );
       }
     }
 
-    // if (transaction.status == .successful) {
-    //   _log.info('Transaction already marked successful (likely by webhook)');
-    //
-    //   // Just refresh the agreement to get the latest state from the backend
-    //   final updatedAgreement = await _fetchAgreement(
-    //     state.value!.agreement.id!,
-    //   );
-    //   return state.value!.copyWith(agreement: updatedAgreement);
-    // }
-
+    // Evaluate charge status from payment provider
     switch (charge.status) {
       case ChargeStatus.succeeded:
+        // Validates base charge amount (agreement.amount + cleerFee)
         if (charge.amount < transaction.amount) {
+          _log.error(
+            'Amount mismatch - expected: ${transaction.amount}, got: ${charge.amount}',
+          );
           throw Exception("Amount mismatch");
         }
+
         await ref
             .read(transactionUseCaseProvider.notifier)
             .updateTransaction(transaction.copyWith(status: .successful))
             .then((r) => r.getOrThrow());
+
         final updatedAgreement = await ref
             .read(agreementUseCaseProvider.notifier)
             .processFundingSuccess(charge.agreementId)
             .then((r) => r.getOrThrow());
-        return state.value!.copyWith(
-          // currentStep: .paymentSecuredSuccessfully,
-          agreement: updatedAgreement,
-        );
+
+        return state.value!.copyWith(agreement: updatedAgreement);
+
       case ChargeStatus.pending:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        _log.info('Charge is still pending processor authorization');
+        throw Exception("Payment confirmation is still pending. Please wait.");
+
       case ChargeStatus.failed:
-        _log.warn('Transaction ${charge.status.name}');
+        _log.warn('Transaction failed at processor');
         await ref
             .read(transactionUseCaseProvider.notifier)
             .updateTransaction(transaction.copyWith(status: .failed))
             .then((r) => r.getOrThrow());
-        return state.value!.copyWith(currentStep: .paymentNotSecured);
+        return state.value!.copyWith(
+          currentStep: PaymentOrchestratorStep.paymentNotSecured,
+        );
+
       case ChargeStatus.voided:
-        _log.warn('Transaction ${charge.status.name}');
+        _log.warn('Transaction voided or cancelled');
         await ref
             .read(transactionUseCaseProvider.notifier)
             .updateTransaction(transaction.copyWith(status: .cancelled))
             .then((r) => r.getOrThrow());
-        return state.value!.copyWith(currentStep: .paymentNotSecured);
+        return state.value!.copyWith(
+          currentStep: PaymentOrchestratorStep.paymentNotSecured,
+        );
+
       case ChargeStatus.unknown:
         _log.error('Unknown charge status received');
         throw Exception("Received unknown transaction status from provider");
@@ -369,59 +377,84 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   }
 
   Future<PaymentOrchestratorState> _verifyVirtualAccountTransaction() async {
-    /// TODO: I need to come back and have a look at this thing when flutterwave is life
-    /// And also do not forget to add the IDEMPOTENCY CHECK in case the webhook changed it to successful first
     _log.info('Attempting to verify virtual account transaction');
-    final listChargesResult = await ref
-        .read(flutterwaveUseCaseProvider.notifier)
-        .listCharges(
-          ListChargesParams(
-            virtualAccountId: state.value!.ongoingVirtualAccount!.id,
-          ),
-        );
-    final charges = listChargesResult.getOrThrow();
 
-    /// TODO: I need to add what to do when there a no charges (yet)
-    _log.info('Found ${charges.length} charges');
+    final virtualAccountId = state.value!.ongoingVirtualAccount!.id;
     final transactionOption =
         (await ref
                 .read(transactionUseCaseProvider.notifier)
-                .getTransactionByFlutterwaveId(
-                  state.value!.ongoingVirtualAccount!.id,
-                ))
+                .getTransactionByFlutterwaveId(virtualAccountId))
             .getOrThrow();
+
     if (transactionOption.isNone()) {
       throw Exception("Transaction record missing");
     }
     final transaction = transactionOption.toNullable()!;
-    final succeededCharges = charges.where(
-      (charge) => charge.status == .succeeded,
-    );
-    _log.info('Found ${succeededCharges.length} succeeded charges');
-    final totalAmount = succeededCharges.fold(
-      0.0,
-      (sum, charge) => sum + charge.amount,
-    );
-    if (totalAmount < transaction.amount) {
-      /// TODO: I need to add what to do when the total money hasn't been sent (yet)
+
+    // Idempotency Guard: Webhook might have already marked this transaction terminal
+    if (transaction.isTerminal) {
       _log.info(
-        'Amount mismatch - expected: ${transaction.amount}, actual: $totalAmount',
+        'Bank transfer transaction already in terminal state: ${transaction.status.name}',
       );
-      throw Exception("Amount mismatch");
-    } else {
+      if (transaction.status == .successful) {
+        final updatedAgreement = await _fetchAgreement(
+          state.value!.agreement.id!,
+        );
+        return state.value!.copyWith(agreement: updatedAgreement);
+      } else {
+        return state.value!.copyWith(
+          currentStep: PaymentOrchestratorStep.paymentNotSecured,
+        );
+      }
+    }
+
+    // Fetch charge for this virtual account
+    final listChargesResult = await ref
+        .read(flutterwaveUseCaseProvider.notifier)
+        .listCharges(ListChargesParams(virtualAccountId: virtualAccountId));
+    final charges = listChargesResult.getOrThrow();
+
+    // No transfer detected yet — user should wait
+    if (charges.isEmpty) {
+      _log.info('No incoming transfer charges found yet for virtual account');
+      throw Exception(
+        "Payment not yet detected. Please wait a moment and try again.",
+      );
+    }
+
+    // Single-use dynamic virtual account has only one charge record
+    final charge = charges.first;
+    _log.info(
+      'Charge resolved with status: ${charge.status.name}, amount: ${charge.amount}',
+    );
+
+    // Success Case
+    if (charge.status == ChargeStatus.succeeded &&
+        charge.amount >= transaction.amount) {
       await ref
           .read(transactionUseCaseProvider.notifier)
           .updateTransaction(transaction.copyWith(status: .successful))
           .then((r) => r.getOrThrow());
+
       final updatedAgreement = await ref
           .read(agreementUseCaseProvider.notifier)
           .processFundingSuccess(state.value!.agreement.id!)
           .then((r) => r.getOrThrow());
-      return state.value!.copyWith(
-        // currentStep: .paymentSecuredSuccessfully,
-        agreement: updatedAgreement,
-      );
+
+      return state.value!.copyWith(agreement: updatedAgreement);
     }
+
+    // Failed Case (Underpayment refunded, voided, or processor failure)
+    _log.warn('Bank transfer failed or underpaid. Marking transaction failed.');
+
+    await ref
+        .read(transactionUseCaseProvider.notifier)
+        .updateTransaction(transaction.copyWith(status: .failed))
+        .then((r) => r.getOrThrow());
+
+    return state.value!.copyWith(
+      currentStep: PaymentOrchestratorStep.paymentNotSecured,
+    );
   }
 
   Future<void> verifyTransaction() async {
