@@ -8,10 +8,9 @@ import * as flw from '../shared/flutterwave.client';
 import * as db from './db.utils';
 
 const logger = new Logger({ logLevel: "INFO", serviceName: "flutterwave-webhook" });
-let isConfigured = false; // Fixes the Amplify configure warning
+let isConfigured = false;
 
 export const handler: Handler = async (event) => {
-    // 1. Configure securely during cold start
     if (!isConfigured) {
         const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env);
         Amplify.configure(resourceConfig, libraryOptions);
@@ -32,7 +31,6 @@ export const handler: Handler = async (event) => {
         return { statusCode: 401 };
     }
 
-    // 2. Your original (and correct!) HMAC validation
     const expectedSignature = crypto
         .createHmac('sha256', secretHash)
         .update(rawBody)
@@ -52,11 +50,10 @@ export const handler: Handler = async (event) => {
 
         const eventType = payload.type || payload.event;
 
-        // Inflow (Collections / Charges)
+        // Inflow (Collections / Charges / Virtual Accounts)
         if (eventType === 'charge.completed') {
             await processCharge(payload.data);
         }
-
         // Outflow (Payouts / Transfers)
         else if (eventType === 'transfer.disburse') {
             await processTransfer(payload.data);
@@ -70,13 +67,17 @@ export const handler: Handler = async (event) => {
 };
 
 async function processCharge(data: any) {
-    const transaction = await db.findTransactionByRef(data.tx_ref || data.reference);
+    const reference = data.tx_ref || data.reference;
+
+    // Look up transaction by reference (works for Card, USSD, OPay, and Bank Transfers)
+    const transaction = await db.findTransactionByRef(reference);
 
     if (!transaction || !transaction.id || !transaction.agreementId || transaction.status === 'SUCCESSFUL') {
         logger.info('Transaction invalid, already processed, or not found. Skipping.');
         return;
     }
 
+    // 2. Query Flutterwave API to verify charge authenticity and exact amount
     const businessEnv = env.AMPLIFY_DATA_BUSINESS_ENV!;
     const token = await flw.getAccessToken({
         clientId: businessEnv === 'prod' ? env.FLW_PROD_CLIENT_ID! : env.FLW_SANDBOX_CLIENT_ID!,
@@ -87,37 +88,43 @@ async function processCharge(data: any) {
 
     const flwStatus = verification.data?.status?.toLowerCase();
 
+    // 3. Evaluate verification status against Transaction amount (Agreement Amount + Cleer Fee)
     if ((flwStatus === 'succeeded' || flwStatus === 'successful') && verification.data.amount >= transaction.amount) {
         logger.info(`Charge verified successfully. Updating DB for Agreement: ${transaction.agreementId}`);
         const agreement = await db.getAgreement(transaction.agreementId);
 
         const nextStatus = agreement?.initiatorRole === 'SENDER' ? 'AWAITING_RECIPIENT' : 'FUNDED';
 
+        // Extract actual app fee from Flutterwave fees breakdown if available
+        const feesList: Array<{ type: string; amount: number }> = verification.data.fees || [];
+        const appFee = (feesList.find(f => f.type === 'app')?.amount ?? transaction.gatewayFee) ?? undefined;
+
         await db.updatePaymentSuccess(
             transaction.id,
             transaction.agreementId,
             nextStatus,
-            agreement?.disbursementType ?? 'ONE_TIME'
+            agreement?.disbursementType ?? 'ONE_TIME',
+            appFee
         );
+
     } else if (flwStatus === 'failed') {
         logger.warn(`Charge verification returned failed. Marking Transaction as FAILED: ${transaction.id}`);
         await db.updateTransactionFailed(transaction.id);
-    }
-    // NEW: Handle explicitly VOIDED charges (e.g. Expired Virtual Accounts)
-    else if (flwStatus === 'voided') {
+    } else if (flwStatus === 'voided') {
         logger.warn(`Charge voided/expired. Marking Transaction as CANCELLED: ${transaction.id}`);
-        // Re-use your failed utility, or create a specific updateTransactionCancelled utility
-        await db.updateTransactionFailed(transaction.id);
-    }
-    else {
-        logger.error('Charge verification pending or amount mismatch', { verificationData: verification.data });
+        await db.updateTransactionCancelled(transaction.id);
+    } else {
+        logger.error('Charge verification pending or amount mismatch', {
+            expectedAmount: transaction.amount,
+            receivedAmount: verification.data?.amount,
+            status: flwStatus
+        });
     }
 }
 
 async function processTransfer(data: any) {
     logger.info(`Processing transfer webhook for reference: ${data.reference}`);
 
-    // Find the Payout we created in the Sweeper Lambda
     const payout = await db.findPayoutByRef(data.reference);
 
     if (!payout || !payout.id || payout.status === 'SUCCESSFUL') {
@@ -125,10 +132,8 @@ async function processTransfer(data: any) {
         return;
     }
 
-    // Verify status securely against the payload
     if (data.status === 'SUCCESSFUL') {
         logger.info(`Transfer successful. Finalizing Payout: ${payout.id}`);
-
         await db.updatePayoutSuccess(
             payout.id,
             payout.agreementId,
@@ -136,9 +141,7 @@ async function processTransfer(data: any) {
         );
     } else if (data.status === 'FAILED') {
         logger.error(`Transfer failed by banking partner.`, { data });
-
         const failureReason = 'Transfer failed at the provider or bank level.';
-
         await db.updatePayoutFailed(payout.id, failureReason);
     }
 }
