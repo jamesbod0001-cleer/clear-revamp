@@ -1,5 +1,9 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'charge_enums.dart';
+
+export 'charge_enums.dart';
+
 part 'charge.freezed.dart';
 
 @freezed
@@ -18,12 +22,10 @@ abstract class Charge with _$Charge {
   }) = _Charge;
 }
 
-enum ChargeStatus { succeeded, pending, failed, voided, unknown }
-
 @freezed
 abstract class ChargeFee with _$ChargeFee {
   const factory ChargeFee({
-    required String type, // e.g., 'vat', 'merchant', 'app'
+    required ChargeFeeType type,
     required double amount,
   }) = _ChargeFee;
 }
@@ -41,4 +43,37 @@ class ChargeAction with _$ChargeAction {
   }) = _BankTransfer;
   const factory ChargeAction.qrCode(String imageUrl) = _QrCode;
   const factory ChargeAction.displayInstruction(String note) = _Instruction;
+}
+
+extension ChargeFeeListX on List<ChargeFee> {
+  /// Finds a specific [ChargeFee] by its [ChargeFeeType].
+  ChargeFee? ofType(ChargeFeeType type) {
+    for (final fee in this) {
+      if (fee.type == type) return fee;
+    }
+    return null;
+  }
+
+  /// Specific fee amounts with fallback to 0.0
+  double get vatAmount => ofType(ChargeFeeType.vat)?.amount ?? 0.0;
+  double get appFeeAmount => ofType(ChargeFeeType.app)?.amount ?? 0.0;
+  double get merchantFeeAmount => ofType(ChargeFeeType.merchant)?.amount ?? 0.0;
+  double get stampDutyAmount => ofType(ChargeFeeType.stampDuty)?.amount ?? 0.0;
+
+  /// Sum of all fee amounts in the list
+  double get totalAmount => fold(0.0, (sum, fee) => sum + fee.amount);
+}
+
+extension ChargeX on Charge {
+  /// Gets a specific [ChargeFee] object from feeBreakdown.
+  ChargeFee? getFee(ChargeFeeType type) => feeBreakdown?.ofType(type);
+
+  /// Quick accessors for fee amounts
+  double get vatAmount => feeBreakdown?.vatAmount ?? 0.0;
+  double get appFeeAmount => feeBreakdown?.appFeeAmount ?? 0.0;
+  double get merchantFeeAmount => feeBreakdown?.merchantFeeAmount ?? 0.0;
+  double get stampDutyAmount => feeBreakdown?.stampDutyAmount ?? 0.0;
+
+  /// Total sum of all fees in breakdown
+  double get totalFees => feeBreakdown?.totalAmount ?? 0.0;
 }

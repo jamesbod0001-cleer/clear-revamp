@@ -77,7 +77,7 @@ class AmplifyAuthRepositoryImpl extends AuthRepository {
       if (amplifyResult.nextStep.signInStep == AuthSignInStep.confirmSignUp) {
         _log.info('User is not confirmed. Resending confirmation code.');
         final resendResult = await resendSignUpCode(params.identifier);
-        return resendResult.fold(
+        return await resendResult.fold(
           (codeDetails) => Success(
             SignInDomainResult.confirmationRequired(
               destination: codeDetails.destination!,

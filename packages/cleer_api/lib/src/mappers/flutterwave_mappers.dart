@@ -101,6 +101,16 @@ extension ChargeResponseMapper on ChargeResponse {
       currency: currency!,
       status: _mapToChargeStatus(status),
       action: _mapToChargeAction(nextAction),
+      customerId: customerId,
+      createdAt: createdDatetime,
+      feeBreakdown: fees
+          ?.map(
+            (fee) => ChargeFee(
+              type: ChargeFeeType.fromValue(fee.type),
+              amount: fee.amount ?? 0,
+            ),
+          )
+          .toList(),
     );
   }
 }
