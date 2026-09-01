@@ -29,9 +29,9 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   }
 
   Future<ResultDart<PaymentMethod, DataFailure>> createPaymentMethod(
-    CreatePaymentMethodParams params, {
-    bool save = true,
-  }) async {
+      CreatePaymentMethodParams params, {
+        bool save = true,
+      }) async {
     final user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing during update');
@@ -42,8 +42,8 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
     final paymentMethodResult = await _flutterwaveRepository
         .createPaymentMethod(
-          params.copyWith(customerId: user.flutterwaveCustomerId),
-        );
+      params.copyWith(customerId: user.flutterwaveCustomerId),
+    );
 
     if (paymentMethodResult.isError()) {
       _log.error(
@@ -73,13 +73,13 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     final updateResult = await _userRepository.updateUserProfile(updatedUser);
 
     return updateResult.fold(
-      (success) {
+          (success) {
         _log.info(
           'Successfully updated user profile with new payment method id: ${paymentMethod.id}',
         );
         return Success(paymentMethod);
       },
-      (failure) {
+          (failure) {
         _log.error(
           'Error updating user profile with new payment method id: ${paymentMethod.id}',
           failure,
@@ -90,17 +90,17 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   }
 
   Future<ResultDart<VirtualAccount, DataFailure>> createVirtualAccount(
-    CreateVirtualAccountParams params,
-  ) async {
+      CreateVirtualAccountParams params,
+      ) async {
     _log.info('Attempting to create virtual account with params: $params');
     final result = await _flutterwaveRepository.createVirtualAccount(params);
     result.fold(
-      (virtualAccount) {
+          (virtualAccount) {
         _log.info(
           'Successfully created virtual account with id: ${virtualAccount.id}',
         );
       },
-      (failure) {
+          (failure) {
         _log.error(
           'Error creating virtual account with params: $params',
           failure,
@@ -111,51 +111,62 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   }
 
   Future<ResultDart<VirtualAccount, DataFailure>> initiatePayWithBankTransfer(
-    Agreement agreement,
-  ) async {
+      Agreement agreement,
+      ) async {
     final User? user = ref.read(userProfileProvider).value;
     if (user == null) {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());
     }
+
+    // Calculate fee breakdown
+    final cleerFee = FeeCalculator.calculateCleerFee(agreement.amount);
+    final chargeAmount = FeeCalculator.calculateChargeAmount(agreement.amount);
+
     _log.info('Attempting to create virtual account');
     final createVirtualAccountResult = await _flutterwaveRepository
         .createVirtualAccount(
-          CreateVirtualAccountParams.dynamic(
-            reference: ReferenceGenerator.generate(agreement.id!),
-            customerId: user.flutterwaveCustomerId,
-            amount: agreement.amount,
-            meta: {'agreement_id': agreement.id},
-          ),
-        );
+      CreateVirtualAccountParams.dynamic(
+        reference: ReferenceGenerator.generate(agreement.id!),
+        customerId: user.flutterwaveCustomerId,
+        amount: chargeAmount,
+        meta: {'agreement_id': agreement.id},
+      ),
+    );
 
     return await createVirtualAccountResult.fold(
-      (virtualAccount) async {
+          (virtualAccount) async {
+            // Derive gatewayFee from the gross amount Flutterwave returned
+            final gatewayFee = (virtualAccount.amount > chargeAmount)
+                ? virtualAccount.amount - chargeAmount
+                : FeeCalculator.calculateGatewayFee(chargeAmount);
         _log.info('Successfully created virtual account');
         final transactionResult = await _transactionRepository
             .createTransaction(
-              Transaction(
-                id: null,
-                paymentMethodType: .bankTransfer,
-                reference: virtualAccount.reference,
-                flutterwaveId: virtualAccount.id,
-                amount: virtualAccount.amount,
-                status: .pending,
-                agreement: agreement,
-              ),
-            );
+          Transaction(
+            id: null,
+            paymentMethodType: PaymentMethodType.bankTransfer,
+            reference: virtualAccount.reference,
+            flutterwaveId: virtualAccount.id,
+            amount: chargeAmount,  // Base requested: ₦10,000 (matches settlement & webhook)
+            cleerFee: cleerFee,    // ₦0
+            gatewayFee: gatewayFee,// ₦200 (exact fee added by Flutterwave)
+            status: .pending,
+            agreement: agreement,
+          ),
+        );
         return await transactionResult.fold(
-          (transaction) {
+              (transaction) {
             _log.info('Successfully created transaction');
             return Success(virtualAccount);
           },
-          (failure) {
+              (failure) {
             _log.error('Error creating transaction', failure);
             return Failure(failure);
           },
         );
       },
-      (failure) {
+          (failure) {
         return Failure(failure);
       },
     );
@@ -166,7 +177,6 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       return '${html.window.location.origin}/close_payment.html';
     }
 
-    // --- FOR MOBILE (iOS/Android) ---
     return '${AppConfig.baseUrl}/close_payment.html';
   }
 
@@ -179,12 +189,18 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());
     }
+
+    // Calculate fee breakdown
+    final cleerFee = FeeCalculator.calculateCleerFee(agreement.amount);
+    final chargeAmount = FeeCalculator.calculateChargeAmount(agreement.amount);
+    final gatewayFee = FeeCalculator.calculateGatewayFee(chargeAmount);
+
     _log.info('Attempting to create charge');
 
     final chargeResult = await _flutterwaveRepository.createCharge(
       CreateChargeParams(
         agreementId: agreement.id!,
-        amount: agreement.amount,
+        amount: chargeAmount,
         customerId: user.flutterwaveCustomerId,
         paymentMethodId: paymentMethod.id,
         redirectUrl: _getPaymentRedirectUrl(),
@@ -192,32 +208,34 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
 
     return await chargeResult.fold(
-      (charge) async {
+          (charge) async {
         final transactionResult = await _transactionRepository
             .createTransaction(
-              Transaction(
-                id: null,
-                paymentMethodType: paymentMethod.type,
-                reference: charge.reference,
-                flutterwaveId: charge.id,
-                amount: charge.amount,
-                flutterwavePaymentMethodId: paymentMethod.id,
-                status: .pending,
-                agreement: agreement,
-              ),
-            );
+          Transaction(
+            id: null,
+            paymentMethodType: paymentMethod.type,
+            reference: charge.reference,
+            flutterwaveId: charge.id,
+            amount: charge.amount,
+            cleerFee: cleerFee,
+            gatewayFee: gatewayFee,
+            flutterwavePaymentMethodId: paymentMethod.id,
+            status: .pending,
+            agreement: agreement,
+          ),
+        );
         return await transactionResult.fold(
-          (transaction) {
+              (transaction) {
             _log.info('Successfully created transaction');
             return Success(charge);
           },
-          (failure) {
+              (failure) {
             _log.error('Error creating transaction', failure);
             return Failure(failure);
           },
         );
       },
-      (failure) {
+          (failure) {
         _log.error('Error creating charge', failure);
         return Failure(failure);
       },
@@ -228,10 +246,10 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     _log.info('Attempting to retrieve charge with id: $id');
     final result = await _flutterwaveRepository.getCharge(id);
     result.fold(
-      (charge) {
+          (charge) {
         _log.info('Successfully retrieved charge with id: $id');
       },
-      (failure) {
+          (failure) {
         _log.error('Error retrieving charge with id: $id', failure);
       },
     );
@@ -239,15 +257,15 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   }
 
   Future<ResultDart<List<Charge>, DataFailure>> listCharges(
-    ListChargesParams params,
-  ) async {
+      ListChargesParams params,
+      ) async {
     _log.info('Attempting to list charges with params: $params');
     final result = await _flutterwaveRepository.listCharges(params);
     result.fold(
-      (charges) {
+          (charges) {
         _log.info('Successfully listed charges');
       },
-      (failure) {
+          (failure) {
         _log.error('Error listing charges', failure);
       },
     );
@@ -255,16 +273,16 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
   }
 
   Future<ResultDart<String, DataFailure>> resolveAccount(
-    ResolveAccountParams params,
-  ) async {
+      ResolveAccountParams params,
+      ) async {
     _log.info('Attempting to resolve account with params: $params');
     final result = await _flutterwaveRepository.resolveAccount(params);
     result.fold(
-      (account) {
+          (account) {
         _log.info('Successfully resolved account');
         return Success(account);
       },
-      (failure) {
+          (failure) {
         _log.error('Error resolving account', failure);
         return Failure(failure);
       },

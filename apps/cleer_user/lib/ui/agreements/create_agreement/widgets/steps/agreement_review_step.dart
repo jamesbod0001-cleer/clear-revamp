@@ -1,6 +1,7 @@
 import 'package:cleer/ui/agreements/create_agreement/models/agreement_type.dart';
 import 'package:cleer/ui/agreements/create_agreement/view_model/create_agreement_view_model.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -319,7 +320,7 @@ class AgreementReviewStep extends HookConsumerWidget {
                             Gap(Dimens.spacing.sp28),
                             Expanded(
                               child: Text(
-                                '',
+                                "${l10n.nairaSign}${NumberFormat('#,###.##').format(FeeCalculator.calculateTotalFee(double.tryParse(formData.amount) ?? 0.0))}",
                                 style: context.typo.bodyMedium.copyWith(
                                   fontWeight: AppFontWeights.regular,
                                 ),

@@ -22,27 +22,29 @@ export async function findTransactionByRef(reference: string) {
 export async function updatePaymentSuccess(
     transactionId: string,
     agreementId: string,
-    nextStatus: any,
-    disbursementType: string
+    nextStatus: 'AWAITING_RECIPIENT' | 'FUNDED',
+    disbursementType: string,
+    gatewayFee?: number | null
 ) {
     const updaterIdentifier = 'FLUTTERWAVE_WEBHOOK';
 
-    // 1. Update Transaction
+    // 1. Mark Transaction as SUCCESSFUL with gateway fee
     const txUpdate = await client.models.Transaction.update({
         id: transactionId,
-        status: 'SUCCESSFUL'
+        status: 'SUCCESSFUL',
+        ...(gatewayFee != null ? { gatewayFee } : {})
     });
     if (txUpdate.errors) logger.error('Failed to update Transaction', { errors: txUpdate.errors });
 
-    // 2. Update Agreement Status & leave Audit Trail
+    // 2. Transition Agreement to nextStatus (AWAITING_RECIPIENT or FUNDED)
     const agreeUpdate = await client.models.Agreement.update({
         id: agreementId,
         status: nextStatus,
         lastUpdatedBy: updaterIdentifier
     });
-    if (agreeUpdate.errors) logger.error('Failed to update Agreement', { errors: agreeUpdate.errors });
+    if (agreeUpdate.errors) logger.error('Failed to update Agreement to nextStatus', { errors: agreeUpdate.errors });
 
-    // 3. Handle Milestones if needed
+    // 3. If the agreement is now FUNDED (recipient-initiated flow), advance to IN_PROGRESS
     if (nextStatus === 'FUNDED') {
         const progressUpdate = await client.models.Agreement.update({
             id: agreementId,
@@ -51,12 +53,15 @@ export async function updatePaymentSuccess(
         });
         if (progressUpdate.errors) logger.error('Failed to update Agreement to IN_PROGRESS', { errors: progressUpdate.errors });
 
+        // Activate Milestone 0 if disbursement is milestone-based
         if (disbursementType === 'MILESTONES') {
-            const { data: milestones } = await client.models.Milestone.list({
+            const { data: milestones, errors: msErrors } = await client.models.Milestone.list({
                 filter: { agreementId: { eq: agreementId }, order: { eq: 0 } }
             });
 
-            if (milestones?.[0]) {
+            if (msErrors) {
+                logger.error('Failed to fetch initial milestone', { errors: msErrors });
+            } else if (milestones?.[0]) {
                 const msUpdate = await client.models.Milestone.update({
                     id: milestones[0].id,
                     status: 'IN_PROGRESS',
@@ -68,15 +73,21 @@ export async function updatePaymentSuccess(
     }
 }
 
+
 export async function updateTransactionFailed(transactionId: string) {
     const txUpdate = await client.models.Transaction.update({
         id: transactionId,
         status: 'FAILED'
     });
+    if (txUpdate.errors) logger.error('Failed to update Transaction to FAILED', { errors: txUpdate.errors });
+}
 
-    if (txUpdate.errors) {
-        logger.error('Failed to update Transaction to FAILED', { errors: txUpdate.errors });
-    }
+export async function updateTransactionCancelled(transactionId: string) {
+    const txUpdate = await client.models.Transaction.update({
+        id: transactionId,
+        status: 'CANCELLED'
+    });
+    if (txUpdate.errors) logger.error('Failed to update Transaction to CANCELLED', { errors: txUpdate.errors });
 }
 
 export async function findPayoutByRef(reference: string) {
@@ -143,8 +154,7 @@ export async function updatePayoutSuccess(
                     // If it's already overdue when it wakes up, fast-forward it instantly!
                     const targetStatus = (nextDate && nextDate <= today) ? 'READY_FOR_RELEASE' : 'IN_PROGRESS';
 
-                    logger.info(`Waking up next milestone: ${nextMilestone.id} (Order: ${nextMilestone.order}). Setting to ${targetStatus} based on date.`);
-
+                    logger.info(`Waking up next milestone: ${nextMilestone.id} (Order: ${nextMilestone.order}) with status ${targetStatus}`);
                     await client.models.Milestone.update({
                         id: nextMilestone.id,
                         status: targetStatus,
@@ -153,9 +163,7 @@ export async function updatePayoutSuccess(
                 }
             }
         }
-    }
-    // 3. Otherwise, close the core Agreement directly
-    else {
+    } else {
         const agreeUpdate = await client.models.Agreement.update({
             id: agreementId,
             status: 'RELEASED',
@@ -171,8 +179,5 @@ export async function updatePayoutFailed(payoutId: string, failureReason: string
         status: 'FAILED',
         failureReason: failureReason
     });
-
-    if (payoutUpdate.errors) {
-        logger.error('Failed to update Payout to FAILED', { errors: payoutUpdate.errors });
-    }
+    if (payoutUpdate.errors) logger.error('Failed to update Payout to FAILED', { errors: payoutUpdate.errors });
 }

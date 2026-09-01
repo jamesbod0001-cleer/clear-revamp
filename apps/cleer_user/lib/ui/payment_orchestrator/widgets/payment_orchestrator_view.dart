@@ -224,11 +224,11 @@ class _StepSwitcher extends StatelessWidget {
           agreementId: agreementId,
         ),
         PaymentOrchestratorStep.payWithBankTransfer => PayWithBankTransferStep(
-          key: const ValueKey('opay'),
+          key: const ValueKey('payWithBankTransfer'),
           agreementId: agreementId,
         ),
         PaymentOrchestratorStep.payWithUSSD => PayWithUSSDStep(
-          key: const ValueKey('opay'),
+          key: const ValueKey('ussd'),
           agreementId: agreementId,
         ),
         PaymentOrchestratorStep.enterCardDetails => EnterCardDetailsStep(

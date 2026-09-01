@@ -11,7 +11,10 @@ export const Transaction = a.model({
     // Note: When paymentMethodType is 'BANK_TRANSFER', flutterwaveId will be the dynamic virtual account id. Otherwise, it is the charge id as usual.
 
     // The Money
-    amount: a.float().required(),
+    amount: a.float().required(),         // agreement.amount + cleerFee
+    cleerFee: a.float().default(0.0),     // Cleer platform fee
+    gatewayFee: a.float().default(0.0),   // Flutterwave app fee
+
     currency: a.string().required().default('NGN'),
 
     // The Status

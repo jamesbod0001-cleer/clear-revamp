@@ -1,5 +1,4 @@
 import java.util.Properties
-import java.util.Base64
 import java.io.FileInputStream
 
 plugins {
@@ -14,20 +13,6 @@ val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
-
-val dartDefinesRaw: String = (project.findProperty("dart-defines") as? String) ?: ""
-val decodedDartDefines: String = if (dartDefinesRaw.isNotEmpty()) {
-    try {
-        String(Base64.getDecoder().decode(dartDefinesRaw))
-    } catch (e: Exception) {
-        ""
-    }
-} else {
-    ""
-}
-
-val isMainEnv = decodedDartDefines.contains("APP_ENV=main")
-val deepLinkHost = if (isMainEnv) "app.cleerpayments.com" else "staging.cleerpayments.com"
 
 android {
     namespace = "com.cleerpayments.cleer"
@@ -49,7 +34,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders["deepLinkHost"] = deepLinkHost
     }
 
     signingConfigs {
@@ -62,7 +46,9 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("release")
         }
     }

@@ -353,6 +353,35 @@ class AgreementDetailsScreen extends ConsumerWidget {
                             mainAxisAlignment: .spaceBetween,
                             children: [
                               Text(
+                                l10n.fee,
+                                style: context.typo.bodyMedium.copyWith(
+                                  fontWeight: AppFontWeights.regular,
+                                  color: context.color.grey600,
+                                ),
+                              ),
+                              Gap(Dimens.spacing.sp28),
+                              // TODO(fee): Currently calculating fee dynamically via FeeCalculator.
+                              // To display the exact historical fee from the database:
+                              // 1. Include `transactions` on Agreement domain model (or query transaction by agreementId).
+                              // 2. Extract the successful transaction fee:
+                              //    final successfulTx = agreement.transactions?.firstWhereOrNull((t) => t.status == TransactionStatus.successful);
+                              //    final feeAmount = successfulTx?.fee ?? FeeCalculator.calculateTotalFee(agreement.amount);
+                              Expanded(
+                                child: Text(
+                                  "${l10n.nairaSign}${NumberFormat('#,###.##').format(FeeCalculator.calculateTotalFee(agreement.amount))}",
+                                  style: context.typo.bodyMedium.copyWith(
+                                    fontWeight: AppFontWeights.regular,
+                                  ),
+                                  textAlign: .end,
+                                  overflow: .ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: .spaceBetween,
+                            children: [
+                              Text(
                                 l10n.category,
                                 style: context.typo.bodyMedium.copyWith(
                                   fontWeight: AppFontWeights.regular,

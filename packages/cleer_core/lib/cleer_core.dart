@@ -9,6 +9,7 @@ export 'utils/validators/validators.dart';
 export 'utils/constants.dart';
 export 'utils/password_generator.dart';
 export 'utils/identity_utils.dart';
+export 'utils/fee_calculator.dart';
 
 // --- ENUMS ---
 // (Add all the enums from your enums folder)
@@ -30,6 +31,7 @@ export 'models/agreement/agreement_enums.dart';
 export 'models/auth_identity/auth_identity.dart';
 export 'models/bank/bank.dart';
 export 'models/charge/charge.dart';
+export 'models/charge/charge_enums.dart';
 export 'models/delivery_details/delivery_details.dart';
 export 'models/delivery_details/delivery_details_enums.dart';
 export 'models/milestone/milestone.dart';
