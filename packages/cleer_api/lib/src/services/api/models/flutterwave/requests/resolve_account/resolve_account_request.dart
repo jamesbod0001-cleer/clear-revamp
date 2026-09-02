@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'resolve_account_request.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class ResolveAccountRequest {
   final String currency;
   final AccountObject account;
@@ -15,7 +15,7 @@ class ResolveAccountRequest {
       _$ResolveAccountRequestFromJson(json);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class AccountObject {
   final String code;
   final String number;

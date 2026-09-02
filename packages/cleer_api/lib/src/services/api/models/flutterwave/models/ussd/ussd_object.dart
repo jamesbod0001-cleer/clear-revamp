@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ussd_object.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class USSDObject {
   @JsonKey(name: 'account_bank')
   final String accountBank;

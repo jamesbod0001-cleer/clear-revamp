@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'update_charge_request.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class UpdateChargeRequest {
   final Map<String, dynamic>? meta;
   final AuthorizationObject? authorization;

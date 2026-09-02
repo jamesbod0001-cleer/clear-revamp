@@ -49,12 +49,14 @@ class AmplifyFlutterwaveProxyServiceClient with ApiErrorChecker {
       }
     ''';
 
+    final cleanBody = body != null ? _removeNulls(body) : null;
+
     final request = GraphQLRequest<String>(
       document: document,
       variables: {
         'method': method,
         'endpoint': endpoint,
-        if (body != null) 'payload': jsonEncode(body),
+        if (cleanBody != null) 'payload': jsonEncode(cleanBody),
         if (headers != null) 'headers': jsonEncode(headers),
       },
       // CRITICAL: Ensure only authenticated Cognito users can trigger payments
@@ -238,5 +240,28 @@ class AmplifyFlutterwaveProxyServiceClient with ApiErrorChecker {
 
     if (cleanParams.isEmpty) return '';
     return '?${Uri(queryParameters: cleanParams).query}';
+  }
+
+  /// Recursively removes all key-value pairs with null values from a JSON Map.
+  /// Prevents passing explicit `null` fields to strict API endpoints.
+  Map<String, dynamic> _removeNulls(Map<String, dynamic> map) {
+    final Map<String, dynamic> result = {};
+    map.forEach((key, value) {
+      if (value != null) {
+        if (value is Map<String, dynamic>) {
+          result[key] = _removeNulls(value);
+        } else if (value is List) {
+          result[key] = value.map((item) {
+            if (item is Map<String, dynamic>) {
+              return _removeNulls(item);
+            }
+            return item;
+          }).toList();
+        } else {
+          result[key] = value;
+        }
+      }
+    });
+    return result;
   }
 }

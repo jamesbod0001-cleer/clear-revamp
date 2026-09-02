@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_charge_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class CreateChargeRequest {
   final double amount;
   final String currency;
@@ -15,6 +15,7 @@ class CreateChargeRequest {
   @JsonKey(name: 'redirect_url')
   final String? redirectUrl;
   final bool recurring;
+  @JsonKey(name: 'order_id')
   final String? orderId;
   @JsonKey(name: 'merchant_vat_amount')
   final String? merchantVatAmount;

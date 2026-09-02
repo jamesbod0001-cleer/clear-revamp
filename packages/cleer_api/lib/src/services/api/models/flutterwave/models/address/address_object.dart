@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'address_object.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class AddressObject {
   final String city;
   final String country;

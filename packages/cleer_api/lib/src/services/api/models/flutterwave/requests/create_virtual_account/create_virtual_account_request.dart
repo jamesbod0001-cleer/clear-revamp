@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_virtual_account_request.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class CreateVirtualAccountRequest {
   final String reference;
   @JsonKey(name: 'customer_id')

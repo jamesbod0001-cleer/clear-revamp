@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'create_payment_method_request.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class CreatePaymentMethodRequest {
   final String type;
   final CardRequestObject? card;
@@ -28,7 +28,7 @@ class CreatePaymentMethodRequest {
       _$CreatePaymentMethodRequestFromJson(json);
 }
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class CardRequestObject {
   @JsonKey(name: 'encrypted_card_number')
   final String encryptedCardNumber;
