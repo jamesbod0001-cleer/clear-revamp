@@ -3,28 +3,37 @@
 import type { Schema } from "../../data/resource";
 import { env } from '$amplify/env/flutterwave-proxy';
 import { Logger } from "@aws-lambda-powertools/logger";
-// Import the centralized base URL utility
 import { getBaseUrl, getAccessToken as fetchNewToken } from "../shared/flutterwave.client";
 
 const logger = new Logger({ logLevel: "INFO", serviceName: "flutterwave-proxy" });
 
-// Cold start cache variables preserved in the warm container memory
 let cachedToken: string | null = null;
 let tokenExpiryTime: number = 0;
 
 export const handler: Schema["flutterwaveProxy"]["functionHandler"] = async (event) => {
     const { method, endpoint, payload, headers } = event.arguments;
 
-    logger.info("--- PROXY INVOCATION START ---", { method, endpoint });
+    logger.info("--- PROXY INVOCATION START ---", {
+        method,
+        endpoint,
+        environment: env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox',
+        payload_preview: sanitizePayloadForLog(payload)
+    });
 
     try {
         const responseData = await executeWithTokenRetry(method, endpoint, payload, headers);
-        logger.info("Proxy request successful");
+        logger.info("Proxy request successful", { endpoint });
         return JSON.stringify(responseData);
 
     } catch (error: any) {
+        logger.error(`[Proxy Error] Code: ${error.name || 'UNKNOWN'}`, {
+            error_message: error.message,
+            validation_errors: error.validationErrors,
+            endpoint,
+            stack: error.stack
+        });
+
         if (error.name && error.name !== 'Error') {
-            logger.error(`[Proxy Error] Code: ${error.name}`, { error_message: error.message });
             throw error;
         }
 
@@ -35,7 +44,18 @@ export const handler: Schema["flutterwaveProxy"]["functionHandler"] = async (eve
     }
 };
 
-// --- HELPER FUNCTIONS ---
+function sanitizePayloadForLog(payloadStr?: string | null): string | null {
+    if (!payloadStr) return null;
+    try {
+        const parsed = JSON.parse(payloadStr);
+        if (parsed.card) {
+            parsed.card = { ...parsed.card, encrypted_card_number: '***', encrypted_cvv: '***' };
+        }
+        return JSON.stringify(parsed);
+    } catch {
+        return '[Unparseable Payload]';
+    }
+}
 
 async function executeWithTokenRetry(
     method: string,
@@ -48,7 +68,7 @@ async function executeWithTokenRetry(
     try {
         return await proxyRequest(method, endpoint, token, payload, headers);
     } catch (error: any) {
-        if (error.name === '10401') {
+        if (String(error.name) === '10401') {
             logger.warn("Cached token was rejected by Flutterwave. Forcing refresh and retry...");
 
             cachedToken = null;
@@ -69,11 +89,10 @@ async function getAccessToken(): Promise<string> {
         return cachedToken;
     }
 
-    logger.info("Cache expired or empty. Delegating token generation to shared client...");
-
     const environment = env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox';
 
-    // Natively utilize your shared config injection protocol
+    logger.info(`Fetching new token for environment: ${environment}`);
+
     const token = await fetchNewToken({
         clientId: environment === 'prod' ? env.FLW_PROD_CLIENT_ID! : env.FLW_SANDBOX_CLIENT_ID!,
         clientSecret: environment === 'prod' ? env.FLW_PROD_CLIENT_SECRET! : env.FLW_SANDBOX_CLIENT_SECRET!,
@@ -82,7 +101,6 @@ async function getAccessToken(): Promise<string> {
 
     cachedToken = token;
 
-    // Maintain local safety buffer evaluation blocks
     const lifespanSeconds = 15 * 60;
     const safetyBufferMs = 60 * 1000;
     tokenExpiryTime = now + (lifespanSeconds * 1000) - safetyBufferMs;
@@ -99,10 +117,13 @@ async function proxyRequest(
     customHeadersStr?: string | null
 ) {
     const environment = env.AMPLIFY_DATA_BUSINESS_ENV || 'sandbox';
-
-    // Resolved cleanly via the shared library function instead of hardcoded strings
     const baseUrl = getBaseUrl(environment);
     const url = `${baseUrl}${endpoint}`;
+
+    logger.info(`Sending ${method} request to Flutterwave: ${url}`, {
+        environment,
+        payload: sanitizePayloadForLog(payload)
+    });
 
     const requestHeaders: Record<string, string> = {
         'Authorization': `Bearer ${token}`,
@@ -127,13 +148,30 @@ async function proxyRequest(
     }
 
     const response = await fetch(url, options);
-    const data = await response.json();
+    const textData = await response.text();
+
+    let data: any = {};
+    try {
+        data = JSON.parse(textData);
+    } catch (e) {
+        logger.error("Failed to parse JSON response from Flutterwave", { status: response.status, raw_response: textData });
+        const parseError = new Error(`Flutterwave returned non-JSON response (HTTP ${response.status})`);
+        parseError.name = response.status.toString();
+        throw parseError;
+    }
 
     if (!response.ok || data.status === 'failed') {
-        const fwCode = data?.error?.code || response.status.toString() || 'FW_UNKNOWN_ERROR';
-        const fwMessage = data?.error?.message || 'Flutterwave transaction failed';
+        const fwCode = String(data?.error?.code || data?.code || response.status || 'FW_UNKNOWN_ERROR');
+        const fwMessage = data?.error?.message || data?.message || 'Flutterwave transaction failed';
 
-        logger.warn("Flutterwave returned an error response", { code: fwCode, fw_message: fwMessage });
+        logger.warn("Flutterwave returned an error response", {
+            http_status: response.status,
+            fw_code: fwCode,
+            fw_message: fwMessage,
+            response_body: data,
+            endpoint,
+            sanitized_payload: sanitizePayloadForLog(payload)
+        });
 
         const error = new Error(fwMessage);
         error.name = fwCode;
@@ -144,5 +182,6 @@ async function proxyRequest(
         throw error;
     }
 
+    logger.info("Flutterwave responded successfully", { http_status: response.status, endpoint });
     return data;
 }
