@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'phone_object.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class PhoneObject {
   @JsonKey(name: 'country_code')
   final String countryCode;

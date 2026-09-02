@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'name_object.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class NameObject {
   final String first;
   final String? middle;

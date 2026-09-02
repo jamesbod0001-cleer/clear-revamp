@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'cof_object.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class COFObject {
   final bool enabled;
   @JsonKey(name: 'agreement_id')
