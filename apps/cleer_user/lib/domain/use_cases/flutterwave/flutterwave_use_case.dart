@@ -28,6 +28,33 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     return;
   }
 
+  Future<ResultDart<String, DataFailure>> _ensureCustomerId(User user) async {
+    if (user.flutterwaveCustomerId.isNotEmpty) {
+      return Success(user.flutterwaveCustomerId);
+    }
+    _log.info('Flutterwave customer ID is empty for user: ${user.id}. Creating customer...');
+    final createCustomerResult = await _flutterwaveRepository.createCustomer(
+      params: CreateCustomerParams(
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+      ),
+      userId: user.id,
+    );
+    return createCustomerResult.fold(
+      (customer) async {
+        _log.info('Successfully created customer with ID: ${customer.id}');
+        final updatedUser = user.copyWith(flutterwaveCustomerId: customer.id);
+        await _userRepository.updateUserProfile(updatedUser);
+        return Success(customer.id);
+      },
+      (failure) {
+        _log.error('Failed to create customer for user: ${user.id}', failure);
+        return Failure(failure);
+      },
+    );
+  }
+
   Future<ResultDart<PaymentMethod, DataFailure>> createPaymentMethod(
       CreatePaymentMethodParams params, {
         bool save = true,
@@ -37,12 +64,19 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       _log.error('User state is missing during update');
       return Failure(DataFailure.notFound());
     }
+
+    final customerIdResult = await _ensureCustomerId(user);
+    if (customerIdResult.isError()) {
+      return Failure(customerIdResult.exceptionOrNull()!);
+    }
+    final customerId = customerIdResult.getOrThrow();
+
     _log.info(
       'Attempting to create payment method with type: ${params.runtimeType}',
     );
     final paymentMethodResult = await _flutterwaveRepository
         .createPaymentMethod(
-      params.copyWith(customerId: user.flutterwaveCustomerId),
+      params.copyWith(customerId: customerId),
     );
 
     if (paymentMethodResult.isError()) {
@@ -119,6 +153,12 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       return Failure(DataFailure.notFound());
     }
 
+    final customerIdResult = await _ensureCustomerId(user);
+    if (customerIdResult.isError()) {
+      return Failure(customerIdResult.exceptionOrNull()!);
+    }
+    final customerId = customerIdResult.getOrThrow();
+
     // Calculate fee breakdown
     final cleerFee = FeeCalculator.calculateCleerFee(agreement.amount);
     final chargeAmount = FeeCalculator.calculateChargeAmount(agreement.amount);
@@ -128,7 +168,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
         .createVirtualAccount(
       CreateVirtualAccountParams.dynamic(
         reference: ReferenceGenerator.generate(agreement.id!),
-        customerId: user.flutterwaveCustomerId,
+        customerId: customerId,
         amount: chargeAmount,
         meta: {'agreement_id': agreement.id},
       ),
@@ -190,6 +230,12 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       return Failure(DataFailure.notFound());
     }
 
+    final customerIdResult = await _ensureCustomerId(user);
+    if (customerIdResult.isError()) {
+      return Failure(customerIdResult.exceptionOrNull()!);
+    }
+    final customerId = customerIdResult.getOrThrow();
+
     // Calculate fee breakdown
     final cleerFee = FeeCalculator.calculateCleerFee(agreement.amount);
     final chargeAmount = FeeCalculator.calculateChargeAmount(agreement.amount);
@@ -201,7 +247,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
       CreateChargeParams(
         agreementId: agreement.id!,
         amount: chargeAmount,
-        customerId: user.flutterwaveCustomerId,
+        customerId: customerId,
         paymentMethodId: paymentMethod.id,
         redirectUrl: _getPaymentRedirectUrl(),
       ),
