@@ -72,8 +72,8 @@ async function processCharge(data: any) {
     // Look up transaction by reference (works for Card, USSD, OPay, and Bank Transfers)
     const transaction = await db.findTransactionByRef(reference);
 
-    if (!transaction || !transaction.id || !transaction.agreementId || transaction.status === 'SUCCESSFUL') {
-        logger.info('Transaction invalid, already processed, or not found. Skipping.');
+    if (!transaction || !transaction.id || !transaction.agreementId || transaction.status === 'SUCCESSFUL' || transaction.status === 'CANCELLED') {
+        logger.info('Transaction invalid, already processed, cancelled, or not found. Skipping.');
         return;
     }
 
