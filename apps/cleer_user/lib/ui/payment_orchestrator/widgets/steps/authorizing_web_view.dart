@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthorizingWebView extends ConsumerStatefulWidget {
   const AuthorizingWebView({
@@ -83,16 +84,70 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
     }
   }
 
+  Future<void> _handleCustomScheme(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return;
+      }
+
+      // Check for browser fallback URL inside intent:// URIs
+      if (url.startsWith('intent://')) {
+        final match = RegExp(r'S\.browser_fallback_url=([^;]+)').firstMatch(url);
+        if (match != null) {
+          final fallbackUrl = Uri.decodeComponent(match.group(1)!);
+          debugPrint('Launching intent fallback URL: $fallbackUrl');
+          webViewController.loadRequest(Uri.parse(fallbackUrl));
+          return;
+        }
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Target payment app is not installed on this device.'),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error handling custom scheme $url: $e');
+    }
+  }
+
   // --- MOBILE LOGIC ---
   void _initMobileWebView() {
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onNavigationRequest: (NavigationRequest request) async {
+            final String url = request.url;
+            debugPrint('Navigation request to: $url');
+
+            // 1. Check if payment completion/redirect URL was reached
+            if (url.contains('close_payment.html') ||
+                url.contains('success') ||
+                url.contains('failed') ||
+                url.contains('cancelled')) {
+              await _triggerVerification();
+              return NavigationDecision.navigate;
+            }
+
+            // 2. Intercept non-HTTP/HTTPS schemes (e.g. btravel://, opay://, intent://)
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+              debugPrint('Intercepted custom scheme/deep-link: $url');
+              await _handleCustomScheme(url);
+              return NavigationDecision.prevent;
+            }
+
+            return NavigationDecision.navigate;
+          },
           onUrlChange: (UrlChange change) async {
             final url = change.url ?? '';
             debugPrint('URL changed to $url');
-            if (url.contains('success') ||
+            if (url.contains('close_payment.html') ||
+                url.contains('success') ||
                 url.contains('failed') ||
                 url.contains('cancelled')) {
               await _triggerVerification();
