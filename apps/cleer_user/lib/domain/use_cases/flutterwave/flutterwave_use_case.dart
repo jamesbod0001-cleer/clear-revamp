@@ -170,7 +170,7 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
         reference: ReferenceGenerator.generate(agreement.id!),
         customerId: customerId,
         amount: chargeAmount,
-        meta: {'agreement_id': agreement.id},
+        meta: {'cleer_agreement_id': agreement.id},
       ),
     );
 
