@@ -5,6 +5,7 @@ import 'package:cleer/domain/use_cases/transaction/transaction_use_case.dart';
 import 'package:cleer/domain/use_cases/user/user_use_case.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/payment_method/payment_method.dart';
+import 'package:cleer_core/models/transaction/transaction_enums.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
@@ -288,45 +289,65 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   Future<PaymentOrchestratorState> _verifyChargeTransaction() async {
     _log.info('Attempting to verify charge transaction');
 
-    // Fetch latest charge state from Flutterwave
-    final chargeResult = await ref
-        .read(flutterwaveUseCaseProvider.notifier)
-        .getCharge(state.value!.ongoingCharge!.id);
-    final charge = chargeResult.getOrThrow();
+    final chargeId = state.value!.ongoingCharge!.id;
+    const maxRetries = 10;
+    const retryDelay = Duration(seconds: 3);
 
-    // Retrieve corresponding internal Transaction record from DB
-    final transactionResult = await ref
-        .read(transactionUseCaseProvider.notifier)
-        .getTransactionByFlutterwaveId(charge.id);
-    final transactionOption = transactionResult.getOrThrow();
+    Charge? charge;
+    Transaction? transaction;
 
-    if (transactionOption.isNone()) {
-      throw Exception("Transaction record missing");
-    }
-    final transaction = transactionOption.toNullable()!;
+    for (int i = 0; i < maxRetries; i++) {
+      final chargeResult = await ref
+          .read(flutterwaveUseCaseProvider.notifier)
+          .getCharge(chargeId);
 
-    // Idempotency Guard: Stop if transaction has already reached a terminal state (e.g., webhook finished first)
-    if (transaction.isTerminal) {
-      _log.info(
-        'Transaction already in terminal state: ${transaction.status.name}',
-      );
+      if (chargeResult.isSuccess()) {
+        charge = chargeResult.getOrThrow();
 
-      if (transaction.status == .successful) {
-        final updatedAgreement = await _fetchAgreement(
-          state.value!.agreement.id!,
-        );
-        return state.value!.copyWith(agreement: updatedAgreement);
-      } else {
-        return state.value!.copyWith(
-          currentStep: PaymentOrchestratorStep.paymentNotSecured,
-        );
+        final transactionResult = await ref
+            .read(transactionUseCaseProvider.notifier)
+            .getTransactionByFlutterwaveId(charge.id);
+
+        final transactionOption = transactionResult.getOrNull();
+        if (transactionOption != null && transactionOption.isSome()) {
+          transaction = transactionOption.toNullable()!;
+
+          if (transaction.isTerminal) {
+            _log.info(
+              'Transaction already in terminal state: ${transaction.status.name}',
+            );
+
+            if (transaction.status == TransactionStatus.successful) {
+              final updatedAgreement = await _fetchAgreement(
+                state.value!.agreement.id!,
+              );
+              return state.value!.copyWith(agreement: updatedAgreement);
+            } else {
+              return state.value!.copyWith(
+                currentStep: PaymentOrchestratorStep.paymentNotSecured,
+              );
+            }
+          }
+        }
+
+        if (charge.status != ChargeStatus.pending) {
+          _log.info('Charge status resolved to: ${charge.status.name}');
+          break;
+        }
+      }
+
+      if (i < maxRetries - 1) {
+        _log.info('Charge is pending. Retrying in 3s... (Attempt ${i + 1}/$maxRetries)');
+        await Future.delayed(retryDelay);
       }
     }
 
-    // Evaluate charge status from payment provider
+    if (charge == null || transaction == null) {
+      throw Exception("Transaction record or charge details missing");
+    }
+
     switch (charge.status) {
       case ChargeStatus.succeeded:
-        // Validates base charge amount (agreement.amount + cleerFee)
         if (charge.amount < transaction.amount) {
           _log.error(
             'Amount mismatch - expected: ${transaction.amount}, got: ${charge.amount}',
@@ -336,7 +357,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
 
         await ref
             .read(transactionUseCaseProvider.notifier)
-            .updateTransaction(transaction.copyWith(status: .successful))
+            .updateTransaction(transaction.copyWith(status: TransactionStatus.successful))
             .then((r) => r.getOrThrow());
 
         final updatedAgreement = await ref
@@ -347,14 +368,16 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         return state.value!.copyWith(agreement: updatedAgreement);
 
       case ChargeStatus.pending:
-        _log.info('Charge is still pending processor authorization');
-        throw Exception("Payment confirmation is still pending. Please wait.");
+        _log.info('Charge remains pending after retries.');
+        return state.value!.copyWith(
+          currentStep: PaymentOrchestratorStep.waitingForConfirmation,
+        );
 
       case ChargeStatus.failed:
         _log.warn('Transaction failed at processor');
         await ref
             .read(transactionUseCaseProvider.notifier)
-            .updateTransaction(transaction.copyWith(status: .failed))
+            .updateTransaction(transaction.copyWith(status: TransactionStatus.failed))
             .then((r) => r.getOrThrow());
         return state.value!.copyWith(
           currentStep: PaymentOrchestratorStep.paymentNotSecured,
@@ -364,7 +387,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         _log.warn('Transaction voided or cancelled');
         await ref
             .read(transactionUseCaseProvider.notifier)
-            .updateTransaction(transaction.copyWith(status: .cancelled))
+            .updateTransaction(transaction.copyWith(status: TransactionStatus.cancelled))
             .then((r) => r.getOrThrow());
         return state.value!.copyWith(
           currentStep: PaymentOrchestratorStep.paymentNotSecured,
@@ -391,12 +414,11 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     }
     final transaction = transactionOption.toNullable()!;
 
-    // Idempotency Guard: Webhook might have already marked this transaction terminal
     if (transaction.isTerminal) {
       _log.info(
         'Bank transfer transaction already in terminal state: ${transaction.status.name}',
       );
-      if (transaction.status == .successful) {
+      if (transaction.status == TransactionStatus.successful) {
         final updatedAgreement = await _fetchAgreement(
           state.value!.agreement.id!,
         );
@@ -408,32 +430,45 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       }
     }
 
-    // Fetch charge for this virtual account
-    final listChargesResult = await ref
-        .read(flutterwaveUseCaseProvider.notifier)
-        .listCharges(ListChargesParams(virtualAccountId: virtualAccountId));
-    final charges = listChargesResult.getOrThrow();
+    const maxRetries = 10;
+    const retryDelay = Duration(seconds: 3);
 
-    // No transfer detected yet — user should wait
-    if (charges.isEmpty) {
-      _log.info('No incoming transfer charges found yet for virtual account');
-      throw Exception(
-        "Payment not yet detected. Please wait a moment and try again.",
+    Charge? charge;
+
+    for (int i = 0; i < maxRetries; i++) {
+      final listChargesResult = await ref
+          .read(flutterwaveUseCaseProvider.notifier)
+          .listCharges(ListChargesParams(virtualAccountId: virtualAccountId));
+
+      if (listChargesResult.isSuccess()) {
+        final charges = listChargesResult.getOrThrow();
+        if (charges.isNotEmpty) {
+          charge = charges.first;
+          if (charge.status != ChargeStatus.pending) {
+            _log.info('Bank transfer charge detected with status: ${charge.status.name}');
+            break;
+          }
+        }
+      }
+
+      if (i < maxRetries - 1) {
+        _log.info('Bank transfer charge not detected yet. Retrying in 3s... (Attempt ${i + 1}/$maxRetries)');
+        await Future.delayed(retryDelay);
+      }
+    }
+
+    if (charge == null) {
+      _log.info('No incoming transfer charges found after retries.');
+      return state.value!.copyWith(
+        currentStep: PaymentOrchestratorStep.payWithBankTransfer,
       );
     }
 
-    // Single-use dynamic virtual account has only one charge record
-    final charge = charges.first;
-    _log.info(
-      'Charge resolved with status: ${charge.status.name}, amount: ${charge.amount}',
-    );
-
-    // Success Case
     if (charge.status == ChargeStatus.succeeded &&
         charge.amount >= transaction.amount) {
       await ref
           .read(transactionUseCaseProvider.notifier)
-          .updateTransaction(transaction.copyWith(status: .successful))
+          .updateTransaction(transaction.copyWith(status: TransactionStatus.successful))
           .then((r) => r.getOrThrow());
 
       final updatedAgreement = await ref
@@ -444,12 +479,11 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       return state.value!.copyWith(agreement: updatedAgreement);
     }
 
-    // Failed Case (Underpayment refunded, voided, or processor failure)
     _log.warn('Bank transfer failed or underpaid. Marking transaction failed.');
 
     await ref
         .read(transactionUseCaseProvider.notifier)
-        .updateTransaction(transaction.copyWith(status: .failed))
+        .updateTransaction(transaction.copyWith(status: TransactionStatus.failed))
         .then((r) => r.getOrThrow());
 
     return state.value!.copyWith(
