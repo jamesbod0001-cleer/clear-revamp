@@ -290,7 +290,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
     _log.info('Attempting to verify charge transaction');
 
     final chargeId = state.value!.ongoingCharge!.id;
-    const maxRetries = 10;
+    const maxRetries = 30;
     const retryDelay = Duration(seconds: 3);
 
     Charge? charge;
@@ -430,7 +430,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       }
     }
 
-    const maxRetries = 10;
+    const maxRetries = 30;
     const retryDelay = Duration(seconds: 3);
 
     Charge? charge;
