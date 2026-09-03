@@ -95,7 +95,7 @@ extension ChargeResponseMapper on ChargeResponse {
   Charge toDomain(String fallbackAgreementId) {
     return Charge(
       id: id!,
-      agreementId: meta?['agreement_id'] as String? ?? fallbackAgreementId,
+      agreementId: (meta?['cleer_agreement_id'] ?? meta?['cleerAgreementId'] ?? meta?['agreement_id']) as String? ?? fallbackAgreementId,
       reference: reference!,
       amount: amount!,
       currency: currency!,
