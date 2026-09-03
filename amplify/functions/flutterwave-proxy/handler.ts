@@ -68,8 +68,10 @@ async function executeWithTokenRetry(
     try {
         return await proxyRequest(method, endpoint, token, payload, headers);
     } catch (error: any) {
-        if (String(error.name) === '10401') {
-            logger.warn("Cached token was rejected by Flutterwave. Forcing refresh and retry...");
+        const errCode = String(error.name || '');
+        const errMsg = String(error.message || '').toLowerCase();
+        if (errCode === '10401' || errCode === '1138422' || errMsg.includes('jwt expired') || errMsg.includes('unauthorized')) {
+            logger.warn(`Cached token was rejected by Flutterwave (Code: ${errCode}, Msg: ${errMsg}). Forcing refresh and retry...`);
 
             cachedToken = null;
             tokenExpiryTime = 0;

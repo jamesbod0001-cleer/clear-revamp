@@ -55,6 +55,7 @@ class AmplifyApiExceptionHandler {
     // --- Auth / Security ---
       case "10401": // Unauthorized
       case "10403": // Forbidden
+      case "1138422": // Flutterwave JWT expired
         return const DataFailure.unauthorizedException();
 
     // --- Verification (OTP/PIN) ---
