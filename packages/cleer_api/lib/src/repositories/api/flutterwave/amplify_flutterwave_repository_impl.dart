@@ -280,7 +280,7 @@ class AmplifyFlutterwaveRepositoryImpl
           customerId: params.customerId,
           paymentMethodId: params.paymentMethodId,
           redirectUrl: params.redirectUrl,
-          meta: {'agreement_id': params.agreementId, ...params.meta ?? {}},
+          meta: {'cleer_agreement_id': params.agreementId, ...params.meta ?? {}},
         );
 
         final response = await _proxyServiceClient.createCharge(request);
