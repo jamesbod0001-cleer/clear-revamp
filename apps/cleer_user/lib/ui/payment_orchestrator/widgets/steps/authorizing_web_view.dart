@@ -5,6 +5,7 @@ import 'package:cleer_ui/cleer_ui.dart';
 import 'package:gap/gap.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_view_model.dart';
+import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -93,16 +94,9 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
             final String url = request.url;
             debugPrint('Navigation request to: $url');
 
-            // 1. Check if payment completion/redirect URL was reached
-            if (url.contains('close_payment.html') ||
-                url.contains('success') ||
-                url.contains('failed') ||
-                url.contains('cancelled')) {
-              await _triggerVerification();
-              return NavigationDecision.navigate;
-            }
+            await _handleUrlNavigation(url);
 
-            // 2. Silently prevent non-HTTP/HTTPS schemes (e.g. btravel://, opay://) so WebView doesn't crash
+            // Silently prevent non-HTTP/HTTPS schemes (e.g. btravel://, opay://) so WebView doesn't crash
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
               debugPrint('Silently preventing non-HTTP scheme: $url');
               return NavigationDecision.prevent;
@@ -113,12 +107,7 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
           onUrlChange: (UrlChange change) async {
             final url = change.url ?? '';
             debugPrint('URL changed to $url');
-            if (url.contains('close_payment.html') ||
-                url.contains('success') ||
-                url.contains('failed') ||
-                url.contains('cancelled')) {
-              await _triggerVerification();
-            }
+            await _handleUrlNavigation(url);
           },
           onPageFinished: (String url) {
             setState(() {
@@ -128,6 +117,66 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
         ),
       )
       ..loadRequest(Uri.parse(widget.url));
+  }
+
+  Future<void> _handleUrlNavigation(String url) async {
+    debugPrint('Checking navigation URL: $url');
+
+    // 1. Check for explicit cancellation/failure in queryParameters response JSON
+    try {
+      final uri = Uri.parse(url);
+      final responseParam = uri.queryParameters['response'];
+      if (responseParam != null) {
+        final Map<String, dynamic> responseJson = jsonDecode(responseParam);
+        final status = responseJson['status']?.toString().toLowerCase();
+        final message = responseJson['vbvrespmessage']?.toString().toLowerCase();
+
+        if (status == 'failed' ||
+            status == 'cancelled' ||
+            (message != null && message.contains('cancelled'))) {
+          debugPrint('Explicit cancellation detected in response JSON. Cancelling transaction...');
+          await _handleCancellation();
+          return;
+        }
+      }
+    } catch (_) {
+      /* Fallback to URL string checks */
+    }
+
+    // Fallback string checks for cancellation
+    final lowerUrl = url.toLowerCase();
+    if (lowerUrl.contains('status=cancelled') ||
+        lowerUrl.contains('payment+cancelled') ||
+        lowerUrl.contains('cancelled+by+the+customer')) {
+      debugPrint('Explicit cancellation detected in URL string. Cancelling transaction...');
+      await _handleCancellation();
+      return;
+    }
+
+    // 2. Otherwise, check for general completion/redirect
+    if (url.contains('close_payment.html') ||
+        url.contains('success') ||
+        url.contains('failed') ||
+        url.contains('cancelled')) {
+      await _triggerVerification();
+    }
+  }
+
+  Future<void> _handleCancellation() async {
+    if (!mounted) return;
+    final viewModel = ref.read(paymentOrchestratorViewModelProvider(widget.agreementId).notifier);
+    final state = ref.read(paymentOrchestratorViewModelProvider(widget.agreementId)).value;
+    final ongoingChargeId = state?.ongoingCharge?.id;
+
+    if (ongoingChargeId != null) {
+      try {
+        await viewModel.cancelTransaction(ongoingChargeId);
+      } catch (e) {
+        debugPrint('Error cancelling transaction in DB: $e');
+      }
+    }
+
+    viewModel.goTo(PaymentOrchestratorStep.paymentNotSecured);
   }
 
   Future<void> _triggerVerification() async {
