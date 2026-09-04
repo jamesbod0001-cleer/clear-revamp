@@ -64,7 +64,7 @@ class PayWithUSSDStep extends HookConsumerWidget {
       },
       child: Column(
         children: [
-          StepHeader(title: l10n.continueWithOpay),
+          StepHeader(title: l10n.payWithUSSD),
           Gap(Dimens.spacing.sp40),
           CustomTextFormField(
             controller: bankController,
