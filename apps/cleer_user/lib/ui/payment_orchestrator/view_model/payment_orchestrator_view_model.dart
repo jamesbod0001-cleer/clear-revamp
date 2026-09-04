@@ -6,6 +6,7 @@ import 'package:cleer/domain/use_cases/user/user_use_case.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/payment_method/payment_method.dart';
 import 'package:cleer_core/models/transaction/transaction_enums.dart';
+import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
 import 'package:cleer/domain/providers/flutterwave/flutterwave_provider.dart';
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/payment_orchestrator/state/payment_orchestrator_state.dart';
@@ -23,6 +24,18 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   FutureOr<PaymentOrchestratorState> build(String agreementId) async {
     final agreement = await _fetchAgreement(agreementId);
     await ref.read(flutterwaveSavedPaymentMethodsProvider.future);
+
+    // Real-time Agreement Stream Listener
+    ref.listen(agreementDetailsProvider(agreementId), (previous, next) {
+      if (next.hasValue && next.value != null) {
+        final updatedAgreement = next.value!;
+        _log.info('📡 Real-time agreement update received: ${updatedAgreement.status}');
+        if (state.hasValue && state.value != null) {
+          state = AsyncData(state.value!.copyWith(agreement: updatedAgreement));
+        }
+      }
+    });
+
     generateUSSDCode = Command.createAsync<Bank, String>(
       _generateUSSDCode,
       initialValue: '',
