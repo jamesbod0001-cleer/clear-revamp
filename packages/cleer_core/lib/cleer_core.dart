@@ -75,6 +75,7 @@ export 'src/params/auth/sign_up_params.dart';
 export 'src/params/auth/update_password_params.dart';
 export 'src/params/payout_destination/get_payout_destination_params.dart';
 export 'src/params/flutterwave/create_charge_params.dart';
+export 'src/params/flutterwave/update_charge_params.dart';
 export 'src/params/flutterwave/create_customer_params.dart';
 export 'src/params/flutterwave/create_payment_method_params.dart';
 export 'src/params/flutterwave/create_virtual_account_params.dart';
