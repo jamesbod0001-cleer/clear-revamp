@@ -11,6 +11,8 @@ import 'package:cleer_api/src/services/api/models/flutterwave/models/name/name_o
 import 'package:cleer_api/src/services/api/models/flutterwave/models/phone/phone_object.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/models/ussd/ussd_object.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/requests/create_charge/create_charge_request.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/requests/update_charge/update_charge_request.dart';
+import 'package:cleer_api/src/services/api/models/flutterwave/models/authorization/authorization_objects.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/requests/create_customer/create_customer_request.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/requests/create_payment_method/create_payment_method_request.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/requests/create_virtual_account/create_virtual_account_request.dart';
@@ -285,6 +287,50 @@ class AmplifyFlutterwaveRepositoryImpl
 
         final response = await _proxyServiceClient.createCharge(request);
         return response.data.toDomain(params.agreementId);
+      },
+    );
+  }
+
+  @override
+  Future<ResultDart<Charge, DataFailure>> updateCharge({
+    required String chargeId,
+    required UpdateChargeParams params,
+  }) async {
+    return await performDataOperation<Charge>(
+      operationName: 'UpdateCharge',
+      targetId: chargeId,
+      timeoutDuration: const Duration(seconds: 45), // 🔴 45s Timeout
+      operation: () async {
+        log.info('Updating charge with id: $chargeId');
+
+        final authorization = await params.when(
+          pin: (pin) async {
+            final String nonce = PaymentSecurityUtils.generateNonce();
+            final String encryptionKey = Env.flutterwaveEncryptionKey;
+            final String encryptedPin =
+                await PaymentSecurityUtils.encryptAESGCM(
+              pin,
+              encryptionKey,
+              nonce,
+            );
+            return AuthorizationObject(
+              type: 'pin',
+              pin: PinObject(nonce: nonce, encryptedPin: encryptedPin),
+            );
+          },
+          otp: (otp) async {
+            return AuthorizationObject(
+              type: 'otp',
+              otp: OtpObject(code: otp),
+            );
+          },
+        );
+
+        final response = await _proxyServiceClient.updateCharge(
+          chargeId,
+          UpdateChargeRequest(authorization: authorization),
+        );
+        return response.data.toDomain('');
       },
     );
   }
