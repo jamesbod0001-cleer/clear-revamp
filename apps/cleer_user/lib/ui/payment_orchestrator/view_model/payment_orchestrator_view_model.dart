@@ -602,22 +602,11 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         currentStep: .choosePaymentMethod,
         ongoingCharge: null,
         ongoingVirtualAccount: null,
+        selectedUSSDBank: null,
       ),
     );
     _log.info('Attempting to change payment method');
     await _cleanupActivePayments(oldState);
-    // if (oldState.ongoingCharge != null) {
-    //   _log.info('Cancelling ongoing transaction');
-    //   if (oldState.currentStep == .payWithUSSD) {
-    //     await cancelTransaction(oldState.ongoingCharge!.id);
-    //   }
-    // }
-    // if (oldState.ongoingVirtualAccount != null) {
-    //   if (oldState.currentStep == .payWithBankTransfer) {
-    //     _log.info('Cancelling transaction');
-    //     await cancelTransaction(oldState.ongoingVirtualAccount!.id);
-    //   }
-    // }
   }
 
   void retryPayment() async {
@@ -626,8 +615,17 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         currentStep: .choosePaymentMethod,
         ongoingCharge: null,
         ongoingVirtualAccount: null,
+        selectedUSSDBank: null,
       ),
     );
+  }
+
+  void selectUSSDBank(Bank bank) {
+    if (state.hasValue && state.value != null) {
+      state = AsyncData(state.value!.copyWith(selectedUSSDBank: bank));
+    }
+    generateUSSDCode.clearErrors();
+    generateUSSDCode.runAsync(bank);
   }
 
   Future<void> cancelTransaction(String flutterwaveId) async {

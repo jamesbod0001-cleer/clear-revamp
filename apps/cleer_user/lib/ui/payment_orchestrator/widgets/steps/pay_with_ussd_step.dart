@@ -12,6 +12,7 @@ import 'package:cleer/ui/payment_orchestrator/view_model/payment_orchestrator_vi
 import 'package:cleer/ui/payment_orchestrator/widgets/step_header.dart';
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,14 +25,19 @@ class PayWithUSSDStep extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    // final state = ref.watch(paymentOrchestratorViewModelProvider(agreementId));
+    final state = ref.watch(paymentOrchestratorViewModelProvider(agreementId));
     final viewModel = ref.read(
       paymentOrchestratorViewModelProvider(agreementId).notifier,
     );
-    final ValueNotifier<Bank?> selectedBank = useState<Bank?>(null);
+
+    final selectedBank = state.value?.selectedUSSDBank;
     final bankController = useTextEditingController(
-      text: selectedBank.value?.name,
+      text: selectedBank?.name ?? '',
     );
+
+    if (selectedBank != null && bankController.text != selectedBank.name) {
+      bankController.text = selectedBank.name;
+    }
 
     final ussdCommand = viewModel.generateUSSDCode;
     useEffect(() {
@@ -44,16 +50,6 @@ class PayWithUSSDStep extends HookConsumerWidget {
       ussdCommand.errors.addListener(listener);
       return () => ussdCommand.errors.removeListener(listener);
     }, [ussdCommand]);
-
-    useEffect(() {
-      bankController.text = selectedBank.value?.name ?? '';
-      if (selectedBank.value != null) {
-        // viewModel.cancelTransaction();
-        viewModel.generateUSSDCode.clearErrors();
-        viewModel.generateUSSDCode.runAsync(selectedBank.value);
-      }
-      return null;
-    }, [selectedBank.value]);
 
     return PopScope(
       canPop: false,
@@ -70,15 +66,9 @@ class PayWithUSSDStep extends HookConsumerWidget {
             controller: bankController,
             labelText: l10n.selectBank,
             readOnly: true,
-            onTap: () => _showBankPickerBottomSheet(
-              context,
-              selectedBank,
-            ),
+            onTap: () => _showBankPickerBottomSheet(context, viewModel),
             suffixIcon: IconButton(
-              onPressed: () => _showBankPickerBottomSheet(
-                context,
-                selectedBank,
-              ),
+              onPressed: () => _showBankPickerBottomSheet(context, viewModel),
               icon: PhosphorIcon(
                 PhosphorIcons.caretDown(),
                 color: context.color.blue700,
@@ -137,15 +127,60 @@ class PayWithUSSDStep extends HookConsumerWidget {
                             ),
                             Gap(Dimens.spacing.sp12),
                             FittedBox(
-                              child: Text(
-                                ussd,
-                                style: context.typo.headlineSmall.copyWith(
-                                  color: context.color.blue700,
-                                  decoration: .underline,
-                                  decorationStyle: .dotted,
-                                  decorationColor: context.color.blue700,
-                                  decorationThickness: 1.5,
-                                ),
+                              child: Row(
+                                mainAxisSize: .min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await Clipboard.setData(
+                                        ClipboardData(text: ussd),
+                                      );
+                                    },
+                                    child: Text(
+                                      ussd,
+                                      style: context.typo.headlineSmall
+                                          .copyWith(
+                                            color: context.color.blue700,
+                                            decoration: .underline,
+                                            decorationStyle: .dotted,
+                                            decorationColor:
+                                                context.color.blue700,
+                                            decorationThickness: 1.5,
+                                          ),
+                                    ),
+                                  ),
+                                  Gap(Dimens.spacing.sp12),
+                                  TextButton(
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: context.color.blue700,
+                                      padding: .symmetric(
+                                        vertical: Dimens.padding.p4,
+                                      ),
+                                      tapTargetSize: .shrinkWrap,
+                                      visualDensity: .compact,
+                                      minimumSize: .zero,
+                                    ),
+                                    onPressed: () async {
+                                      await Clipboard.setData(
+                                        ClipboardData(text: ussd),
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisSize: .min,
+                                      children: [
+                                        PhosphorIcon(
+                                          PhosphorIcons.copySimple(.fill),
+                                          size: Dimens.size.s16,
+                                        ),
+                                        Gap(Dimens.spacing.sp4),
+                                        Text(
+                                          l10n.copy,
+                                          style: context.typo.bodyMedium,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -176,30 +211,31 @@ class PayWithUSSDStep extends HookConsumerWidget {
 
   void _showBankPickerBottomSheet(
     BuildContext context,
-    ValueNotifier<Bank?> selectedBank,
-  ) => BankPickerBottomSheet.show(
-    context,
-    child: Consumer(
-      builder: (context, ref, _) {
-        // Watch your app's specific feature provider here
-        final banksAsync = ref.watch(getBanksProvider(.NG));
+    PaymentOrchestratorViewModel viewModel,
+  ) =>
+      BankPickerBottomSheet.show(
+        context,
+        child: Consumer(
+          builder: (context, ref, _) {
+            // Watch your app's specific feature provider here
+            final banksAsync = ref.watch(getBanksProvider(.NG));
 
-        return BankPickerBottomSheet(
-          banks: banksAsync.value ?? [],
-          isLoading: banksAsync.isLoading,
-          errorState: banksAsync.hasError
-              ? banksAsync.error!.toErrorState(
-            ref,
-            variant: .card,
-            onRetry: () => ref.invalidate(getBanksProvider(.NG)),
-          )
-              : null,
-        );
-      },
-    ),
-  ).then((bank) {
-    if (bank != null) {
-      selectedBank.value = bank;
-    }
-  });
+            return BankPickerBottomSheet(
+              banks: banksAsync.value ?? [],
+              isLoading: banksAsync.isLoading,
+              errorState: banksAsync.hasError
+                  ? banksAsync.error!.toErrorState(
+                      ref,
+                      variant: .card,
+                      onRetry: () => ref.invalidate(getBanksProvider(.NG)),
+                    )
+                  : null,
+            );
+          },
+        ),
+      ).then((bank) {
+        if (bank != null) {
+          viewModel.selectUSSDBank(bank);
+        }
+      });
 }

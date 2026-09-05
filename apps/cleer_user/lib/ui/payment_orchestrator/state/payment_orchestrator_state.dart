@@ -1,4 +1,5 @@
 import 'package:cleer_core/models/agreement/agreement.dart';
+import 'package:cleer_core/models/bank/bank.dart';
 import 'package:cleer_core/models/charge/charge.dart';
 import 'package:cleer_core/models/virtual_account/virtual_account.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -27,5 +28,6 @@ abstract class PaymentOrchestratorState with _$PaymentOrchestratorState {
     required Agreement agreement,
     Charge? ongoingCharge,
     VirtualAccount? ongoingVirtualAccount,
+    Bank? selectedUSSDBank,
   }) = _PaymentOrchestratorState;
 }
