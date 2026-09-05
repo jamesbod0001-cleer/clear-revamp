@@ -30,6 +30,11 @@ abstract class FlutterwaveRepository {
       CreateChargeParams params,
       );
 
+  Future<ResultDart<Charge, DataFailure>> updateCharge({
+    required String chargeId,
+    required UpdateChargeParams params,
+  });
+
   Future<ResultDart<Charge, DataFailure>> getCharge(String id);
   Future<ResultDart<List<Charge>, DataFailure>> listCharges(
       ListChargesParams params,
