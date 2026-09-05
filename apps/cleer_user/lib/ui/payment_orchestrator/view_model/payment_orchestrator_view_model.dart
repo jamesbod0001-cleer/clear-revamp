@@ -263,32 +263,7 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
       await result.fold(
         (charge) async {
           _log.info('Charge created successfully');
-          state = AsyncData(state.value!.copyWith(ongoingCharge: charge));
-          _log.info('Handling charge next action');
-          await charge.action.when(
-            none: () {
-              _log.info('No action required');
-              verifyTransaction();
-            },
-            redirect: (String url) {
-              _log.info('Redirecting to $url');
-              state = AsyncData(
-                state.value!.copyWith(
-                  currentStep: PaymentOrchestratorStep.authorizing,
-                ),
-              );
-            },
-            otp: () {
-              _log.info('OTP required');
-            },
-            pin: () {
-              _log.info('PIN required');
-            },
-            bankTransfer:
-                (String accountNumber, String bankName, DateTime? expiry) {},
-            qrCode: (String imageUrl) {},
-            displayInstruction: (String note) {},
-          );
+          await _handleChargeAction(charge);
         },
         (failure) {
           _log.error('Error creating charge', failure);
@@ -296,6 +271,112 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
         },
       );
       return state.value!;
+    });
+  }
+
+  Future<void> _handleChargeAction(Charge charge) async {
+    state = AsyncData(state.value!.copyWith(ongoingCharge: charge));
+    _log.info('Handling charge next action: ${charge.action}');
+
+    await charge.action.when(
+      none: () async {
+        _log.info('No action required. Verifying transaction...');
+        await verifyTransaction();
+      },
+      redirect: (String url) {
+        _log.info('Redirecting to $url');
+        state = AsyncData(
+          state.value!.copyWith(
+            currentStep: PaymentOrchestratorStep.authorizing,
+          ),
+        );
+      },
+      otp: () {
+        _log.info('OTP required');
+        state = AsyncData(
+          state.value!.copyWith(
+            currentStep: PaymentOrchestratorStep.enterCardOtp,
+          ),
+        );
+      },
+      pin: () {
+        _log.info('PIN required');
+        state = AsyncData(
+          state.value!.copyWith(
+            currentStep: PaymentOrchestratorStep.enterCardPin,
+          ),
+        );
+      },
+      bankTransfer:
+          (String accountNumber, String bankName, DateTime? expiry) {},
+      qrCode: (String imageUrl) {},
+      displayInstruction: (String note) {},
+    );
+  }
+
+  Future<void> submitCardPin(String pin) async {
+    final chargeId = state.value?.ongoingCharge?.id;
+    if (chargeId == null) {
+      _log.error('No ongoing charge ID to submit PIN for');
+      return;
+    }
+    state = AsyncData(
+      state.value!.copyWith(
+        currentStep: PaymentOrchestratorStep.securingYourPayment,
+      ),
+    );
+    state = await AsyncValue.guard(() async {
+      _log.info('Submitting PIN for charge $chargeId');
+      final result = await ref
+          .read(flutterwaveUseCaseProvider.notifier)
+          .updateCharge(
+            chargeId: chargeId,
+            params: UpdateChargeParams.pin(pin: pin),
+          );
+      return await result.fold(
+        (updatedCharge) async {
+          _log.info('PIN update succeeded, handling next action');
+          await _handleChargeAction(updatedCharge);
+          return state.value!;
+        },
+        (failure) {
+          _log.error('Error submitting PIN', failure);
+          throw failure;
+        },
+      );
+    });
+  }
+
+  Future<void> submitCardOtp(String otp) async {
+    final chargeId = state.value?.ongoingCharge?.id;
+    if (chargeId == null) {
+      _log.error('No ongoing charge ID to submit OTP for');
+      return;
+    }
+    state = AsyncData(
+      state.value!.copyWith(
+        currentStep: PaymentOrchestratorStep.securingYourPayment,
+      ),
+    );
+    state = await AsyncValue.guard(() async {
+      _log.info('Submitting OTP for charge $chargeId');
+      final result = await ref
+          .read(flutterwaveUseCaseProvider.notifier)
+          .updateCharge(
+            chargeId: chargeId,
+            params: UpdateChargeParams.otp(otp: otp),
+          );
+      return await result.fold(
+        (updatedCharge) async {
+          _log.info('OTP update succeeded, handling next action');
+          await _handleChargeAction(updatedCharge);
+          return state.value!;
+        },
+        (failure) {
+          _log.error('Error submitting OTP', failure);
+          throw failure;
+        },
+      );
     });
   }
 

@@ -288,6 +288,26 @@ class FlutterwaveUseCase extends _$FlutterwaveUseCase {
     );
   }
 
+  Future<ResultDart<Charge, DataFailure>> updateCharge({
+    required String chargeId,
+    required UpdateChargeParams params,
+  }) async {
+    _log.info('Attempting to update charge with id: $chargeId');
+    final result = await _flutterwaveRepository.updateCharge(
+      chargeId: chargeId,
+      params: params,
+    );
+    result.fold(
+      (charge) {
+        _log.info('Successfully updated charge with id: $chargeId');
+      },
+      (failure) {
+        _log.error('Error updating charge with id: $chargeId', failure);
+      },
+    );
+    return result;
+  }
+
   Future<ResultDart<Charge, DataFailure>> getCharge(String id) async {
     _log.info('Attempting to retrieve charge with id: $id');
     final result = await _flutterwaveRepository.getCharge(id);

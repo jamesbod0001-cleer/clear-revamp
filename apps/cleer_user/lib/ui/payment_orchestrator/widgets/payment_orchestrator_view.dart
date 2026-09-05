@@ -18,6 +18,8 @@ import 'package:cleer/ui/payment_orchestrator/widgets/agreement_rejection_bottom
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/choose_payment_method_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/continue_with_opay_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/enter_card_details_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/enter_card_pin_step.dart';
+import 'package:cleer/ui/payment_orchestrator/widgets/steps/enter_card_otp_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/loading_step.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/authorizing_web_view.dart';
 import 'package:cleer/ui/payment_orchestrator/widgets/steps/pay_with_bank_transfer_step.dart';
@@ -235,6 +237,14 @@ class _StepSwitcher extends StatelessWidget {
           key: const ValueKey('card'),
           agreementId: agreementId,
         ),
+        PaymentOrchestratorStep.enterCardPin => EnterCardPinStep(
+          key: const ValueKey('card_pin'),
+          agreementId: agreementId,
+        ),
+        PaymentOrchestratorStep.enterCardOtp => EnterCardOtpStep(
+          key: const ValueKey('card_otp'),
+          agreementId: agreementId,
+        ),
         // Note: Authorizing is handled at the top level to fill the screen
         PaymentOrchestratorStep.redirecting => LoadingStep(
           key: const ValueKey('redirecting'),
@@ -307,10 +317,12 @@ class _OrchestratorFooter extends ConsumerWidget {
             Column(
               mainAxisSize: .min,
               children: [
-                ChangePaymentMethodButton(
-                  onPressed: () => viewModel.changePaymentMethod(),
-                ),
-                Gap(Dimens.spacing.sp16),
+                if (!(step == PaymentOrchestratorStep.enterCardOtp)) ...[
+                  ChangePaymentMethodButton(
+                    onPressed: () => viewModel.changePaymentMethod(),
+                  ),
+                  Gap(Dimens.spacing.sp16),
+                ],
                 CancelPaymentButton(
                   onPressed: () => AgreementRejectionBottomSheet.show(
                     context,

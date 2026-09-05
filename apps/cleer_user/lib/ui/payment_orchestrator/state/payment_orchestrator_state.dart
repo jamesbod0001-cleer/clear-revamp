@@ -12,6 +12,8 @@ enum PaymentOrchestratorStep {
   payWithUSSD,
   payWithBankTransfer,
   enterCardDetails,
+  enterCardPin,
+  enterCardOtp,
   waitingForConfirmation,
   securingYourPayment,
   redirecting,
