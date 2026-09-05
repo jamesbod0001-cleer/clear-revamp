@@ -77,6 +77,7 @@ class PayWithBankTransferStep extends HookConsumerWidget {
                           children: [
                             Row(
                               mainAxisAlignment: .spaceBetween,
+                              spacing: Dimens.spacing.sp16,
                               children: [
                                 Text(
                                   l10n.amount,
@@ -88,12 +89,16 @@ class PayWithBankTransferStep extends HookConsumerWidget {
                                 Text(
                                   "${l10n.ngn} ${NumberFormat('#,###.##').format(virtualAccount?.amount ?? 0)}",
                                   style: context.typo.labelMedium,
+                                  textAlign: .end,
+                                  maxLines: 2,
+                                  overflow: .ellipsis,
                                 ),
                               ],
                             ),
                             Gap(Dimens.spacing.sp20),
                             Row(
                               mainAxisAlignment: .spaceBetween,
+                              spacing: Dimens.spacing.sp16,
                               children: [
                                 Text(
                                   l10n.bankName,
@@ -102,15 +107,21 @@ class PayWithBankTransferStep extends HookConsumerWidget {
                                     color: context.color.grey800,
                                   ),
                                 ),
-                                Text(
-                                  virtualAccount?.bankName ?? '',
-                                  style: context.typo.labelMedium,
+                                Flexible(
+                                  child: Text(
+                                    virtualAccount?.bankName ?? '',
+                                    style: context.typo.labelMedium,
+                                    textAlign: .end,
+                                    maxLines: 2,
+                                    overflow: .ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
                             Gap(Dimens.spacing.sp20),
                             Row(
                               mainAxisAlignment: .spaceBetween,
+                              spacing: Dimens.spacing.sp16,
                               children: [
                                 Text(
                                   l10n.accountNumber,
