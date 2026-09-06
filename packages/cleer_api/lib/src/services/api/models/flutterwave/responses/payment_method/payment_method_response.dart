@@ -7,12 +7,12 @@ part 'payment_method_response.g.dart';
 
 @JsonSerializable()
 class PaymentMethodResponse {
-  final String type;
+  final String? type;
 
   CardResponseObject? card;
   USSDObject? ussd;
 
-  final String id;
+  final String? id;
   @JsonKey(name: 'customer_id')
   final String? customerId;
   final Map<String, dynamic>? meta;
@@ -21,20 +21,18 @@ class PaymentMethodResponse {
   @JsonKey(name: 'client_ip')
   final String? clientIp;
   @JsonKey(name: 'created_datetime')
-  final DateTime createdDatetime;
+  final DateTime? createdDatetime;
 
   PaymentMethodResponse({
-    required this.type,
-    required this.id,
-
+    this.type,
+    this.id,
     this.card,
     this.ussd,
-
     this.customerId,
     this.meta,
     this.deviceFingerprint,
     this.clientIp,
-    required this.createdDatetime,
+    this.createdDatetime,
   });
 
   factory PaymentMethodResponse.fromJson(Map<String, dynamic> json) =>
@@ -46,28 +44,28 @@ class PaymentMethodResponse {
 @JsonSerializable()
 class CardResponseObject {
   @JsonKey(name: 'expiry_month')
-  final int expiryMonth;
+  final int? expiryMonth;
   @JsonKey(name: 'expiry_year')
-  final int expiryYear;
-  final String first6;
-  final String last4;
-  final String network;
+  final int? expiryYear;
+  final String? first6;
+  final String? last4;
+  final String? network;
   @JsonKey(name: 'bill_address')
   final AddressObject? billingAddress;
   @JsonKey(name: 'card_holder_name')
   final String? cardHolderName;
 
-  final COFObject cof;
+  final COFObject? cof;
 
   CardResponseObject({
-    required this.expiryMonth,
-    required this.expiryYear,
-    required this.first6,
-    required this.last4,
-    required this.network,
+    this.expiryMonth,
+    this.expiryYear,
+    this.first6,
+    this.last4,
+    this.network,
     this.billingAddress,
     this.cardHolderName,
-    required this.cof,
+    this.cof,
   });
 
   factory CardResponseObject.fromJson(Map<String, dynamic> json) =>

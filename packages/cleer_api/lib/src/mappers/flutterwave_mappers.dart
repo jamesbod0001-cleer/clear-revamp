@@ -27,24 +27,24 @@ extension PaymentMethodResponseMapper on PaymentMethodResponse {
     switch (type) {
       case 'card':
         return PaymentMethod(
-          id: id,
+          id: id ?? '',
           type: .card,
           cardDetails: CardDetails(
-            first6: card!.first6,
-            last4: card!.last4,
-            network: mapToCardNetwork(card!.network),
-            expiryMonth: card!.expiryMonth,
-            expiryYear: card!.expiryYear,
+            first6: card?.first6 ?? '',
+            last4: card?.last4 ?? '',
+            network: mapToCardNetwork(card?.network),
+            expiryMonth: card?.expiryMonth ?? 0,
+            expiryYear: card?.expiryYear ?? 0,
           ),
           createdAt: createdDatetime,
         );
       case 'opay':
-        return PaymentMethod(id: id, type: .opay, createdAt: createdDatetime);
+        return PaymentMethod(id: id ?? '', type: .opay, createdAt: createdDatetime);
       case 'ussd':
         return PaymentMethod(
-          id: id,
+          id: id ?? '',
           type: .ussd,
-          ussdDetails: USSDDetails(accountBankCode: ussd!.accountBank),
+          ussdDetails: USSDDetails(accountBankCode: ussd?.accountBank ?? ''),
           createdAt: createdDatetime,
         );
       default:
@@ -94,11 +94,11 @@ VirtualAccountType mapToVirtualAccountType(String accountType) {
 extension ChargeResponseMapper on ChargeResponse {
   Charge toDomain(String fallbackAgreementId) {
     return Charge(
-      id: id!,
+      id: id ?? '',
       agreementId: (meta?['cleer_agreement_id'] ?? meta?['cleerAgreementId'] ?? meta?['agreement_id']) as String? ?? fallbackAgreementId,
-      reference: reference!,
-      amount: amount!,
-      currency: currency!,
+      reference: reference ?? '',
+      amount: amount ?? 0.0,
+      currency: currency ?? 'NGN',
       status: _mapToChargeStatus(status),
       action: _mapToChargeAction(nextAction),
       customerId: customerId,
