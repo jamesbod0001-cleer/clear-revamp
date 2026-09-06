@@ -213,7 +213,7 @@ class AmplifyFlutterwaveProxyServiceClient with ApiErrorChecker {
 
   Future<FlutterwaveResponse<ChargeResponse>> updateCharge(String id, UpdateChargeRequest body) async {
     final response = await _callProxy(
-      method: 'POST', // Or PUT, depending on FW specs
+      method: 'PUT',
       endpoint: '/charges/$id',
       body: body.toJson(),
     );
