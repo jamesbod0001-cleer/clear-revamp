@@ -61,7 +61,7 @@ class EnterCardOtpStep extends HookConsumerWidget {
                 return null;
               },
             ),
-            Gap(Dimens.spacing.sp32),
+            Gap(Dimens.spacing.sp52),
             PrimaryButton(
               onPressed: isOtpValid.value
                   ? () {
