@@ -89,7 +89,7 @@ class BillingDetailsObject {
 
 @JsonSerializable()
 class NextActionObject {
-  final String type;
+  final String? type;
   @JsonKey(name: 'redirect_url')
   final RedirectUrlObject? redirectUrl;
   @JsonKey(name: 'requires_additional_fields')
@@ -106,7 +106,7 @@ class NextActionObject {
   final QrCodeObject? qrCode;
 
   NextActionObject({
-    required this.type,
+    this.type,
     this.redirectUrl,
     this.requiresAdditionalFields,
     this.paymentInstruction,
@@ -121,9 +121,9 @@ class NextActionObject {
 
 @JsonSerializable()
 class RedirectUrlObject {
-  final String url;
+  final String? url;
 
-  RedirectUrlObject({required this.url});
+  RedirectUrlObject({this.url});
 
   factory RedirectUrlObject.fromJson(Map<String, dynamic> json) =>
       _$RedirectUrlObjectFromJson(json);
@@ -132,9 +132,9 @@ class RedirectUrlObject {
 
 @JsonSerializable()
 class RequiresAdditionalFieldsObject {
-  final List<String> fields;
+  final List<String>? fields;
 
-  RequiresAdditionalFieldsObject({required this.fields});
+  RequiresAdditionalFieldsObject({this.fields});
 
   factory RequiresAdditionalFieldsObject.fromJson(Map<String, dynamic> json) =>
       _$RequiresAdditionalFieldsObjectFromJson(json);
@@ -143,9 +143,9 @@ class RequiresAdditionalFieldsObject {
 
 @JsonSerializable()
 class PaymentInstructionObject {
-  final String note;
+  final String? note;
 
-  PaymentInstructionObject({required this.note});
+  PaymentInstructionObject({this.note});
 
   factory PaymentInstructionObject.fromJson(Map<String, dynamic> json) =>
       _$PaymentInstructionObjectFromJson(json);
@@ -155,16 +155,16 @@ class PaymentInstructionObject {
 @JsonSerializable()
 class RequiresBankTransferObject {
   @JsonKey(name: 'account_number')
-  final String accountNumber;
+  final String? accountNumber;
   @JsonKey(name: 'account_bank_name')
-  final String accountBankName;
+  final String? accountBankName;
   @JsonKey(name: 'account_expiration_datetime')
   final DateTime? accountExpirationDatetime;
   final String? note;
 
   RequiresBankTransferObject({
-    required this.accountNumber,
-    required this.accountBankName,
+    this.accountNumber,
+    this.accountBankName,
     this.accountExpirationDatetime,
     this.note,
   });
@@ -176,9 +176,9 @@ class RequiresBankTransferObject {
 
 @JsonSerializable()
 class QrCodeObject {
-  final String image;
+  final String? image;
 
-  QrCodeObject({required this.image});
+  QrCodeObject({this.image});
 
   factory QrCodeObject.fromJson(Map<String, dynamic> json) =>
       _$QrCodeObjectFromJson(json);
@@ -187,10 +187,10 @@ class QrCodeObject {
 
 @JsonSerializable()
 class ProcessorResponseObject {
-  final String type;
-  final String code;
+  final String? type;
+  final String? code;
 
-  ProcessorResponseObject({required this.type, required this.code});
+  ProcessorResponseObject({this.type, this.code});
 
   factory ProcessorResponseObject.fromJson(Map<String, dynamic> json) =>
       _$ProcessorResponseObjectFromJson(json);
