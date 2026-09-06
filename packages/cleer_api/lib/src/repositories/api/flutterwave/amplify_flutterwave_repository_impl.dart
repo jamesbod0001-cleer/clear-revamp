@@ -6,7 +6,6 @@ import 'package:cleer_api/src/services/api/amplify_flutterwave_proxy_service_cli
 
 // Request/Response Models
 import 'package:cleer_api/src/services/api/models/flutterwave/models/charge_filter/charge_filter.dart';
-import 'package:cleer_api/src/services/api/models/flutterwave/models/cof/cof_object.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/models/name/name_object.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/models/phone/phone_object.dart';
 import 'package:cleer_api/src/services/api/models/flutterwave/models/ussd/ussd_object.dart';
@@ -179,7 +178,6 @@ class AmplifyFlutterwaveRepositoryImpl
                 encryptedExpiryYear: await PaymentSecurityUtils.encryptAESGCM(expiryYear, encryptionKey, nonce),
                 encryptedCvv: await PaymentSecurityUtils.encryptAESGCM(cvv, encryptionKey, nonce),
                 nonce: nonce,
-                cof: COFObject(enabled: true),
               ),
               customerId: customerId,
               meta: meta,

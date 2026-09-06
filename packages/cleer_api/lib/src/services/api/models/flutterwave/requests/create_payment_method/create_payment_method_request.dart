@@ -40,7 +40,7 @@ class CardRequestObject {
   final String encryptedCvv;
   final String nonce;
 
-  final COFObject cof;
+  final COFObject? cof;
 
   CardRequestObject({
     required this.encryptedCardNumber,
@@ -48,7 +48,7 @@ class CardRequestObject {
     required this.encryptedExpiryYear,
     required this.encryptedCvv,
     required this.nonce,
-    required this.cof,
+    this.cof,
   });
 
   factory CardRequestObject.fromJson(Map<String, dynamic> json) =>
