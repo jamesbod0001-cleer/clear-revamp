@@ -33,16 +33,40 @@ export const handler: Schema['joinAgreement']['functionHandler'] = async (event)
     const item = agreements[0];
     const participants = item.participants || [];
 
-    // 3. IDEMPOTENCY CHECK: Are they already in the participants array?
-    if (participants.includes(callerId)) {
-        // They are already in! Return the ID immediately so the frontend can proceed.
-        console.log(`User ${callerId} is already a participant of ${item.id}.`);
-        return item.id;
-    }
-
     // 4. Figure out their role based on who created it
     const isCallerSender = item.initiatorRole === 'RECIPIENT';
     const isCallerRecipient = item.initiatorRole === 'SENDER';
+
+    // Helper to update payout destination if caller is recipient
+    const ensurePayoutDestinationUser = async () => {
+        if (isCallerRecipient && item.recipientAccountNumber && item.recipientBankCode) {
+            try {
+                const { data: payoutDest } = await client.models.PayoutDestination.get({
+                    accountNumber: item.recipientAccountNumber,
+                    bankCode: item.recipientBankCode,
+                });
+
+                if (payoutDest && payoutDest.userId !== callerId) {
+                    await client.models.PayoutDestination.update({
+                        accountNumber: item.recipientAccountNumber,
+                        bankCode: item.recipientBankCode,
+                        userId: callerId,
+                    });
+                    console.log(`Successfully assigned PayoutDestination ${item.recipientAccountNumber} to user ${callerId}.`);
+                }
+            } catch (e) {
+                console.error("Failed to update PayoutDestination with recipient userId:", e);
+            }
+        }
+    };
+
+    // 3. IDEMPOTENCY CHECK: Are they already in the participants array?
+    if (participants.includes(callerId)) {
+        // They are already in! Make sure PayoutDestination is linked if needed, then return ID immediately.
+        console.log(`User ${callerId} is already a participant of ${item.id}.`);
+        await ensurePayoutDestinationUser();
+        return item.id;
+    }
 
     // 5. Update the Agreement (Add to participants AND assign role ID)
     try {
@@ -58,6 +82,9 @@ export const handler: Schema['joinAgreement']['functionHandler'] = async (event)
         console.error("Failed to update Agreement:", e);
         throw new Error("Failed to join agreement.");
     }
+
+    // 5b. Update PayoutDestination for recipient
+    await ensurePayoutDestinationUser();
 
     // 6. Update all associated Milestones (if any)
     if (item.disbursementType === 'MILESTONES') {
