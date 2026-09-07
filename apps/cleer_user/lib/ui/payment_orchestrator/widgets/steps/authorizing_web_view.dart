@@ -28,10 +28,20 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
   late WebViewController webViewController;
   bool loading = true;
   StreamSubscription? _webMessageSubscription;
+  AppLifecycleListener? _lifecycleListener;
 
   @override
   void initState() {
     super.initState();
+
+    if (!kIsWeb) {
+      _lifecycleListener = AppLifecycleListener(
+        onResume: () {
+          debugPrint('App resumed from background during payment authorizing step. Triggering verification...');
+          _triggerVerification();
+        },
+      );
+    }
 
     if (kIsWeb) {
       _initWebPaymentFlow();
@@ -188,6 +198,7 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
 
   @override
   void dispose() {
+    _lifecycleListener?.dispose();
     _webMessageSubscription?.cancel();
     super.dispose();
   }
