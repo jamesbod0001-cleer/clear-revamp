@@ -1,4 +1,3 @@
-import 'package:cleer/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,18 +18,12 @@ class _ClosePaymentScreenState extends ConsumerState<ClosePaymentScreen> {
       if (!mounted) return;
       if (context.canPop()) {
         context.pop();
-      } else {
-        HomeRoute().go(context);
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return const SizedBox.shrink();
   }
 }
