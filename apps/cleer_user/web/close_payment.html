@@ -73,17 +73,19 @@
         } catch (e) {}
 
         window.addEventListener('DOMContentLoaded', () => {
-            const currentOrigin = window.location.origin;
-            const targetUrl = currentOrigin + '/close_payment.html' + window.location.search;
+            const origin = window.location.origin.toLowerCase();
+            const isStaging = origin.includes('staging');
+            const scheme = isStaging ? 'cleerstaging' : 'cleer';
+            const customSchemeUrl = scheme + '://close_payment.html' + window.location.search;
 
             const btn = document.getElementById('return-btn');
             if (btn) {
-                btn.href = targetUrl;
+                btn.href = customSchemeUrl;
             }
 
-            // Auto-redirect to native app / deep link
+            // Auto-redirect to custom app scheme
             setTimeout(() => {
-                window.location.href = targetUrl;
+                window.location.href = customSchemeUrl;
             }, 300);
         });
 
