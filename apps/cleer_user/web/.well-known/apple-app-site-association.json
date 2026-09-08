@@ -11,10 +11,6 @@
         ],
         "components": [
           {
-            "/": "/close_payment.html",
-            "exclude": true
-          },
-          {
             "/": "/*"
           }
         ]
