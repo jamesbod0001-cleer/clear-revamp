@@ -29,20 +29,6 @@
     	<string>mailto</string>
     	<string>tel</string>
     </array>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLName</key>
-			<string>com.cleerpayments.cleer</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>cleerstaging</string>
-				<string>cleer</string>
-			</array>
-		</dict>
-	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>

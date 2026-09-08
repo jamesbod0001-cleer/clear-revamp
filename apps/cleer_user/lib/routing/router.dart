@@ -41,8 +41,7 @@ GoRouter router(Ref ref) {
             path.startsWith('/create_account') ||
             path.startsWith('/verify_phone') ||
             path.startsWith(createPasswordPath) ||
-            path.startsWith('/a/') ||
-            path.contains('close_payment.html');
+            path.startsWith('/a/');
       }
 
       // --- APP INITIALIZING ---
@@ -51,10 +50,7 @@ GoRouter router(Ref ref) {
           authState is Unknown) {
         // ONLY let deep links bypass the Splash screen during loading!
         // This prevents the "Onboarding Flash" if the app remembers an old route.
-        if (currentPath.startsWith('/a/') ||
-            currentPath.contains('close_payment.html')) {
-          return null;
-        }
+        if (currentPath.startsWith('/a/')) return null;
 
         // Force everything else (including onboarding) to wait safely on the Splash screen
         return currentPath == const SplashRoute().location
@@ -94,8 +90,7 @@ GoRouter router(Ref ref) {
           return pendingRoute;
         }
 
-        if (currentPath.startsWith('/a/') ||
-            currentPath.contains('close_payment.html')) {
+        if (currentPath.startsWith('/a/')) {
           return null;
         }
 

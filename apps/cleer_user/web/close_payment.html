@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Processing Payment...</title>
+    <title>Payment Status - Cleer</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -25,6 +25,10 @@
             max-width: 360px;
             width: 100%;
         }
+        .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
         h2 {
             margin-top: 0;
             margin-bottom: 8px;
@@ -32,74 +36,77 @@
             font-weight: 700;
         }
         p {
-            margin: 0 0 24px 0;
+            margin: 0;
             color: #666666;
             font-size: 15px;
             line-height: 1.5;
         }
-        .btn {
-            display: inline-block;
-            width: 100%;
-            padding: 14px 20px;
-            background-color: #000000;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: background-color 0.2s ease;
-        }
-        .btn:active {
-            background-color: #333333;
-        }
     </style>
     <script type="text/javascript">
         const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('status') || 'cancelled';
+        let status = urlParams.get('status');
 
-        // Method 1: Post Message (For standard desktop browsers / web popup)
+        // Fallback: check response JSON parameter if status isn't directly in query
+        if (!status) {
+            const responseParam = urlParams.get('response');
+            if (responseParam) {
+                try {
+                    const parsed = JSON.parse(responseParam);
+                    status = parsed.status;
+                } catch (e) {}
+            }
+        }
+        status = (status || '').toLowerCase();
+
+        // Method 1: Post Message (For desktop popup windows)
         if (window.opener) {
             try {
                 window.opener.postMessage({ type: "payment_status", status: status }, "*");
             } catch (e) {}
         }
 
-        // Method 2: Local Storage Fallback (For web apps)
+        // Method 2: Local Storage Fallback
         try {
             const payload = JSON.stringify({ status: status, time: Date.now() });
             localStorage.setItem("flutterwave_payment_status", payload);
             setTimeout(() => localStorage.removeItem("flutterwave_payment_status"), 500);
         } catch (e) {}
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const origin = window.location.origin.toLowerCase();
-            const isStaging = origin.includes('staging');
-            const scheme = isStaging ? 'cleerstaging' : 'cleer';
-            const customSchemeUrl = scheme + '://close_payment.html' + window.location.search;
-
-            const btn = document.getElementById('return-btn');
-            if (btn) {
-                btn.href = customSchemeUrl;
-            }
-
-            // Auto-redirect to custom app scheme
-            setTimeout(() => {
-                window.location.href = customSchemeUrl;
-            }, 300);
-        });
-
-        // Try closing pop-up tab if allowed
+        // Try closing popup window if allowed
         try {
             window.close();
         } catch (e) {}
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const iconEl = document.getElementById('status-icon');
+            const titleEl = document.getElementById('status-title');
+            const msgEl = document.getElementById('status-msg');
+
+            if (status === 'successful' || status === 'completed') {
+                if (iconEl) iconEl.textContent = '✅';
+                if (titleEl) titleEl.textContent = 'Payment Successful';
+                if (msgEl) msgEl.textContent = 'Please return to the Cleer app to view your agreement.';
+            } else if (status === 'cancelled') {
+                if (iconEl) iconEl.textContent = '❌';
+                if (titleEl) titleEl.textContent = 'Payment Cancelled';
+                if (msgEl) msgEl.textContent = 'Please return to the Cleer app to try again or select another payment method.';
+            } else if (status === 'failed') {
+                if (iconEl) iconEl.textContent = '⚠️';
+                if (titleEl) titleEl.textContent = 'Payment Failed';
+                if (msgEl) msgEl.textContent = 'Please return to the Cleer app to try again.';
+            } else {
+                if (iconEl) iconEl.textContent = '🔄';
+                if (titleEl) titleEl.textContent = 'Payment Processed';
+                if (msgEl) msgEl.textContent = 'Please return to the Cleer app to continue.';
+            }
+        });
     </script>
 </head>
 <body>
     <div class="card">
-        <h2>Payment Complete</h2>
-        <p>Returning you to the Cleer app...</p>
-        <a id="return-btn" href="#" class="btn">Return to Cleer App</a>
+        <div id="status-icon" class="icon">🔄</div>
+        <h2 id="status-title">Processing Payment...</h2>
+        <p id="status-msg">Please return to the Cleer app to continue.</p>
     </div>
 </body>
 </html>

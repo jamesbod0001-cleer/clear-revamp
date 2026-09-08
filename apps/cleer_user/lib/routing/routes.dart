@@ -19,7 +19,6 @@ import 'package:cleer/ui/core/navigation/app_navigation_shell.dart';
 import 'package:cleer/ui/core/navigation/navigation_config.dart';
 import 'package:cleer/ui/home/home/widgets/home_screen.dart';
 import 'package:cleer/ui/onboarding/widgets/onboarding_screen.dart';
-import 'package:cleer/ui/payment_orchestrator/widgets/close_payment_screen.dart';
 import 'package:cleer/ui/profile/account_security/widgets/account_security_screen.dart';
 import 'package:cleer/ui/profile/data_privacy/widgets/data_privacy_screen.dart';
 import 'package:cleer/ui/profile/help_support/widgets/help_support_screen.dart';
@@ -165,18 +164,6 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return AcceptAgreementScreen(shortCode: shortCode, action: action);
-  }
-}
-
-@TypedGoRoute<ClosePaymentRoute>(path: '/close_payment.html')
-class ClosePaymentRoute extends GoRouteData with $ClosePaymentRoute {
-  final String? response;
-
-  const ClosePaymentRoute({this.response});
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return ClosePaymentScreen(response: response);
   }
 }
 
