@@ -21,6 +21,9 @@ GoRouter router(Ref ref) {
     refreshListenable: authNotifier,
     debugLogDiagnostics: true,
     routes: $appRoutes,
+    onException: (context, state, router) {
+      router.go(HomeRoute().location);
+    },
     redirect: (context, state) {
       final authStateValue = ref.read(authUseCaseProvider);
       final authState = authStateValue.value;
