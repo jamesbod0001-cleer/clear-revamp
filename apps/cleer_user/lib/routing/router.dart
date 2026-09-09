@@ -22,6 +22,9 @@ GoRouter router(Ref ref) {
     debugLogDiagnostics: true,
     routes: $appRoutes,
     onException: (context, state, router) {
+      if (state.uri.path.contains('close_payment.html')) {
+        return;
+      }
       router.go(HomeRoute().location);
     },
     redirect: (context, state) {
