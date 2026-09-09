@@ -6,12 +6,9 @@
         "appIDs": [
           "3A496QKS9C.com.cleerpayments.cleer"
         ],
-        "paths": [
-          "*"
-        ],
         "components": [
           {
-            "/": "/*"
+            "/": "/a/*"
           }
         ]
       }
