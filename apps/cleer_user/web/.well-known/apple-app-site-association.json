@@ -4,6 +4,9 @@
     "details": [
       {
         "appID": "3A496QKS9C.com.cleerpayments.cleer",
+        "appIDs": [
+          "3A496QKS9C.com.cleerpayments.cleer"
+        ],
         "paths": [
           "NOT /close_payment.html",
           "/a/*"
