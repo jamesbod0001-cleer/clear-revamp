@@ -213,10 +213,33 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
     // Mobile Layout UI
     return PopScope(
       canPop: false,
-      child: Stack(
+      child: Column(
         children: [
-          WebViewWidget(controller: webViewController),
-          if (loading) const LinearProgressIndicator(),
+          Expanded(
+            child: Stack(
+              children: [
+                WebViewWidget(controller: webViewController),
+                if (loading) const LinearProgressIndicator(),
+              ],
+            ),
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: Dimens.mobile.edgeInsetsScreenHorizontal.copyWith(
+                top: Dimens.spacing.sp12,
+                bottom: Dimens.spacing.sp12,
+              ),
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: context.color.grey800,
+                  minimumSize: Size(double.infinity, Dimens.size.s48),
+                ),
+                onPressed: () => _handleCancellation(),
+                child: const Text('Cancel & Try Again'),
+              ),
+            ),
+          ),
         ],
       ),
     );
