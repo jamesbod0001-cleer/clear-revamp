@@ -90,11 +90,11 @@
             } else if (status === 'cancelled') {
                 if (iconEl) iconEl.textContent = '❌';
                 if (titleEl) titleEl.textContent = 'Payment Cancelled';
-                if (msgEl) msgEl.textContent = 'Please return to the Cleer app to try again or select another payment method.';
+                if (msgEl) msgEl.textContent = 'Please return to the Cleer app and tap "Cancel & Try Again".';
             } else if (status === 'failed') {
                 if (iconEl) iconEl.textContent = '⚠️';
                 if (titleEl) titleEl.textContent = 'Payment Failed';
-                if (msgEl) msgEl.textContent = 'Please return to the Cleer app to try again.';
+                if (msgEl) msgEl.textContent = 'Please return to the Cleer app and tap "Cancel & Try Again".';
             } else {
                 if (iconEl) iconEl.textContent = '🔄';
                 if (titleEl) titleEl.textContent = 'Payment Processed';
