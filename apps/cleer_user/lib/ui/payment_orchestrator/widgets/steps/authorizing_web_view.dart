@@ -79,8 +79,10 @@ class _AuthorizingWebViewState extends ConsumerState<AuthorizingWebView> {
 
   // Helper method so we don't duplicate logic
   Future<void> _handleStatus(String status) async {
-    if (status == 'successful' || status == 'failed' || status == 'cancelled') {
+    if (status == 'successful') {
       await _triggerVerification();
+    } else if (status == 'failed' || status == 'cancelled') {
+      await _handleCancellation();
     }
   }
 
