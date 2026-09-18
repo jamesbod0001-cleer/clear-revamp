@@ -46,6 +46,7 @@ export const Agreement = a.model({
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
     payouts: a.hasMany('Payout', 'agreementId'),
+    refunds: a.hasMany('Refund', 'agreementId'),
     initiator: a.belongsTo('User', 'initiatorId'),
     sender: a.belongsTo('User', 'senderId'),
     recipient: a.belongsTo('User', 'recipientId'),

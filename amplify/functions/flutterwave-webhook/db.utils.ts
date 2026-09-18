@@ -1,6 +1,8 @@
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../data/resource';
 import { Logger } from "@aws-lambda-powertools/logger";
+import { createActivityRecord } from '../shared/activity.utils';
+import { formatCurrency } from '../shared/currency.utils';
 
 const logger = new Logger({ serviceName: "db-utils" });
 const client = generateClient<Schema>();
@@ -180,4 +182,63 @@ export async function updatePayoutFailed(payoutId: string, failureReason: string
         failureReason: failureReason
     });
     if (payoutUpdate.errors) logger.error('Failed to update Payout to FAILED', { errors: payoutUpdate.errors });
+}
+
+export async function findRefundByFlwIdOrChargeId(flutterwaveRefundId?: string, chargeId?: string) {
+    if (flutterwaveRefundId) {
+        const { data } = await client.models.Refund.list({
+            filter: { flutterwaveRefundId: { eq: flutterwaveRefundId } }
+        });
+        if (data?.[0]) return data[0];
+    }
+    if (chargeId) {
+        const { data } = await client.models.Refund.list({
+            filter: { chargeId: { eq: chargeId } }
+        });
+        if (data?.[0]) return data[0];
+    }
+    return null;
+}
+
+export async function updateRefundSuccess(refundId: string) {
+    const { data: refund, errors: refundErr } = await client.models.Refund.get({ id: refundId });
+    if (refundErr || !refund) {
+        logger.error('Failed to fetch Refund for success update', { errors: refundErr });
+        return;
+    }
+
+    const refundUpdate = await client.models.Refund.update({
+        id: refundId,
+        status: 'SUCCESSFUL'
+    });
+    if (refundUpdate.errors) logger.error('Failed to update Refund to SUCCESSFUL', { errors: refundUpdate.errors });
+
+    try {
+        const agreement = await getAgreement(refund.agreementId);
+        if (agreement) {
+            const senderId = agreement.senderId || agreement.initiatorId;
+            const formattedAmount = formatCurrency(refund.amount, refund.currency);
+            await createActivityRecord(
+                client,
+                senderId,
+                'PAYMENT',
+                'Refund Completed',
+                'Your refund has been processed successfully to your account.',
+                agreement.id,
+                formattedAmount,
+                agreement.description
+            );
+        }
+    } catch (err) {
+        logger.error('Failed to create Activity record for refund completion', { err });
+    }
+}
+
+export async function updateRefundFailed(refundId: string, failureReason: string) {
+    const refundUpdate = await client.models.Refund.update({
+        id: refundId,
+        status: 'FAILED',
+        failureReason: failureReason
+    });
+    if (refundUpdate.errors) logger.error('Failed to update Refund to FAILED', { errors: refundUpdate.errors });
 }

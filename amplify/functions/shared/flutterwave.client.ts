@@ -55,3 +55,36 @@ export async function verifyCharge(flwId: string, accessToken: string, businessE
 
     return await response.json();
 }
+
+export interface CreateRefundParams {
+    chargeId: string;
+    amount: number;
+    reason: string;
+    accessToken: string;
+    businessEnv: string;
+}
+
+export async function createRefund(params: CreateRefundParams) {
+    logger.info(`Initiating refund for charge ID: ${params.chargeId}, amount: ${params.amount}`);
+    const baseUrl = getBaseUrl(params.businessEnv);
+
+    const response = await fetch(`${baseUrl}/refunds`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${params.accessToken}`
+        },
+        body: JSON.stringify({
+            charge_id: params.chargeId,
+            amount: params.amount,
+            reason: params.reason
+        })
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Refund failed with status ${response.status}: ${errorText}`);
+    }
+
+    return await response.json();
+}

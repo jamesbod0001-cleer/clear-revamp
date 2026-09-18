@@ -21,7 +21,9 @@ import {DeliveryDetails} from "./custom-types/delivery-details";
 import {PhysicalDeliveryContext} from "./custom-types/physical-delivery-context";
 import {syncMilestoneToAgreement} from "../functions/sync-milestone-to-agreement/resource";
 import {processPayouts} from "../functions/process-payouts/resource";
+import {processRefund} from "../functions/process-refund/resource";
 import {Payout} from "./models/payout";
+import {Refund} from "./models/refund";
 import {evaluateDeadlines} from "../functions/evaluate-deadlines/resource";
 
 const schema = a.schema({
@@ -34,6 +36,7 @@ const schema = a.schema({
     StatusHistory,
     Activity,
     Payout,
+    Refund,
     UserPreview,
     AgreementPreview,
     MilestonePreview,
@@ -65,7 +68,7 @@ const schema = a.schema({
         .returns(a.string())
         .authorization(allow => [allow.authenticated()])
         .handler(a.handler.function(flutterwaveProxy)),
-}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity),allow.resource(syncMilestoneToAgreement),allow.resource(processPayouts), allow.resource(evaluateDeadlines)]);
+}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity),allow.resource(syncMilestoneToAgreement),allow.resource(processPayouts), allow.resource(processRefund), allow.resource(evaluateDeadlines)]);
 
 export type Schema = ClientSchema<typeof schema>;
 
