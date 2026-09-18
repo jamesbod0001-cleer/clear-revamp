@@ -25,6 +25,7 @@ export const Transaction = a.model({
     // flutterwavePaymentMethodId will also be null when the paymentMethodType is 'BANK_TRANSFER'
 
     agreement: a.belongsTo('Agreement', 'agreementId'),
+    refunds: a.hasMany('Refund', 'transactionId'),
 }).authorization(allow => [
     allow.owner().identityClaim('sub'),
 ]);

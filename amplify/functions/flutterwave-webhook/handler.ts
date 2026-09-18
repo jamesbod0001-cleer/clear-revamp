@@ -58,6 +58,10 @@ export const handler: Handler = async (event) => {
         else if (eventType === 'transfer.disburse') {
             await processTransfer(payload.data);
         }
+        // Refunds
+        else if (eventType === 'refund.completed' || eventType === 'refund.succeeded' || eventType === 'refund.failed') {
+            await processRefundWebhook(payload.data, eventType);
+        }
 
         return { statusCode: 200, body: 'Webhook received' };
     } catch (error) {
@@ -143,5 +147,27 @@ async function processTransfer(data: any) {
         logger.error(`Transfer failed by banking partner.`, { data });
         const failureReason = 'Transfer failed at the provider or bank level.';
         await db.updatePayoutFailed(payout.id, failureReason);
+    }
+}
+
+async function processRefundWebhook(data: any, eventType: string) {
+    const refundId = data.id;
+    const chargeId = data.charge_id;
+    const status = data.status?.toLowerCase();
+    logger.info(`Processing refund webhook (event: ${eventType}) for refund ID: ${refundId}, charge ID: ${chargeId}, status: ${status}`);
+
+    const refund = await db.findRefundByFlwIdOrChargeId(refundId, chargeId);
+
+    if (!refund || !refund.id || refund.status === 'SUCCESSFUL') {
+        logger.info('Refund invalid, already processed, or not found. Skipping.');
+        return;
+    }
+
+    if (status === 'succeeded' || status === 'completed' || status === 'successful') {
+        logger.info(`Refund successful. Finalizing Refund: ${refund.id}`);
+        await db.updateRefundSuccess(refund.id);
+    } else if (status === 'failed') {
+        logger.error(`Refund failed by Flutterwave.`, { data });
+        await db.updateRefundFailed(refund.id, 'Refund failed at provider level.');
     }
 }

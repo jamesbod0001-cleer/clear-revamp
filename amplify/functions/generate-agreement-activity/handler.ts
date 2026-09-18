@@ -96,11 +96,11 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                             await notify(recipientId, 'Agreement Accepted', 'You have accepted the agreement.');
                             break;
                         case 'REJECTED':
-                            await notify(initiatorId, 'Agreement Declined', 'This agreement has been declined.');
+                            await notify(initiatorId, 'Agreement Declined', 'This agreement has been declined. Your refund is being processed.');
                             await notify(recipientId, 'Agreement Declined', 'You have declined this agreement.');
                             break;
                         case 'CANCELLED':
-                            await notify(initiatorId, 'Agreement Cancelled', 'You cancelled this agreement.');
+                            await notify(initiatorId, 'Agreement Cancelled', 'You cancelled this agreement. Your refund is being processed.');
                             break;
                     }
                 }
