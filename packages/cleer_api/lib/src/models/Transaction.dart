@@ -21,6 +21,7 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
+import 'package:collection/collection.dart';
 
 
 /** This is an auto generated class representing the Transaction type in your schema. */
@@ -37,6 +38,7 @@ class Transaction extends amplify_core.Model {
   final TransactionStatus? _status;
   final String? _flutterwavePaymentMethodId;
   final Agreement? _agreement;
+  final List<Refund>? _refunds;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -129,6 +131,10 @@ class Transaction extends amplify_core.Model {
     return _agreement;
   }
   
+  List<Refund>? get refunds {
+    return _refunds;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -137,9 +143,9 @@ class Transaction extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Transaction._internal({required this.id, paymentMethodType, required reference, required flutterwaveId, required amount, cleerFee, gatewayFee, required currency, status, flutterwavePaymentMethodId, agreement, createdAt, updatedAt}): _paymentMethodType = paymentMethodType, _reference = reference, _flutterwaveId = flutterwaveId, _amount = amount, _cleerFee = cleerFee, _gatewayFee = gatewayFee, _currency = currency, _status = status, _flutterwavePaymentMethodId = flutterwavePaymentMethodId, _agreement = agreement, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Transaction._internal({required this.id, paymentMethodType, required reference, required flutterwaveId, required amount, cleerFee, gatewayFee, required currency, status, flutterwavePaymentMethodId, agreement, refunds, createdAt, updatedAt}): _paymentMethodType = paymentMethodType, _reference = reference, _flutterwaveId = flutterwaveId, _amount = amount, _cleerFee = cleerFee, _gatewayFee = gatewayFee, _currency = currency, _status = status, _flutterwavePaymentMethodId = flutterwavePaymentMethodId, _agreement = agreement, _refunds = refunds, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Transaction({String? id, TransactionPaymentMethodType? paymentMethodType, required String reference, required String flutterwaveId, required double amount, double? cleerFee, double? gatewayFee, required String currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement}) {
+  factory Transaction({String? id, TransactionPaymentMethodType? paymentMethodType, required String reference, required String flutterwaveId, required double amount, double? cleerFee, double? gatewayFee, required String currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement, List<Refund>? refunds}) {
     return Transaction._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       paymentMethodType: paymentMethodType,
@@ -151,7 +157,8 @@ class Transaction extends amplify_core.Model {
       currency: currency,
       status: status,
       flutterwavePaymentMethodId: flutterwavePaymentMethodId,
-      agreement: agreement);
+      agreement: agreement,
+      refunds: refunds != null ? List<Refund>.unmodifiable(refunds) : refunds);
   }
   
   bool equals(Object other) {
@@ -172,7 +179,8 @@ class Transaction extends amplify_core.Model {
       _currency == other._currency &&
       _status == other._status &&
       _flutterwavePaymentMethodId == other._flutterwavePaymentMethodId &&
-      _agreement == other._agreement;
+      _agreement == other._agreement &&
+      DeepCollectionEquality().equals(_refunds, other._refunds);
   }
   
   @override
@@ -201,7 +209,7 @@ class Transaction extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Transaction copyWith({TransactionPaymentMethodType? paymentMethodType, String? reference, String? flutterwaveId, double? amount, double? cleerFee, double? gatewayFee, String? currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement}) {
+  Transaction copyWith({TransactionPaymentMethodType? paymentMethodType, String? reference, String? flutterwaveId, double? amount, double? cleerFee, double? gatewayFee, String? currency, TransactionStatus? status, String? flutterwavePaymentMethodId, Agreement? agreement, List<Refund>? refunds}) {
     return Transaction._internal(
       id: id,
       paymentMethodType: paymentMethodType ?? this.paymentMethodType,
@@ -213,7 +221,8 @@ class Transaction extends amplify_core.Model {
       currency: currency ?? this.currency,
       status: status ?? this.status,
       flutterwavePaymentMethodId: flutterwavePaymentMethodId ?? this.flutterwavePaymentMethodId,
-      agreement: agreement ?? this.agreement);
+      agreement: agreement ?? this.agreement,
+      refunds: refunds ?? this.refunds);
   }
   
   Transaction copyWithModelFieldValues({
@@ -226,7 +235,8 @@ class Transaction extends amplify_core.Model {
     ModelFieldValue<String>? currency,
     ModelFieldValue<TransactionStatus?>? status,
     ModelFieldValue<String?>? flutterwavePaymentMethodId,
-    ModelFieldValue<Agreement?>? agreement
+    ModelFieldValue<Agreement?>? agreement,
+    ModelFieldValue<List<Refund>?>? refunds
   }) {
     return Transaction._internal(
       id: id,
@@ -239,7 +249,8 @@ class Transaction extends amplify_core.Model {
       currency: currency == null ? this.currency : currency.value,
       status: status == null ? this.status : status.value,
       flutterwavePaymentMethodId: flutterwavePaymentMethodId == null ? this.flutterwavePaymentMethodId : flutterwavePaymentMethodId.value,
-      agreement: agreement == null ? this.agreement : agreement.value
+      agreement: agreement == null ? this.agreement : agreement.value,
+      refunds: refunds == null ? this.refunds : refunds.value
     );
   }
   
@@ -259,11 +270,24 @@ class Transaction extends amplify_core.Model {
           ? Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']['serializedData']))
           : Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']))
         : null,
+      _refunds = json['refunds']  is Map
+        ? (json['refunds']['items'] is List
+          ? (json['refunds']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Refund.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['refunds'] is List
+          ? (json['refunds'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Refund.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'paymentMethodType': amplify_core.enumToString(_paymentMethodType), 'reference': _reference, 'flutterwaveId': _flutterwaveId, 'amount': _amount, 'cleerFee': _cleerFee, 'gatewayFee': _gatewayFee, 'currency': _currency, 'status': amplify_core.enumToString(_status), 'flutterwavePaymentMethodId': _flutterwavePaymentMethodId, 'agreement': _agreement?.toJson(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'paymentMethodType': amplify_core.enumToString(_paymentMethodType), 'reference': _reference, 'flutterwaveId': _flutterwaveId, 'amount': _amount, 'cleerFee': _cleerFee, 'gatewayFee': _gatewayFee, 'currency': _currency, 'status': amplify_core.enumToString(_status), 'flutterwavePaymentMethodId': _flutterwavePaymentMethodId, 'agreement': _agreement?.toJson(), 'refunds': _refunds?.map((Refund? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -278,6 +302,7 @@ class Transaction extends amplify_core.Model {
     'status': _status,
     'flutterwavePaymentMethodId': _flutterwavePaymentMethodId,
     'agreement': _agreement,
+    'refunds': _refunds,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -296,6 +321,9 @@ class Transaction extends amplify_core.Model {
   static final AGREEMENT = amplify_core.QueryField(
     fieldName: "agreement",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static final REFUNDS = amplify_core.QueryField(
+    fieldName: "refunds",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Refund'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Transaction";
     modelSchemaDefinition.pluralName = "Transactions";
@@ -375,6 +403,13 @@ class Transaction extends amplify_core.Model {
       isRequired: false,
       targetNames: ['agreementId'],
       ofModelName: 'Agreement'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Transaction.REFUNDS,
+      isRequired: false,
+      ofModelName: 'Refund',
+      associatedKey: Refund.TRANSACTION
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

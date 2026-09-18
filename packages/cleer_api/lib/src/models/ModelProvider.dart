@@ -25,6 +25,7 @@ import 'Agreement.dart';
 import 'Milestone.dart';
 import 'Payout.dart';
 import 'PayoutDestination.dart';
+import 'Refund.dart';
 import 'StatusHistory.dart';
 import 'Transaction.dart';
 import 'User.dart';
@@ -53,6 +54,8 @@ export 'PayoutStatus.dart';
 export 'Photo.dart';
 export 'PhysicalDeliveryContext.dart';
 export 'PhysicalDeliveryContextStatus.dart';
+export 'Refund.dart';
+export 'RefundStatus.dart';
 export 'StatusHistory.dart';
 export 'Transaction.dart';
 export 'TransactionPaymentMethodType.dart';
@@ -62,9 +65,9 @@ export 'UserPreview.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "64af1ff7337f68fdc20a63ce89ac23ba";
+  String version = "98de201a8fb26d0209b02c87c2fd661c";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [Activity.schema, Agreement.schema, Milestone.schema, Payout.schema, PayoutDestination.schema, StatusHistory.schema, Transaction.schema, User.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [Activity.schema, Agreement.schema, Milestone.schema, Payout.schema, PayoutDestination.schema, Refund.schema, StatusHistory.schema, Transaction.schema, User.schema];
   @override
   List<amplify_core.ModelSchema> customTypeSchemas = [AgreementPreview.schema, DeliveryDetails.schema, MilestonePreview.schema, Photo.schema, PhysicalDeliveryContext.schema, UserPreview.schema];
   static final ModelProvider _instance = ModelProvider();
@@ -83,6 +86,8 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return Payout.classType;
       case "PayoutDestination":
         return PayoutDestination.classType;
+      case "Refund":
+        return Refund.classType;
       case "StatusHistory":
         return StatusHistory.classType;
       case "Transaction":
