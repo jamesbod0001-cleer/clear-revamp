@@ -24,6 +24,7 @@ import { generateAgreementActivity } from "./functions/generate-agreement-activi
 import { dispatchActivityNotification } from "./functions/dispatch-activity-notification/resource";
 import {syncMilestoneToAgreement} from "./functions/sync-milestone-to-agreement/resource";
 import {processPayouts} from "./functions/process-payouts/resource";
+import {processRefund} from "./functions/process-refund/resource";
 import {evaluateDeadlines} from "./functions/evaluate-deadlines/resource";
 
 const backend = defineBackend({
@@ -38,6 +39,7 @@ const backend = defineBackend({
     dispatchActivityNotification,
     syncMilestoneToAgreement,
     processPayouts,
+    processRefund,
     evaluateDeadlines
 });
 
@@ -100,6 +102,13 @@ backend.logMilestoneStatus.resources.lambda.addEventSource(
 
 
 backend.generateAgreementActivity.resources.lambda.addEventSource(
+    new DynamoEventSource(agreementTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [anyModificationFilter],
+    })
+);
+
+backend.processRefund.resources.lambda.addEventSource(
     new DynamoEventSource(agreementTable, {
         startingPosition: StartingPosition.LATEST,
         filters: [anyModificationFilter],
