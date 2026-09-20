@@ -6,7 +6,7 @@ import { getAmplifyDataClientConfig } from '@aws-amplify/backend/function/runtim
 import { env } from '$amplify/env/process-refund';
 import type { Schema } from '../../data/resource';
 import { Logger } from "@aws-lambda-powertools/logger";
-import { getAccessToken, createRefund } from "../shared/flutterwave.client";
+import { getAccessToken, createRefund, listChargesByVirtualAccount } from "../shared/flutterwave.client";
 import { createActivityRecord } from '../shared/activity.utils';
 import { formatCurrency } from '../shared/currency.utils';
 
@@ -62,7 +62,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     }
 
                     const successfulTx = transactions[0];
-                    const chargeId = successfulTx.flutterwaveId;
+                    let chargeId = successfulTx.flutterwaveId;
 
                     if (!chargeId) {
                         logger.error(`Transaction ${successfulTx.id} missing flutterwaveId charge ID.`);
@@ -80,8 +80,30 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                         continue;
                     }
 
-                    logger.info(`Initiating Flutterwave refund for agreement ${agreementId}, charge: ${chargeId}`);
                     const token = await ensureToken();
+
+                    /**
+                     * Fallback Safety Net:
+                     * If flutterwaveId is still a Virtual Account ID (van_...), query Flutterwave
+                     * for charges linked to this virtual account to resolve the actual Charge ID (chg_...).
+                     */
+                    if (chargeId.startsWith('van_')) {
+                        logger.info(`flutterwaveId ${chargeId} is a Virtual Account ID. Resolving associated Charge ID...`);
+                        try {
+                            const vanCharges = await listChargesByVirtualAccount(chargeId, token, businessEnv);
+                            if (vanCharges && vanCharges.length > 0) {
+                                const resolvedCharge = vanCharges.find((c: any) => c.status === 'successful' || c.status === 'succeeded') || vanCharges[0];
+                                if (resolvedCharge?.id) {
+                                    chargeId = resolvedCharge.id;
+                                    logger.info(`Successfully resolved Virtual Account ID ${successfulTx.flutterwaveId} to Charge ID: ${chargeId}`);
+                                }
+                            }
+                        } catch (err) {
+                            logger.error(`Failed to resolve Virtual Account ID ${chargeId} to Charge ID`, { err });
+                        }
+                    }
+
+                    logger.info(`Initiating Flutterwave refund for agreement ${agreementId}, charge: ${chargeId}`);
 
                     const refundRes = await createRefund({
                         chargeId: chargeId,
