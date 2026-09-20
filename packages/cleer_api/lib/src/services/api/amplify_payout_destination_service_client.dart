@@ -60,10 +60,48 @@ class AmplifyPayoutDestinationServiceClient with ApiErrorChecker {
   Future<PaginatedResult<PayoutDestination>> queryPayoutDestinationsByUser(
     String userId,
   ) async {
-    final request = ModelQueries.list(
-      PayoutDestination.classType,
-      where: PayoutDestination.USER.eq(userId),
+    const String document = '''
+      query ListPayoutDestinationsByUser(\$userId: ID!, \$limit: Int) {
+        listPayoutDestinations(filter: { userId: { eq: \$userId } }, limit: \$limit) {
+          items {
+            accountNumber
+            bankCode
+            currency
+            userId
+            bankName
+            accountName
+            createdAt
+            updatedAt
+            user {
+              id
+              identityId
+              firstName
+              lastName
+              phoneNumber
+              profilePicture
+              flutterwaveCustomerId
+              isEmailVerified
+              email
+              deviceToken
+              createdAt
+              updatedAt
+            }
+          }
+          nextToken
+        }
+      }
+    ''';
+
+    final request = GraphQLRequest<PaginatedResult<PayoutDestination>>(
+      document: document,
+      variables: {
+        'userId': userId,
+        'limit': 100,
+      },
+      modelType: const PaginatedModelType(PayoutDestination.classType),
+      decodePath: 'listPayoutDestinations',
     );
+
     final response = await _amplifyAPI.query(request: request).response;
     return validateRequiredResponse(response);
   }

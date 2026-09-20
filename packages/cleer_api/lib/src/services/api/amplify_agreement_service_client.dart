@@ -33,10 +33,99 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
   Future<PaginatedResult<Agreement>?> queryAgreementByShortCode(
     String shortCode,
   ) async {
-    final request = ModelQueries.list(
-      Agreement.classType,
-      where: Agreement.SHORTCODE.eq(shortCode),
+    const String document = '''
+      query AgreementsByShortCode(\$shortCode: String!, \$limit: Int) {
+        agreementsByShortCode(shortCode: \$shortCode, limit: \$limit) {
+          items {
+            id
+            shortCode
+            amount
+            currency
+            category
+            description
+            status
+            createdAt
+            disbursementType
+            initiatorRole
+            expectedReleaseDate
+            lastUpdatedBy
+            participants
+            activeMilestoneId
+            activeMilestoneStatus
+            activeMilestoneName
+            activeMilestoneAmount
+            activeMilestoneExpectedReleaseDate
+            releaseEligibleAt
+            updatedAt
+            physicalDeliveryContext {
+              status
+              packagingPhotos {
+                key
+                blurHash
+                width
+                height
+                altText
+              }
+              deliveryDetails {
+                driverPhoneNumber
+                additionalDetails
+                photos {
+                  key
+                  blurHash
+                  width
+                  height
+                  altText
+                }
+                arrangedBy
+              }
+            }
+            initiator {
+              id
+              identityId
+              firstName
+              lastName
+              phoneNumber
+              flutterwaveCustomerId
+            }
+            sender {
+              id
+              identityId
+              firstName
+              lastName
+              phoneNumber
+              flutterwaveCustomerId
+            }
+            recipient {
+              id
+              identityId
+              firstName
+              lastName
+              phoneNumber
+              flutterwaveCustomerId
+            }
+            payoutDestination {
+              accountNumber
+              bankCode
+              bankName
+              accountName
+              currency
+            }
+          }
+          nextToken
+        }
+      }
+    ''';
+
+    final request = GraphQLRequest<PaginatedResult<Agreement>>(
+      document: document,
+      variables: {
+        'shortCode': shortCode,
+        'limit': 1,
+      },
+      modelType: const PaginatedModelType(Agreement.classType),
+      decodePath: 'agreementsByShortCode',
     );
+
     final response = await _amplifyAPI.query(request: request).response;
     return validateResponse(response);
   }
@@ -181,10 +270,35 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
   Future<PaginatedResult<StatusHistory>> queryAgreementStatusHistory(
     String agreementId,
   ) async {
-    final request = ModelQueries.list(
-      StatusHistory.classType,
-      where: StatusHistory.ENTITYID.eq(agreementId),
+    const String document = '''
+      query ListByEntity(\$entityId: ID!, \$limit: Int) {
+        listByEntity(entityId: \$entityId, limit: \$limit) {
+          items {
+            id
+            entityId
+            entityType
+            context
+            oldStatus
+            newStatus
+            changedBy
+            createdAt
+            updatedAt
+          }
+          nextToken
+        }
+      }
+    ''';
+
+    final request = GraphQLRequest<PaginatedResult<StatusHistory>>(
+      document: document,
+      variables: {
+        'entityId': agreementId,
+        'limit': 100,
+      },
+      modelType: const PaginatedModelType(StatusHistory.classType),
+      decodePath: 'listByEntity',
     );
+
     final response = await _amplifyAPI.query(request: request).response;
     return validateRequiredResponse(response);
   }
