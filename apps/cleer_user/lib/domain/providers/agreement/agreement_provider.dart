@@ -65,6 +65,7 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
   Future<void> _handleUpdate(Agreement incompleteItem) async {
     final repository = ref.read(agreementRepositoryProvider);
     final agreementResult = await repository.getAgreement(incompleteItem.id!);
+    if (!ref.mounted) return;
 
     if (agreementResult.isError()) return;
     final updatedItem = agreementResult.getOrNull()!;
@@ -160,20 +161,27 @@ class UserCompletedAgreements extends _$UserCompletedAgreements {
   Future<void> _handleUpdate(Agreement incompleteItem) async {
     final repository = ref.read(agreementRepositoryProvider);
     final agreementResult = await repository.getAgreement(incompleteItem.id!);
+    if (!ref.mounted) return;
 
     if (agreementResult.isError()) return;
     final updatedItem = agreementResult.getOrNull()!;
 
-    final isTerminal = const [
-      AgreementStatus.released,
-      AgreementStatus.rejected,
-      AgreementStatus.cancelled,
-    ].contains(updatedItem.status);
-
-    if (!isTerminal) return;
-
     final currentList = state.value;
     if (currentList == null) return;
+
+    final isReleased = updatedItem.status == AgreementStatus.released;
+
+    if (!isReleased) {
+      // Completed agreements tab only shows released agreements.
+      // If an agreement in the list changes away from RELEASED, remove it.
+      final exists = currentList.items.any((i) => i.id == updatedItem.id);
+      if (exists) {
+        final newItems =
+            currentList.items.where((i) => i.id != updatedItem.id).toList();
+        state = AsyncData(currentList.copyWith(items: newItems));
+      }
+      return;
+    }
 
     final exists = currentList.items.any((i) => i.id == updatedItem.id);
     List<Agreement> newItems;
@@ -315,6 +323,7 @@ class AgreementDetails extends _$AgreementDetails {
             final result = await ref
                 .read(agreementRepositoryProvider)
                 .getAgreement(agreementId);
+            if (!ref.mounted) return;
             if (result.isSuccess()) {
               state = AsyncData(result.getOrThrow());
             }
