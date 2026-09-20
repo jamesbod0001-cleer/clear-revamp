@@ -26,14 +26,20 @@ export async function updatePaymentSuccess(
     agreementId: string,
     nextStatus: 'AWAITING_RECIPIENT' | 'FUNDED',
     disbursementType: string,
-    gatewayFee?: number | null
+    gatewayFee?: number | null,
+    chargeId?: string
 ) {
     const updaterIdentifier = 'FLUTTERWAVE_WEBHOOK';
 
-    // 1. Mark Transaction as SUCCESSFUL with gateway fee
+    /**
+     * For Bank Transfers, the transaction initially holds a Virtual Account ID (van_...).
+     * When the payment is confirmed, we update flutterwaveId to the actual Charge ID (chg_...)
+     * returned by Flutterwave so that future refunds and charge verifications can locate the charge.
+     */
     const txUpdate = await client.models.Transaction.update({
         id: transactionId,
         status: 'SUCCESSFUL',
+        ...(chargeId ? { flutterwaveId: chargeId } : {}),
         ...(gatewayFee != null ? { gatewayFee } : {})
     });
     if (txUpdate.errors) logger.error('Failed to update Transaction', { errors: txUpdate.errors });

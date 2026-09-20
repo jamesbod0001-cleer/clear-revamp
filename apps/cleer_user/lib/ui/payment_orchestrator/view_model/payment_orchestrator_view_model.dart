@@ -560,9 +560,16 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
 
     if (charge.status == ChargeStatus.succeeded &&
         charge.amount >= transaction.amount) {
+      // Update transaction status to successful and replace the Virtual Account ID (van_...)
+      // with the actual Flutterwave Charge ID (chg_...) required for refunds.
       await ref
           .read(transactionUseCaseProvider.notifier)
-          .updateTransaction(transaction.copyWith(status: TransactionStatus.successful))
+          .updateTransaction(
+            transaction.copyWith(
+              status: TransactionStatus.successful,
+              flutterwaveId: charge.id,
+            ),
+          )
           .then((r) => r.getOrThrow());
 
       final updatedAgreement = await ref

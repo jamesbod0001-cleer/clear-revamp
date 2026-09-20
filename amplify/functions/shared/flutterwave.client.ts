@@ -88,3 +88,24 @@ export async function createRefund(params: CreateRefundParams) {
 
     return await response.json();
 }
+
+export async function listChargesByVirtualAccount(virtualAccountId: string, accessToken: string, businessEnv: string) {
+    logger.info(`Listing charges for Virtual Account ID: ${virtualAccountId}`);
+    const baseUrl = getBaseUrl(businessEnv);
+
+    const response = await fetch(`${baseUrl}/charges?virtual_account_id=${virtualAccountId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to list charges for virtual account with status ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data.data || [];
+}

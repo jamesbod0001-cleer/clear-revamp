@@ -102,13 +102,15 @@ async function processCharge(data: any) {
         // Extract actual app fee from Flutterwave fees breakdown if available
         const feesList: Array<{ type: string; amount: number }> = verification.data.fees || [];
         const appFee = (feesList.find(f => f.type === 'app')?.amount ?? transaction.gatewayFee) ?? undefined;
+        const actualChargeId = verification.data?.id || data.id;
 
         await db.updatePaymentSuccess(
             transaction.id,
             transaction.agreementId,
             nextStatus,
             agreement?.disbursementType ?? 'ONE_TIME',
-            appFee
+            appFee,
+            actualChargeId
         );
 
     } else if (flwStatus === 'failed') {
