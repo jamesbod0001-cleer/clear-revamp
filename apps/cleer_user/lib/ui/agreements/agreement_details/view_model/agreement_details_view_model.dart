@@ -15,9 +15,9 @@ class AgreementDetailsViewModel extends _$AgreementDetailsViewModel {
     return ref.watch(agreementDetailsProvider(agreementId).future);
   }
 
-  Future<void> cancelAgreement() async {
+  Future<bool> cancelAgreement() async {
     final currentAgreement = state.value;
-    if (currentAgreement == null) return;
+    if (currentAgreement == null) return false;
 
     final keepAliveLink = ref.keepAlive();
     state = const AsyncValue.loading();
@@ -32,19 +32,22 @@ class AgreementDetailsViewModel extends _$AgreementDetailsViewModel {
           .read(agreementUseCaseProvider.notifier)
           .updateAgreement(updatedAgreement);
 
-      result.fold(
+      final success = result.fold(
         (agreement) {
           _log.info('Successfully cancelled agreement: ${agreement.id}');
-          // Keep state in AsyncValue.loading() so loading continues until the screen pops!
+          return true;
         },
         (failure) {
           _log.error('Error cancelling agreement', failure);
           state = AsyncValue.error(failure, StackTrace.current);
+          return false;
         },
       );
+      return success;
     } catch (e, stack) {
       _log.error('Unexpected error cancelling agreement', e);
       state = AsyncValue.error(e, stack);
+      return false;
     } finally {
       keepAliveLink.close();
     }

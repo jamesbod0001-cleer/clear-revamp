@@ -41,24 +41,6 @@ class AgreementDetailsScreen extends ConsumerWidget {
 
     final state = ref.watch(agreementDetailsViewModelProvider(agreementId));
 
-    ref.listen<AsyncValue<Agreement>>(
-      agreementDetailsViewModelProvider(agreementId),
-      (previous, next) {
-        if (previous?.isLoading == true && !next.isLoading) {
-          if (next.hasValue &&
-              next.value?.status == AgreementStatus.cancelled) {
-            if (context.mounted) {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                AgreementsRoute().go(context);
-              }
-            }
-          }
-        }
-      },
-    );
-
     final agreement = state.value ?? initialAgreement;
 
     if (agreement == null && state.isLoading) {
@@ -79,6 +61,20 @@ class AgreementDetailsScreen extends ConsumerWidget {
         agreement.initiator?.id != user?.id) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AcceptAgreementRoute(shortCode: agreement.shortCode).go(context);
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (agreement.status == AgreementStatus.cancelled ||
+        agreement.status == AgreementStatus.rejected) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            AgreementsRoute().go(context);
+          }
+        }
       });
       return const Center(child: CircularProgressIndicator());
     }
@@ -132,8 +128,8 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         CancelAgreementBottomSheet.show(
                           context,
                           isFunded: isFunded,
-                          onConfirm: () {
-                            ref
+                          onConfirm: () async {
+                            await ref
                                 .read(
                                   agreementDetailsViewModelProvider(
                                     agreement.id!,

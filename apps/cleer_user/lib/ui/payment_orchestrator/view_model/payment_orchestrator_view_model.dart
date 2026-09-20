@@ -593,20 +593,25 @@ class PaymentOrchestratorViewModel extends _$PaymentOrchestratorViewModel {
   }
 
   Future<void> verifyTransaction() async {
-    state = AsyncValue.data(
-      state.value!.copyWith(currentStep: .waitingForConfirmation),
-    );
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      if (state.value!.ongoingCharge != null) {
-        return await _verifyChargeTransaction();
-      } else if (state.value!.ongoingVirtualAccount != null) {
-        return await _verifyVirtualAccountTransaction();
-      } else {
-        _log.error('No ongoing transaction');
-        throw Exception("No ongoing transaction");
-      }
-    });
+    final keepAliveLink = ref.keepAlive();
+    try {
+      state = AsyncValue.data(
+        state.value!.copyWith(currentStep: .waitingForConfirmation),
+      );
+      state = const AsyncValue.loading();
+      state = await AsyncValue.guard(() async {
+        if (state.value!.ongoingCharge != null) {
+          return await _verifyChargeTransaction();
+        } else if (state.value!.ongoingVirtualAccount != null) {
+          return await _verifyVirtualAccountTransaction();
+        } else {
+          _log.error('No ongoing transaction');
+          throw Exception("No ongoing transaction");
+        }
+      });
+    } finally {
+      keepAliveLink.close();
+    }
   }
 
   Future<void> _cleanupActivePayments(
