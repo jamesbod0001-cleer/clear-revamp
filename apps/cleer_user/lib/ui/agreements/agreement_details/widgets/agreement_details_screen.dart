@@ -65,6 +65,20 @@ class AgreementDetailsScreen extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
+    if (agreement.status == AgreementStatus.cancelled ||
+        agreement.status == AgreementStatus.rejected) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            AgreementsRoute().go(context);
+          }
+        }
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final agreementStatusHistoryState = ref.watch(
       agreementStatusHistoryProvider(agreement.id!),
     );
@@ -115,21 +129,13 @@ class AgreementDetailsScreen extends ConsumerWidget {
                           context,
                           isFunded: isFunded,
                           onConfirm: () async {
-                            final success = await ref
+                            await ref
                                 .read(
                                   agreementDetailsViewModelProvider(
                                     agreement.id!,
                                   ).notifier,
                                 )
                                 .cancelAgreement();
-
-                            if (success && context.mounted) {
-                              if (context.canPop()) {
-                                context.pop();
-                              } else {
-                                AgreementsRoute().go(context);
-                              }
-                            }
                           },
                         );
                       },
