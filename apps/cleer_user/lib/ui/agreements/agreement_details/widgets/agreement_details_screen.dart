@@ -41,24 +41,6 @@ class AgreementDetailsScreen extends ConsumerWidget {
 
     final state = ref.watch(agreementDetailsViewModelProvider(agreementId));
 
-    ref.listen<AsyncValue<Agreement>>(
-      agreementDetailsViewModelProvider(agreementId),
-      (previous, next) {
-        if (previous?.isLoading == true && !next.isLoading) {
-          if (next.hasValue &&
-              next.value?.status == AgreementStatus.cancelled) {
-            if (context.mounted) {
-              if (context.canPop()) {
-                context.pop();
-              } else {
-                AgreementsRoute().go(context);
-              }
-            }
-          }
-        }
-      },
-    );
-
     final agreement = state.value ?? initialAgreement;
 
     if (agreement == null && state.isLoading) {
@@ -132,14 +114,22 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         CancelAgreementBottomSheet.show(
                           context,
                           isFunded: isFunded,
-                          onConfirm: () {
-                            ref
+                          onConfirm: () async {
+                            final success = await ref
                                 .read(
                                   agreementDetailsViewModelProvider(
                                     agreement.id!,
                                   ).notifier,
                                 )
                                 .cancelAgreement();
+
+                            if (success && context.mounted) {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                AgreementsRoute().go(context);
+                              }
+                            }
                           },
                         );
                       },
