@@ -129,13 +129,21 @@ class AgreementDetailsScreen extends ConsumerWidget {
                           context,
                           isFunded: isFunded,
                           onConfirm: () async {
-                            await ref
+                            final success = await ref
                                 .read(
                                   agreementDetailsViewModelProvider(
                                     agreement.id!,
                                   ).notifier,
                                 )
                                 .cancelAgreement();
+
+                            if (success && context.mounted) {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                AgreementsRoute().go(context);
+                              }
+                            }
                           },
                         );
                       },
