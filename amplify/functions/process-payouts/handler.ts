@@ -13,12 +13,12 @@ const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(env)
 Amplify.configure(resourceConfig, libraryOptions);
 const client = generateClient<Schema>();
 
-function generateReference(id: string): string {
+function generateReference(entityType: string, id: string, retryCount: number = 0): string {
     const cleanId = id.replace(/[^a-zA-Z0-9]/g, '');
-    const idPart = cleanId.length > 8 ? cleanId.substring(0, 8) : cleanId;
-    const timestamp = Date.now().toString();
-    const timePart = timestamp.substring(timestamp.length - 8);
-    return `${idPart}${timePart}`;
+    const prefix = entityType === 'MILESTONE' ? 'MLS' : 'AGR';
+    const shortId = cleanId.length > 28 ? cleanId.substring(0, 28) : cleanId;
+    const retrySuffix = retryCount > 0 ? `-R${retryCount}` : '';
+    return `${prefix}-${shortId}${retrySuffix}`;
 }
 
 async function createAndExecutePayout(
@@ -42,10 +42,9 @@ async function createAndExecutePayout(
         existingPayouts = data;
     } else {
         const { data } = await client.models.Payout.list({
-            // Only look for one-time agreement payouts (where milestoneId is technically null/undefined)
-            filter: { agreementId: { eq: agreementId }, milestoneId: { attributeExists: false } }
+            filter: { agreementId: { eq: agreementId } }
         });
-        existingPayouts = data;
+        existingPayouts = data?.filter(p => !p.milestoneId);
     }
 
     // If a PENDING or SUCCESSFUL payout already exists, DO NOT pay them again!
@@ -55,7 +54,8 @@ async function createAndExecutePayout(
         return true; // Return true so the loop cleanly moves on
     }
 
-    const safeReference = generateReference(entityId);
+    const failedCount = existingPayouts?.filter(p => p.status === 'FAILED').length || 0;
+    const safeReference = generateReference(entityType, entityId, failedCount);
 
     const payoutPayload: any = {
         agreementId: agreementId,
