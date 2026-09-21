@@ -137,6 +137,7 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
         'agreementId': agreementId,
         'limit': 100,
       },
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(Milestone.classType),
       decodePath: 'listMilestones',
     );
@@ -183,6 +184,7 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
         'entityId': milestoneId,
         'limit': 100,
       },
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(StatusHistory.classType),
       decodePath: 'listByEntity',
     );
