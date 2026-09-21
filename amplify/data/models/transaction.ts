@@ -28,6 +28,8 @@ export const Transaction = a.model({
 
     agreement: a.belongsTo('Agreement', 'agreementId'),
     refunds: a.hasMany('Refund', 'transactionId'),
-}).authorization(allow => [
+}).secondaryIndexes((index) => [
+    index("flutterwaveId").queryField("transactionsByFlutterwaveId")
+]).authorization(allow => [
     allow.owner().identityClaim('sub'),
 ]);
