@@ -34,8 +34,8 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     String shortCode,
   ) async {
     const String document = '''
-      query AgreementsByShortCode(\$shortCode: String!, \$limit: Int) {
-        agreementsByShortCode(shortCode: \$shortCode, limit: \$limit) {
+      query ListAgreementsByShortCode(\$shortCode: String!, \$limit: Int) {
+        listAgreements(filter: { shortCode: { eq: \$shortCode } }, limit: \$limit) {
           items {
             id
             shortCode
@@ -123,7 +123,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
         'limit': 1,
       },
       modelType: const PaginatedModelType(Agreement.classType),
-      decodePath: 'agreementsByShortCode',
+      decodePath: 'listAgreements',
     );
 
     final response = await _amplifyAPI.query(request: request).response;
