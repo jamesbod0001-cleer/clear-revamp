@@ -122,6 +122,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
         'shortCode': shortCode,
         'limit': 1,
       },
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(Agreement.classType),
       decodePath: 'listAgreements',
     );
@@ -239,6 +240,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
     final request = GraphQLRequest<PaginatedResult<Agreement>>(
       document: graphQLDocument,
       variables: {'status': status.name, 'limit': limit},
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(Agreement.classType),
       decodePath: 'agreementsByStatus',
     );
@@ -295,6 +297,7 @@ class AmplifyAgreementServiceClient with ApiErrorChecker {
         'entityId': agreementId,
         'limit': 100,
       },
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(StatusHistory.classType),
       decodePath: 'listByEntity',
     );

@@ -180,7 +180,7 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         ),
                         tapTargetSize: .shrinkWrap,
                       ),
-                      onPressed: () => RaiseDisputeBottomSheet.show(context),
+                      onPressed: () => RaiseDisputeBottomSheet.show(context, agreement: agreement),
                       child: Row(
                         mainAxisSize: .min,
                         children: [

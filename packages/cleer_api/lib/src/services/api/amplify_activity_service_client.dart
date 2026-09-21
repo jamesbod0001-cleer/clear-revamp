@@ -49,6 +49,7 @@ class AmplifyActivityServiceClient with ApiErrorChecker {
     final request = GraphQLRequest<PaginatedResult<Activity>>(
       document: graphQLDocument,
       variables: {'userId': userId, 'limit': limit},
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(Activity.classType),
       decodePath: 'listActivitiesByUser',
     );

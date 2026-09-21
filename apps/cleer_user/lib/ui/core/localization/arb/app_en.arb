@@ -827,5 +827,6 @@
   "theClientHasApprovedTheReleaseTheFundsWillArriveInYourRegisteredPayoutDestinationWithin2Hours": "The client has approved the release. The funds will arrive in your registered payout destination within 2 hours.",
   "paymentReleased": "Payment Released",
   "youHaveSuccessfullyApprovedThisPaymentTheFundsAreCurrentlyBeingRoutedToTheProvider": "You have successfully approved this payment. The funds are currently being routed to the provider.",
-  "fee": "Fee"
+  "fee": "Fee",
+  "fundsWillRemainSecurelyHeldWhileWeInvestigateTheDispute": "Funds will remain securely held while we investigate the dispute."
 }

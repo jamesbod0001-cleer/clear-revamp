@@ -30,8 +30,8 @@ class AmplifyTransactionServiceClient with ApiErrorChecker {
     String flutterwaveId,
   ) async {
     const String document = '''
-      query ListTransactionsByFlutterwaveId(\$flutterwaveId: String!, \$limit: Int) {
-        listTransactions(filter: { flutterwaveId: { eq: \$flutterwaveId } }, limit: \$limit) {
+      query TransactionsByFlutterwaveId(\$flutterwaveId: String!, \$limit: Int) {
+        transactionsByFlutterwaveId(flutterwaveId: \$flutterwaveId, limit: \$limit) {
           items {
             id
             agreementId
@@ -133,8 +133,9 @@ class AmplifyTransactionServiceClient with ApiErrorChecker {
         'flutterwaveId': flutterwaveId,
         'limit': 1,
       },
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(Transaction.classType),
-      decodePath: 'listTransactions',
+      decodePath: 'transactionsByFlutterwaveId',
     );
 
     final response = await _amplifyAPI.query(request: request).response;

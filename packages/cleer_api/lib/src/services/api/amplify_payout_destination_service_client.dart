@@ -104,6 +104,7 @@ class AmplifyPayoutDestinationServiceClient with ApiErrorChecker {
         'userId': userId,
         'limit': 100,
       },
+      authorizationMode: APIAuthorizationType.userPools,
       modelType: const PaginatedModelType(PayoutDestination.classType),
       decodePath: 'listPayoutDestinations',
     );
