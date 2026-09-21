@@ -1,3 +1,4 @@
+import 'package:cleer/ui/agreements/route_issue/widgets/report_issue_screen.dart';
 import 'package:cleer/ui/home/activity_timeline/widgets/activity_timeline_screen.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/accept_agreement_screen.dart';
@@ -187,7 +188,9 @@ class AcceptAgreementRoute extends GoRouteData with $AcceptAgreementRoute {
           path: '/agreements',
           routes: [
             TypedGoRoute<CreateAgreementRoute>(path: 'create_agreement/:type'),
-            TypedGoRoute<AgreementDetailsRoute>(path: 'details/:id'),
+            TypedGoRoute<AgreementDetailsRoute>(path: 'details/:id', routes: [
+              TypedGoRoute<ReportIssueRoute>(path: 'report_issue'),
+            ]),
           ],
         ),
       ],
@@ -276,6 +279,17 @@ class AgreementDetailsRoute extends GoRouteData with $AgreementDetailsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       AgreementDetailsScreen(agreementId: id, initialAgreement: $extra);
+}
+
+class ReportIssueRoute extends GoRouteData with $ReportIssueRoute {
+  final String id;
+  final Agreement? $extra;
+
+  const ReportIssueRoute({required this.id, this.$extra});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      ReportIssueScreen(agreementId: id, initialAgreement: $extra);
 }
 
 class ProfileBranch extends StatefulShellBranchData {

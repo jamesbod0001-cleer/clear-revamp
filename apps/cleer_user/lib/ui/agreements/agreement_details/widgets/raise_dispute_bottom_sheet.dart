@@ -1,4 +1,6 @@
+import 'package:cleer/routing/routes.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer_ui/cleer_ui.dart';
 import 'package:cleer_ui/widgets/bottom_sheets/custom_bottom_sheet.dart';
 import 'package:cleer_ui/widgets/buttons/primary_button.dart';
@@ -7,12 +9,13 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 class RaiseDisputeBottomSheet extends StatelessWidget {
-  const RaiseDisputeBottomSheet({super.key});
+  const RaiseDisputeBottomSheet({super.key, required this.agreement});
+  final Agreement agreement;
 
-  static Future<void> show(BuildContext context) {
+  static Future<void> show(BuildContext context, {required Agreement agreement}) {
     return CustomBottomSheet.show(
       context: context,
-      child: const RaiseDisputeBottomSheet(),
+      child: RaiseDisputeBottomSheet(agreement: agreement,),
     );
   }
 
@@ -39,7 +42,10 @@ class RaiseDisputeBottomSheet extends StatelessWidget {
           ),
         ),
         Gap(Dimens.spacing.sp24),
-        PrimaryButton.error(onPressed: () {}, child: Text(l10n.continueText)),
+        PrimaryButton.error(onPressed: () {
+          context.pop();
+          ReportIssueRoute(id: agreement.id!, $extra: agreement).go(context);
+        }, child: Text(l10n.continueText)),
         Gap(Dimens.spacing.sp12),
         TextButton(
           onPressed: () {
