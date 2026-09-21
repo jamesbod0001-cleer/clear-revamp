@@ -34,10 +34,113 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
   Future<PaginatedResult<Milestone>> queryMilestonesByAgreement(
     String agreementId,
   ) async {
-    final request = ModelQueries.list(
-      Milestone.classType,
-      where: Milestone.AGREEMENT.eq(agreementId),
+    const String document = '''
+      query ListMilestonesByAgreement(\$agreementId: ID!, \$limit: Int) {
+        listMilestones(filter: { agreementId: { eq: \$agreementId } }, limit: \$limit) {
+          items {
+            id
+            agreementId
+            name
+            amount
+            order
+            expectedReleaseDate
+            participants
+            lastUpdatedBy
+            releaseEligibleAt
+            status
+            createdAt
+            updatedAt
+            agreement {
+              id
+              shortCode
+              amount
+              currency
+              category
+              description
+              status
+              createdAt
+              disbursementType
+              initiatorRole
+              expectedReleaseDate
+              lastUpdatedBy
+              participants
+              activeMilestoneId
+              activeMilestoneStatus
+              activeMilestoneName
+              activeMilestoneAmount
+              activeMilestoneExpectedReleaseDate
+              releaseEligibleAt
+              updatedAt
+              physicalDeliveryContext {
+                status
+                packagingPhotos {
+                  key
+                  blurHash
+                  width
+                  height
+                  altText
+                }
+                deliveryDetails {
+                  driverPhoneNumber
+                  additionalDetails
+                  photos {
+                    key
+                    blurHash
+                    width
+                    height
+                    altText
+                  }
+                  arrangedBy
+                }
+              }
+              initiator {
+                id
+                identityId
+                firstName
+                lastName
+                phoneNumber
+                flutterwaveCustomerId
+              }
+              sender {
+                id
+                identityId
+                firstName
+                lastName
+                phoneNumber
+                flutterwaveCustomerId
+              }
+              recipient {
+                id
+                identityId
+                firstName
+                lastName
+                phoneNumber
+                flutterwaveCustomerId
+              }
+              payoutDestination {
+                accountNumber
+                bankCode
+                bankName
+                accountName
+                currency
+              }
+            }
+          }
+          nextToken
+        }
+      }
+    ''';
+
+    final request = GraphQLRequest<PaginatedResult<Milestone>>(
+      document: document,
+      variables: {
+        'agreementId': agreementId,
+        'limit': 100,
+      },
+      modelType: const PaginatedModelType(Milestone.classType),
+      decodePath: 'listMilestones',
     );
+
     final response = await _amplifyAPI.query(request: request).response;
     return validateRequiredResponse(response);
   }
@@ -55,10 +158,35 @@ class AmplifyMilestoneServiceClient with ApiErrorChecker {
   Future<PaginatedResult<StatusHistory>> queryMilestoneStatusHistory(
     String milestoneId,
   ) async {
-    final request = ModelQueries.list(
-      StatusHistory.classType,
-      where: StatusHistory.ENTITYID.eq(milestoneId),
+    const String document = '''
+      query ListByEntity(\$entityId: ID!, \$limit: Int) {
+        listByEntity(entityId: \$entityId, limit: \$limit) {
+          items {
+            id
+            entityId
+            entityType
+            context
+            oldStatus
+            newStatus
+            changedBy
+            createdAt
+            updatedAt
+          }
+          nextToken
+        }
+      }
+    ''';
+
+    final request = GraphQLRequest<PaginatedResult<StatusHistory>>(
+      document: document,
+      variables: {
+        'entityId': milestoneId,
+        'limit': 100,
+      },
+      modelType: const PaginatedModelType(StatusHistory.classType),
+      decodePath: 'listByEntity',
     );
+
     final response = await _amplifyAPI.query(request: request).response;
     return validateRequiredResponse(response);
   }

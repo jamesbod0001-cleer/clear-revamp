@@ -29,9 +29,112 @@ class AmplifyTransactionServiceClient with ApiErrorChecker {
   Future<Transaction?> getTransactionByFlutterwaveId(
     String flutterwaveId,
   ) async {
-    final request = ModelQueries.list(
-      Transaction.classType,
-      where: Transaction.FLUTTERWAVEID.eq(flutterwaveId),
+    const String document = '''
+      query ListTransactionsByFlutterwaveId(\$flutterwaveId: String!, \$limit: Int) {
+        listTransactions(filter: { flutterwaveId: { eq: \$flutterwaveId } }, limit: \$limit) {
+          items {
+            id
+            agreementId
+            paymentMethodType
+            reference
+            flutterwaveId
+            amount
+            cleerFee
+            gatewayFee
+            currency
+            status
+            flutterwavePaymentMethodId
+            createdAt
+            updatedAt
+            agreement {
+              id
+              shortCode
+              amount
+              currency
+              category
+              description
+              status
+              createdAt
+              disbursementType
+              initiatorRole
+              expectedReleaseDate
+              lastUpdatedBy
+              participants
+              activeMilestoneId
+              activeMilestoneStatus
+              activeMilestoneName
+              activeMilestoneAmount
+              activeMilestoneExpectedReleaseDate
+              releaseEligibleAt
+              updatedAt
+              physicalDeliveryContext {
+                status
+                packagingPhotos {
+                  key
+                  blurHash
+                  width
+                  height
+                  altText
+                }
+                deliveryDetails {
+                  driverPhoneNumber
+                  additionalDetails
+                  photos {
+                    key
+                    blurHash
+                    width
+                    height
+                    altText
+                  }
+                  arrangedBy
+                }
+              }
+              initiator {
+                id
+                identityId
+                firstName
+                lastName
+                phoneNumber
+                flutterwaveCustomerId
+              }
+              sender {
+                id
+                identityId
+                firstName
+                lastName
+                phoneNumber
+                flutterwaveCustomerId
+              }
+              recipient {
+                id
+                identityId
+                firstName
+                lastName
+                phoneNumber
+                flutterwaveCustomerId
+              }
+              payoutDestination {
+                accountNumber
+                bankCode
+                bankName
+                accountName
+                currency
+              }
+            }
+          }
+          nextToken
+        }
+      }
+    ''';
+
+    final request = GraphQLRequest<PaginatedResult<Transaction>>(
+      document: document,
+      variables: {
+        'flutterwaveId': flutterwaveId,
+        'limit': 1,
+      },
+      modelType: const PaginatedModelType(Transaction.classType),
+      decodePath: 'listTransactions',
     );
 
     final response = await _amplifyAPI.query(request: request).response;
@@ -41,8 +144,7 @@ class AmplifyTransactionServiceClient with ApiErrorChecker {
       return null;
     }
 
-    // Return the first match (there should only be one)
-    return result.items.first;
+    return result.items.whereType<Transaction>().firstOrNull;
   }
 
   Future<Transaction> updateTransaction(Transaction transaction) async {
