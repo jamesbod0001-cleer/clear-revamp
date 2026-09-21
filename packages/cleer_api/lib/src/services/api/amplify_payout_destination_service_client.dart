@@ -78,7 +78,13 @@ class AmplifyPayoutDestinationServiceClient with ApiErrorChecker {
               firstName
               lastName
               phoneNumber
-              profilePicture
+              profilePicture {
+                key
+                blurHash
+                width
+                height
+                altText
+              }
               flutterwaveCustomerId
               isEmailVerified
               email
