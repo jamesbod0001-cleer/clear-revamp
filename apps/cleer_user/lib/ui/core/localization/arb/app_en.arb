@@ -828,5 +828,14 @@
   "paymentReleased": "Payment Released",
   "youHaveSuccessfullyApprovedThisPaymentTheFundsAreCurrentlyBeingRoutedToTheProvider": "You have successfully approved this payment. The funds are currently being routed to the provider.",
   "fee": "Fee",
-  "fundsWillRemainSecurelyHeldWhileWeInvestigateTheDispute": "Funds will remain securely held while we investigate the dispute."
+  "fundsWillRemainSecurelyHeldWhileWeInvestigateTheDispute": "Funds will remain securely held while we investigate the dispute.",
+  "reason": "Reason",
+  "describeExactlyWhatWentWrong": "Describe exactly what went wrong.",
+  "includeDatesTimesAndWhatSpecificAgreementTermsWereViolated": "(Include dates, times, and what specific agreement terms were violated.)",
+  "evidenceUpload": "Evidence Upload",
+  "photosScreenShotsDocumentsOrVideosThatCanHelpExplainTheIssue": "(Photos, screenshots, documents or videos that can help explain the issue.)",
+  "selectFileToUpload": "Select File(s) to upload",
+  "submit": "Submit",
+  "whatHappensNext": "What happens next?",
+  "whatHappensNextContent": "• Funds will remain securely held.\n• Both parties may be asked to provide additional information.\n• Our team will review the submitted evidence.\n• You'll be notified once there's an update."
 }

@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
-class RaiseDisputeBottomSheet extends StatelessWidget {
-  const RaiseDisputeBottomSheet({super.key, required this.agreement});
+class ReportIssueBottomSheet extends StatelessWidget {
+  const ReportIssueBottomSheet({super.key, required this.agreement});
   final Agreement agreement;
 
   static Future<void> show(BuildContext context, {required Agreement agreement}) {
     return CustomBottomSheet.show(
       context: context,
-      child: RaiseDisputeBottomSheet(agreement: agreement,),
+      child: ReportIssueBottomSheet(agreement: agreement,),
     );
   }
 
