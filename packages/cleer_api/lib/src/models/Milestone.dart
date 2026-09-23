@@ -37,6 +37,7 @@ class Milestone extends amplify_core.Model {
   final amplify_core.TemporalDateTime? _releaseEligibleAt;
   final MilestoneStatus? _status;
   final Agreement? _agreement;
+  final List<Dispute>? _disputes;
   final List<Payout>? _payouts;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
@@ -126,6 +127,10 @@ class Milestone extends amplify_core.Model {
     return _agreement;
   }
   
+  List<Dispute>? get disputes {
+    return _disputes;
+  }
+  
   List<Payout>? get payouts {
     return _payouts;
   }
@@ -138,9 +143,9 @@ class Milestone extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Milestone._internal({required this.id, required name, required amount, required order, required expectedReleaseDate, participants, lastUpdatedBy, releaseEligibleAt, status, agreement, payouts, createdAt, updatedAt}): _name = name, _amount = amount, _order = order, _expectedReleaseDate = expectedReleaseDate, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _releaseEligibleAt = releaseEligibleAt, _status = status, _agreement = agreement, _payouts = payouts, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Milestone._internal({required this.id, required name, required amount, required order, required expectedReleaseDate, participants, lastUpdatedBy, releaseEligibleAt, status, agreement, disputes, payouts, createdAt, updatedAt}): _name = name, _amount = amount, _order = order, _expectedReleaseDate = expectedReleaseDate, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _releaseEligibleAt = releaseEligibleAt, _status = status, _agreement = agreement, _disputes = disputes, _payouts = payouts, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Milestone({String? id, required String name, required double amount, required int order, required amplify_core.TemporalDate expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, amplify_core.TemporalDateTime? releaseEligibleAt, MilestoneStatus? status, Agreement? agreement, List<Payout>? payouts}) {
+  factory Milestone({String? id, required String name, required double amount, required int order, required amplify_core.TemporalDate expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, amplify_core.TemporalDateTime? releaseEligibleAt, MilestoneStatus? status, Agreement? agreement, List<Dispute>? disputes, List<Payout>? payouts}) {
     return Milestone._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       name: name,
@@ -152,6 +157,7 @@ class Milestone extends amplify_core.Model {
       releaseEligibleAt: releaseEligibleAt,
       status: status,
       agreement: agreement,
+      disputes: disputes != null ? List<Dispute>.unmodifiable(disputes) : disputes,
       payouts: payouts != null ? List<Payout>.unmodifiable(payouts) : payouts);
   }
   
@@ -173,6 +179,7 @@ class Milestone extends amplify_core.Model {
       _releaseEligibleAt == other._releaseEligibleAt &&
       _status == other._status &&
       _agreement == other._agreement &&
+      DeepCollectionEquality().equals(_disputes, other._disputes) &&
       DeepCollectionEquality().equals(_payouts, other._payouts);
   }
   
@@ -201,7 +208,7 @@ class Milestone extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Milestone copyWith({String? name, double? amount, int? order, amplify_core.TemporalDate? expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, amplify_core.TemporalDateTime? releaseEligibleAt, MilestoneStatus? status, Agreement? agreement, List<Payout>? payouts}) {
+  Milestone copyWith({String? name, double? amount, int? order, amplify_core.TemporalDate? expectedReleaseDate, List<String>? participants, String? lastUpdatedBy, amplify_core.TemporalDateTime? releaseEligibleAt, MilestoneStatus? status, Agreement? agreement, List<Dispute>? disputes, List<Payout>? payouts}) {
     return Milestone._internal(
       id: id,
       name: name ?? this.name,
@@ -213,6 +220,7 @@ class Milestone extends amplify_core.Model {
       releaseEligibleAt: releaseEligibleAt ?? this.releaseEligibleAt,
       status: status ?? this.status,
       agreement: agreement ?? this.agreement,
+      disputes: disputes ?? this.disputes,
       payouts: payouts ?? this.payouts);
   }
   
@@ -226,6 +234,7 @@ class Milestone extends amplify_core.Model {
     ModelFieldValue<amplify_core.TemporalDateTime?>? releaseEligibleAt,
     ModelFieldValue<MilestoneStatus?>? status,
     ModelFieldValue<Agreement?>? agreement,
+    ModelFieldValue<List<Dispute>?>? disputes,
     ModelFieldValue<List<Payout>?>? payouts
   }) {
     return Milestone._internal(
@@ -239,6 +248,7 @@ class Milestone extends amplify_core.Model {
       releaseEligibleAt: releaseEligibleAt == null ? this.releaseEligibleAt : releaseEligibleAt.value,
       status: status == null ? this.status : status.value,
       agreement: agreement == null ? this.agreement : agreement.value,
+      disputes: disputes == null ? this.disputes : disputes.value,
       payouts: payouts == null ? this.payouts : payouts.value
     );
   }
@@ -258,6 +268,19 @@ class Milestone extends amplify_core.Model {
           ? Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']['serializedData']))
           : Agreement.fromJson(new Map<String, dynamic>.from(json['agreement']))
         : null,
+      _disputes = json['disputes']  is Map
+        ? (json['disputes']['items'] is List
+          ? (json['disputes']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Dispute.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['disputes'] is List
+          ? (json['disputes'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Dispute.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _payouts = json['payouts']  is Map
         ? (json['payouts']['items'] is List
           ? (json['payouts']['items'] as List)
@@ -275,7 +298,7 @@ class Milestone extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'amount': _amount, 'order': _order, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'releaseEligibleAt': _releaseEligibleAt?.format(), 'status': amplify_core.enumToString(_status), 'agreement': _agreement?.toJson(), 'payouts': _payouts?.map((Payout? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'name': _name, 'amount': _amount, 'order': _order, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'releaseEligibleAt': _releaseEligibleAt?.format(), 'status': amplify_core.enumToString(_status), 'agreement': _agreement?.toJson(), 'disputes': _disputes?.map((Dispute? e) => e?.toJson()).toList(), 'payouts': _payouts?.map((Payout? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -289,6 +312,7 @@ class Milestone extends amplify_core.Model {
     'releaseEligibleAt': _releaseEligibleAt,
     'status': _status,
     'agreement': _agreement,
+    'disputes': _disputes,
     'payouts': _payouts,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
@@ -307,6 +331,9 @@ class Milestone extends amplify_core.Model {
   static final AGREEMENT = amplify_core.QueryField(
     fieldName: "agreement",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Agreement'));
+  static final DISPUTES = amplify_core.QueryField(
+    fieldName: "disputes",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Dispute'));
   static final PAYOUTS = amplify_core.QueryField(
     fieldName: "payouts",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Payout'));
@@ -388,6 +415,13 @@ class Milestone extends amplify_core.Model {
       isRequired: false,
       targetNames: ['agreementId'],
       ofModelName: 'Agreement'
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Milestone.DISPUTES,
+      isRequired: false,
+      ofModelName: 'Dispute',
+      associatedKey: Dispute.MILESTONE
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(

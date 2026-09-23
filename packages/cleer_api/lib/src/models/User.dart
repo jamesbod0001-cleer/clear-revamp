@@ -42,6 +42,7 @@ class User extends amplify_core.Model {
   final List<Agreement>? _sentAgreements;
   final List<Agreement>? _receivedAgreements;
   final List<PayoutDestination>? _payoutDestinations;
+  final List<Dispute>? _disputes;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -159,6 +160,10 @@ class User extends amplify_core.Model {
     return _payoutDestinations;
   }
   
+  List<Dispute>? get disputes {
+    return _disputes;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -167,9 +172,9 @@ class User extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const User._internal({required this.id, required identityId, required phoneNumber, required firstName, required lastName, email, isEmailVerified, profilePicture, required flutterwaveCustomerId, flutterwavePaymentMethodIds, deviceToken, initiatedAgreements, sentAgreements, receivedAgreements, payoutDestinations, createdAt, updatedAt}): _identityId = identityId, _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _isEmailVerified = isEmailVerified, _profilePicture = profilePicture, _flutterwaveCustomerId = flutterwaveCustomerId, _flutterwavePaymentMethodIds = flutterwavePaymentMethodIds, _deviceToken = deviceToken, _initiatedAgreements = initiatedAgreements, _sentAgreements = sentAgreements, _receivedAgreements = receivedAgreements, _payoutDestinations = payoutDestinations, _createdAt = createdAt, _updatedAt = updatedAt;
+  const User._internal({required this.id, required identityId, required phoneNumber, required firstName, required lastName, email, isEmailVerified, profilePicture, required flutterwaveCustomerId, flutterwavePaymentMethodIds, deviceToken, initiatedAgreements, sentAgreements, receivedAgreements, payoutDestinations, disputes, createdAt, updatedAt}): _identityId = identityId, _phoneNumber = phoneNumber, _firstName = firstName, _lastName = lastName, _email = email, _isEmailVerified = isEmailVerified, _profilePicture = profilePicture, _flutterwaveCustomerId = flutterwaveCustomerId, _flutterwavePaymentMethodIds = flutterwavePaymentMethodIds, _deviceToken = deviceToken, _initiatedAgreements = initiatedAgreements, _sentAgreements = sentAgreements, _receivedAgreements = receivedAgreements, _payoutDestinations = payoutDestinations, _disputes = disputes, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory User({String? id, required String identityId, required String phoneNumber, required String firstName, required String lastName, String? email, bool? isEmailVerified, Photo? profilePicture, required String flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, String? deviceToken, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
+  factory User({String? id, required String identityId, required String phoneNumber, required String firstName, required String lastName, String? email, bool? isEmailVerified, Photo? profilePicture, required String flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, String? deviceToken, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations, List<Dispute>? disputes}) {
     return User._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       identityId: identityId,
@@ -185,7 +190,8 @@ class User extends amplify_core.Model {
       initiatedAgreements: initiatedAgreements != null ? List<Agreement>.unmodifiable(initiatedAgreements) : initiatedAgreements,
       sentAgreements: sentAgreements != null ? List<Agreement>.unmodifiable(sentAgreements) : sentAgreements,
       receivedAgreements: receivedAgreements != null ? List<Agreement>.unmodifiable(receivedAgreements) : receivedAgreements,
-      payoutDestinations: payoutDestinations != null ? List<PayoutDestination>.unmodifiable(payoutDestinations) : payoutDestinations);
+      payoutDestinations: payoutDestinations != null ? List<PayoutDestination>.unmodifiable(payoutDestinations) : payoutDestinations,
+      disputes: disputes != null ? List<Dispute>.unmodifiable(disputes) : disputes);
   }
   
   bool equals(Object other) {
@@ -210,7 +216,8 @@ class User extends amplify_core.Model {
       DeepCollectionEquality().equals(_initiatedAgreements, other._initiatedAgreements) &&
       DeepCollectionEquality().equals(_sentAgreements, other._sentAgreements) &&
       DeepCollectionEquality().equals(_receivedAgreements, other._receivedAgreements) &&
-      DeepCollectionEquality().equals(_payoutDestinations, other._payoutDestinations);
+      DeepCollectionEquality().equals(_payoutDestinations, other._payoutDestinations) &&
+      DeepCollectionEquality().equals(_disputes, other._disputes);
   }
   
   @override
@@ -239,7 +246,7 @@ class User extends amplify_core.Model {
     return buffer.toString();
   }
   
-  User copyWith({String? identityId, String? phoneNumber, String? firstName, String? lastName, String? email, bool? isEmailVerified, Photo? profilePicture, String? flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, String? deviceToken, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations}) {
+  User copyWith({String? identityId, String? phoneNumber, String? firstName, String? lastName, String? email, bool? isEmailVerified, Photo? profilePicture, String? flutterwaveCustomerId, List<String>? flutterwavePaymentMethodIds, String? deviceToken, List<Agreement>? initiatedAgreements, List<Agreement>? sentAgreements, List<Agreement>? receivedAgreements, List<PayoutDestination>? payoutDestinations, List<Dispute>? disputes}) {
     return User._internal(
       id: id,
       identityId: identityId ?? this.identityId,
@@ -255,7 +262,8 @@ class User extends amplify_core.Model {
       initiatedAgreements: initiatedAgreements ?? this.initiatedAgreements,
       sentAgreements: sentAgreements ?? this.sentAgreements,
       receivedAgreements: receivedAgreements ?? this.receivedAgreements,
-      payoutDestinations: payoutDestinations ?? this.payoutDestinations);
+      payoutDestinations: payoutDestinations ?? this.payoutDestinations,
+      disputes: disputes ?? this.disputes);
   }
   
   User copyWithModelFieldValues({
@@ -272,7 +280,8 @@ class User extends amplify_core.Model {
     ModelFieldValue<List<Agreement>?>? initiatedAgreements,
     ModelFieldValue<List<Agreement>?>? sentAgreements,
     ModelFieldValue<List<Agreement>?>? receivedAgreements,
-    ModelFieldValue<List<PayoutDestination>?>? payoutDestinations
+    ModelFieldValue<List<PayoutDestination>?>? payoutDestinations,
+    ModelFieldValue<List<Dispute>?>? disputes
   }) {
     return User._internal(
       id: id,
@@ -289,7 +298,8 @@ class User extends amplify_core.Model {
       initiatedAgreements: initiatedAgreements == null ? this.initiatedAgreements : initiatedAgreements.value,
       sentAgreements: sentAgreements == null ? this.sentAgreements : sentAgreements.value,
       receivedAgreements: receivedAgreements == null ? this.receivedAgreements : receivedAgreements.value,
-      payoutDestinations: payoutDestinations == null ? this.payoutDestinations : payoutDestinations.value
+      payoutDestinations: payoutDestinations == null ? this.payoutDestinations : payoutDestinations.value,
+      disputes: disputes == null ? this.disputes : disputes.value
     );
   }
   
@@ -361,11 +371,24 @@ class User extends amplify_core.Model {
               .map((e) => PayoutDestination.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
               .toList()
           : null),
+      _disputes = json['disputes']  is Map
+        ? (json['disputes']['items'] is List
+          ? (json['disputes']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Dispute.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['disputes'] is List
+          ? (json['disputes'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Dispute.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'identityId': _identityId, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'isEmailVerified': _isEmailVerified, 'profilePicture': _profilePicture?.toJson(), 'flutterwaveCustomerId': _flutterwaveCustomerId, 'flutterwavePaymentMethodIds': _flutterwavePaymentMethodIds, 'deviceToken': _deviceToken, 'initiatedAgreements': _initiatedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'sentAgreements': _sentAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'receivedAgreements': _receivedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'payoutDestinations': _payoutDestinations?.map((PayoutDestination? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'identityId': _identityId, 'phoneNumber': _phoneNumber, 'firstName': _firstName, 'lastName': _lastName, 'email': _email, 'isEmailVerified': _isEmailVerified, 'profilePicture': _profilePicture?.toJson(), 'flutterwaveCustomerId': _flutterwaveCustomerId, 'flutterwavePaymentMethodIds': _flutterwavePaymentMethodIds, 'deviceToken': _deviceToken, 'initiatedAgreements': _initiatedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'sentAgreements': _sentAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'receivedAgreements': _receivedAgreements?.map((Agreement? e) => e?.toJson()).toList(), 'payoutDestinations': _payoutDestinations?.map((PayoutDestination? e) => e?.toJson()).toList(), 'disputes': _disputes?.map((Dispute? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -384,6 +407,7 @@ class User extends amplify_core.Model {
     'sentAgreements': _sentAgreements,
     'receivedAgreements': _receivedAgreements,
     'payoutDestinations': _payoutDestinations,
+    'disputes': _disputes,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -412,6 +436,9 @@ class User extends amplify_core.Model {
   static final PAYOUTDESTINATIONS = amplify_core.QueryField(
     fieldName: "payoutDestinations",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'PayoutDestination'));
+  static final DISPUTES = amplify_core.QueryField(
+    fieldName: "disputes",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Dispute'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
     modelSchemaDefinition.pluralName = "Users";
@@ -523,6 +550,13 @@ class User extends amplify_core.Model {
       isRequired: false,
       ofModelName: 'PayoutDestination',
       associatedKey: PayoutDestination.USER
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: User.DISPUTES,
+      isRequired: false,
+      ofModelName: 'Dispute',
+      associatedKey: Dispute.RAISEDBY
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
