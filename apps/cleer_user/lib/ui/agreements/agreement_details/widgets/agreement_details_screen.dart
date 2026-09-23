@@ -159,11 +159,12 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         ],
                       ),
                     )
-                  else if (![
-                    AgreementStatus.awaitingFunding,
-                    AgreementStatus.awaitingRecipient,
-                    AgreementStatus.released,
-                  ].contains(agreement.status))
+                  else if (!agreement.isDisputed &&
+                      ![
+                        AgreementStatus.awaitingFunding,
+                        AgreementStatus.awaitingRecipient,
+                        AgreementStatus.released,
+                      ].contains(agreement.status))
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         backgroundColor: context.color.errorLight,
@@ -180,7 +181,10 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         ),
                         tapTargetSize: .shrinkWrap,
                       ),
-                      onPressed: () => ReportIssueBottomSheet.show(context, agreement: agreement),
+                      onPressed: () => ReportIssueBottomSheet.show(
+                        context,
+                        agreement: agreement,
+                      ),
                       child: Row(
                         mainAxisSize: .min,
                         children: [

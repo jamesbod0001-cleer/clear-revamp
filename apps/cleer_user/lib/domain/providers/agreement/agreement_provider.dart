@@ -108,6 +108,7 @@ class UserOngoingAgreements extends _$UserOngoingAgreements {
     AgreementStatus.inProgress,
     AgreementStatus.readyForRelease,
     AgreementStatus.processingRelease,
+    AgreementStatus.disputed,
   ].contains(s);
 
   bool _isTerminal(AgreementStatus? s) => const [
@@ -176,8 +177,9 @@ class UserCompletedAgreements extends _$UserCompletedAgreements {
       // If an agreement in the list changes away from RELEASED, remove it.
       final exists = currentList.items.any((i) => i.id == updatedItem.id);
       if (exists) {
-        final newItems =
-            currentList.items.where((i) => i.id != updatedItem.id).toList();
+        final newItems = currentList.items
+            .where((i) => i.id != updatedItem.id)
+            .toList();
         state = AsyncData(currentList.copyWith(items: newItems));
       }
       return;
@@ -275,7 +277,8 @@ class AgreementStatusHistory extends _$AgreementStatusHistory {
             final current = state.value ?? [];
             state = AsyncData(_sort([...current, newItem]));
           },
-          onError: (e) => _log.error('❌ Agreement History Subscription Error', e),
+          onError: (e) =>
+              _log.error('❌ Agreement History Subscription Error', e),
         );
   }
 
@@ -328,7 +331,8 @@ class AgreementDetails extends _$AgreementDetails {
               state = AsyncData(result.getOrThrow());
             }
           },
-          onError: (e) => _log.error('❌ Agreement Details Subscription Error', e),
+          onError: (e) =>
+              _log.error('❌ Agreement Details Subscription Error', e),
         );
   }
 }
@@ -489,7 +493,7 @@ Future<(int count, double sent, double received)> userPerformanceStats(
   if (user == null) return (0, 0.0, 0.0);
 
   // TODO(aggregation): This currently calculates stats based on the local paginated list
-  // to avoid a "Sync Storm" of network calls. For large datasets, these aggregates 
+  // to avoid a "Sync Storm" of network calls. For large datasets, these aggregates
   // should be moved to a specific backend endpoint or computed via a Lambda function.
   final completedAgreements = await ref.watch(
     userCompletedAgreementsProvider.future,

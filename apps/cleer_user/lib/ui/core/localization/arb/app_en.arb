@@ -837,5 +837,21 @@
   "selectFileToUpload": "Select File(s) to upload",
   "submit": "Submit",
   "whatHappensNext": "What happens next?",
-  "whatHappensNextContent": "• Funds will remain securely held.\n• Both parties may be asked to provide additional information.\n• Our team will review the submitted evidence.\n• You'll be notified once there's an update."
+  "whatHappensNextContent": "• Funds will remain securely held.\n• Both parties may be asked to provide additional information.\n• Our team will review the submitted evidence.\n• You'll be notified once there's an update.",
+  "issueReasonItemNotReceived": "Item not received",
+  "issueReasonItemDamaged": "Item damaged",
+  "issueReasonWrongItemReceived": "Wrong item received",
+  "issueReasonItemSignificantlyDifferent": "Item significantly different from description",
+  "issueReasonDeliveryIssue": "Delivery issue",
+  "issueReasonWorkNotDelivered": "Work not delivered",
+  "issueReasonWorkIncomplete": "Work incomplete",
+  "issueReasonWorkDoesNotMatch": "Work doesn't match agreement",
+  "issueReasonServiceDeadlineMissed": "Deadline missed",
+  "issueReasonPaymentReleasedByMistake": "Payment released by mistake",
+  "issueReasonMilestoneNotCompleted": "Milestone not completed",
+  "issueReasonMilestoneDoesNotMatch": "Milestone doesn't match agreement",
+  "issueReasonWorkRequiresRevisions": "Work requires revisions",
+  "issueReasonOther": "Other",
+  "yourReportHasBeenSubmitted": "Your report has been submitted",
+  "weHaveReceivedYourSubmissionAndTemporarilySecuredTheFundsWhileWeReviewTheDispute": "We've received your submission and temporarily secured the funds while we review the dispute."
 }
