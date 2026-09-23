@@ -86,7 +86,7 @@ class ReportIssueViewModel extends _$ReportIssueViewModel {
           final updatedFiles = [
             ...currentFormData.evidenceFiles,
             ...files,
-          ].take(5).toList();
+          ].take(ReportIssueFormData.maxEvidenceFilesLimit).toList();
 
           state = AsyncValue.data(
             state.value!.copyWith(
@@ -135,9 +135,7 @@ class ReportIssueViewModel extends _$ReportIssueViewModel {
     state = const AsyncValue.loading();
 
     try {
-      Agreement? agreement = ref
-          .read(agreementDetailsProvider(agreementId))
-          .value;
+      var agreement = ref.read(agreementDetailsProvider(agreementId)).value;
       if (agreement == null) {
         _log.info('Fetching agreement details for: $agreementId');
         final agreementResult = await ref

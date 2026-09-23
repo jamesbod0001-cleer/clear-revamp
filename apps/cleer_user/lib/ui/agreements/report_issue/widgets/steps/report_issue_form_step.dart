@@ -179,7 +179,6 @@ class ReportIssueFormStep extends HookConsumerWidget {
                 ValueListenableBuilder<bool>(
                   valueListenable: viewModel.pickEvidenceFilesCommand.isRunning,
                   builder: (context, isRunning, _) {
-                    final limit = 5;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -268,20 +267,16 @@ class ReportIssueFormStep extends HookConsumerWidget {
                           ),
                         ],
                         Gap(Dimens.spacing.sp8),
-                        if (formData.evidenceFiles.length < limit) ...[
+                        if (!formData.hasReachedMaxEvidence) ...[
                           Align(
                             alignment: Alignment.centerLeft,
                             child: InkWell(
                               onTap: isRunning
                                   ? null
                                   : () {
-                                      final currentCount =
-                                          formData.evidenceFiles.length;
-                                      final remainingLimit =
-                                          limit - currentCount;
-                                      if (remainingLimit > 0) {
+                                      if (formData.remainingFileAllowance > 0) {
                                         viewModel.pickEvidenceFilesCommand.run(
-                                          remainingLimit,
+                                          formData.remainingFileAllowance,
                                         );
                                       }
                                     },

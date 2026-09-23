@@ -19,6 +19,9 @@ abstract class ReportIssueState with _$ReportIssueState {
 
 @freezed
 abstract class ReportIssueFormData with _$ReportIssueFormData {
+  /// Maximum number of evidence files permitted for a dispute
+  static const int maxEvidenceFilesLimit = 5;
+
   const factory ReportIssueFormData({
     required String disputeId,
     DisputeReason? reason,
@@ -33,4 +36,12 @@ abstract class ReportIssueFormData with _$ReportIssueFormData {
 
 extension ReportIssueFormDataX on ReportIssueFormData {
   bool get isValid => reason != null && description.trim().length >= 3;
+
+  /// Helper to check if the max evidence file limit has been reached
+  bool get hasReachedMaxEvidence =>
+      evidenceFiles.length >= ReportIssueFormData.maxEvidenceFilesLimit;
+
+  /// Remaining evidence file allowance
+  int get remainingFileAllowance =>
+      ReportIssueFormData.maxEvidenceFilesLimit - evidenceFiles.length;
 }
