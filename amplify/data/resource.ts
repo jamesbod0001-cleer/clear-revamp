@@ -24,6 +24,7 @@ import {processPayouts} from "../functions/process-payouts/resource";
 import {processRefund} from "../functions/process-refund/resource";
 import {Payout} from "./models/payout";
 import {Refund} from "./models/refund";
+import {Dispute} from "./models/dispute";
 import {evaluateDeadlines} from "../functions/evaluate-deadlines/resource";
 
 const schema = a.schema({
@@ -37,6 +38,7 @@ const schema = a.schema({
     Activity,
     Payout,
     Refund,
+    Dispute,
     UserPreview,
     AgreementPreview,
     MilestonePreview,

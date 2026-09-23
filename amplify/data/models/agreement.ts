@@ -27,7 +27,7 @@ export const Agreement = a.model({
     recipientAccountNumber: a.string().required(),
     recipientBankCode: a.string().required(),
 
-    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'CANCELLED', 'REJECTED', 'RELEASED']),
+    status: a.enum(['DRAFT', 'AWAITING_RECIPIENT', 'AWAITING_FUNDING', 'FUNDED', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'CANCELLED', 'REJECTED', 'RELEASED', 'DISPUTED']),
 
     // ONLY physical goods will have this object. For category 'service_work', it remains null.
     physicalDeliveryContext: a.ref('PhysicalDeliveryContext'),
@@ -45,6 +45,7 @@ export const Agreement = a.model({
 
     // Relationships
     milestones: a.hasMany('Milestone', 'agreementId'),
+    disputes: a.hasMany('Dispute', 'agreementId'),
     payouts: a.hasMany('Payout', 'agreementId'),
     refunds: a.hasMany('Refund', 'agreementId'),
     initiator: a.belongsTo('User', 'initiatorId'),

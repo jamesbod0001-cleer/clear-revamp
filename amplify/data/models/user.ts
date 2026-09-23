@@ -20,6 +20,7 @@ export const User = a.model({
     sentAgreements: a.hasMany('Agreement', 'senderId'), // Agreements where this user is the one paying
     receivedAgreements: a.hasMany('Agreement', 'recipientId'), // Agreements where this user is the one getting paid
     payoutDestinations: a.hasMany('PayoutDestination', 'userId'),
+    disputes: a.hasMany('Dispute', 'raisedById'),
 }).identifier(['id']).authorization(allow => [
     allow.ownerDefinedIn('id').identityClaim('sub'),
 ])

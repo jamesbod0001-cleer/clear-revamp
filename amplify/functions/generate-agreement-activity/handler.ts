@@ -63,7 +63,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     userId: string | undefined,
                     heading: string,
                     text: string,
-                    type: 'AGREEMENT' | 'PAYMENT' | 'DELIVERY' = 'AGREEMENT',
+                    type: 'AGREEMENT' | 'PAYMENT' | 'DELIVERY' | 'DISPUTE' = 'AGREEMENT',
                     amountOverride?: string,
                     descriptionOverride?: string
                 ) => {
@@ -105,8 +105,8 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     }
                 }
 
-                    // ==========================================
-                    // FLOW 2: INITIATOR IS THE RECIPIENT (Request Payment)
+                // ==========================================
+                // FLOW 2: INITIATOR IS THE RECIPIENT (Request Payment)
                 // ==========================================
                 else if (initiatorRole === 'RECIPIENT') {
                     if (isStatusChanged && newStatus === 'AWAITING_FUNDING' && (!oldStatus || oldStatus === 'DRAFT')) {
@@ -201,6 +201,11 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                             await notify(senderId, 'Agreement Completed', 'The agreement has been successfully completed.', 'AGREEMENT');
                             await notify(recipientId, 'Funds Released', 'The funds have been successfully released to your payout destination.', 'PAYMENT');
                             break;
+
+                        case 'DISPUTED':
+                            await notify(senderId, 'Issue Reported', 'An issue has been reported for this agreement. Funds remain securely held during review.', 'DISPUTE');
+                            await notify(recipientId, 'Issue Reported', 'An issue has been reported for this agreement. Funds remain securely held during review.', 'DISPUTE');
+                            break;
                     }
                 }
 
@@ -247,6 +252,11 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                                 // This still fires for the FINAL milestone of the agreement (because the ID doesn't change)
                                 await notify(senderId, 'Milestone Completed', `${milestoneName} has been successfully completed.`, 'AGREEMENT', formattedMilestoneAmount, milestoneName);
                                 await notify(recipientId, 'Funds Released', `Funds for ${milestoneName} have been released to your payout destination.`, 'PAYMENT', formattedMilestoneAmount, milestoneName);
+                                break;
+
+                            case 'DISPUTED':
+                                await notify(senderId, 'Milestone Disputed', `An issue has been reported for ${milestoneName}. Funds remain securely held during review.`, 'DISPUTE', formattedMilestoneAmount, milestoneName);
+                                await notify(recipientId, 'Milestone Disputed', `An issue has been reported for ${milestoneName}. Funds remain securely held during review.`, 'DISPUTE', formattedMilestoneAmount, milestoneName);
                                 break;
                         }
                     }
