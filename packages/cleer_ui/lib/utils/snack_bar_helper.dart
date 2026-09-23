@@ -44,11 +44,19 @@ class SnackBarHelper {
       case 'DELIVERY':
         stripeColor = context.color.warning;
         backgroundColor = context.color.warningLight;
-        iconBackgroundColor = Color(0xFFFDF0E1);
+        iconBackgroundColor = const Color(0xFFFDF0E1);
         icon = PhosphorIcon(
           PhosphorIcons.truck(PhosphorIconsStyle.duotone),
           color: context.color.warning,
           size: Dimens.size.s16,
+        );
+      case 'DISPUTE':
+        stripeColor = context.color.error;
+        backgroundColor = context.color.errorLight;
+        iconBackgroundColor = context.color.errorLight;
+        icon = Assets.images.errorFlag.image(
+          height: Dimens.size.s16,
+          width: Dimens.size.s12,
         );
 
       default:
