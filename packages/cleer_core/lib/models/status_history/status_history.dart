@@ -44,4 +44,12 @@ extension StatusHistoryParsingX on StatusHistory {
           e.name.toLowerCase() == newStatus.replaceAll('_', '').toLowerCase(),
     );
   }
+
+  DisputeStatus? get parsedDisputeStatus {
+    if (entityType != 'DISPUTE') return null; // Safety check
+    return DisputeStatus.values.firstWhereOrNull(
+      (e) =>
+          e.name.toLowerCase() == newStatus.replaceAll('_', '').toLowerCase(),
+    );
+  }
 }

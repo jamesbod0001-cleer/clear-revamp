@@ -20,6 +20,5 @@ abstract class Dispute with _$Dispute {
     List<String>? participants,
     String? lastUpdatedBy,
     DateTime? createdAt,
-    DateTime? updatedAt,
   }) = _Dispute;
 }
