@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class MenuSectionHeader extends StatelessWidget {
-  const MenuSectionHeader({super.key, required this.title});
+  const MenuSectionHeader({super.key, required this.title, this.trailing});
 
   final String title;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +17,19 @@ class MenuSectionHeader extends StatelessWidget {
         mainAxisSize: .min,
         crossAxisAlignment: .start,
         children: [
-          Text(
-            title,
-            style: context.typo.titleSmall.copyWith(
-              color: context.color.grey600,
-            ),
+          Row(
+            children: [
+              Text(
+                title,
+                style: context.typo.titleSmall.copyWith(
+                  color: context.color.grey600,
+                ),
+              ),
+              if (trailing != null) ...[
+                Gap(Dimens.spacing.sp8),
+                trailing!,
+              ],
+            ],
           ),
           Gap(Dimens.spacing.sp8),
           Divider(
