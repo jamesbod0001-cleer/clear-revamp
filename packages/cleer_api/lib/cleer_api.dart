@@ -3,6 +3,7 @@ library;
 // Export the Repository Providers (The App needs these for ref.watch)
 export 'src/repositories/api/activity/activity_repository_provider.dart';
 export 'src/repositories/api/agreement/agreement_repository_provider.dart';
+export 'src/repositories/api/dispute/dispute_repository_provider.dart';
 export 'src/repositories/api/flutterwave/flutterwave_repository_provider.dart';
 export 'src/repositories/api/milestone/milestone_repository_provider.dart';
 export 'src/repositories/api/payout_destination/payout_destination_repository_provider.dart';

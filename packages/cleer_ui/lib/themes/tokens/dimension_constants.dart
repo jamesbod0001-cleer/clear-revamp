@@ -102,6 +102,7 @@ class _AppSpacing {
 class _AppPadding {
   const _AppPadding();
   final double p0 = 0.0;
+  final double p1 = 1.0;
   final double p2 = 2.0;
   final double p3 = 3.0;
   final double p4 = 4.0;

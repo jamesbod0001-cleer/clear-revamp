@@ -174,6 +174,10 @@ class AmplifyAgreementRepositoryImpl
                       amplify_model.Agreement.STATUS.eq(
                         amplify_model.AgreementStatus.PROCESSING_RELEASE,
                       ),
+                    ).or(
+                      amplify_model.Agreement.STATUS.eq(
+                        amplify_model.AgreementStatus.DISPUTED,
+                      ),
                     ),
               ),
             );

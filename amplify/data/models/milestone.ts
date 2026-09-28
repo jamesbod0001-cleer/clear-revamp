@@ -14,6 +14,7 @@ export const Milestone = a.model({
 
     status: a.enum(['PENDING', 'IN_PROGRESS', 'READY_FOR_RELEASE', 'PROCESSING_RELEASE', 'RELEASED', 'DISPUTED']),
     agreement: a.belongsTo('Agreement', 'agreementId'),
+    disputes: a.hasMany('Dispute', 'milestoneId'),
     payouts: a.hasMany('Payout', 'milestoneId'),
 }).secondaryIndexes((index) => [
     index("status").queryField("milestonesByStatus")

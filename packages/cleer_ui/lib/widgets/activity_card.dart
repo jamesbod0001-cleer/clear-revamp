@@ -87,11 +87,17 @@ class ActivityCard extends StatelessWidget {
           size: Dimens.size.s24,
         );
       case ActivityType.delivery:
-        color = Color(0xFFFDF0E1);
+        color = const Color(0xFFFDF0E1);
         icon = PhosphorIcon(
           PhosphorIcons.truck(PhosphorIconsStyle.duotone),
           color: context.color.warning,
           size: Dimens.size.s24,
+        );
+      case ActivityType.dispute:
+        color = context.color.errorLight;
+        icon = Assets.images.errorFlag.image(
+          height: Dimens.size.s24,
+          width: Dimens.size.s19,
         );
     }
 

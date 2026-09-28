@@ -49,6 +49,8 @@ ActivityType _mapActivityTypeToDomain(amplify_model.ActivityType p) {
       return ActivityType.payment;
     case amplify_model.ActivityType.DELIVERY:
       return ActivityType.delivery;
+    case amplify_model.ActivityType.DISPUTE:
+      return ActivityType.dispute;
   }
 }
 
@@ -60,5 +62,7 @@ amplify_model.ActivityType _mapActivityTypeToAmplify(ActivityType p) {
       return amplify_model.ActivityType.PAYMENT;
     case ActivityType.delivery:
       return amplify_model.ActivityType.DELIVERY;
+    case ActivityType.dispute:
+      return amplify_model.ActivityType.DISPUTE;
   }
 }

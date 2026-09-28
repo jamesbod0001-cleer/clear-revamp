@@ -1,7 +1,4 @@
-import 'package:cleer_core/models/agreement/agreement.dart';
-import 'package:cleer_core/models/agreement/agreement_enums.dart';
-import 'package:cleer_core/models/physical_delivery_context/physical_delivery_context_enums.dart';
-import 'package:cleer_core/models/user/user.dart';
+import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
@@ -10,7 +7,13 @@ import 'package:gap/gap.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 extension AgreementUIExtensions on Agreement {
+  bool get isDisputed =>
+      status == AgreementStatus.disputed ||
+      activeMilestoneStatus?.toUpperCase() == 'DISPUTED';
+
   Color getStatusPillColor(BuildContext context) {
+    if (isDisputed) return context.color.errorLight;
+
     switch (status) {
       case AgreementStatus.draft:
       case AgreementStatus.awaitingRecipient:
@@ -23,6 +26,8 @@ extension AgreementUIExtensions on Agreement {
         return context.color.infoLight;
       case AgreementStatus.released:
         return context.color.successLight;
+      case AgreementStatus.disputed:
+        return context.color.errorLight;
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
@@ -31,6 +36,8 @@ extension AgreementUIExtensions on Agreement {
   }
 
   Color getStatusTextColor(BuildContext context) {
+    if (isDisputed) return context.color.error;
+
     switch (status) {
       case AgreementStatus.draft:
       case AgreementStatus.awaitingRecipient:
@@ -43,6 +50,8 @@ extension AgreementUIExtensions on Agreement {
         return context.color.info;
       case AgreementStatus.released:
         return context.color.success;
+      case AgreementStatus.disputed:
+        return context.color.error;
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Update these with your actual colors when ready
@@ -52,6 +61,8 @@ extension AgreementUIExtensions on Agreement {
 
   String getStatusText(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    if (isDisputed) return l10n.inDispute;
+
     switch (status) {
       case AgreementStatus.draft:
       case AgreementStatus.awaitingRecipient:
@@ -64,6 +75,8 @@ extension AgreementUIExtensions on Agreement {
         return l10n.fundsHeld;
       case AgreementStatus.released:
         return l10n.released;
+      case AgreementStatus.disputed:
+        return l10n.inDispute;
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         // TODO: Add actual l10n strings later
@@ -94,6 +107,7 @@ extension AgreementUIExtensions on Agreement {
       case AgreementStatus.readyForRelease:
       case AgreementStatus.processingRelease:
       case AgreementStatus.released:
+      case AgreementStatus.disputed:
       case AgreementStatus.rejected:
       case AgreementStatus.cancelled:
         return l10n.agreementWith(partnerName);
@@ -189,6 +203,62 @@ extension AgreementUIExtensions on Agreement {
         return expectedReleaseDate;
       case DisbursementType.milestones:
         return activeMilestoneExpectedReleaseDate;
+    }
+  }
+}
+
+extension AgreementDisputeCategoryExtension on Agreement {
+  DisputeReasonCategory get reportIssueCategory {
+    if (category == AgreementCategory.physicalGoods) {
+      return DisputeReasonCategory.products;
+    }
+    if (category == AgreementCategory.servicesWork &&
+        disbursementType == DisbursementType.milestones) {
+      return DisputeReasonCategory.milestones;
+    }
+    return DisputeReasonCategory.services;
+  }
+
+  List<DisputeReason> get availableIssueReasons {
+    return DisputeReason.forCategory(reportIssueCategory);
+  }
+}
+
+extension DisputeReasonUIExtension on DisputeReason {
+  String getLabel(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (this) {
+      case DisputeReason.itemNotReceived:
+        return l10n.issueReasonItemNotReceived;
+      case DisputeReason.itemDamaged:
+        return l10n.issueReasonItemDamaged;
+      case DisputeReason.wrongItemReceived:
+        return l10n.issueReasonWrongItemReceived;
+      case DisputeReason.itemSignificantlyDifferent:
+        return l10n.issueReasonItemSignificantlyDifferent;
+      case DisputeReason.deliveryIssue:
+        return l10n.issueReasonDeliveryIssue;
+      case DisputeReason.workNotDelivered:
+        return l10n.issueReasonWorkNotDelivered;
+      case DisputeReason.workIncomplete:
+        return l10n.issueReasonWorkIncomplete;
+      case DisputeReason.workDoesNotMatch:
+        return l10n.issueReasonWorkDoesNotMatch;
+      case DisputeReason.serviceDeadlineMissed:
+      case DisputeReason.milestoneDeadlineMissed:
+        return l10n.issueReasonServiceDeadlineMissed;
+      case DisputeReason.paymentReleasedByMistake:
+        return l10n.issueReasonPaymentReleasedByMistake;
+      case DisputeReason.milestoneNotCompleted:
+        return l10n.issueReasonMilestoneNotCompleted;
+      case DisputeReason.milestoneDoesNotMatch:
+        return l10n.issueReasonMilestoneDoesNotMatch;
+      case DisputeReason.workRequiresRevisions:
+        return l10n.issueReasonWorkRequiresRevisions;
+      case DisputeReason.productOther:
+      case DisputeReason.serviceOther:
+      case DisputeReason.milestoneOther:
+        return l10n.issueReasonOther;
     }
   }
 }

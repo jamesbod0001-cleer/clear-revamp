@@ -149,6 +149,8 @@ AgreementStatus _mapAgreementStatusToDomain(amplify_model.AgreementStatus p) {
       return AgreementStatus.cancelled;
     case amplify_model.AgreementStatus.RELEASED:
       return AgreementStatus.released;
+    case amplify_model.AgreementStatus.DISPUTED:
+      return AgreementStatus.disputed;
   }
 }
 
@@ -174,5 +176,7 @@ amplify_model.AgreementStatus _mapAgreementStatusToAmplify(AgreementStatus p) {
       return amplify_model.AgreementStatus.CANCELLED;
     case AgreementStatus.released:
       return amplify_model.AgreementStatus.RELEASED;
+    case AgreementStatus.disputed:
+      return amplify_model.AgreementStatus.DISPUTED;
   }
 }

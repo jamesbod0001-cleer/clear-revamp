@@ -70,6 +70,18 @@ class StorageUseCase extends _$StorageUseCase {
     return result;
   }
 
+  Future<ResultDart<List<XFile>, StorageFailure>> pickFiles(
+    PickFilesParams params,
+  ) async {
+    _log.info("Picking files");
+    final result = await _mediaRepository.pickFiles(params);
+    result.fold(
+      (files) => _log.info("Picked ${files.length} files"),
+      (failure) => _log.error("Error picking files", failure),
+    );
+    return result;
+  }
+
   Future<ResultDart<ProcessImageDomainResult, StorageFailure>> processImage(
     ProcessImageParams params,
   ) async {
@@ -79,6 +91,26 @@ class StorageUseCase extends _$StorageUseCase {
     result.fold(
       ((success) => _log.info("Image processed")),
       (failure) => _log.error("Error processing image", failure),
+    );
+    return result;
+  }
+
+  Future<ResultDart<String, StorageFailure>> uploadFile({
+    required XFile file,
+    required String fullPath,
+    void Function(double)? onProgress,
+  }) async {
+    _log.info("Uploading file to path: $fullPath");
+    final result = await _storageRepository.uploadFile(
+      UploadFileParams(
+        file: file,
+        path: fullPath,
+        onProgress: onProgress,
+      ),
+    );
+    result.fold(
+      (key) => _log.info("File uploaded successfully to path: $key"),
+      (failure) => _log.error("Error uploading file to path: $fullPath", failure),
     );
     return result;
   }

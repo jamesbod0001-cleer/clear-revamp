@@ -9,4 +9,7 @@ abstract class MediaRepository {
   Future<ResultDart<ProcessImageDomainResult, StorageFailure>> processImage(
     ProcessImageParams params,
   );
+  Future<ResultDart<List<XFile>, StorageFailure>> pickFiles(
+    PickFilesParams params,
+  );
 }

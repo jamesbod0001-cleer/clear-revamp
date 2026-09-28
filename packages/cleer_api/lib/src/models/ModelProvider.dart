@@ -22,6 +22,7 @@
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'Activity.dart';
 import 'Agreement.dart';
+import 'Dispute.dart';
 import 'Milestone.dart';
 import 'Payout.dart';
 import 'PayoutDestination.dart';
@@ -45,6 +46,8 @@ export 'AgreementPreview.dart';
 export 'AgreementStatus.dart';
 export 'DeliveryDetails.dart';
 export 'DeliveryDetailsArrangedBy.dart';
+export 'Dispute.dart';
+export 'DisputeStatus.dart';
 export 'Milestone.dart';
 export 'MilestonePreview.dart';
 export 'MilestoneStatus.dart';
@@ -65,9 +68,9 @@ export 'UserPreview.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "98de201a8fb26d0209b02c87c2fd661c";
+  String version = "5cf258944cc6a64f79c169ae147e714f";
   @override
-  List<amplify_core.ModelSchema> modelSchemas = [Activity.schema, Agreement.schema, Milestone.schema, Payout.schema, PayoutDestination.schema, Refund.schema, StatusHistory.schema, Transaction.schema, User.schema];
+  List<amplify_core.ModelSchema> modelSchemas = [Activity.schema, Agreement.schema, Dispute.schema, Milestone.schema, Payout.schema, PayoutDestination.schema, Refund.schema, StatusHistory.schema, Transaction.schema, User.schema];
   @override
   List<amplify_core.ModelSchema> customTypeSchemas = [AgreementPreview.schema, DeliveryDetails.schema, MilestonePreview.schema, Photo.schema, PhysicalDeliveryContext.schema, UserPreview.schema];
   static final ModelProvider _instance = ModelProvider();
@@ -80,6 +83,8 @@ class ModelProvider implements amplify_core.ModelProviderInterface {
         return Activity.classType;
       case "Agreement":
         return Agreement.classType;
+      case "Dispute":
+        return Dispute.classType;
       case "Milestone":
         return Milestone.classType;
       case "Payout":

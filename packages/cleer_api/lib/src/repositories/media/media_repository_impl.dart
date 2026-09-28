@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:cleer_api/src/mappers/media_mappers.dart';
 import 'package:cleer_api/src/services/media/media_service_client.dart';
+import 'package:cleer_api/src/services/media/models/pick_files/pick_files_request.dart';
 import 'package:cleer_api/src/services/media/models/process_image/process_image_request.dart';
 import 'package:cleer_core/models/process_image_result/process_image_result.dart';
 
@@ -70,6 +71,31 @@ class MediaRepositoryImpl extends MediaRepository {
       }
     } catch (e) {
       _log.error('Error picking images from gallery: $e');
+      return Failure(AmplifyStorageExceptionHandler.handleGenericException(e));
+    }
+  }
+
+  @override
+  Future<ResultDart<List<XFile>, StorageFailure>> pickFiles(
+    PickFilesParams params,
+  ) async {
+    try {
+      _log.info('Picking files');
+      final files = await _mediaServiceClient.pickFiles(
+        PickFilesRequest(
+          allowedExtensions: params.allowedExtensions,
+          allowMultiple: params.allowMultiple,
+          limit: params.limit,
+        ),
+      );
+      if (files.isEmpty) {
+        _log.error('No files picked, user canceled');
+        return Failure(StorageFailure.canceled());
+      }
+      _log.info('Successfully picked ${files.length} files');
+      return Success(files);
+    } catch (e) {
+      _log.error('Error picking files: $e');
       return Failure(AmplifyStorageExceptionHandler.handleGenericException(e));
     }
   }

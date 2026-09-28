@@ -1,5 +1,7 @@
+import 'package:cleer_api/src/services/media/models/pick_files/pick_files_request.dart';
 import 'package:cleer_api/src/services/media/models/process_image/process_image_request.dart';
 import 'package:cleer_api/src/services/media/models/process_image/process_image_result.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +26,38 @@ class MediaServiceClient {
   /// Pick multiple images
   Future<List<XFile>> pickMultipleImages(int? limit) async {
     return await _imagePicker.pickMultiImage(limit: limit);
+  }
+
+  /// Pick generic files (PDFs, Documents, Images, Videos)
+  Future<List<XFile>> pickFiles(PickFilesRequest request) async {
+    final List<PlatformFile> files = request.allowMultiple
+        ? await FilePicker.pickFiles(
+            type: request.allowedExtensions != null
+                ? FileType.custom
+                : FileType.any,
+            allowedExtensions: request.allowedExtensions,
+          )
+        : await () async {
+            final singleFile = await FilePicker.pickFile(
+              type: request.allowedExtensions != null
+                  ? FileType.custom
+                  : FileType.any,
+              allowedExtensions: request.allowedExtensions,
+            );
+            return singleFile != null ? [singleFile] : <PlatformFile>[];
+          }();
+
+    if (files.isEmpty) return [];
+    final xFiles = files
+        .where((f) => f.path != null)
+        .map((f) => XFile(f.path!))
+        .toList();
+
+    if (request.limit != null && xFiles.length > request.limit!) {
+      return xFiles.take(request.limit!).toList();
+    }
+
+    return xFiles;
   }
 
   /// The "Heavy Lifting" processing image

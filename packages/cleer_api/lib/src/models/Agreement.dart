@@ -47,6 +47,7 @@ class Agreement extends amplify_core.Model {
   final amplify_core.TemporalDate? _activeMilestoneExpectedReleaseDate;
   final amplify_core.TemporalDateTime? _releaseEligibleAt;
   final List<Milestone>? _milestones;
+  final List<Dispute>? _disputes;
   final List<Payout>? _payouts;
   final List<Refund>? _refunds;
   final User? _initiator;
@@ -191,6 +192,10 @@ class Agreement extends amplify_core.Model {
     return _milestones;
   }
   
+  List<Dispute>? get disputes {
+    return _disputes;
+  }
+  
   List<Payout>? get payouts {
     return _payouts;
   }
@@ -227,9 +232,9 @@ class Agreement extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, physicalDeliveryContext, activeMilestoneId, activeMilestoneStatus, activeMilestoneName, activeMilestoneAmount, activeMilestoneExpectedReleaseDate, releaseEligibleAt, milestones, payouts, refunds, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _physicalDeliveryContext = physicalDeliveryContext, _activeMilestoneId = activeMilestoneId, _activeMilestoneStatus = activeMilestoneStatus, _activeMilestoneName = activeMilestoneName, _activeMilestoneAmount = activeMilestoneAmount, _activeMilestoneExpectedReleaseDate = activeMilestoneExpectedReleaseDate, _releaseEligibleAt = releaseEligibleAt, _milestones = milestones, _payouts = payouts, _refunds = refunds, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Agreement._internal({required this.id, required shortCode, required amount, required currency, disbursementType, required category, expectedReleaseDate, required description, participants, lastUpdatedBy, initiatorRole, status, physicalDeliveryContext, activeMilestoneId, activeMilestoneStatus, activeMilestoneName, activeMilestoneAmount, activeMilestoneExpectedReleaseDate, releaseEligibleAt, milestones, disputes, payouts, refunds, initiator, sender, recipient, payoutDestination, transactions, createdAt, updatedAt}): _shortCode = shortCode, _amount = amount, _currency = currency, _disbursementType = disbursementType, _category = category, _expectedReleaseDate = expectedReleaseDate, _description = description, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _initiatorRole = initiatorRole, _status = status, _physicalDeliveryContext = physicalDeliveryContext, _activeMilestoneId = activeMilestoneId, _activeMilestoneStatus = activeMilestoneStatus, _activeMilestoneName = activeMilestoneName, _activeMilestoneAmount = activeMilestoneAmount, _activeMilestoneExpectedReleaseDate = activeMilestoneExpectedReleaseDate, _releaseEligibleAt = releaseEligibleAt, _milestones = milestones, _disputes = disputes, _payouts = payouts, _refunds = refunds, _initiator = initiator, _sender = sender, _recipient = recipient, _payoutDestination = payoutDestination, _transactions = transactions, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, double? activeMilestoneAmount, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Payout>? payouts, List<Refund>? refunds, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
+  factory Agreement({String? id, required String shortCode, required double amount, required String currency, AgreementDisbursementType? disbursementType, required String category, amplify_core.TemporalDate? expectedReleaseDate, required String description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, double? activeMilestoneAmount, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Dispute>? disputes, List<Payout>? payouts, List<Refund>? refunds, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       shortCode: shortCode,
@@ -251,6 +256,7 @@ class Agreement extends amplify_core.Model {
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate,
       releaseEligibleAt: releaseEligibleAt,
       milestones: milestones != null ? List<Milestone>.unmodifiable(milestones) : milestones,
+      disputes: disputes != null ? List<Dispute>.unmodifiable(disputes) : disputes,
       payouts: payouts != null ? List<Payout>.unmodifiable(payouts) : payouts,
       refunds: refunds != null ? List<Refund>.unmodifiable(refunds) : refunds,
       initiator: initiator,
@@ -289,6 +295,7 @@ class Agreement extends amplify_core.Model {
       _activeMilestoneExpectedReleaseDate == other._activeMilestoneExpectedReleaseDate &&
       _releaseEligibleAt == other._releaseEligibleAt &&
       DeepCollectionEquality().equals(_milestones, other._milestones) &&
+      DeepCollectionEquality().equals(_disputes, other._disputes) &&
       DeepCollectionEquality().equals(_payouts, other._payouts) &&
       DeepCollectionEquality().equals(_refunds, other._refunds) &&
       _initiator == other._initiator &&
@@ -337,7 +344,7 @@ class Agreement extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, double? activeMilestoneAmount, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Payout>? payouts, List<Refund>? refunds, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
+  Agreement copyWith({String? shortCode, double? amount, String? currency, AgreementDisbursementType? disbursementType, String? category, amplify_core.TemporalDate? expectedReleaseDate, String? description, List<String>? participants, String? lastUpdatedBy, AgreementInitiatorRole? initiatorRole, AgreementStatus? status, PhysicalDeliveryContext? physicalDeliveryContext, String? activeMilestoneId, String? activeMilestoneStatus, String? activeMilestoneName, double? activeMilestoneAmount, amplify_core.TemporalDate? activeMilestoneExpectedReleaseDate, amplify_core.TemporalDateTime? releaseEligibleAt, List<Milestone>? milestones, List<Dispute>? disputes, List<Payout>? payouts, List<Refund>? refunds, User? initiator, User? sender, User? recipient, PayoutDestination? payoutDestination, List<Transaction>? transactions, amplify_core.TemporalDateTime? createdAt}) {
     return Agreement._internal(
       id: id,
       shortCode: shortCode ?? this.shortCode,
@@ -359,6 +366,7 @@ class Agreement extends amplify_core.Model {
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate ?? this.activeMilestoneExpectedReleaseDate,
       releaseEligibleAt: releaseEligibleAt ?? this.releaseEligibleAt,
       milestones: milestones ?? this.milestones,
+      disputes: disputes ?? this.disputes,
       payouts: payouts ?? this.payouts,
       refunds: refunds ?? this.refunds,
       initiator: initiator ?? this.initiator,
@@ -389,6 +397,7 @@ class Agreement extends amplify_core.Model {
     ModelFieldValue<amplify_core.TemporalDate?>? activeMilestoneExpectedReleaseDate,
     ModelFieldValue<amplify_core.TemporalDateTime?>? releaseEligibleAt,
     ModelFieldValue<List<Milestone>?>? milestones,
+    ModelFieldValue<List<Dispute>?>? disputes,
     ModelFieldValue<List<Payout>?>? payouts,
     ModelFieldValue<List<Refund>?>? refunds,
     ModelFieldValue<User?>? initiator,
@@ -419,6 +428,7 @@ class Agreement extends amplify_core.Model {
       activeMilestoneExpectedReleaseDate: activeMilestoneExpectedReleaseDate == null ? this.activeMilestoneExpectedReleaseDate : activeMilestoneExpectedReleaseDate.value,
       releaseEligibleAt: releaseEligibleAt == null ? this.releaseEligibleAt : releaseEligibleAt.value,
       milestones: milestones == null ? this.milestones : milestones.value,
+      disputes: disputes == null ? this.disputes : disputes.value,
       payouts: payouts == null ? this.payouts : payouts.value,
       refunds: refunds == null ? this.refunds : refunds.value,
       initiator: initiator == null ? this.initiator : initiator.value,
@@ -465,6 +475,19 @@ class Agreement extends amplify_core.Model {
           ? (json['milestones'] as List)
               .where((e) => e?['serializedData'] != null)
               .map((e) => Milestone.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
+      _disputes = json['disputes']  is Map
+        ? (json['disputes']['items'] is List
+          ? (json['disputes']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Dispute.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['disputes'] is List
+          ? (json['disputes'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Dispute.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
               .toList()
           : null),
       _payouts = json['payouts']  is Map
@@ -530,7 +553,7 @@ class Agreement extends amplify_core.Model {
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'physicalDeliveryContext': _physicalDeliveryContext?.toJson(), 'activeMilestoneId': _activeMilestoneId, 'activeMilestoneStatus': _activeMilestoneStatus, 'activeMilestoneName': _activeMilestoneName, 'activeMilestoneAmount': _activeMilestoneAmount, 'activeMilestoneExpectedReleaseDate': _activeMilestoneExpectedReleaseDate?.format(), 'releaseEligibleAt': _releaseEligibleAt?.format(), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'payouts': _payouts?.map((Payout? e) => e?.toJson()).toList(), 'refunds': _refunds?.map((Refund? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'shortCode': _shortCode, 'amount': _amount, 'currency': _currency, 'disbursementType': amplify_core.enumToString(_disbursementType), 'category': _category, 'expectedReleaseDate': _expectedReleaseDate?.format(), 'description': _description, 'participants': _participants, 'lastUpdatedBy': _lastUpdatedBy, 'initiatorRole': amplify_core.enumToString(_initiatorRole), 'status': amplify_core.enumToString(_status), 'physicalDeliveryContext': _physicalDeliveryContext?.toJson(), 'activeMilestoneId': _activeMilestoneId, 'activeMilestoneStatus': _activeMilestoneStatus, 'activeMilestoneName': _activeMilestoneName, 'activeMilestoneAmount': _activeMilestoneAmount, 'activeMilestoneExpectedReleaseDate': _activeMilestoneExpectedReleaseDate?.format(), 'releaseEligibleAt': _releaseEligibleAt?.format(), 'milestones': _milestones?.map((Milestone? e) => e?.toJson()).toList(), 'disputes': _disputes?.map((Dispute? e) => e?.toJson()).toList(), 'payouts': _payouts?.map((Payout? e) => e?.toJson()).toList(), 'refunds': _refunds?.map((Refund? e) => e?.toJson()).toList(), 'initiator': _initiator?.toJson(), 'sender': _sender?.toJson(), 'recipient': _recipient?.toJson(), 'payoutDestination': _payoutDestination?.toJson(), 'transactions': _transactions?.map((Transaction? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -554,6 +577,7 @@ class Agreement extends amplify_core.Model {
     'activeMilestoneExpectedReleaseDate': _activeMilestoneExpectedReleaseDate,
     'releaseEligibleAt': _releaseEligibleAt,
     'milestones': _milestones,
+    'disputes': _disputes,
     'payouts': _payouts,
     'refunds': _refunds,
     'initiator': _initiator,
@@ -588,6 +612,9 @@ class Agreement extends amplify_core.Model {
   static final MILESTONES = amplify_core.QueryField(
     fieldName: "milestones",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Milestone'));
+  static final DISPUTES = amplify_core.QueryField(
+    fieldName: "disputes",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Dispute'));
   static final PAYOUTS = amplify_core.QueryField(
     fieldName: "payouts",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Payout'));
@@ -749,6 +776,13 @@ class Agreement extends amplify_core.Model {
       isRequired: false,
       ofModelName: 'Milestone',
       associatedKey: Milestone.AGREEMENT
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Agreement.DISPUTES,
+      isRequired: false,
+      ofModelName: 'Dispute',
+      associatedKey: Dispute.AGREEMENT
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(

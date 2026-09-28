@@ -22,5 +22,6 @@
 enum ActivityType {
   AGREEMENT,
   PAYMENT,
-  DELIVERY
+  DELIVERY,
+  DISPUTE
 }

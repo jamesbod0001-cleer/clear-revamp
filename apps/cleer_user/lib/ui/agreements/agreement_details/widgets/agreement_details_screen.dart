@@ -1,7 +1,9 @@
 import 'package:cleer/routing/routes.dart';
+import 'package:cleer/domain/providers/dispute/dispute_provider.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/cancel_agreement_bottom_sheet.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/dynamic_agreement_header.dart';
-import 'package:cleer/ui/agreements/agreement_details/widgets/raise_dispute_bottom_sheet.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/issue_status_timeline.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/report_issue_bottom_sheet.dart';
 import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer/domain/providers/agreement/agreement_provider.dart';
@@ -159,11 +161,12 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         ],
                       ),
                     )
-                  else if (![
-                    AgreementStatus.awaitingFunding,
-                    AgreementStatus.awaitingRecipient,
-                    AgreementStatus.released,
-                  ].contains(agreement.status))
+                  else if (!agreement.isDisputed &&
+                      ![
+                        AgreementStatus.awaitingFunding,
+                        AgreementStatus.awaitingRecipient,
+                        AgreementStatus.released,
+                      ].contains(agreement.status))
                     OutlinedButton(
                       style: OutlinedButton.styleFrom(
                         backgroundColor: context.color.errorLight,
@@ -180,7 +183,10 @@ class AgreementDetailsScreen extends ConsumerWidget {
                         ),
                         tapTargetSize: .shrinkWrap,
                       ),
-                      onPressed: () => RaiseDisputeBottomSheet.show(context, agreement: agreement),
+                      onPressed: () => ReportIssueBottomSheet.show(
+                        context,
+                        agreement: agreement,
+                      ),
                       child: Row(
                         mainAxisSize: .min,
                         children: [
@@ -279,6 +285,70 @@ class AgreementDetailsScreen extends ConsumerWidget {
                           agreement: agreement,
                           currentUser: user,
                         ),
+                        if (agreement.isDisputed && agreement.id != null) ...[
+                          Builder(
+                            builder: (context) {
+                              final disputeState = ref.watch(
+                                activeAgreementDisputeProvider(agreement.id!),
+                              );
+                              final dispute = disputeState.value;
+                              final isDisputeLoading =
+                                  disputeState.isLoading && !disputeState.isReloading;
+
+                              if (dispute == null && !isDisputeLoading) {
+                                return const SizedBox.shrink();
+                              }
+
+                              final currentDispute = dispute ??
+                                  Dispute(
+                                    id: 'skeleton',
+                                    reason: DisputeReason.deliveryIssue,
+                                    description: 'Loading issue status timeline...',
+                                    raisedBy: user,
+                                    createdAt: DateTime.now(),
+                                  );
+
+                              final disputeHistoryState = isDisputeLoading
+                                  ? const AsyncLoading<List<StatusHistory>>()
+                                  : ref.watch(
+                                      disputeStatusHistoryProvider(
+                                        currentDispute.id!,
+                                      ),
+                                    );
+
+                              return Column(
+                                children: [
+                                  Gap(Dimens.spacing.sp24),
+                                  disputeHistoryState.maybeWhen(
+                                    error: (error, stackTrace) =>
+                                        error.toErrorState(
+                                          ref,
+                                          onRetry: () => ref.invalidate(
+                                            disputeStatusHistoryProvider(
+                                              currentDispute.id!,
+                                            ),
+                                          ),
+                                          variant: AppErrorStateVariant.card,
+                                        ),
+                                    orElse: () {
+                                      final isLoading =
+                                          isDisputeLoading ||
+                                          disputeHistoryState.isLoading;
+                                      return Skeletonizer(
+                                        enabled: isLoading,
+                                        child: IssueStatusTimeline(
+                                          dispute: currentDispute,
+                                          statusHistory:
+                                              disputeHistoryState.value ?? [],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
                         if ([
                           AgreementStatus.awaitingFunding,
                           AgreementStatus.awaitingRecipient,

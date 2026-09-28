@@ -1,4 +1,4 @@
-import 'package:cleer/ui/agreements/route_issue/widgets/report_issue_screen.dart';
+import 'package:cleer/ui/agreements/report_issue/widgets/report_issue_screen.dart';
 import 'package:cleer/ui/home/activity_timeline/widgets/activity_timeline_screen.dart';
 import 'package:cleer_core/models/agreement/agreement.dart';
 import 'package:cleer/ui/agreements/accept_agreement/widgets/accept_agreement_screen.dart';

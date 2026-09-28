@@ -1,1 +1,1 @@
-enum ActivityType { agreement, payment, delivery }
+enum ActivityType { agreement, payment, delivery, dispute }

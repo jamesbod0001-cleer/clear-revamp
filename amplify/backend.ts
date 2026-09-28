@@ -20,6 +20,7 @@ import { FunctionUrlAuthType, HttpMethod } from 'aws-cdk-lib/aws-lambda';
 import { previewAgreement } from "./functions/preview-agreement/resource";
 import { logAgreementStatus } from "./functions/log-agreement-status/resource";
 import { logMilestoneStatus } from "./functions/log-milestone-status/resource";
+import { logDisputeStatus } from "./functions/log-dispute-status/resource";
 import { generateAgreementActivity } from "./functions/generate-agreement-activity/resource";
 import { dispatchActivityNotification } from "./functions/dispatch-activity-notification/resource";
 import {syncMilestoneToAgreement} from "./functions/sync-milestone-to-agreement/resource";
@@ -33,6 +34,7 @@ const backend = defineBackend({
     storage,
     logAgreementStatus,
     logMilestoneStatus,
+    logDisputeStatus,
     flutterwaveWebhook,
     previewAgreement,
     generateAgreementActivity,
@@ -76,9 +78,13 @@ cfnResources.amplifyDynamoDbTables['Agreement'].streamSpecification = {
 cfnResources.amplifyDynamoDbTables['Milestone'].streamSpecification = {
     streamViewType: StreamViewType.NEW_AND_OLD_IMAGES,
 };
+cfnResources.amplifyDynamoDbTables['Dispute'].streamSpecification = {
+    streamViewType: StreamViewType.NEW_AND_OLD_IMAGES,
+};
 
 const agreementTable = backend.data.resources.tables['Agreement'];
 const milestoneTable = backend.data.resources.tables['Milestone'];
+const disputeTable = backend.data.resources.tables['Dispute'];
 
 // Simplified filter: Just wake up on any modification.
 // The Lambdas will diff the old and new images to see thr actual change.
@@ -95,6 +101,13 @@ backend.logAgreementStatus.resources.lambda.addEventSource(
 
 backend.logMilestoneStatus.resources.lambda.addEventSource(
     new DynamoEventSource(milestoneTable, {
+        startingPosition: StartingPosition.LATEST,
+        filters: [anyModificationFilter],
+    })
+);
+
+backend.logDisputeStatus.resources.lambda.addEventSource(
+    new DynamoEventSource(disputeTable, {
         startingPosition: StartingPosition.LATEST,
         filters: [anyModificationFilter],
     })

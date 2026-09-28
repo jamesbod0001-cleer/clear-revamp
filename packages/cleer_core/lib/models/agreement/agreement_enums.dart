@@ -37,4 +37,5 @@ enum AgreementStatus {
   cancelled,
   rejected,
   released,
+  disputed,
 }
