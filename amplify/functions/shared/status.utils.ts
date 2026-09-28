@@ -8,7 +8,7 @@ export const logger = new Logger({
 export async function logStatusChange(
     client: any,
     entityId: string,
-    entityType: 'AGREEMENT' | 'MILESTONE',
+    entityType: 'AGREEMENT' | 'MILESTONE' | 'DISPUTE',
     context: 'CORE_STATUS' | 'DELIVERY_STATUS',
     oldStatus: string | null,
     newStatus: string,

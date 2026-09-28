@@ -19,11 +19,8 @@ export const Dispute = a.model({
     agreement: a.belongsTo('Agreement', 'agreementId'),
     milestone: a.belongsTo('Milestone', 'milestoneId'),
     raisedBy: a.belongsTo('User', 'raisedById'),
-
-    createdAt: a.datetime(),
-    updatedAt: a.datetime(),
 }).secondaryIndexes((index) => [
-    index("agreementId"),
+    index("agreementId").queryField("disputesByAgreementId"),
     index("status")
 ]).authorization(allow => [
     allow.ownersDefinedIn('participants').identityClaim('sub'),

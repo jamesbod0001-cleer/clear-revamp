@@ -26,6 +26,7 @@ import {Payout} from "./models/payout";
 import {Refund} from "./models/refund";
 import {Dispute} from "./models/dispute";
 import {evaluateDeadlines} from "../functions/evaluate-deadlines/resource";
+import {logDisputeStatus} from "../functions/log-dispute-status/resource";
 
 const schema = a.schema({
     User,
@@ -70,7 +71,7 @@ const schema = a.schema({
         .returns(a.string())
         .authorization(allow => [allow.authenticated()])
         .handler(a.handler.function(flutterwaveProxy)),
-}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity),allow.resource(syncMilestoneToAgreement),allow.resource(processPayouts), allow.resource(processRefund), allow.resource(evaluateDeadlines)]);
+}).authorization(allow => [allow.resource(logAgreementStatus), allow.resource(logMilestoneStatus),allow.resource(logDisputeStatus), allow.resource(flutterwaveWebhook), allow.resource(previewAgreement), allow.resource(joinAgreement), allow.resource(generateAgreementActivity),allow.resource(syncMilestoneToAgreement),allow.resource(processPayouts), allow.resource(processRefund), allow.resource(evaluateDeadlines)]);
 
 export type Schema = ClientSchema<typeof schema>;
 
