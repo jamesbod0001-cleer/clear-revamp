@@ -1,5 +1,7 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer_api/src/mappers/dispute_mappers.dart';
+import 'package:cleer_api/src/mappers/status_history_mappers.dart';
+import 'package:cleer_api/src/models/ModelProvider.dart' as amplify_model;
 import 'package:cleer_api/src/repositories/api/mixins/amplify_api_repository_mixin.dart';
 import 'package:cleer_api/src/services/api/amplify_dispute_service_client.dart';
 import 'package:cleer_core/cleer_core.dart';
@@ -46,5 +48,68 @@ class AmplifyDisputeRepositoryImpl
       operationName: 'GetDispute',
       targetId: disputeId,
     );
+  }
+
+  @override
+  Future<ResultDart<List<Dispute>, DataFailure>> getDisputesByAgreement(
+    String agreementId,
+  ) async {
+    return await performDataOperation<List<Dispute>>(
+      operation: () async {
+        final response = await _disputeServiceClient.queryDisputesByAgreement(
+          agreementId,
+        );
+        return response.items
+            .map((d) => d?.toDomain())
+            .whereType<Dispute>()
+            .toList();
+      },
+      operationName: 'GetDisputesByAgreement',
+      targetId: agreementId,
+    );
+  }
+
+  @override
+  Stream<Dispute> observeAgreementDisputeUpdates(String agreementId) {
+    return _disputeServiceClient
+        .observeAgreementDisputeUpdates(agreementId)
+        .handleError((error) => log.error('Stream error for dispute', error))
+        .where((event) => event.data != null)
+        .map((event) {
+          log.info('New event: Dispute updated: ${event.data}');
+          return event.data!.toDomain();
+        });
+  }
+
+  @override
+  Future<ResultDart<List<StatusHistory>, DataFailure>> getDisputeStatusHistory(
+    String disputeId,
+  ) async {
+    return await performDataOperation<List<StatusHistory>>(
+      operation: () async {
+        final response = await _disputeServiceClient.queryDisputeStatusHistory(
+          disputeId,
+        );
+        return response.items
+            .whereType<amplify_model.StatusHistory>()
+            .map((item) => item.toDomain())
+            .toList();
+      },
+      operationName: 'GetDisputeStatusHistory',
+      targetId: disputeId,
+    );
+  }
+
+  @override
+  Stream<StatusHistory> observeDisputeStatusHistoryCreates(
+    String disputeId,
+  ) {
+    return _disputeServiceClient
+        .observeDisputeStatusHistoryCreates(disputeId)
+        .handleError(
+          (error) => log.error('Stream error for dispute status history', error),
+        )
+        .where((event) => event.data != null)
+        .map((event) => event.data!.toDomain());
   }
 }

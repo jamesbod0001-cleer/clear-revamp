@@ -117,7 +117,7 @@ class Dispute extends amplify_core.Model {
   
   const Dispute._internal({required this.id, required reason, required description, evidenceKeys, status, participants, lastUpdatedBy, agreement, milestone, raisedBy, createdAt, updatedAt}): _reason = reason, _description = description, _evidenceKeys = evidenceKeys, _status = status, _participants = participants, _lastUpdatedBy = lastUpdatedBy, _agreement = agreement, _milestone = milestone, _raisedBy = raisedBy, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Dispute({String? id, required String reason, required String description, List<String>? evidenceKeys, DisputeStatus? status, List<String>? participants, String? lastUpdatedBy, Agreement? agreement, Milestone? milestone, User? raisedBy, amplify_core.TemporalDateTime? createdAt, amplify_core.TemporalDateTime? updatedAt}) {
+  factory Dispute({String? id, required String reason, required String description, List<String>? evidenceKeys, DisputeStatus? status, List<String>? participants, String? lastUpdatedBy, Agreement? agreement, Milestone? milestone, User? raisedBy}) {
     return Dispute._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       reason: reason,
@@ -128,9 +128,7 @@ class Dispute extends amplify_core.Model {
       lastUpdatedBy: lastUpdatedBy,
       agreement: agreement,
       milestone: milestone,
-      raisedBy: raisedBy,
-      createdAt: createdAt,
-      updatedAt: updatedAt);
+      raisedBy: raisedBy);
   }
   
   bool equals(Object other) {
@@ -150,9 +148,7 @@ class Dispute extends amplify_core.Model {
       _lastUpdatedBy == other._lastUpdatedBy &&
       _agreement == other._agreement &&
       _milestone == other._milestone &&
-      _raisedBy == other._raisedBy &&
-      _createdAt == other._createdAt &&
-      _updatedAt == other._updatedAt;
+      _raisedBy == other._raisedBy;
   }
   
   @override
@@ -180,7 +176,7 @@ class Dispute extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Dispute copyWith({String? reason, String? description, List<String>? evidenceKeys, DisputeStatus? status, List<String>? participants, String? lastUpdatedBy, Agreement? agreement, Milestone? milestone, User? raisedBy, amplify_core.TemporalDateTime? createdAt, amplify_core.TemporalDateTime? updatedAt}) {
+  Dispute copyWith({String? reason, String? description, List<String>? evidenceKeys, DisputeStatus? status, List<String>? participants, String? lastUpdatedBy, Agreement? agreement, Milestone? milestone, User? raisedBy}) {
     return Dispute._internal(
       id: id,
       reason: reason ?? this.reason,
@@ -191,9 +187,7 @@ class Dispute extends amplify_core.Model {
       lastUpdatedBy: lastUpdatedBy ?? this.lastUpdatedBy,
       agreement: agreement ?? this.agreement,
       milestone: milestone ?? this.milestone,
-      raisedBy: raisedBy ?? this.raisedBy,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt);
+      raisedBy: raisedBy ?? this.raisedBy);
   }
   
   Dispute copyWithModelFieldValues({
@@ -205,9 +199,7 @@ class Dispute extends amplify_core.Model {
     ModelFieldValue<String?>? lastUpdatedBy,
     ModelFieldValue<Agreement?>? agreement,
     ModelFieldValue<Milestone?>? milestone,
-    ModelFieldValue<User?>? raisedBy,
-    ModelFieldValue<amplify_core.TemporalDateTime?>? createdAt,
-    ModelFieldValue<amplify_core.TemporalDateTime?>? updatedAt
+    ModelFieldValue<User?>? raisedBy
   }) {
     return Dispute._internal(
       id: id,
@@ -219,9 +211,7 @@ class Dispute extends amplify_core.Model {
       lastUpdatedBy: lastUpdatedBy == null ? this.lastUpdatedBy : lastUpdatedBy.value,
       agreement: agreement == null ? this.agreement : agreement.value,
       milestone: milestone == null ? this.milestone : milestone.value,
-      raisedBy: raisedBy == null ? this.raisedBy : raisedBy.value,
-      createdAt: createdAt == null ? this.createdAt : createdAt.value,
-      updatedAt: updatedAt == null ? this.updatedAt : updatedAt.value
+      raisedBy: raisedBy == null ? this.raisedBy : raisedBy.value
     );
   }
   
@@ -287,8 +277,6 @@ class Dispute extends amplify_core.Model {
   static final RAISEDBY = amplify_core.QueryField(
     fieldName: "raisedBy",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'User'));
-  static final CREATEDAT = amplify_core.QueryField(fieldName: "createdAt");
-  static final UPDATEDAT = amplify_core.QueryField(fieldName: "updatedAt");
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Dispute";
     modelSchemaDefinition.pluralName = "Disputes";
@@ -373,15 +361,17 @@ class Dispute extends amplify_core.Model {
       ofModelName: 'User'
     ));
     
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: Dispute.CREATEDAT,
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
       isRequired: false,
+      isReadOnly: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
     ));
     
-    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-      key: Dispute.UPDATEDAT,
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
       isRequired: false,
+      isReadOnly: true,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
     ));
   });

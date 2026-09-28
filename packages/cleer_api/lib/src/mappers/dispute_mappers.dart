@@ -1,4 +1,3 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:cleer_api/src/mappers/agreement_mappers.dart';
 import 'package:cleer_api/src/mappers/milestone_mappers.dart';
 import 'package:cleer_api/src/mappers/user_mappers.dart';
@@ -20,7 +19,6 @@ extension DisputeToDomainMapper on amplify_model.Dispute {
       participants: participants,
       lastUpdatedBy: lastUpdatedBy,
       createdAt: createdAt?.getDateTimeInUtc().toLocal(),
-      updatedAt: updatedAt?.getDateTimeInUtc().toLocal(),
     );
   }
 }
@@ -38,12 +36,6 @@ extension DisputeToAmplifyMapper on domain.Dispute {
       agreement: agreement?.toAmplify(),
       milestone: milestone?.toAmplify(),
       raisedBy: raisedBy?.toAmplify(),
-      createdAt: createdAt != null
-          ? TemporalDateTime(createdAt!.toUtc())
-          : null,
-      updatedAt: updatedAt != null
-          ? TemporalDateTime(updatedAt!.toUtc())
-          : null,
     );
   }
 }
