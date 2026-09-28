@@ -3,6 +3,7 @@ import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
 import 'package:cleer/ui/agreements/report_issue/state/report_issue_state.dart';
 import 'package:cleer/ui/agreements/report_issue/view_model/report_issue_view_model.dart';
 import 'package:cleer/ui/agreements/report_issue/widgets/reason_picker_bottom_sheet.dart';
+import 'package:cleer/ui/core/extensions/file_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_ui/cleer_ui.dart';
@@ -39,9 +40,15 @@ class ReportIssueFormStep extends HookConsumerWidget {
     );
     final activeAgreement = agreementDetailsState.value ?? initialAgreement;
 
-    final selectedReason = useState<DisputeReason?>(null);
-    final reasonController = useTextEditingController();
-    final descriptionController = useTextEditingController();
+    final formData = state.value?.formData ?? ReportIssueFormData.empty();
+
+    final selectedReason = useState<DisputeReason?>(formData.reason);
+    final reasonController = useTextEditingController(
+      text: formData.reason?.getLabel(context) ?? '',
+    );
+    final descriptionController = useTextEditingController(
+      text: formData.description,
+    );
 
     useEffect(() {
       void listener() {
@@ -65,8 +72,6 @@ class ReportIssueFormStep extends HookConsumerWidget {
       pickEvidenceFilesCommand.errors.addListener(listener);
       return () => pickEvidenceFilesCommand.errors.removeListener(listener);
     }, [pickEvidenceFilesCommand]);
-
-    final formData = state.value?.formData ?? ReportIssueFormData.empty();
 
     final availableReasons =
         activeAgreement?.availableIssueReasons ?? DisputeReason.values;
@@ -202,14 +207,7 @@ class ReportIssueFormStep extends HookConsumerWidget {
                                   final file = entry.value;
                                   final name = file.name;
 
-                                  final icon = name.endsWith('.pdf')
-                                      ? PhosphorIcons.filePdf()
-                                      : name.endsWith('.doc') ||
-                                            name.endsWith('.docx')
-                                      ? PhosphorIcons.fileDoc()
-                                      : name.endsWith('.mp4')
-                                      ? PhosphorIcons.videoCamera()
-                                      : PhosphorIcons.image();
+                                  final icon = name.fileIcon;
 
                                   return Container(
                                     margin: EdgeInsets.only(

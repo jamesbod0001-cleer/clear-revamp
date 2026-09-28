@@ -853,5 +853,40 @@
   "issueReasonWorkRequiresRevisions": "Work requires revisions",
   "issueReasonOther": "Other",
   "yourReportHasBeenSubmitted": "Your report has been submitted",
-  "weHaveReceivedYourSubmissionAndTemporarilySecuredTheFundsWhileWeReviewTheDispute": "We've received your submission and temporarily secured the funds while we review the dispute."
+  "weHaveReceivedYourSubmissionAndTemporarilySecuredTheFundsWhileWeReviewTheDispute": "We've received your submission and temporarily secured the funds while we review the dispute.",
+  "fundsAreSecurelyHeldUntilTheIssueIsResolved": "Funds are securely held until the issue is resolved.",
+  "visibleToBothParties": "Visible to both parties",
+  "paused": "Paused",
+  "issueStatus": "Issue Status",
+  "reportSubmitted": "Report Submitted",
+  "issueReportedBy": "Issue reported by {name}",
+  "@issueReportedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inReview": "In Review",
+  "resolution": "Resolution",
+  "reportResolved": "Report resolved",
+  "reportDismissed": "Report dismissed",
+  "wellNotifyYouWhenADecisionHasBeenReached": "We'll notify you when a decision has been reached.",
+  "yourReport": "Your Report",
+  "usersReport": "{name}'s Report",
+  "@usersReport": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reasonWithLabel": "Reason: {reason}",
+  "@reasonWithLabel": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -211,7 +211,7 @@ class ReviewDeliveryInformationCard extends ConsumerWidget {
                                   (Dimens.spacing.sp12 * 2)) /
                               3;
                           return Wrap(
-                            spacing: Dimens.spacing.sp8,
+                            spacing: Dimens.spacing.sp12,
                             runSpacing: Dimens.spacing.sp8,
                             children: photos.asMap().entries.map((entry) {
                               final int index = entry.key;

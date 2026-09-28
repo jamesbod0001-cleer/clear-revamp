@@ -1,6 +1,7 @@
 import 'package:cleer/domain/providers/user/user_provider.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/photo_viewer_dialog.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_photo_thumbnail.dart';
+import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
 import 'package:cleer/ui/core/extensions/error_ui_extensions.dart';
 import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_core/models/milestone/milestone_enums.dart';
@@ -329,12 +330,12 @@ class _MilestoneTimelineTile extends HookConsumerWidget {
         ),
         children: [
           historyState.maybeWhen(
-            error: (Object error, StackTrace stackTrace) =>
-                error.toErrorState(
-                  ref,
-                  variant: .minimal,
-                  onRetry: () => ref.invalidate(milestoneStatusHistoryProvider(milestone.id!)),
-                ),
+            error: (Object error, StackTrace stackTrace) => error.toErrorState(
+              ref,
+              variant: .minimal,
+              onRetry: () =>
+                  ref.invalidate(milestoneStatusHistoryProvider(milestone.id!)),
+            ),
             orElse: () {
               bool isLoading = historyState.isLoading;
 
@@ -606,6 +607,28 @@ class _StandardTimeline extends ConsumerWidget {
           title: agreement.disbursementType == .oneTime
               ? l10n.agreementStatus
               : l10n.paymentMilestones,
+          trailing: agreement.isDisputed
+              ? Skeleton.leaf(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: context.color.warningLight,
+                      borderRadius: BorderRadius.circular(
+                        Dimens.radius.r20,
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.padding.p8,
+                      vertical: Dimens.padding.p4,
+                    ),
+                    child: Text(
+                      l10n.paused.toUpperCase(),
+                      style: context.typo.titleSmall.copyWith(
+                        color: context.color.warning,
+                      ),
+                    ),
+                  ),
+                )
+              : null,
         ),
         Padding(
           padding: agreement.disbursementType == .oneTime
@@ -723,7 +746,31 @@ class _PhysicalGoodsTimeline extends HookConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        MenuSectionHeader(title: l10n.agreementStatus),
+        MenuSectionHeader(
+          title: l10n.agreementStatus,
+          trailing: agreement.isDisputed
+              ? Skeleton.leaf(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: context.color.warningLight,
+                      borderRadius: BorderRadius.circular(
+                        Dimens.radius.r20,
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.padding.p8,
+                      vertical: Dimens.padding.p4,
+                    ),
+                    child: Text(
+                      l10n.paused.toUpperCase(),
+                      style: context.typo.titleSmall.copyWith(
+                        color: context.color.warning,
+                      ),
+                    ),
+                  ),
+                )
+              : null,
+        ),
         AgreementProgressCard(
           currentStep: calculatedCurrentStep,
           isCompleted: agreement.status == AgreementStatus.released,

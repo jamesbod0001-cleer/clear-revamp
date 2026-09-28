@@ -1,34 +1,67 @@
+import 'package:cleer/domain/providers/dispute/dispute_provider.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/approve_service_payment_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/confirm_item_received_card.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/dispute_notice_card.dart';
+import 'package:cleer/ui/agreements/agreement_details/widgets/dispute_report_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/mark_service_completed_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_delivery_information_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/review_package_photos_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/share_delivery_information_card.dart';
 import 'package:cleer/ui/agreements/agreement_details/widgets/upload_package_photos_card.dart';
-import 'package:cleer_core/cleer_core.dart';
+import 'package:cleer/ui/agreements/extensions/agreement_ui_extensions.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
+import 'package:cleer_core/cleer_core.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 // ============================================================================
 // DYNAMIC HEADER
 // ============================================================================
 
-class DynamicAgreementHeader extends StatelessWidget {
+class DynamicAgreementHeader extends ConsumerWidget {
   const DynamicAgreementHeader({
     super.key,
     required this.agreement,
     required this.currentUser,
-  }); // <-- DELETED the milestones parameter!
+  });
 
   final Agreement agreement;
   final User? currentUser;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (agreement.isDisputed && agreement.id != null) {
+      final disputeState = ref.watch(
+        activeAgreementDisputeProvider(agreement.id!),
+      );
+      final dispute = disputeState.value;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const DisputeNoticeCard(),
+          Gap(Dimens.spacing.sp20),
+          Skeletonizer(
+            enabled: disputeState.isLoading && !disputeState.isReloading,
+            child: DisputeReportCard(
+              dispute:
+                  dispute ??
+                  Dispute(
+                    id: 'id',
+                    reason: .deliveryIssue,
+                    description: 'description',
+                  ),
+            ),
+          ),
+        ],
+      );
+    }
+
     if ([
       AgreementStatus.draft,
       AgreementStatus.released,
@@ -108,7 +141,6 @@ class DynamicAgreementHeader extends StatelessWidget {
     final isMilestones =
         agreement.disbursementType == DisbursementType.milestones;
 
-    // NEW: We just read the string directly from the Agreement model!
     final activeStatus = agreement.activeMilestoneStatus;
 
     if (agreement.status == AgreementStatus.inProgress) {
@@ -116,12 +148,10 @@ class DynamicAgreementHeader extends StatelessWidget {
         if (isOneTime) {
           return MarkServiceCompletedCard(agreement: agreement);
         }
-        // Milestones: Check the denormalized status string
         if (isMilestones && activeStatus == 'IN_PROGRESS') {
           return MarkServiceCompletedCard(agreement: agreement);
         }
       } else if (isSender) {
-        // Milestones: Check the denormalized status string
         if (isMilestones && activeStatus == 'READY_FOR_RELEASE') {
           return ApproveServicePaymentCard(agreement: agreement);
         }
@@ -153,7 +183,7 @@ class AgreementActionBanner extends StatelessWidget {
     super.key,
     required this.agreement,
     required this.currentUser,
-  }); // <-- DELETED activeMilestone parameter!
+  });
 
   final Agreement agreement;
   final User? currentUser;
@@ -327,7 +357,6 @@ class AgreementActionBanner extends StatelessWidget {
                   : l10n.theAgreementIsNowActiveYouWillBeNotifiedWhenTheProviderMarksTheServiceAsCompleted,
             );
           } else if (isRecipient && activeStatus == 'READY_FOR_RELEASE') {
-            // NEW: Reading straight from the denormalized string
             return _BannerData(
               PhosphorIcons.hourglass(PhosphorIconsStyle.duotone),
               l10n.waitingForMilestonePayment,

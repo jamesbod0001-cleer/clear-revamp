@@ -67,11 +67,12 @@ class ReportIssueViewModel extends _$ReportIssueViewModel {
               'jpg',
               'jpeg',
               'png',
+              'heic',
               'pdf',
               'doc',
               'docx',
               'mp4',
-              'mov',
+              'mov'
             ],
             allowMultiple: true,
             limit: remainingLimit,
@@ -199,6 +200,7 @@ class ReportIssueViewModel extends _$ReportIssueViewModel {
         evidenceKeys: uploadedKeys,
         status: DisputeStatus.open,
         participants: agreement.participants,
+        lastUpdatedBy: user.id,
       );
 
       final createDisputeResult = await ref
