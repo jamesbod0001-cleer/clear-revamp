@@ -13,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DisputeReportCard extends ConsumerWidget {
   const DisputeReportCard({super.key, required this.dispute});
@@ -199,17 +200,29 @@ class EvidenceTileCard extends ConsumerWidget {
     final fileType = s3Key.fileType;
     final urlState = ref.watch(fileUrlProvider(s3Key));
 
-    return Skeleton.leaf(
-      child: Container(
-        width: dimension,
-        height: dimension,
-        decoration: BoxDecoration(
-          color: _getBackgroundColor(context, fileType),
-          borderRadius: BorderRadius.circular(Dimens.radius.r10),
-          border: Border.all(color: context.color.grayComponent),
+    return InkWell(
+      onTap: () async {
+        final url = urlState.value;
+        if (url != null && url.isNotEmpty) {
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        }
+      },
+      borderRadius: BorderRadius.circular(Dimens.radius.r10),
+      child: Skeleton.leaf(
+        child: Container(
+          width: dimension,
+          height: dimension,
+          decoration: BoxDecoration(
+            color: _getBackgroundColor(context, fileType),
+            borderRadius: BorderRadius.circular(Dimens.radius.r10),
+            border: Border.all(color: context.color.grayComponent),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: _buildTileContent(context, fileType, urlState),
         ),
-        clipBehavior: Clip.antiAlias,
-        child: _buildTileContent(context, fileType, urlState),
       ),
     );
   }
