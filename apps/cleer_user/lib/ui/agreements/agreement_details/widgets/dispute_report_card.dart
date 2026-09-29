@@ -205,8 +205,10 @@ class EvidenceTileCard extends ConsumerWidget {
         final url = urlState.value;
         if (url != null && url.isNotEmpty) {
           final uri = Uri.parse(url);
-          if (await canLaunchUrl(uri)) {
+          try {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } catch (e) {
+            debugPrint('Error launching evidence URL: $e');
           }
         }
       },
