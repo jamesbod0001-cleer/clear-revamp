@@ -81,6 +81,9 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     }
                 };
 
+                // Determine if the agreement was funded prior to status change
+                const wasFunded = oldStatus && oldStatus !== 'DRAFT' && oldStatus !== 'AWAITING_FUNDING';
+
                 // ==========================================
                 // FLOW 1: INITIATOR IS THE SENDER (Send Funds)
                 // ==========================================
@@ -96,11 +99,19 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                             await notify(recipientId, 'Agreement Accepted', 'You have accepted the agreement.');
                             break;
                         case 'REJECTED':
-                            await notify(initiatorId, 'Agreement Declined', 'This agreement has been declined. Your refund is being processed.');
+                            if (wasFunded) {
+                                await notify(initiatorId, 'Agreement Declined', 'This agreement has been declined. Your refund is being processed.');
+                            } else {
+                                await notify(initiatorId, 'Agreement Declined', 'This agreement has been declined.');
+                            }
                             await notify(recipientId, 'Agreement Declined', 'You have declined this agreement.');
                             break;
                         case 'CANCELLED':
-                            await notify(initiatorId, 'Agreement Cancelled', 'You cancelled this agreement. Your refund is being processed.');
+                            if (wasFunded) {
+                                await notify(initiatorId, 'Agreement Cancelled', 'You cancelled this agreement. Your refund is being processed.');
+                            } else {
+                                await notify(initiatorId, 'Agreement Cancelled', 'You cancelled this agreement.');
+                            }
                             break;
                     }
                 }

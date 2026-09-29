@@ -45,6 +45,13 @@ export const handler: DynamoDBStreamHandler = async (event) => {
                     const agreementId = newItem.id;
                     const initiatorRole = newItem.initiatorRole;
 
+                    // Skip if the agreement was cancelled/rejected before being funded
+                    const wasFunded = oldStatus && oldStatus !== 'DRAFT' && oldStatus !== 'AWAITING_FUNDING';
+                    if (!wasFunded) {
+                        logger.info(`Agreement ${agreementId} was cancelled/rejected before funding (oldStatus: ${oldStatus}). Skipping refund.`);
+                        continue;
+                    }
+
                     // Only agreements where the SENDER paid funds into escrow require a refund
                     if (initiatorRole !== 'SENDER') {
                         logger.info(`Agreement ${agreementId} was not funded by sender (initiatorRole: ${initiatorRole}). Skipping refund.`);
