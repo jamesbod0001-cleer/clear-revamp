@@ -16,39 +16,33 @@ class VerifyPhoneNumberViewModel extends _$VerifyPhoneNumberViewModel {
   }
 
   Future<void> verifyPhoneNumber(String phoneNumber, String code) async {
-    if (code == '025337') {
-      _log.info('By passing verify phone number');
-      state = const AsyncValue.loading();
-      state = AsyncValue.data(SignUpDomainResult.success());
-    } else {
-      _log.info('Attempting to verify phone number for user: $phoneNumber');
-      state = const AsyncValue.loading();
-      state = await AsyncValue.guard(() async {
-        final result = await ref
-            .read(authUseCaseProvider.notifier)
-            .confirmSignUp(
-              ConfirmSignUpParams(
-                identifier: phoneNumber,
-                confirmationCode: code,
-              ),
-            );
-        return result.fold(
-          (result) {
-            _log.info(
-              'Successfully verified phone number for user: $phoneNumber',
-            );
-            return result;
-          },
-          (failure) {
-            _log.error(
-              'Error verifying phone number for user: $phoneNumber',
-              failure,
-            );
-            throw failure;
-          },
-        );
-      });
-    }
+    _log.info('Attempting to verify phone number for user: $phoneNumber');
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final result = await ref
+          .read(authUseCaseProvider.notifier)
+          .confirmSignUp(
+            ConfirmSignUpParams(
+              identifier: phoneNumber,
+              confirmationCode: code,
+            ),
+          );
+      return result.fold(
+        (result) {
+          _log.info(
+            'Successfully verified phone number for user: $phoneNumber',
+          );
+          return result;
+        },
+        (failure) {
+          _log.error(
+            'Error verifying phone number for user: $phoneNumber',
+            failure,
+          );
+          throw failure;
+        },
+      );
+    });
   }
 
   Future<void> resendCode(String phoneNumber) async {
