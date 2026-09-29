@@ -1,4 +1,4 @@
-// import 'package:cleer/config/assets.gen.dart';
+import 'package:cleer/config/assets.gen.dart';
 import 'package:cleer/ui/core/localization/generated/app_localizations.dart';
 import 'package:cleer_ui/themes/dimensions.dart';
 import 'package:cleer_ui/themes/theme.dart';
@@ -51,11 +51,11 @@ class ChoosePaymentMethodStep extends ConsumerWidget {
       ),
 
       ///TODO: Hiding OPay for now because of its issues with refund
-      // _PaymentMethod(
-      //   icon: Assets.icons.opayLogo.svg(width: Dimens.size.s20),
-      //   label: l10n.payWithOpay,
-      //   onTap: viewModel.payWithOpay,
-      // ),
+      _PaymentMethod(
+        icon: Assets.icons.opayLogo.svg(width: Dimens.size.s20),
+        label: l10n.payWithOpay,
+        onTap: viewModel.payWithOpay,
+      ),
     ];
 
     return PopScope(
